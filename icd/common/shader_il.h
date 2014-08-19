@@ -25,10 +25,13 @@
 #ifndef SHADER_IL_H
 #define SHADER_IL_H
 
-#define XGL_SHADER_IL_NAME "XGL_BIL"
+const int BILMagicNumber = 0x07230203;
+const int BILVersion = 99;
 
-struct il_header {
-    char il_name[8];
+struct bil_header {
+    uint32_t bil_magic;
+    uint32_t bil_version;
+    uint32_t gen_magic;  // Generator's magic number
 };
 
 #endif // SHADER_IL_H
