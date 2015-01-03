@@ -25,23 +25,30 @@
  *    Chia-I Wu <olv@lunarg.com>
  */
 
-#ifndef ICD_H
-#define ICD_H
+#ifndef ICD_LOG_H
+#define ICD_LOG_H
 
-#include <xgl.h>
-#include <xglDbg.h>
-#include <xglLayer.h>
+#include <stdarg.h>
+#include "icd-utils.h"
+#include "icd.h"
 
-#if defined(__GNUC__) && __GNUC__ >= 4
-#  define ICD_EXPORT __attribute__((visibility("default")))
-#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
-#  define ICD_EXPORT __attribute__((visibility("default")))
-#else
-#  define ICD_EXPORT
-#endif
+XGL_RESULT icd_logger_set_bool(XGL_DBG_GLOBAL_OPTION option, bool enable);
 
-XGL_RESULT XGLAPI icdDbgRegisterMsgCallback(XGL_DBG_MSG_CALLBACK_FUNCTION pfnMsgCallback, XGL_VOID* pUserData);
-XGL_RESULT XGLAPI icdDbgUnregisterMsgCallback(XGL_DBG_MSG_CALLBACK_FUNCTION pfnMsgCallback);
-XGL_RESULT XGLAPI icdDbgSetGlobalOption(XGL_DBG_GLOBAL_OPTION dbgOption, XGL_SIZE dataSize, const XGL_VOID* pData);
+XGL_RESULT icd_logger_add_callback(XGL_DBG_MSG_CALLBACK_FUNCTION func,
+                                   void *user_data);
+XGL_RESULT icd_logger_remove_callback(XGL_DBG_MSG_CALLBACK_FUNCTION func);
+void icd_logger_clear_callbacks(void);
 
-#endif /* ICD_H */
+void icd_logv(XGL_DBG_MSG_TYPE msg_type,
+              XGL_VALIDATION_LEVEL validation_level,
+              XGL_BASE_OBJECT src_object,
+              size_t location, int32_t msg_code,
+              const char *format, va_list ap);
+
+void icd_log(XGL_DBG_MSG_TYPE msg_type,
+             XGL_VALIDATION_LEVEL validation_level,
+             XGL_BASE_OBJECT src_object,
+             size_t location, int32_t msg_code,
+             const char *format, ...);
+
+#endif /* ICD_LOG_H */
