@@ -56,7 +56,7 @@
 
 #include <vulkan/vk_sdk_platform.h>
 #include "linmath.h"
-#include "vk_enum_string_helper.h"
+#include "object_type_string_helper.h"
 
 #include "gettime.h"
 #include "inttypes.h"
