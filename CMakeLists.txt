@@ -46,40 +46,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(LVL_TARGET_FOLDER lvl_cmake_targets)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(FALLBACK_CONFIG_DIRS "/etc/xdg" CACHE STRING
-        "Search path to use when XDG_CONFIG_DIRS is unset or empty or the current process is SUID/SGID. Default is freedesktop compliant.")
-    set(FALLBACK_DATA_DIRS "/usr/local/share:/usr/share" CACHE STRING
-        "Search path to use when XDG_DATA_DIRS is unset or empty or the current process is SUID/SGID. Default is freedesktop compliant.")
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    include(FindPkgConfig)
-    option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
-    option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
-    option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
-    option(BUILD_WSI_MIR_SUPPORT "Build Mir WSI support" OFF)
-    set(DEMOS_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for demos (XCB, XLIB, WAYLAND, MIR, DISPLAY)")
-
-    if (BUILD_WSI_XCB_SUPPORT)
-        find_package(XCB REQUIRED)
-    endif()
-
-    if (BUILD_WSI_XLIB_SUPPORT)
-        find_package(X11 REQUIRED)
-    endif()
-
-    if (BUILD_WSI_WAYLAND_SUPPORT)
-        find_package(Wayland REQUIRED)
-        include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
-    endif()
-
-    if (BUILD_WSI_MIR_SUPPORT)
-        find_package(Mir REQUIRED)
-    endif()
-
-endif()
-
+# Move to ICD
 set(SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
 
 # Header file for CMake settings
@@ -151,7 +118,7 @@ else()
     endif()
 endif()
 
-option(BUILD_DEMOS "Build demos" ON)
+option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
 
@@ -192,8 +159,8 @@ endif()
 
 add_definitions(-DAPI_NAME="${API_NAME}")
 
-if(BUILD_DEMOS)
-    add_subdirectory(demos)
+if(BUILD_CUBE)
+    add_subdirectory(cube)
 endif()
 if(BUILD_VULKANINFO)
     add_subdirectory(vulkaninfo)
