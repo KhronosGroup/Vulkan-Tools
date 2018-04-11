@@ -152,6 +152,7 @@ else()
 endif()
 
 option(BUILD_DEMOS "Build demos" ON)
+option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
 
 find_program(GLSLANG_VALIDATOR NAMES glslangValidator
@@ -193,6 +194,9 @@ add_definitions(-DAPI_NAME="${API_NAME}")
 
 if(BUILD_DEMOS)
     add_subdirectory(demos)
+endif()
+if(BUILD_VULKANINFO)
+    add_subdirectory(vulkaninfo)
 endif()
 if(BUILD_ICD)
     add_subdirectory(icd)

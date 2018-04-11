@@ -114,7 +114,6 @@ if(WIN32)
     endforeach()
 
    file(COPY cube.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
-   file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
 endif()
 
 add_custom_command(
@@ -148,7 +147,6 @@ include_directories(
     ${DEMO_INCLUDE_DIRS}
     )
 
-######################################################################################
 # vulkaninfo
 if(WIN32)
     add_executable(vulkaninfo vulkaninfo.c vulkaninfo.rc)
