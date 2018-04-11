@@ -44,9 +44,7 @@ findtool jarsigner
 
 set -ev
 
-LAYER_BUILD_DIR=$PWD
-DEMO_BUILD_DIR=$PWD/../demos/android
-echo LAYER_BUILD_DIR="${LAYER_BUILD_DIR}"
+DEMO_BUILD_DIR=$PWD/../cube/android
 echo DEMO_BUILD_DIR="${DEMO_BUILD_DIR}"
 
 function create_APK() {
@@ -55,20 +53,6 @@ function create_APK() {
     jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -keypass android  bin/$1-unaligned.apk androiddebugkey
     zipalign -f 4 bin/$1-unaligned.apk bin/$1.apk
 }
-
-#
-# build layers
-#
-./update_external_sources_android.sh --no-build
-./android-generate.sh
-ndk-build -j $cores
-
-#
-# build VulkanLayerValidationTests APK
-#
-mkdir -p bin/libs/lib
-cp -r $LAYER_BUILD_DIR/libs/* $LAYER_BUILD_DIR/bin/libs/lib/
-create_APK VulkanLayerValidationTests
 
 #
 # build cube APKs (with and without layers)
@@ -81,19 +65,15 @@ mkdir -p $DEMO_BUILD_DIR/cube/bin/libs/lib
 cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube/bin/libs/lib/
 cd $DEMO_BUILD_DIR/cube
 create_APK cube
+# Todo: support cube with layers
 # And one with validation layers
-mkdir -p $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib
-cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
-cp -r $LAYER_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
-cd $DEMO_BUILD_DIR/cube-with-layers
-create_APK cube-with-layers
+#mkdir -p $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib
+#cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
+#cp -r $LAYER_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
+#cd $DEMO_BUILD_DIR/cube-with-layers
+#create_APK cube-with-layers
 popd
 )
-
-#
-# build Smoke with layers
-#
-# TODO
 
 echo Builds succeeded
 exit 0
