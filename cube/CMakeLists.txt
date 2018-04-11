@@ -3,6 +3,12 @@ set(CUBE_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
+find_program(GLSLANG_VALIDATOR NAMES glslangValidator
+             HINTS "${EXTERNAL_SOURCE_ROOT}/glslang/${BUILDTGT_DIR}/install/bin"
+                   "$ENV{VK_SDK_PATH}/bin"
+                   "${GLSLANG_BINARY_ROOT}/StandAlone"
+                   "${PROJECT_SOURCE_DIR}/external/${BINDATA_DIR}")
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     include(FindPkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
@@ -40,10 +46,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
     endif()
-    set(CUBE_INCLUDE_DIRS
-       "${PROJECT_SOURCE_DIR}/icd/common"
-        ${CUBE_INCLUDE_DIRS}
-    )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -97,7 +99,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message( FATAL_ERROR "Unrecognized value for CUBE_WSI_SELECTION: ${CUBE_WSI_SELECTION}" )
      endif()
 
-    include_directories ("${PROJECT_SOURCE_DIR}/icd/common")
     link_libraries(${API_LOWERCASE} m)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)

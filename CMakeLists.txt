@@ -9,29 +9,12 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment ve
 project (VULKAN)
 # set (CMAKE_VERBOSE_MAKEFILE 1)
 
-# The API_NAME allows renaming builds to avoid conflicts with installed SDKs
-# The MAJOR number of the version we're building, used in naming
-# <api-name>-<major>.dll (and other files).
-set(API_NAME "Vulkan" CACHE STRING "API name to use when building")
-set(MAJOR "1")
-string(TOLOWER ${API_NAME} API_LOWERCASE)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(PythonInterp 3 REQUIRED)
 
 # If CMAKE 3.7+, use FindVulkan
 if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
     message(STATUS "Using find_package to locate Vulkan")
     find_package(Vulkan)
-endif()
-
-option(USE_CCACHE "Use ccache" OFF)
-if (USE_CCACHE)
-    find_program(CCACHE_FOUND ccache)
-    if(CCACHE_FOUND)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-    endif(CCACHE_FOUND)
 endif()
 
 if(APPLE)
@@ -44,10 +27,7 @@ endif()
 
 # Enable cmake folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set(LVL_TARGET_FOLDER lvl_cmake_targets)
-
-# Move to ICD
-set(SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
+set(TOOLS_TARGET_FOLDER lvl_cmake_targets)
 
 # Header file for CMake settings
 include_directories("${PROJECT_SOURCE_DIR}/include")
@@ -74,73 +54,9 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     endif()
 endif()
 
-if(WIN32)
-    # Treat warnings as errors
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/WX>")
-    # Disable RTTI
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/GR->")
-    # Warn about nested declarations
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/w34456>")
-    # Warn about potentially uninitialized variables
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/w34701>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/w34703>")
-    # Warn about different indirection types.
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/w34057>")
-    # Warn about signed/unsigned mismatch.
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/w34245>")
-endif()
-
-if(NOT WIN32)
-    set (BUILDTGT_DIR build)
-    set (BINDATA_DIR Bin)
-    set (LIBSOURCE_DIR Lib)
-else()
-    # is WIN32
-    option(DISABLE_BUILD_PATH_DECORATION "Disable the decoration of the gslang and SPIRV-Tools build path with MSVC build type info" OFF)
-    option(DISABLE_BUILDTGT_DIR_DECORATION "Disable the decoration of the gslang and SPIRV-Tools build path with target info" OFF)
-    option(ENABLE_WIN10_ONECORE "Link the loader with OneCore umbrella libraries" OFF)
-
-    # For Windows, since 32-bit and 64-bit items can co-exist, we build each in its own build directory.
-    # 32-bit target data goes in build32, and 64-bit target data goes into build.  So, include/link the
-    # appropriate data at build time.
-    if (DISABLE_BUILDTGT_DIR_DECORATION)
-        set (BUILDTGT_DIR "")
-        set (BINDATA_DIR "")
-        set (LIBSOURCE_DIR "")
-    elseif (CMAKE_CL_64)
-        set (BUILDTGT_DIR build)
-        set (BINDATA_DIR Bin)
-        set (LIBSOURCE_DIR Lib)
-    else()
-        set (BUILDTGT_DIR build32)
-        set (BINDATA_DIR Bin32)
-        set (LIBSOURCE_DIR Lib32)
-    endif()
-endif()
-
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
-
-find_program(GLSLANG_VALIDATOR NAMES glslangValidator
-             HINTS "${EXTERNAL_SOURCE_ROOT}/glslang/${BUILDTGT_DIR}/install/bin"
-                   "${GLSLANG_BINARY_ROOT}/StandAlone"
-                   "${PROJECT_SOURCE_DIR}/external/${BINDATA_DIR}")
-
-find_library(Vulkan_LIBRARY NAMES vulkan-1 vulkan
-             HINTS ${VK_SDK_PATH} )
-
-
-set (PYTHON_CMD ${PYTHON_EXECUTABLE})
-
-# Move to icd dir 
-# Define macro used for building vkxml generated files
-macro(run_vk_xml_generate dependency output)
-    add_custom_command(OUTPUT ${output}
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/lvl_genvk.py -registry ${SCRIPTS_DIR}/vk.xml ${output}
-    DEPENDS ${SCRIPTS_DIR}/vk.xml ${SCRIPTS_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/lvl_genvk.py ${SCRIPTS_DIR}/reg.py
-    )
-endmacro()
 
 if(UNIX)
     if(INSTALL_LVL_FILES)
@@ -156,8 +72,6 @@ if(UNIX)
     add_custom_target(uninstall
         COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 endif()
-
-add_definitions(-DAPI_NAME="${API_NAME}")
 
 if(BUILD_CUBE)
     add_subdirectory(cube)

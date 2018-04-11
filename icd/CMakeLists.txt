@@ -1,4 +1,19 @@
 cmake_minimum_required (VERSION 2.8.11)
+
+find_package(PythonInterp 3 REQUIRED)
+
+set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
+
+set (PYTHON_CMD ${PYTHON_EXECUTABLE})
+
+# Define macro used for building vk.xml generated files
+macro(run_vk_xml_generate dependency output)
+    add_custom_command(OUTPUT ${output}
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/lvl_genvk.py -registry ${SCRIPTS_DIR}/vk.xml ${output}
+    DEPENDS ${SCRIPTS_DIR}/vk.xml ${SCRIPTS_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/lvl_genvk.py ${SCRIPTS_DIR}/reg.py
+    )
+endmacro()
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
     set(DisplayServer Win32)
@@ -39,7 +54,7 @@ if (WIN32)
                     COMMAND copy ${src_json} ${dst_json}
                     VERBATIM
                     )
-                set_target_properties(${config_file}-json PROPERTIES FOLDER ${LVL_TARGET_FOLDER})
+                set_target_properties(${config_file}-json PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
             endforeach(config_file)
         else()
             foreach (config_file ${ICD_JSON_FILES})
@@ -95,7 +110,7 @@ add_custom_target(generate_icd_files DEPENDS
     mock_icd.h
     mock_icd.cpp
     )
-set_target_properties(generate_icd_files PROPERTIES FOLDER ${LVL_TARGET_FOLDER})
+set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
 
 if (WIN32)
     macro(add_vk_icd target)
@@ -104,7 +119,7 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} VkICD_${target}.def
         VERBATIM
     )
-    set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${LVL_TARGET_FOLDER})
+    set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
     add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
     add_dependencies(VkICD_${target} generate_helper_files generate_icd_files)
     #target_link_Libraries(VkICD_${target} VkICD_utils)
