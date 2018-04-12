@@ -227,13 +227,3 @@ else()
     add_executable(cubepp WIN32 cube.cpp ${PROJECT_SOURCE_DIR}/demos/cube.vert ${PROJECT_SOURCE_DIR}/demos/cube.frag cube.vert.inc cube.frag.inc)
     target_link_libraries(cubepp ${LIBRARIES})
 endif()
-
-######################################################################################
-# smoke
-
-if ((${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR}))
-    if ((DEMOS_WSI_SELECTION STREQUAL "XCB") OR (DEMOS_WSI_SELECTION STREQUAL "WAYLAND") OR WIN32 OR
-        (CMAKE_SYSTEM_NAME STREQUAL "Android") OR (CMAKE_SYSTEM_NAME STREQUAL "Darwin"))
-        add_subdirectory(smoke)
-    endif()
-endif()
