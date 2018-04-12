@@ -87,9 +87,11 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 if(WIN32)
-  set (LIBRARIES "${API_LOWERCASE}-${MAJOR}")
+####  set (LIBRARIES "vulkan-1")
+  set (LIBRARIES "Vulkan::Vulkan")
 elseif(UNIX)
-  set (LIBRARIES "${API_LOWERCASE}")
+  set (LIBRARIES "Vulkan::Vulkan")
+###  set (LIBRARIES "vulkan")
 else()
 endif()
 
@@ -129,8 +131,7 @@ add_custom_command(
     MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/demos/cube.frag
     DEPENDS ${PROJECT_SOURCE_DIR}/demos/cube.frag ${GLSLANG_VALIDATOR}
 )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 if(WIN32)
@@ -150,20 +151,21 @@ include_directories(
 ######################################################################################
 # vulkaninfo
 if(WIN32)
-    add_executable(${API_LOWERCASE}info vulkaninfo.c vulkaninfo.rc)
+    add_executable(vulkaninfo vulkaninfo.c vulkaninfo.rc)
 elseif(APPLE)
-    add_executable(${API_LOWERCASE}info vulkaninfo.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
+    add_executable(vulkaninfo vulkaninfo.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h
+        )
 else()
-    add_executable(${API_LOWERCASE}info vulkaninfo.c)
+    add_executable(vulkaninfo vulkaninfo.c)
 endif()
 
 if(APPLE)
     target_link_libraries(${API_LOWERCASE}info ${LIBRARIES} "-framework AppKit -framework QuartzCore")
     target_include_directories(${API_LOWERCASE}info PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
 else()
-    target_link_libraries(${API_LOWERCASE}info ${LIBRARIES})
+    target_link_libraries(vulkaninfo Vulkan::Vulkan)
 endif()
 
 if(APPLE)

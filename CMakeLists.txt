@@ -19,6 +19,12 @@ string(TOLOWER ${API_NAME} API_LOWERCASE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(PythonInterp 3 REQUIRED)
 
+# If CMAKE 3.7+, use FindVulkan
+if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
+    message(STATUS "Using find_package to locate Vulkan")
+    find_package(Vulkan)
+endif()
+
 option(USE_CCACHE "Use ccache" OFF)
 if (USE_CCACHE)
     find_program(CCACHE_FOUND ccache)
@@ -72,11 +78,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         find_package(Mir REQUIRED)
     endif()
 
-    # This option can be used to suppress the installation of artifacts from the
-    # Vulkan-LoaderAndValidationLayers repo while running "make install" for the
-    # VulkanTools and VulkanSamples repos.  This can be used to prevent the
-    # overwriting of LVL artifacts when installing these downstream repos.
-    option(INSTALL_LVL_FILES "Install content from LoaderAndValidationLayers repo" ON)
 endif()
 
 set(SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
@@ -150,15 +151,7 @@ else()
     endif()
 endif()
 
-option(BUILD_LOADER "Build loader" ON)
-option(BUILD_TESTS "Build tests" ON)
-option(BUILD_LAYERS "Build layers" ON)
 option(BUILD_DEMOS "Build demos" ON)
-if (APPLE)
-    option(BUILD_VKJSON "Build vkjson" OFF)
-else()
-    option(BUILD_VKJSON "Build vkjson" ON)
-endif()
 option(BUILD_ICD "Build icd" ON)
 option(CUSTOM_GLSLANG_BIN_ROOT "Use the user defined GLSLANG_BINARY_ROOT" OFF)
 option(CUSTOM_SPIRV_TOOLS_BIN_ROOT "Use the user defined SPIRV_TOOLS*BINARY_ROOT paths" OFF)
@@ -271,6 +264,9 @@ find_library(SPIRV_TOOLS_LIB NAMES SPIRV-Tools
 find_library(SPIRV_TOOLS_OPT_LIB NAMES SPIRV-Tools-opt
              HINTS ${SPIRV_TOOLS_OPT_SEARCH_PATH} )
 
+find_library(Vulkan_LIBRARY NAMES vulkan-1 vulkan
+             HINTS ${VK_SDK_PATH} )
+
 if (WIN32)
     add_library(glslang         STATIC IMPORTED)
     add_library(OGLCompiler     STATIC IMPORTED)
@@ -278,7 +274,7 @@ if (WIN32)
     add_library(HLSL            STATIC IMPORTED)
     add_library(SPIRV           STATIC IMPORTED)
     add_library(SPVRemapper     STATIC IMPORTED)
-    add_library(Loader          STATIC IMPORTED)
+#    add_library(Loader          STATIC IMPORTED)
     add_library(SPIRV-Tools-opt STATIC IMPORTED)
     add_library(SPIRV-Tools     STATIC IMPORTED)
 
@@ -342,50 +338,6 @@ macro(run_vk_xml_generate dependency output)
     )
 endmacro()
 
-# Define macro used for generating header files containing commit IDs for external dependencies
-macro(run_external_revision_generate source_dir symbol_name output)
-    add_custom_command(OUTPUT ${output}
-    # NOTE: If you modify this call to use --rev_file instead of --git_dir (to read the commit ID from a file instead of
-    # parsing from a Git repository), you probably also want to add the revision file to the list of DEPENDS on the
-    # subsequent line (to ensure that the script is re-run when the revision file is modified).
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/external_revision_generator.py --git_dir ${source_dir} -s ${symbol_name} -o ${output}
-    DEPENDS ${SCRIPTS_DIR}/external_revision_generator.py ${source_dir}/.git/HEAD ${source_dir}/.git/index
-    )
-endmacro()
-
-# Custom target for generated vulkan helper file dependencies
-set(generate_helper_files_DEPENDS)
-if(BUILD_LAYERS)
-    LIST(APPEND generate_helper_files_DEPENDS spirv_tools_commit_id.h)
-endif()
-add_custom_target(generate_helper_files DEPENDS
-    vk_enum_string_helper.h
-    vk_safe_struct.h
-    vk_safe_struct.cpp
-    vk_object_types.h
-    vk_layer_dispatch_table.h
-    vk_dispatch_table_helper.h
-    vk_extension_helper.h
-    vk_typemap_helper.h
-    ${generate_helper_files_DEPENDS}
-    )
-set_target_properties(generate_helper_files PROPERTIES FOLDER ${LVL_TARGET_FOLDER})
-
-# Rules to build generated helper files
-run_vk_xml_generate(loader_extension_generator.py vk_layer_dispatch_table.h)
-run_vk_xml_generate(dispatch_table_helper_generator.py vk_dispatch_table_helper.h)
-run_vk_xml_generate(helper_file_generator.py vk_safe_struct.h)
-run_vk_xml_generate(helper_file_generator.py vk_safe_struct.cpp)
-run_vk_xml_generate(helper_file_generator.py vk_enum_string_helper.h)
-run_vk_xml_generate(helper_file_generator.py vk_object_types.h)
-run_vk_xml_generate(helper_file_generator.py vk_extension_helper.h)
-run_vk_xml_generate(helper_file_generator.py vk_typemap_helper.h)
-if(BUILD_LAYERS)
-    run_external_revision_generate(${EXTERNAL_SOURCE_ROOT}/glslang/External/spirv-tools SPIRV_TOOLS_COMMIT_ID spirv_tools_commit_id.h)
-endif()
-
-
-
 if(NOT WIN32)
     include(GNUInstallDirs)
 
@@ -402,7 +354,6 @@ endif()
 if(UNIX)
     if(INSTALL_LVL_FILES)
         install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/vulkan" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/vk_layer_dispatch_table.h" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/vulkan")
     endif()
 
 # uninstall target
@@ -415,54 +366,10 @@ add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 endif()
 
-# Layer Utils Library
-# For Windows, we use a static lib because the Windows loader has a fairly restrictive loader search
-# path that can't be easily modified to point it to the same directory that contains the layers.
-set(VKLAYER_UTILS_VLF_SOURCES
-    layers/vk_layer_config.cpp
-    layers/vk_layer_extension_utils.cpp
-    layers/vk_layer_utils.cpp
-    layers/vk_format_utils.cpp
-    )
-if (WIN32)
-    add_library(VkLayer_utils STATIC ${VKLAYER_UTILS_VLF_SOURCES})
-    target_compile_definitions(VkLayer_utils PUBLIC _CRT_SECURE_NO_WARNINGS)
-else()
-    add_library(VkLayer_utils SHARED ${VKLAYER_UTILS_VLF_SOURCES})
-    if(INSTALL_LVL_FILES)
-        install(TARGETS VkLayer_utils DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    endif()
-endif()
-add_dependencies(VkLayer_utils generate_helper_files)
-target_include_directories(
-    VkLayer_utils PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/loader
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/vulkan
-    ${CMAKE_CURRENT_BINARY_DIR}
-    )
-
 add_definitions(-DAPI_NAME="${API_NAME}")
-
-# loader: Generic VULKAN ICD loader
-# tests: VULKAN tests
-if(BUILD_LOADER)
-    add_subdirectory(loader)
-endif()
-
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
-
-if(BUILD_LAYERS)
-    add_subdirectory(layers)
-endif()
 
 if(BUILD_DEMOS)
     add_subdirectory(demos)
-endif()
-
-if(BUILD_VKJSON)
-    add_subdirectory(libs/vkjson)
 endif()
 
 if(BUILD_ICD)
