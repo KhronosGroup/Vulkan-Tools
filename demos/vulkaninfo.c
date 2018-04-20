@@ -1711,179 +1711,179 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
 
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceFeatures</summary>\n");
-        fprintf(out, "\t\t\t\t\t\t<details><summary>alphaToOne                              = <div class='val'>%u</div></summary></details>\n", features.alphaToOne                             );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>depthBiasClamp                          = <div class='val'>%u</div></summary></details>\n", features.depthBiasClamp                         );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>depthBounds                             = <div class='val'>%u</div></summary></details>\n", features.depthBounds                            );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>depthClamp                              = <div class='val'>%u</div></summary></details>\n", features.depthClamp                             );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>drawIndirectFirstInstance               = <div class='val'>%u</div></summary></details>\n", features.drawIndirectFirstInstance              );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>dualSrcBlend                            = <div class='val'>%u</div></summary></details>\n", features.dualSrcBlend                           );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>fillModeNonSolid                        = <div class='val'>%u</div></summary></details>\n", features.fillModeNonSolid                       );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentStoresAndAtomics                = <div class='val'>%u</div></summary></details>\n", features.fragmentStoresAndAtomics               );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>robustBufferAccess                      = <div class='val'>%u</div></summary></details>\n", features.robustBufferAccess                     );
         fprintf(out, "\t\t\t\t\t\t<details><summary>fullDrawIndexUint32                     = <div class='val'>%u</div></summary></details>\n", features.fullDrawIndexUint32                    );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>geometryShader                          = <div class='val'>%u</div></summary></details>\n", features.geometryShader                         );
         fprintf(out, "\t\t\t\t\t\t<details><summary>imageCubeArray                          = <div class='val'>%u</div></summary></details>\n", features.imageCubeArray                         );
         fprintf(out, "\t\t\t\t\t\t<details><summary>independentBlend                        = <div class='val'>%u</div></summary></details>\n", features.independentBlend                       );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>inheritedQueries                        = <div class='val'>%u</div></summary></details>\n", features.inheritedQueries                       );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>largePoints                             = <div class='val'>%u</div></summary></details>\n", features.largePoints                            );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>geometryShader                          = <div class='val'>%u</div></summary></details>\n", features.geometryShader                         );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>tessellationShader                      = <div class='val'>%u</div></summary></details>\n", features.tessellationShader                     );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>sampleRateShading                       = <div class='val'>%u</div></summary></details>\n", features.sampleRateShading                      );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>dualSrcBlend                            = <div class='val'>%u</div></summary></details>\n", features.dualSrcBlend                           );
         fprintf(out, "\t\t\t\t\t\t<details><summary>logicOp                                 = <div class='val'>%u</div></summary></details>\n", features.logicOp                                );
         fprintf(out, "\t\t\t\t\t\t<details><summary>multiDrawIndirect                       = <div class='val'>%u</div></summary></details>\n", features.multiDrawIndirect                      );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>drawIndirectFirstInstance               = <div class='val'>%u</div></summary></details>\n", features.drawIndirectFirstInstance              );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>depthClamp                              = <div class='val'>%u</div></summary></details>\n", features.depthClamp                             );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>depthBiasClamp                          = <div class='val'>%u</div></summary></details>\n", features.depthBiasClamp                         );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>fillModeNonSolid                        = <div class='val'>%u</div></summary></details>\n", features.fillModeNonSolid                       );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>depthBounds                             = <div class='val'>%u</div></summary></details>\n", features.depthBounds                            );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>wideLines                               = <div class='val'>%u</div></summary></details>\n", features.wideLines                              );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>largePoints                             = <div class='val'>%u</div></summary></details>\n", features.largePoints                            );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>alphaToOne                              = <div class='val'>%u</div></summary></details>\n", features.alphaToOne                             );
         fprintf(out, "\t\t\t\t\t\t<details><summary>multiViewport                           = <div class='val'>%u</div></summary></details>\n", features.multiViewport                          );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>samplerAnisotropy                       = <div class='val'>%u</div></summary></details>\n", features.samplerAnisotropy                      );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionETC2                  = <div class='val'>%u</div></summary></details>\n", features.textureCompressionETC2                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionASTC_LDR              = <div class='val'>%u</div></summary></details>\n", features.textureCompressionASTC_LDR             );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionBC                    = <div class='val'>%u</div></summary></details>\n", features.textureCompressionBC                   );
         fprintf(out, "\t\t\t\t\t\t<details><summary>occlusionQueryPrecise                   = <div class='val'>%u</div></summary></details>\n", features.occlusionQueryPrecise                  );
         fprintf(out, "\t\t\t\t\t\t<details><summary>pipelineStatisticsQuery                 = <div class='val'>%u</div></summary></details>\n", features.pipelineStatisticsQuery                );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>robustBufferAccess                      = <div class='val'>%u</div></summary></details>\n", features.robustBufferAccess                     );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>samplerAnisotropy                       = <div class='val'>%u</div></summary></details>\n", features.samplerAnisotropy                      );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>sampleRateShading                       = <div class='val'>%u</div></summary></details>\n", features.sampleRateShading                      );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderClipDistance                      = <div class='val'>%u</div></summary></details>\n", features.shaderClipDistance                     );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderCullDistance                      = <div class='val'>%u</div></summary></details>\n", features.shaderCullDistance                     );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderFloat64                           = <div class='val'>%u</div></summary></details>\n", features.shaderFloat64                          );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>vertexPipelineStoresAndAtomics          = <div class='val'>%u</div></summary></details>\n", features.vertexPipelineStoresAndAtomics         );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentStoresAndAtomics                = <div class='val'>%u</div></summary></details>\n", features.fragmentStoresAndAtomics               );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderTessellationAndGeometryPointSize  = <div class='val'>%u</div></summary></details>\n", features.shaderTessellationAndGeometryPointSize );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderImageGatherExtended               = <div class='val'>%u</div></summary></details>\n", features.shaderImageGatherExtended              );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt16                             = <div class='val'>%u</div></summary></details>\n", features.shaderInt16                            );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt64                             = <div class='val'>%u</div></summary></details>\n", features.shaderInt64                            );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderResourceMinLod                    = <div class='val'>%u</div></summary></details>\n", features.shaderResourceMinLod                   );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderResourceResidency                 = <div class='val'>%u</div></summary></details>\n", features.shaderResourceResidency                );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSampledImageArrayDynamicIndexing  = <div class='val'>%u</div></summary></details>\n", features.shaderSampledImageArrayDynamicIndexing );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageBufferArrayDynamicIndexing = <div class='val'>%u</div></summary></details>\n", features.shaderStorageBufferArrayDynamicIndexing);
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageArrayDynamicIndexing  = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageArrayDynamicIndexing );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageExtendedFormats       = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageExtendedFormats      );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageMultisample           = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageMultisample          );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageReadWithoutFormat     = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageReadWithoutFormat    );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageWriteWithoutFormat    = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageWriteWithoutFormat   );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderTessellationAndGeometryPointSize  = <div class='val'>%u</div></summary></details>\n", features.shaderTessellationAndGeometryPointSize );
         fprintf(out, "\t\t\t\t\t\t<details><summary>shaderUniformBufferArrayDynamicIndexing = <div class='val'>%u</div></summary></details>\n", features.shaderUniformBufferArrayDynamicIndexing);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSampledImageArrayDynamicIndexing  = <div class='val'>%u</div></summary></details>\n", features.shaderSampledImageArrayDynamicIndexing );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageBufferArrayDynamicIndexing = <div class='val'>%u</div></summary></details>\n", features.shaderStorageBufferArrayDynamicIndexing);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderStorageImageArrayDynamicIndexing  = <div class='val'>%u</div></summary></details>\n", features.shaderStorageImageArrayDynamicIndexing );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderClipDistance                      = <div class='val'>%u</div></summary></details>\n", features.shaderClipDistance                     );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderCullDistance                      = <div class='val'>%u</div></summary></details>\n", features.shaderCullDistance                     );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderFloat64                           = <div class='val'>%u</div></summary></details>\n", features.shaderFloat64                          );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt64                             = <div class='val'>%u</div></summary></details>\n", features.shaderInt64                            );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt16                             = <div class='val'>%u</div></summary></details>\n", features.shaderInt16                            );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderResourceResidency                 = <div class='val'>%u</div></summary></details>\n", features.shaderResourceResidency                );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>shaderResourceMinLod                    = <div class='val'>%u</div></summary></details>\n", features.shaderResourceMinLod                   );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseBinding                           = <div class='val'>%u</div></summary></details>\n", features.sparseBinding                          );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyBuffer                   = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyBuffer                  );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyImage2D                  = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyImage2D                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyImage3D                  = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyImage3D                 );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidency2Samples                 = <div class='val'>%u</div></summary></details>\n", features.sparseResidency2Samples                );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidency4Samples                 = <div class='val'>%u</div></summary></details>\n", features.sparseResidency4Samples                );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidency8Samples                 = <div class='val'>%u</div></summary></details>\n", features.sparseResidency8Samples                );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidency16Samples                = <div class='val'>%u</div></summary></details>\n", features.sparseResidency16Samples               );
         fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyAliased                  = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyAliased                 );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyBuffer                   = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyBuffer                  );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyImage2D                  = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyImage2D                 );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>sparseResidencyImage3D                  = <div class='val'>%u</div></summary></details>\n", features.sparseResidencyImage3D                 );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>tessellationShader                      = <div class='val'>%u</div></summary></details>\n", features.tessellationShader                     );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionASTC_LDR              = <div class='val'>%u</div></summary></details>\n", features.textureCompressionASTC_LDR             );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionBC                    = <div class='val'>%u</div></summary></details>\n", features.textureCompressionBC                   );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>textureCompressionETC2                  = <div class='val'>%u</div></summary></details>\n", features.textureCompressionETC2                 );
         fprintf(out, "\t\t\t\t\t\t<details><summary>variableMultisampleRate                 = <div class='val'>%u</div></summary></details>\n", features.variableMultisampleRate                );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>vertexPipelineStoresAndAtomics          = <div class='val'>%u</div></summary></details>\n", features.vertexPipelineStoresAndAtomics         );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>wideLines                               = <div class='val'>%u</div></summary></details>\n", features.wideLines                              );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>inheritedQueries                        = <div class='val'>%u</div></summary></details>\n", features.inheritedQueries                       );
         fprintf(out, "\t\t\t\t\t</details>\n");
     } else if (human_readable_output) {
         printf("VkPhysicalDeviceFeatures:\n");
         printf("=========================\n");
-        printf("\talphaToOne                              = %u\n", features.alphaToOne                             );
-        printf("\tdepthBiasClamp                          = %u\n", features.depthBiasClamp                         );
-        printf("\tdepthBounds                             = %u\n", features.depthBounds                            );
-        printf("\tdepthClamp                              = %u\n", features.depthClamp                             );
-        printf("\tdrawIndirectFirstInstance               = %u\n", features.drawIndirectFirstInstance              );
-        printf("\tdualSrcBlend                            = %u\n", features.dualSrcBlend                           );
-        printf("\tfillModeNonSolid                        = %u\n", features.fillModeNonSolid                       );
-        printf("\tfragmentStoresAndAtomics                = %u\n", features.fragmentStoresAndAtomics               );
+        printf("\trobustBufferAccess                      = %u\n", features.robustBufferAccess                     );
         printf("\tfullDrawIndexUint32                     = %u\n", features.fullDrawIndexUint32                    );
-        printf("\tgeometryShader                          = %u\n", features.geometryShader                         );
         printf("\timageCubeArray                          = %u\n", features.imageCubeArray                         );
         printf("\tindependentBlend                        = %u\n", features.independentBlend                       );
-        printf("\tinheritedQueries                        = %u\n", features.inheritedQueries                       );
-        printf("\tlargePoints                             = %u\n", features.largePoints                            );
+        printf("\tgeometryShader                          = %u\n", features.geometryShader                         );
+        printf("\ttessellationShader                      = %u\n", features.tessellationShader                     );
+        printf("\tsampleRateShading                       = %u\n", features.sampleRateShading                      );
+        printf("\tdualSrcBlend                            = %u\n", features.dualSrcBlend                           );
         printf("\tlogicOp                                 = %u\n", features.logicOp                                );
         printf("\tmultiDrawIndirect                       = %u\n", features.multiDrawIndirect                      );
+        printf("\tdrawIndirectFirstInstance               = %u\n", features.drawIndirectFirstInstance              );
+        printf("\tdepthClamp                              = %u\n", features.depthClamp                             );
+        printf("\tdepthBiasClamp                          = %u\n", features.depthBiasClamp                         );
+        printf("\tfillModeNonSolid                        = %u\n", features.fillModeNonSolid                       );
+        printf("\tdepthBounds                             = %u\n", features.depthBounds                            );
+        printf("\twideLines                               = %u\n", features.wideLines                              );
+        printf("\tlargePoints                             = %u\n", features.largePoints                            );
+        printf("\talphaToOne                              = %u\n", features.alphaToOne                             );
         printf("\tmultiViewport                           = %u\n", features.multiViewport                          );
+        printf("\tsamplerAnisotropy                       = %u\n", features.samplerAnisotropy                      );
+        printf("\ttextureCompressionETC2                  = %u\n", features.textureCompressionETC2                 );
+        printf("\ttextureCompressionASTC_LDR              = %u\n", features.textureCompressionASTC_LDR             );
+        printf("\ttextureCompressionBC                    = %u\n", features.textureCompressionBC                   );
         printf("\tocclusionQueryPrecise                   = %u\n", features.occlusionQueryPrecise                  );
         printf("\tpipelineStatisticsQuery                 = %u\n", features.pipelineStatisticsQuery                );
-        printf("\trobustBufferAccess                      = %u\n", features.robustBufferAccess                     );
-        printf("\tsamplerAnisotropy                       = %u\n", features.samplerAnisotropy                      );
-        printf("\tsampleRateShading                       = %u\n", features.sampleRateShading                      );
-        printf("\tshaderClipDistance                      = %u\n", features.shaderClipDistance                     );
-        printf("\tshaderCullDistance                      = %u\n", features.shaderCullDistance                     );
-        printf("\tshaderFloat64                           = %u\n", features.shaderFloat64                          );
+        printf("\tvertexPipelineStoresAndAtomics          = %u\n", features.vertexPipelineStoresAndAtomics         );
+        printf("\tfragmentStoresAndAtomics                = %u\n", features.fragmentStoresAndAtomics               );
+        printf("\tshaderTessellationAndGeometryPointSize  = %u\n", features.shaderTessellationAndGeometryPointSize );
         printf("\tshaderImageGatherExtended               = %u\n", features.shaderImageGatherExtended              );
-        printf("\tshaderInt16                             = %u\n", features.shaderInt16                            );
-        printf("\tshaderInt64                             = %u\n", features.shaderInt64                            );
-        printf("\tshaderSampledImageArrayDynamicIndexing  = %u\n", features.shaderSampledImageArrayDynamicIndexing );
-        printf("\tshaderStorageBufferArrayDynamicIndexing = %u\n", features.shaderStorageBufferArrayDynamicIndexing);
-        printf("\tshaderStorageImageArrayDynamicIndexing  = %u\n", features.shaderStorageImageArrayDynamicIndexing );
         printf("\tshaderStorageImageExtendedFormats       = %u\n", features.shaderStorageImageExtendedFormats      );
         printf("\tshaderStorageImageMultisample           = %u\n", features.shaderStorageImageMultisample          );
         printf("\tshaderStorageImageReadWithoutFormat     = %u\n", features.shaderStorageImageReadWithoutFormat    );
         printf("\tshaderStorageImageWriteWithoutFormat    = %u\n", features.shaderStorageImageWriteWithoutFormat   );
-        printf("\tshaderTessellationAndGeometryPointSize  = %u\n", features.shaderTessellationAndGeometryPointSize );
         printf("\tshaderUniformBufferArrayDynamicIndexing = %u\n", features.shaderUniformBufferArrayDynamicIndexing);
+        printf("\tshaderSampledImageArrayDynamicIndexing  = %u\n", features.shaderSampledImageArrayDynamicIndexing );
+        printf("\tshaderStorageBufferArrayDynamicIndexing = %u\n", features.shaderStorageBufferArrayDynamicIndexing);
+        printf("\tshaderStorageImageArrayDynamicIndexing  = %u\n", features.shaderStorageImageArrayDynamicIndexing );
+        printf("\tshaderClipDistance                      = %u\n", features.shaderClipDistance                     );
+        printf("\tshaderCullDistance                      = %u\n", features.shaderCullDistance                     );
+        printf("\tshaderFloat64                           = %u\n", features.shaderFloat64                          );
+        printf("\tshaderInt64                             = %u\n", features.shaderInt64                            );
+        printf("\tshaderInt16                             = %u\n", features.shaderInt16                            );
+        printf("\tshaderResourceResidency                 = %u\n", features.shaderResourceResidency                );
+        printf("\tshaderResourceMinLod                    = %u\n", features.shaderResourceMinLod                   );
         printf("\tsparseBinding                           = %u\n", features.sparseBinding                          );
+        printf("\tsparseResidencyBuffer                   = %u\n", features.sparseResidencyBuffer                  );
+        printf("\tsparseResidencyImage2D                  = %u\n", features.sparseResidencyImage2D                 );
+        printf("\tsparseResidencyImage3D                  = %u\n", features.sparseResidencyImage3D                 );
         printf("\tsparseResidency2Samples                 = %u\n", features.sparseResidency2Samples                );
         printf("\tsparseResidency4Samples                 = %u\n", features.sparseResidency4Samples                );
         printf("\tsparseResidency8Samples                 = %u\n", features.sparseResidency8Samples                );
         printf("\tsparseResidency16Samples                = %u\n", features.sparseResidency16Samples               );
         printf("\tsparseResidencyAliased                  = %u\n", features.sparseResidencyAliased                 );
-        printf("\tsparseResidencyBuffer                   = %u\n", features.sparseResidencyBuffer                  );
-        printf("\tsparseResidencyImage2D                  = %u\n", features.sparseResidencyImage2D                 );
-        printf("\tsparseResidencyImage3D                  = %u\n", features.sparseResidencyImage3D                 );
-        printf("\tshaderResourceMinLod                    = %u\n", features.shaderResourceMinLod                   );
-        printf("\tshaderResourceResidency                 = %u\n", features.shaderResourceResidency                );
-        printf("\ttessellationShader                      = %u\n", features.tessellationShader                     );
-        printf("\ttextureCompressionASTC_LDR              = %u\n", features.textureCompressionASTC_LDR             );
-        printf("\ttextureCompressionBC                    = %u\n", features.textureCompressionBC                   );
-        printf("\ttextureCompressionETC2                  = %u\n", features.textureCompressionETC2                 );
         printf("\tvariableMultisampleRate                 = %u\n", features.variableMultisampleRate                );
-        printf("\tvertexPipelineStoresAndAtomics          = %u\n", features.vertexPipelineStoresAndAtomics         );
-        printf("\twideLines                               = %u\n", features.wideLines                              );
+        printf("\tinheritedQueries                        = %u\n", features.inheritedQueries                       );
     }
     if (json_output) {
         printf(",\n");
         printf("\t\"VkPhysicalDeviceFeatures\": {\n");
-        printf("\t\t\"alphaToOne\": %u,\n",                              features.alphaToOne);
-        printf("\t\t\"depthBiasClamp\": %u,\n",                          features.depthBiasClamp);
-        printf("\t\t\"depthBounds\": %u,\n",                             features.depthBounds);
-        printf("\t\t\"depthClamp\": %u,\n",                              features.depthClamp);
-        printf("\t\t\"drawIndirectFirstInstance\": %u,\n",               features.drawIndirectFirstInstance);
-        printf("\t\t\"dualSrcBlend\": %u,\n",                            features.dualSrcBlend);
-        printf("\t\t\"fillModeNonSolid\": %u,\n",                        features.fillModeNonSolid);
-        printf("\t\t\"fragmentStoresAndAtomics\": %u,\n",                features.fragmentStoresAndAtomics);
+        printf("\t\t\"robustBufferAccess\": %u,\n",                      features.robustBufferAccess);
         printf("\t\t\"fullDrawIndexUint32\": %u,\n",                     features.fullDrawIndexUint32);
-        printf("\t\t\"geometryShader\": %u,\n",                          features.geometryShader);
         printf("\t\t\"imageCubeArray\": %u,\n",                          features.imageCubeArray);
         printf("\t\t\"independentBlend\": %u,\n",                        features.independentBlend);
-        printf("\t\t\"inheritedQueries\": %u,\n",                        features.inheritedQueries);
-        printf("\t\t\"largePoints\": %u,\n",                             features.largePoints);
+        printf("\t\t\"geometryShader\": %u,\n",                          features.geometryShader);
+        printf("\t\t\"tessellationShader\": %u,\n",                      features.tessellationShader);
+        printf("\t\t\"sampleRateShading\": %u,\n",                       features.sampleRateShading);
+        printf("\t\t\"dualSrcBlend\": %u,\n",                            features.dualSrcBlend);
         printf("\t\t\"logicOp\": %u,\n",                                 features.logicOp);
         printf("\t\t\"multiDrawIndirect\": %u,\n",                       features.multiDrawIndirect);
+        printf("\t\t\"drawIndirectFirstInstance\": %u,\n",               features.drawIndirectFirstInstance);
+        printf("\t\t\"depthClamp\": %u,\n",                              features.depthClamp);
+        printf("\t\t\"depthBiasClamp\": %u,\n",                          features.depthBiasClamp);
+        printf("\t\t\"fillModeNonSolid\": %u,\n",                        features.fillModeNonSolid);
+        printf("\t\t\"depthBounds\": %u,\n",                             features.depthBounds);
+        printf("\t\t\"wideLines\": %u,\n",                               features.wideLines);
+        printf("\t\t\"largePoints\": %u,\n",                             features.largePoints);
+        printf("\t\t\"alphaToOne\": %u,\n",                              features.alphaToOne);
         printf("\t\t\"multiViewport\": %u,\n",                           features.multiViewport);
+        printf("\t\t\"samplerAnisotropy\": %u,\n",                       features.samplerAnisotropy);
+        printf("\t\t\"textureCompressionETC2\": %u,\n",                  features.textureCompressionETC2);
+        printf("\t\t\"textureCompressionASTC_LDR\": %u,\n",              features.textureCompressionASTC_LDR);
+        printf("\t\t\"textureCompressionBC\": %u,\n",                    features.textureCompressionBC);
         printf("\t\t\"occlusionQueryPrecise\": %u,\n",                   features.occlusionQueryPrecise);
         printf("\t\t\"pipelineStatisticsQuery\": %u,\n",                 features.pipelineStatisticsQuery);
-        printf("\t\t\"robustBufferAccess\": %u,\n",                      features.robustBufferAccess);
-        printf("\t\t\"samplerAnisotropy\": %u,\n",                       features.samplerAnisotropy);
-        printf("\t\t\"sampleRateShading\": %u,\n",                       features.sampleRateShading);
-        printf("\t\t\"shaderClipDistance\": %u,\n",                      features.shaderClipDistance);
-        printf("\t\t\"shaderCullDistance\": %u,\n",                      features.shaderCullDistance);
-        printf("\t\t\"shaderFloat64\": %u,\n",                           features.shaderFloat64);
+        printf("\t\t\"vertexPipelineStoresAndAtomics\": %u,\n",          features.vertexPipelineStoresAndAtomics);
+        printf("\t\t\"fragmentStoresAndAtomics\": %u,\n",                features.fragmentStoresAndAtomics);
+        printf("\t\t\"shaderTessellationAndGeometryPointSize\": %u,\n",  features.shaderTessellationAndGeometryPointSize);
         printf("\t\t\"shaderImageGatherExtended\": %u,\n",               features.shaderImageGatherExtended);
-        printf("\t\t\"shaderInt16\": %u,\n",                             features.shaderInt16);
-        printf("\t\t\"shaderInt64\": %u,\n",                             features.shaderInt64);
-        printf("\t\t\"shaderResourceMinLod\": %u,\n",                    features.shaderResourceMinLod);
-        printf("\t\t\"shaderResourceResidency\": %u,\n",                 features.shaderResourceResidency);
-        printf("\t\t\"shaderSampledImageArrayDynamicIndexing\": %u,\n",  features.shaderSampledImageArrayDynamicIndexing);
-        printf("\t\t\"shaderStorageBufferArrayDynamicIndexing\": %u,\n", features.shaderStorageBufferArrayDynamicIndexing);
-        printf("\t\t\"shaderStorageImageArrayDynamicIndexing\": %u,\n",  features.shaderStorageImageArrayDynamicIndexing);
         printf("\t\t\"shaderStorageImageExtendedFormats\": %u,\n",       features.shaderStorageImageExtendedFormats);
         printf("\t\t\"shaderStorageImageMultisample\": %u,\n",           features.shaderStorageImageMultisample);
         printf("\t\t\"shaderStorageImageReadWithoutFormat\": %u,\n",     features.shaderStorageImageReadWithoutFormat);
         printf("\t\t\"shaderStorageImageWriteWithoutFormat\": %u,\n",    features.shaderStorageImageWriteWithoutFormat);
-        printf("\t\t\"shaderTessellationAndGeometryPointSize\": %u,\n",  features.shaderTessellationAndGeometryPointSize);
         printf("\t\t\"shaderUniformBufferArrayDynamicIndexing\": %u,\n", features.shaderUniformBufferArrayDynamicIndexing);
+        printf("\t\t\"shaderSampledImageArrayDynamicIndexing\": %u,\n",  features.shaderSampledImageArrayDynamicIndexing);
+        printf("\t\t\"shaderStorageBufferArrayDynamicIndexing\": %u,\n", features.shaderStorageBufferArrayDynamicIndexing);
+        printf("\t\t\"shaderStorageImageArrayDynamicIndexing\": %u,\n",  features.shaderStorageImageArrayDynamicIndexing);
+        printf("\t\t\"shaderClipDistance\": %u,\n",                      features.shaderClipDistance);
+        printf("\t\t\"shaderCullDistance\": %u,\n",                      features.shaderCullDistance);
+        printf("\t\t\"shaderFloat64\": %u,\n",                           features.shaderFloat64);
+        printf("\t\t\"shaderInt64\": %u,\n",                             features.shaderInt64);
+        printf("\t\t\"shaderInt16\": %u,\n",                             features.shaderInt16);
+        printf("\t\t\"shaderResourceResidency\": %u,\n",                 features.shaderResourceResidency);
+        printf("\t\t\"shaderResourceMinLod\": %u,\n",                    features.shaderResourceMinLod);
         printf("\t\t\"sparseBinding\": %u,\n",                           features.sparseBinding);
+        printf("\t\t\"sparseResidencyBuffer\": %u,\n",                   features.sparseResidencyBuffer);
+        printf("\t\t\"sparseResidencyImage2D\": %u,\n",                  features.sparseResidencyImage2D);
+        printf("\t\t\"sparseResidencyImage3D\": %u,\n",                  features.sparseResidencyImage3D);
         printf("\t\t\"sparseResidency2Samples\": %u,\n",                 features.sparseResidency2Samples);
         printf("\t\t\"sparseResidency4Samples\": %u,\n",                 features.sparseResidency4Samples);
         printf("\t\t\"sparseResidency8Samples\": %u,\n",                 features.sparseResidency8Samples);
         printf("\t\t\"sparseResidency16Samples\": %u,\n",                features.sparseResidency16Samples);
         printf("\t\t\"sparseResidencyAliased\": %u,\n",                  features.sparseResidencyAliased);
-        printf("\t\t\"sparseResidencyBuffer\": %u,\n",                   features.sparseResidencyBuffer);
-        printf("\t\t\"sparseResidencyImage2D\": %u,\n",                  features.sparseResidencyImage2D);
-        printf("\t\t\"sparseResidencyImage3D\": %u,\n",                  features.sparseResidencyImage3D);
-        printf("\t\t\"tessellationShader\": %u,\n",                      features.tessellationShader);
-        printf("\t\t\"textureCompressionASTC_LDR\": %u,\n",              features.textureCompressionASTC_LDR);
-        printf("\t\t\"textureCompressionBC\": %u,\n",                    features.textureCompressionBC);
-        printf("\t\t\"textureCompressionETC2\": %u,\n",                  features.textureCompressionETC2);
         printf("\t\t\"variableMultisampleRate\": %u,\n",                 features.variableMultisampleRate);
-        printf("\t\t\"vertexPipelineStoresAndAtomics\": %u,\n",          features.vertexPipelineStoresAndAtomics);
-        printf("\t\t\"wideLines\": %u\n",                                features.wideLines);
+        printf("\t\t\"inheritedQueries\": %u\n",                         features.inheritedQueries);
         printf("\t}");
     }
 
@@ -1952,8 +1952,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\t\t\t\t\t\t<details><summary>multiviewGeometryShader     = <div class='val'>%u</div></summary></details>\n", multiview_features->multiviewGeometryShader    );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>multiviewTessellationShader = <div class='val'>%u</div></summary></details>\n", multiview_features->multiviewTessellationShader);
                     fprintf(out, "\t\t\t\t\t</details>\n");
-                }
-                else if (human_readable_output) {
+                } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceMultiviewFeatures:\n");
                     printf("==================================\n");
                     printf("\tmultiview                   = %u\n", multiview_features->multiview                  );
@@ -1987,11 +1986,11 @@ static void AppDumpSparseProps(const VkPhysicalDeviceSparseProperties *sparse_pr
     if (json_output) {
         printf(",\n");
         printf("\t\t\"sparseProperties\": {\n");
-        printf("\t\t\t\"residencyAlignedMipSize\": %u,\n",                  sparse_props->residencyAlignedMipSize);
-        printf("\t\t\t\"residencyNonResidentStrict\": %u,\n",               sparse_props->residencyNonResidentStrict);
         printf("\t\t\t\"residencyStandard2DBlockShape\": %u,\n",            sparse_props->residencyStandard2DBlockShape);
         printf("\t\t\t\"residencyStandard2DMultisampleBlockShape\": %u,\n", sparse_props->residencyStandard2DMultisampleBlockShape);
-        printf("\t\t\t\"residencyStandard3DBlockShape\": %u\n",             sparse_props->residencyStandard3DBlockShape);
+        printf("\t\t\t\"residencyStandard3DBlockShape\": %u,\n",             sparse_props->residencyStandard3DBlockShape);
+        printf("\t\t\t\"residencyAlignedMipSize\": %u,\n",                  sparse_props->residencyAlignedMipSize);
+        printf("\t\t\t\"residencyNonResidentStrict\": %u\n",               sparse_props->residencyNonResidentStrict);
         printf("\t\t}");
     }
 }
@@ -2235,21 +2234,57 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
     if (json_output) {
         printf(",\n");
         printf("\t\t\"limits\": {\n");
+        printf("\t\t\t\"maxImageDimension1D\": %u,\n",                                    limits->maxImageDimension1D);
+        printf("\t\t\t\"maxImageDimension2D\": %u,\n",                                    limits->maxImageDimension2D);
+        printf("\t\t\t\"maxImageDimension3D\": %u,\n",                                    limits->maxImageDimension3D);
+        printf("\t\t\t\"maxImageDimensionCube\": %u,\n",                                  limits->maxImageDimensionCube);
+        printf("\t\t\t\"maxImageArrayLayers\": %u,\n",                                    limits->maxImageArrayLayers);
+        printf("\t\t\t\"maxTexelBufferElements\": %u,\n",                                 limits->maxTexelBufferElements);
+        printf("\t\t\t\"maxUniformBufferRange\": %u,\n",                                  limits->maxUniformBufferRange);
+        printf("\t\t\t\"maxStorageBufferRange\": %u,\n",                                  limits->maxStorageBufferRange);
+        printf("\t\t\t\"maxPushConstantsSize\": %u,\n",                                   limits->maxPushConstantsSize);
+        printf("\t\t\t\"maxMemoryAllocationCount\": %u,\n",                               limits->maxMemoryAllocationCount);
+        printf("\t\t\t\"maxSamplerAllocationCount\": %u,\n",                              limits->maxSamplerAllocationCount);
         printf("\t\t\t\"bufferImageGranularity\": %llu,\n",                               (unsigned long long)limits->bufferImageGranularity);
-        printf("\t\t\t\"discreteQueuePriorities\": %u,\n",                                limits->discreteQueuePriorities);
-        printf("\t\t\t\"framebufferColorSampleCounts\": %u,\n",                           limits->framebufferColorSampleCounts);
-        printf("\t\t\t\"framebufferDepthSampleCounts\": %u,\n",                           limits->framebufferDepthSampleCounts);
-        printf("\t\t\t\"framebufferNoAttachmentsSampleCounts\": %u,\n",                   limits->framebufferNoAttachmentsSampleCounts);
-        printf("\t\t\t\"framebufferStencilSampleCounts\": %u,\n",                         limits->framebufferStencilSampleCounts);
-        printf("\t\t\t\"lineWidthGranularity\": %g,\n",                                   limits->lineWidthGranularity);
-        printf("\t\t\t\"lineWidthRange\": [\n");
-        printf("\t\t\t\t%g,\n",                                                           limits->lineWidthRange[0]);
-        printf("\t\t\t\t%g\n",                                                            limits->lineWidthRange[1]);
-        printf("\t\t\t],\n");
+        printf("\t\t\t\"sparseAddressSpaceSize\": %llu,\n",                               (unsigned long long)limits->sparseAddressSpaceSize);
         printf("\t\t\t\"maxBoundDescriptorSets\": %u,\n",                                 limits->maxBoundDescriptorSets);
-        printf("\t\t\t\"maxClipDistances\": %u,\n",                                       limits->maxClipDistances);
-        printf("\t\t\t\"maxColorAttachments\": %u,\n",                                    limits->maxColorAttachments);
-        printf("\t\t\t\"maxCombinedClipAndCullDistances\": %u,\n",                        limits->maxCombinedClipAndCullDistances);
+        printf("\t\t\t\"maxPerStageDescriptorSamplers\": %u,\n",                          limits->maxPerStageDescriptorSamplers);
+        printf("\t\t\t\"maxPerStageDescriptorUniformBuffers\": %u,\n",                    limits->maxPerStageDescriptorUniformBuffers);
+        printf("\t\t\t\"maxPerStageDescriptorStorageBuffers\": %u,\n",                    limits->maxPerStageDescriptorStorageBuffers);
+        printf("\t\t\t\"maxPerStageDescriptorSampledImages\": %u,\n",                     limits->maxPerStageDescriptorSampledImages);
+        printf("\t\t\t\"maxPerStageDescriptorStorageImages\": %u,\n",                     limits->maxPerStageDescriptorStorageImages);
+        printf("\t\t\t\"maxPerStageDescriptorInputAttachments\": %u,\n",                  limits->maxPerStageDescriptorInputAttachments);
+        printf("\t\t\t\"maxPerStageResources\": %u,\n",                                   limits->maxPerStageResources);
+        printf("\t\t\t\"maxDescriptorSetSamplers\": %u,\n",                               limits->maxDescriptorSetSamplers);
+        printf("\t\t\t\"maxDescriptorSetUniformBuffers\": %u,\n",                         limits->maxDescriptorSetUniformBuffers);
+        printf("\t\t\t\"maxDescriptorSetUniformBuffersDynamic\": %u,\n",                  limits->maxDescriptorSetUniformBuffersDynamic);
+        printf("\t\t\t\"maxDescriptorSetStorageBuffers\": %u,\n",                         limits->maxDescriptorSetStorageBuffers);
+        printf("\t\t\t\"maxDescriptorSetStorageBuffersDynamic\": %u,\n",                  limits->maxDescriptorSetStorageBuffersDynamic);
+        printf("\t\t\t\"maxDescriptorSetSampledImages\": %u,\n",                          limits->maxDescriptorSetSampledImages);
+        printf("\t\t\t\"maxDescriptorSetStorageImages\": %u,\n",                          limits->maxDescriptorSetStorageImages);
+        printf("\t\t\t\"maxDescriptorSetInputAttachments\": %u,\n",                       limits->maxDescriptorSetInputAttachments);
+        printf("\t\t\t\"maxVertexInputAttributes\": %u,\n",                               limits->maxVertexInputAttributes);
+        printf("\t\t\t\"maxVertexInputBindings\": %u,\n",                                 limits->maxVertexInputBindings);
+        printf("\t\t\t\"maxVertexInputAttributeOffset\": %u,\n",                          limits->maxVertexInputAttributeOffset);
+        printf("\t\t\t\"maxVertexInputBindingStride\": %u,\n",                            limits->maxVertexInputBindingStride);
+        printf("\t\t\t\"maxVertexOutputComponents\": %u,\n",                              limits->maxVertexOutputComponents);
+        printf("\t\t\t\"maxTessellationGenerationLevel\": %u,\n",                         limits->maxTessellationGenerationLevel);
+        printf("\t\t\t\"maxTessellationPatchSize\": %u,\n",                               limits->maxTessellationPatchSize);
+        printf("\t\t\t\"maxTessellationControlPerVertexInputComponents\": %u,\n",         limits->maxTessellationControlPerVertexInputComponents);
+        printf("\t\t\t\"maxTessellationControlPerVertexOutputComponents\": %u,\n",        limits->maxTessellationControlPerVertexOutputComponents);
+        printf("\t\t\t\"maxTessellationControlPerPatchOutputComponents\": %u,\n",         limits->maxTessellationControlPerPatchOutputComponents);
+        printf("\t\t\t\"maxTessellationControlTotalOutputComponents\": %u,\n",            limits->maxTessellationControlTotalOutputComponents);
+        printf("\t\t\t\"maxTessellationEvaluationInputComponents\": %u,\n",               limits->maxTessellationEvaluationInputComponents);
+        printf("\t\t\t\"maxTessellationEvaluationOutputComponents\": %u,\n",              limits->maxTessellationEvaluationOutputComponents);
+        printf("\t\t\t\"maxGeometryShaderInvocations\": %u,\n",                           limits->maxGeometryShaderInvocations);
+        printf("\t\t\t\"maxGeometryInputComponents\": %u,\n",                             limits->maxGeometryInputComponents);
+        printf("\t\t\t\"maxGeometryOutputComponents\": %u,\n",                            limits->maxGeometryOutputComponents);
+        printf("\t\t\t\"maxGeometryOutputVertices\": %u,\n",                              limits->maxGeometryOutputVertices);
+        printf("\t\t\t\"maxGeometryTotalOutputComponents\": %u,\n",                       limits->maxGeometryTotalOutputComponents);
+        printf("\t\t\t\"maxFragmentInputComponents\": %u,\n",                             limits->maxFragmentInputComponents);
+        printf("\t\t\t\"maxFragmentOutputAttachments\": %u,\n",                           limits->maxFragmentOutputAttachments);
+        printf("\t\t\t\"maxFragmentDualSrcAttachments\": %u,\n",                          limits->maxFragmentDualSrcAttachments);
+        printf("\t\t\t\"maxFragmentCombinedOutputResources\": %u,\n",                     limits->maxFragmentCombinedOutputResources);
         printf("\t\t\t\"maxComputeSharedMemorySize\": %u,\n",                             limits->maxComputeSharedMemorySize);
         printf("\t\t\t\"maxComputeWorkGroupCount\": [\n");
         printf("\t\t\t\t%u,\n",                                                           limits->maxComputeWorkGroupCount[0]);
@@ -2262,105 +2297,69 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
         printf("\t\t\t\t%u,\n",                                                           limits->maxComputeWorkGroupSize[1]);
         printf("\t\t\t\t%u\n",                                                            limits->maxComputeWorkGroupSize[2]);
         printf("\t\t\t],\n");
-        printf("\t\t\t\"maxCullDistances\": %u,\n",                                       limits->maxCullDistances);
-        printf("\t\t\t\"maxDescriptorSetInputAttachments\": %u,\n",                       limits->maxDescriptorSetInputAttachments);
-        printf("\t\t\t\"maxDescriptorSetSampledImages\": %u,\n",                          limits->maxDescriptorSetSampledImages);
-        printf("\t\t\t\"maxDescriptorSetSamplers\": %u,\n",                               limits->maxDescriptorSetSamplers);
-        printf("\t\t\t\"maxDescriptorSetStorageBuffers\": %u,\n",                         limits->maxDescriptorSetStorageBuffers);
-        printf("\t\t\t\"maxDescriptorSetStorageBuffersDynamic\": %u,\n",                  limits->maxDescriptorSetStorageBuffersDynamic);
-        printf("\t\t\t\"maxDescriptorSetStorageImages\": %u,\n",                          limits->maxDescriptorSetStorageImages);
-        printf("\t\t\t\"maxDescriptorSetUniformBuffers\": %u,\n",                         limits->maxDescriptorSetUniformBuffers);
-        printf("\t\t\t\"maxDescriptorSetUniformBuffersDynamic\": %u,\n",                  limits->maxDescriptorSetUniformBuffersDynamic);
+        printf("\t\t\t\"subPixelPrecisionBits\": %u,\n",                                  limits->subPixelPrecisionBits);
+        printf("\t\t\t\"subTexelPrecisionBits\": %u,\n",                                  limits->subTexelPrecisionBits);
+        printf("\t\t\t\"mipmapPrecisionBits\": %u,\n",                                    limits->mipmapPrecisionBits);
         printf("\t\t\t\"maxDrawIndexedIndexValue\": %u,\n",                               limits->maxDrawIndexedIndexValue);
         printf("\t\t\t\"maxDrawIndirectCount\": %u,\n",                                   limits->maxDrawIndirectCount);
-        printf("\t\t\t\"maxFragmentCombinedOutputResources\": %u,\n",                     limits->maxFragmentCombinedOutputResources);
-        printf("\t\t\t\"maxFragmentDualSrcAttachments\": %u,\n",                          limits->maxFragmentDualSrcAttachments);
-        printf("\t\t\t\"maxFragmentInputComponents\": %u,\n",                             limits->maxFragmentInputComponents);
-        printf("\t\t\t\"maxFragmentOutputAttachments\": %u,\n",                           limits->maxFragmentOutputAttachments);
-        printf("\t\t\t\"maxFramebufferHeight\": %u,\n",                                   limits->maxFramebufferHeight);
-        printf("\t\t\t\"maxFramebufferLayers\": %u,\n",                                   limits->maxFramebufferLayers);
-        printf("\t\t\t\"maxFramebufferWidth\": %u,\n",                                    limits->maxFramebufferWidth);
-        printf("\t\t\t\"maxGeometryInputComponents\": %u,\n",                             limits->maxGeometryInputComponents);
-        printf("\t\t\t\"maxGeometryOutputComponents\": %u,\n",                            limits->maxGeometryOutputComponents);
-        printf("\t\t\t\"maxGeometryOutputVertices\": %u,\n",                              limits->maxGeometryOutputVertices);
-        printf("\t\t\t\"maxGeometryShaderInvocations\": %u,\n",                           limits->maxGeometryShaderInvocations);
-        printf("\t\t\t\"maxGeometryTotalOutputComponents\": %u,\n",                       limits->maxGeometryTotalOutputComponents);
-        printf("\t\t\t\"maxImageArrayLayers\": %u,\n",                                    limits->maxImageArrayLayers);
-        printf("\t\t\t\"maxImageDimension1D\": %u,\n",                                    limits->maxImageDimension1D);
-        printf("\t\t\t\"maxImageDimension2D\": %u,\n",                                    limits->maxImageDimension2D);
-        printf("\t\t\t\"maxImageDimension3D\": %u,\n",                                    limits->maxImageDimension3D);
-        printf("\t\t\t\"maxImageDimensionCube\": %u,\n",                                  limits->maxImageDimensionCube);
-        printf("\t\t\t\"maxInterpolationOffset\": %g,\n",                                 limits->maxInterpolationOffset);
-        printf("\t\t\t\"maxMemoryAllocationCount\": %u,\n",                               limits->maxMemoryAllocationCount);
-        printf("\t\t\t\"maxPerStageDescriptorInputAttachments\": %u,\n",                  limits->maxPerStageDescriptorInputAttachments);
-        printf("\t\t\t\"maxPerStageDescriptorSampledImages\": %u,\n",                     limits->maxPerStageDescriptorSampledImages);
-        printf("\t\t\t\"maxPerStageDescriptorSamplers\": %u,\n",                          limits->maxPerStageDescriptorSamplers);
-        printf("\t\t\t\"maxPerStageDescriptorStorageBuffers\": %u,\n",                    limits->maxPerStageDescriptorStorageBuffers);
-        printf("\t\t\t\"maxPerStageDescriptorStorageImages\": %u,\n",                     limits->maxPerStageDescriptorStorageImages);
-        printf("\t\t\t\"maxPerStageDescriptorUniformBuffers\": %u,\n",                    limits->maxPerStageDescriptorUniformBuffers);
-        printf("\t\t\t\"maxPerStageResources\": %u,\n",                                   limits->maxPerStageResources);
-        printf("\t\t\t\"maxPushConstantsSize\": %u,\n",                                   limits->maxPushConstantsSize);
-        printf("\t\t\t\"maxSampleMaskWords\": %u,\n",                                     limits->maxSampleMaskWords);
-        printf("\t\t\t\"maxSamplerAllocationCount\": %u,\n",                              limits->maxSamplerAllocationCount);
-        printf("\t\t\t\"maxSamplerAnisotropy\": %g,\n",                                   limits->maxSamplerAnisotropy);
         printf("\t\t\t\"maxSamplerLodBias\": %g,\n",                                      limits->maxSamplerLodBias);
-        printf("\t\t\t\"maxStorageBufferRange\": %u,\n",                                  limits->maxStorageBufferRange);
-        printf("\t\t\t\"maxTessellationControlPerPatchOutputComponents\": %u,\n",         limits->maxTessellationControlPerPatchOutputComponents);
-        printf("\t\t\t\"maxTessellationControlPerVertexInputComponents\": %u,\n",         limits->maxTessellationControlPerVertexInputComponents);
-        printf("\t\t\t\"maxTessellationControlPerVertexOutputComponents\": %u,\n",        limits->maxTessellationControlPerVertexOutputComponents);
-        printf("\t\t\t\"maxTessellationControlTotalOutputComponents\": %u,\n",            limits->maxTessellationControlTotalOutputComponents);
-        printf("\t\t\t\"maxTessellationEvaluationInputComponents\": %u,\n",               limits->maxTessellationEvaluationInputComponents);
-        printf("\t\t\t\"maxTessellationEvaluationOutputComponents\": %u,\n",              limits->maxTessellationEvaluationOutputComponents);
-        printf("\t\t\t\"maxTessellationGenerationLevel\": %u,\n",                         limits->maxTessellationGenerationLevel);
-        printf("\t\t\t\"maxTessellationPatchSize\": %u,\n",                               limits->maxTessellationPatchSize);
-        printf("\t\t\t\"maxTexelBufferElements\": %u,\n",                                 limits->maxTexelBufferElements);
-        printf("\t\t\t\"maxTexelGatherOffset\": %u,\n",                                   limits->maxTexelGatherOffset);
-        printf("\t\t\t\"maxTexelOffset\": %u,\n",                                         limits->maxTexelOffset);
-        printf("\t\t\t\"maxUniformBufferRange\": %u,\n",                                  limits->maxUniformBufferRange);
-        printf("\t\t\t\"maxVertexInputAttributeOffset\": %u,\n",                          limits->maxVertexInputAttributeOffset);
-        printf("\t\t\t\"maxVertexInputAttributes\": %u,\n",                               limits->maxVertexInputAttributes);
-        printf("\t\t\t\"maxVertexInputBindings\": %u,\n",                                 limits->maxVertexInputBindings);
-        printf("\t\t\t\"maxVertexInputBindingStride\": %u,\n",                            limits->maxVertexInputBindingStride);
-        printf("\t\t\t\"maxVertexOutputComponents\": %u,\n",                              limits->maxVertexOutputComponents);
+        printf("\t\t\t\"maxSamplerAnisotropy\": %g,\n",                                   limits->maxSamplerAnisotropy);
+        printf("\t\t\t\"maxViewports\": %u,\n",                                           limits->maxViewports);
         printf("\t\t\t\"maxViewportDimensions\": [\n");
         printf("\t\t\t\t%u,\n",                                                           limits->maxViewportDimensions[0]);
         printf("\t\t\t\t%u\n",                                                            limits->maxViewportDimensions[1]);
         printf("\t\t\t],\n");
-        printf("\t\t\t\"maxViewports\": %u,\n",                                           limits->maxViewports);
-        printf("\t\t\t\"minInterpolationOffset\": %g,\n",                                 limits->minInterpolationOffset);
-        printf("\t\t\t\"minMemoryMapAlignment\": " PRINTF_SIZE_T_SPECIFIER ",\n",         limits->minMemoryMapAlignment);
-        printf("\t\t\t\"minStorageBufferOffsetAlignment\": %llu,\n",                      (unsigned long long)limits->minStorageBufferOffsetAlignment);
-        printf("\t\t\t\"minTexelBufferOffsetAlignment\": %llu,\n",                        (unsigned long long)limits->minTexelBufferOffsetAlignment);
-        printf("\t\t\t\"minTexelGatherOffset\": %d,\n",                                   limits->minTexelGatherOffset);
-        printf("\t\t\t\"minTexelOffset\": %d,\n",                                         limits->minTexelOffset);
-        printf("\t\t\t\"minUniformBufferOffsetAlignment\": %llu,\n",                      (unsigned long long)limits->minUniformBufferOffsetAlignment);
-        printf("\t\t\t\"mipmapPrecisionBits\": %u,\n",                                    limits->mipmapPrecisionBits);
-        printf("\t\t\t\"nonCoherentAtomSize\": %llu,\n",                                  (unsigned long long)limits->nonCoherentAtomSize);
-        printf("\t\t\t\"optimalBufferCopyOffsetAlignment\": %llu,\n",                     (unsigned long long)limits->optimalBufferCopyOffsetAlignment);
-        printf("\t\t\t\"optimalBufferCopyRowPitchAlignment\": %llu,\n",                   (unsigned long long)limits->optimalBufferCopyRowPitchAlignment);
-        printf("\t\t\t\"pointSizeGranularity\": %g,\n",                                   limits->pointSizeGranularity);
-        printf("\t\t\t\"pointSizeRange\": [\n");
-        printf("\t\t\t\t%g,\n",                                                           limits->pointSizeRange[0]);
-        printf("\t\t\t\t%g\n",                                                            limits->pointSizeRange[1]);
-        printf("\t\t\t],\n");
-        printf("\t\t\t\"sampledImageColorSampleCounts\": %u,\n",                          limits->sampledImageColorSampleCounts);
-        printf("\t\t\t\"sampledImageDepthSampleCounts\": %u,\n",                          limits->sampledImageDepthSampleCounts);
-        printf("\t\t\t\"sampledImageIntegerSampleCounts\": %u,\n",                        limits->sampledImageIntegerSampleCounts);
-        printf("\t\t\t\"sampledImageStencilSampleCounts\": %u,\n",                        limits->sampledImageStencilSampleCounts);
-        printf("\t\t\t\"sparseAddressSpaceSize\": %llu,\n",                               (unsigned long long)limits->sparseAddressSpaceSize);
-        printf("\t\t\t\"standardSampleLocations\": %u,\n",                                limits->standardSampleLocations);
-        printf("\t\t\t\"storageImageSampleCounts\": %u,\n",                               limits->storageImageSampleCounts);
-        printf("\t\t\t\"strictLines\": %u,\n",                                            limits->strictLines);
-        printf("\t\t\t\"subPixelInterpolationOffsetBits\": %u,\n",                        limits->subPixelInterpolationOffsetBits);
-        printf("\t\t\t\"subPixelPrecisionBits\": %u,\n",                                  limits->subPixelPrecisionBits);
-        printf("\t\t\t\"subTexelPrecisionBits\": %u,\n",                                  limits->subTexelPrecisionBits);
-        printf("\t\t\t\"timestampComputeAndGraphics\": %u,\n",                            limits->timestampComputeAndGraphics);
-        printf("\t\t\t\"timestampPeriod\": %g,\n",                                        limits->timestampPeriod);
         printf("\t\t\t\"viewportBoundsRange\": [\n");
         printf("\t\t\t\t%g,\n",                                                           limits->viewportBoundsRange[0]);
         printf("\t\t\t\t%g\n",                                                            limits->viewportBoundsRange[1]);
         printf("\t\t\t],\n");
-        printf("\t\t\t\"viewportSubPixelBits\": %u\n",                                    limits->viewportSubPixelBits);
+        printf("\t\t\t\"viewportSubPixelBits\": %u,\n",                                   limits->viewportSubPixelBits);
+        printf("\t\t\t\"minMemoryMapAlignment\": " PRINTF_SIZE_T_SPECIFIER ",\n",         limits->minMemoryMapAlignment);
+        printf("\t\t\t\"minTexelBufferOffsetAlignment\": %llu,\n",                        (unsigned long long)limits->minTexelBufferOffsetAlignment);
+        printf("\t\t\t\"minUniformBufferOffsetAlignment\": %llu,\n",                      (unsigned long long)limits->minUniformBufferOffsetAlignment);
+        printf("\t\t\t\"minStorageBufferOffsetAlignment\": %llu,\n",                      (unsigned long long)limits->minStorageBufferOffsetAlignment);
+        printf("\t\t\t\"minTexelOffset\": %d,\n",                                         limits->minTexelOffset);
+        printf("\t\t\t\"maxTexelOffset\": %u,\n",                                         limits->maxTexelOffset);
+        printf("\t\t\t\"minTexelGatherOffset\": %d,\n",                                   limits->minTexelGatherOffset);
+        printf("\t\t\t\"maxTexelGatherOffset\": %u,\n",                                   limits->maxTexelGatherOffset);
+        printf("\t\t\t\"minInterpolationOffset\": %g,\n",                                 limits->minInterpolationOffset);
+        printf("\t\t\t\"maxInterpolationOffset\": %g,\n",                                 limits->maxInterpolationOffset);
+        printf("\t\t\t\"subPixelInterpolationOffsetBits\": %u,\n",                        limits->subPixelInterpolationOffsetBits);
+        printf("\t\t\t\"maxFramebufferWidth\": %u,\n",                                    limits->maxFramebufferWidth);
+        printf("\t\t\t\"maxFramebufferHeight\": %u,\n",                                   limits->maxFramebufferHeight);
+        printf("\t\t\t\"maxFramebufferLayers\": %u,\n",                                   limits->maxFramebufferLayers);
+        printf("\t\t\t\"framebufferColorSampleCounts\": %u,\n",                           limits->framebufferColorSampleCounts);
+        printf("\t\t\t\"framebufferDepthSampleCounts\": %u,\n",                           limits->framebufferDepthSampleCounts);
+        printf("\t\t\t\"framebufferStencilSampleCounts\": %u,\n",                         limits->framebufferStencilSampleCounts);
+        printf("\t\t\t\"framebufferNoAttachmentsSampleCounts\": %u,\n",                   limits->framebufferNoAttachmentsSampleCounts);
+        printf("\t\t\t\"maxColorAttachments\": %u,\n",                                    limits->maxColorAttachments);
+        printf("\t\t\t\"sampledImageColorSampleCounts\": %u,\n",                          limits->sampledImageColorSampleCounts);
+        printf("\t\t\t\"sampledImageIntegerSampleCounts\": %u,\n",                        limits->sampledImageIntegerSampleCounts);
+        printf("\t\t\t\"sampledImageDepthSampleCounts\": %u,\n",                          limits->sampledImageDepthSampleCounts);
+        printf("\t\t\t\"sampledImageStencilSampleCounts\": %u,\n",                        limits->sampledImageStencilSampleCounts);
+        printf("\t\t\t\"storageImageSampleCounts\": %u,\n",                               limits->storageImageSampleCounts);
+        printf("\t\t\t\"maxSampleMaskWords\": %u,\n",                                     limits->maxSampleMaskWords);
+        printf("\t\t\t\"timestampComputeAndGraphics\": %u,\n",                            limits->timestampComputeAndGraphics);
+        printf("\t\t\t\"timestampPeriod\": %g,\n",                                        limits->timestampPeriod);
+        printf("\t\t\t\"maxClipDistances\": %u,\n",                                       limits->maxClipDistances);
+        printf("\t\t\t\"maxCullDistances\": %u,\n",                                       limits->maxCullDistances);
+        printf("\t\t\t\"maxCombinedClipAndCullDistances\": %u,\n",                        limits->maxCombinedClipAndCullDistances);
+        printf("\t\t\t\"discreteQueuePriorities\": %u,\n",                                limits->discreteQueuePriorities);
+        printf("\t\t\t\"pointSizeRange\": [\n");
+        printf("\t\t\t\t%g,\n",                                                           limits->pointSizeRange[0]);
+        printf("\t\t\t\t%g\n",                                                            limits->pointSizeRange[1]);
+        printf("\t\t\t],\n");
+        printf("\t\t\t\"lineWidthRange\": [\n");
+        printf("\t\t\t\t%g,\n",                                                           limits->lineWidthRange[0]);
+        printf("\t\t\t\t%g\n",                                                            limits->lineWidthRange[1]);
+        printf("\t\t\t],\n");
+        printf("\t\t\t\"pointSizeGranularity\": %g,\n",                                   limits->pointSizeGranularity);
+        printf("\t\t\t\"lineWidthGranularity\": %g,\n",                                   limits->lineWidthGranularity);
+        printf("\t\t\t\"strictLines\": %u,\n",                                            limits->strictLines);
+        printf("\t\t\t\"standardSampleLocations\": %u,\n",                                limits->standardSampleLocations);
+        printf("\t\t\t\"optimalBufferCopyOffsetAlignment\": %llu,\n",                     (unsigned long long)limits->optimalBufferCopyOffsetAlignment);
+        printf("\t\t\t\"optimalBufferCopyRowPitchAlignment\": %llu,\n",                   (unsigned long long)limits->optimalBufferCopyRowPitchAlignment);
+        printf("\t\t\t\"nonCoherentAtomSize\": %llu\n",                                   (unsigned long long)limits->nonCoherentAtomSize);
         printf("\t\t}");
     }
 }
@@ -2404,21 +2403,11 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
         printf(",\n");
         printf("\t\"VkPhysicalDeviceProperties\": {\n");
         printf("\t\t\"apiVersion\": %u,\n", apiVersion);
+        printf("\t\t\"driverVersion\": %u,\n", props.driverVersion);
+        printf("\t\t\"vendorID\": %u,\n", props.vendorID);
         printf("\t\t\"deviceID\": %u,\n", props.deviceID);
-        printf("\t\t\"deviceName\": \"%s\",\n", props.deviceName);
         printf("\t\t\"deviceType\": %u,\n", props.deviceType);
-        printf("\t\t\"driverVersion\": %u", props.driverVersion);
-    }
-
-    if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions, gpu->inst->inst_extensions_count)) {
-        AppDumpLimits(&gpu->props2.properties.limits, out);
-    } else {
-        AppDumpLimits(&gpu->props.limits, out);
-    }
-
-    // Dump pipeline cache UUIDs to json
-    if (json_output) {
-        printf(",\n");
+        printf("\t\t\"deviceName\": \"%s\",\n", props.deviceName);
         printf("\t\t\"pipelineCacheUUID\": [");
         for (uint32_t i = 0; i < VK_UUID_SIZE; ++i) {
             if (i > 0) {
@@ -2432,15 +2421,19 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
     }
 
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions, gpu->inst->inst_extensions_count)) {
+        AppDumpLimits(&gpu->props2.properties.limits, out);
+    } else {
+        AppDumpLimits(&gpu->props.limits, out);
+    }
+
+    if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions, gpu->inst->inst_extensions_count)) {
         AppDumpSparseProps(&gpu->props2.properties.sparseProperties, out);
     } else {
         AppDumpSparseProps(&gpu->props.sparseProperties, out);
     }
 
     if (json_output) {
-        printf(",\n");
-        printf("\t\t\"vendorID\": %u\n", props.vendorID);
-        printf("\t}");
+        printf("\n\t}");
     }
 
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
@@ -2506,15 +2499,14 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                 VkPhysicalDeviceMultiviewPropertiesKHR *multiview_props = (VkPhysicalDeviceMultiviewPropertiesKHR*)structure;
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewProperties</summary>\n");
-                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxMultiviewInstanceIndex = <div class='val'>%u</div></summary></details>\n", multiview_props->maxMultiviewInstanceIndex);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxMultiviewViewCount     = <div class='val'>%u</div></summary></details>\n", multiview_props->maxMultiviewViewCount    );
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxMultiviewInstanceIndex = <div class='val'>%u</div></summary></details>\n", multiview_props->maxMultiviewInstanceIndex);
                     fprintf(out, "\t\t\t\t\t</details>\n");
-                }
-                else if (human_readable_output) {
+                } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceMultiviewProperties:\n");
                     printf("=========================================\n");
-                    printf("\tmaxMultiviewInstanceIndex = %u\n", multiview_props->maxMultiviewInstanceIndex);
                     printf("\tmaxMultiviewViewCount     = %u\n", multiview_props->maxMultiviewViewCount    );
+                    printf("\tmaxMultiviewInstanceIndex = %u\n", multiview_props->maxMultiviewInstanceIndex);
                 }
             }
             place = structure->pNext;
@@ -2525,8 +2517,22 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
     fflush(stdout);
 }
 
+// Compare function for sorting extensions by name
+static int CompareExtensionName(const void *a, const void *b) {
+    const char *this = ((const VkExtensionProperties *)a)->extensionName;
+    const char *that = ((const VkExtensionProperties *)b)->extensionName;
+    return strcmp(this, that);
+}
+
+// Compare function for sorting layers by name
+static int CompareLayerName(const void *a, const void *b) {
+    const char *this = ((const struct LayerExtensionList *)a)->layer_properties.layerName;
+    const char *that = ((const struct LayerExtensionList *)b)->layer_properties.layerName;
+    return strcmp(this, that);
+}
+
 static void AppDumpExtensions(const char *indent, const char *layer_name, const uint32_t extension_count,
-                              const VkExtensionProperties *extension_properties, FILE *out) {
+                              VkExtensionProperties *extension_properties, FILE *out) {
     if (html_output) {
         fprintf(out, "\t\t\t%s<details><summary>", indent);
     }
@@ -2557,6 +2563,8 @@ static void AppDumpExtensions(const char *indent, const char *layer_name, const 
         printf(",\n");
         printf("\t\"ArrayOfVkExtensionProperties\": [");
     }
+
+    qsort(extension_properties, extension_count, sizeof(VkExtensionProperties), CompareExtensionName);
 
     for (uint32_t i = 0; i < extension_count; ++i) {
         VkExtensionProperties const *ext_prop = &extension_properties[i];
@@ -3191,6 +3199,9 @@ int main(int argc, char **argv) {
         printf(",\n");
         printf("\t\"ArrayOfVkLayerProperties\": [");
     }
+
+    qsort(inst.global_layers, inst.global_layer_count, sizeof(struct LayerExtensionList), CompareLayerName);
+
     for (uint32_t i = 0; i < inst.global_layer_count; ++i) {
         uint32_t layer_major, layer_minor, layer_patch;
         char spec_version[64], layer_version[64];
