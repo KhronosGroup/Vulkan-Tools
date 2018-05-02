@@ -729,13 +729,16 @@ void PrintJsonHeader(const int vulkan_major, const int vulkan_minor, const int v
 }
 
 // Checks if current argument specifies json output, interprets/updates gpu selection
-void CheckForJsonOption(const char *arg) {
+bool CheckForJsonOption(const char *arg) {
     if (strncmp("--json", arg, 6) == 0 || strcmp(arg, "-j") == 0) {
         if (strlen(arg) > 7 && strncmp("--json=", arg, 7) == 0) {
             selected_gpu = strtol(arg + 7, NULL, 10);
         }
         human_readable_output = false;
         json_output = true;
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -3092,6 +3095,22 @@ static void ConsoleEnlarge() {
 }
 #endif
 
+void print_usage(char *argv0) {
+    printf("\nvulkaninfo - Summarize Vulkan information in relation to the current environment.\n\n");
+    printf("USAGE: %s [options]\n\n", argv0);
+    printf("OPTIONS:\n");
+    printf("-h, --help            Print this help.\n");
+    printf("--html                Produce an html version of vulkaninfo output, saved as\n");
+    printf("                      \"vulkaninfo.html\" in the directory in which the command is\n");
+    printf("                      run.\n");
+    printf("-j, --json            Produce a json version of vulkaninfo output to standard\n");
+    printf("                      output.\n");
+    printf("--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n");
+    printf("                      specifying the gpu-number associated with the gpu of \n");
+    printf("                      interest. This number can be determined by running\n");
+    printf("                      vulkaninfo without any options specified.\n\n");
+}
+
 int main(int argc, char **argv) {
     uint32_t gpu_count;
     VkResult err;
@@ -3114,17 +3133,25 @@ int main(int argc, char **argv) {
     const uint32_t vulkan_minor = VK_VERSION_MINOR(instance_version);
     const uint32_t vulkan_patch = VK_VERSION_PATCH(VK_HEADER_VERSION);
 
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--html") == 0) {
-            out = fopen("vulkaninfo.html", "w");
-            human_readable_output = false;
-            html_output = true;
-            continue;
+    // Combinations of output: html only, html AND json, json only, human readable only
+    for (int i = 1; i < argc; ++i) {
+        if (!CheckForJsonOption(argv[i])) {
+            if (strcmp(argv[i], "--html") == 0) {
+                human_readable_output = false;
+                html_output = true;
+                continue;
+            } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+                print_usage(argv[0]);
+                return 1;
+            } else {
+                print_usage(argv[0]);
+                return 1;
+            }
         }
-        CheckForJsonOption(argv[i]);
     }
 
     if (html_output) {
+        out = fopen("vulkaninfo.html", "w");
         PrintHtmlHeader(out);
         fprintf(out, "\t\t\t<details><summary>");
     } else if (human_readable_output) {
