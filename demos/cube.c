@@ -569,7 +569,7 @@ bool ActualTimeLate(uint64_t desired, uint64_t actual, uint64_t rdur) {
         // present was obviously NOT late.
         return false;
     }
-    uint64_t deadline = actual + rdur;
+    uint64_t deadline = desired + rdur;
     if (actual > deadline) {
         return true;
     } else {
