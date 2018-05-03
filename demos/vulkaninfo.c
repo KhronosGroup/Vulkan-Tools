@@ -723,7 +723,7 @@ void PrintJsonHeader(const int vulkan_major, const int vulkan_minor, const int v
     printf("{\n");
     printf("\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n");
     printf("\t\"comments\": {\n");
-    printf("\t\t\"desc\": \"JSON configuration file describing GPU %u. Generated using the VulkanInfo program.\",\n", selected_gpu);
+    printf("\t\t\"desc\": \"JSON configuration file describing GPU %u. Generated using the vulkaninfo program.\",\n", selected_gpu);
     printf("\t\t\"vulkanApiVersion\": \"%d.%d.%d\"\n", vulkan_major, vulkan_minor, vulkan_patch);
     printf("\t}");
 }
