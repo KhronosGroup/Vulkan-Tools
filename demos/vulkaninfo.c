@@ -51,6 +51,10 @@
 #warning "Vulkaninfo does not have code for Mir at this time"
 #endif
 
+#if defined(VK_USE_PLATFORM_MACOS_MVK)
+#include "metal_view.h"
+#endif
+
 #include <vulkan/vulkan.h>
 
 #define ERR(err) fprintf(stderr, "%s:%d: failed with %s\n", __FILE__, __LINE__, VkResultString(err));
@@ -159,6 +163,8 @@ struct AppInstance {
     Window xlib_window;
 #elif VK_USE_PLATFORM_ANDROID_KHR  // TODO
     ANativeWindow *window;
+#elif VK_USE_PLATFORM_MACOS_MVK
+    void *window;
 #endif
 };
 
@@ -453,7 +459,8 @@ static const char *VkFormatString(VkFormat fmt) {
             return "UNKNOWN_FORMAT";
     }
 }
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR)
+#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
+    defined(VK_USE_PLATFORM_MACOS_MVK)
 static const char *VkPresentModeString(VkPresentModeKHR mode) {
     switch (mode) {
 #define STR(r)                \
@@ -765,6 +772,8 @@ static void AppCreateInstance(struct AppInstance *inst) {
                                               VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
 #elif VK_USE_PLATFORM_ANDROID_KHR
                                               VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
+#elif VK_USE_PLATFORM_MACOS_MVK
+                                              VK_MVK_MACOS_SURFACE_EXTENSION_NAME
 #endif
     };
     const uint32_t info_instance_extensions_count = ARRAY_SIZE(info_instance_extensions);
@@ -1086,7 +1095,8 @@ static void AppDestroyWin32Window(struct AppInstance *inst) {
 
 #if defined(VK_USE_PLATFORM_XCB_KHR)     || \
     defined(VK_USE_PLATFORM_XLIB_KHR)    || \
-    defined(VK_USE_PLATFORM_WIN32_KHR)
+    defined(VK_USE_PLATFORM_WIN32_KHR)   || \
+    defined(VK_USE_PLATFORM_MACOS_MVK)
 static void AppDestroySurface(struct AppInstance *inst) { //same for all platforms
     vkDestroySurfaceKHR(inst->instance, inst->surface, NULL);
 }
@@ -1200,9 +1210,37 @@ static void AppDestroyXlibWindow(struct AppInstance *inst) {
 #endif //VK_USE_PLATFORM_XLIB_KHR
 //-----------------------------------------------------------
 
+#ifdef VK_USE_PLATFORM_MACOS_MVK
+
+static void AppCreateMacOSWindow(struct AppInstance *inst) {
+    inst->window = CreateMetalView(inst->width, inst->height);
+    if (inst->window == NULL) {
+        fprintf(stderr, "Could not create a native Metal view.\nExiting...\n");
+        exit(1);
+    }
+}
+
+static void AppCreateMacOSSurface(struct AppInstance *inst) {
+    VkResult U_ASSERT_ONLY err;
+    VkMacOSSurfaceCreateInfoMVK surface;
+    surface.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
+    surface.pNext = NULL;
+    surface.flags = 0;
+    surface.pView = inst->window;
+    
+    err = vkCreateMacOSSurfaceMVK(inst->instance, &surface, NULL, &inst->surface);
+    assert(!err);
+}
+
+static void AppDestroyMacOSWindow(struct AppInstance *inst) {
+    DestroyMetalView(inst->window);
+}
+#endif //VK_USE_PLATFORM_MACOS_MVK
+
 #if defined(VK_USE_PLATFORM_XCB_KHR)     || \
     defined(VK_USE_PLATFORM_XLIB_KHR)    || \
-    defined(VK_USE_PLATFORM_WIN32_KHR)
+    defined(VK_USE_PLATFORM_WIN32_KHR)   || \
+    defined(VK_USE_PLATFORM_MACOS_MVK)
 static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, FILE *out) {
     // Get the list of VkFormat's that are supported
     VkResult U_ASSERT_ONLY err;
@@ -3401,6 +3439,28 @@ int main(int argc, char **argv) {
             AppDestroySurface(&inst);
         }
         AppDestroyXlibWindow(&inst);
+    }
+//--MACOS--
+#elif VK_USE_PLATFORM_MACOS_MVK
+    if (CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        AppCreateMacOSWindow(&inst);
+        for (uint32_t i = 0; i < gpu_count; ++i) {
+            AppCreateMacOSSurface(&inst);
+            if (html_output) {
+                fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary></details>\n", i,
+                        gpus[i].props.deviceName);
+                fprintf(out, "\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
+                        VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
+            } else if (human_readable_output) {
+                printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
+                printf("Surface type : %s\n", VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
+            }
+            format_count += AppDumpSurfaceFormats(&inst, &gpus[i], out);
+            present_mode_count += AppDumpSurfacePresentModes(&inst, &gpus[i], out);
+            AppDumpSurfaceCapabilities(&inst, &gpus[i], out);
+            AppDestroySurface(&inst);
+        }
+        AppDestroyMacOSWindow(&inst);
     }
 #endif
 

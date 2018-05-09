@@ -151,10 +151,21 @@ include_directories(
 # vulkaninfo
 if(WIN32)
     add_executable(${API_LOWERCASE}info vulkaninfo.c vulkaninfo.rc)
+elseif(APPLE)
+    add_executable(${API_LOWERCASE}info vulkaninfo.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
 else()
     add_executable(${API_LOWERCASE}info vulkaninfo.c)
 endif()
-target_link_libraries(${API_LOWERCASE}info ${LIBRARIES})
+
+if(APPLE)
+    target_link_libraries(${API_LOWERCASE}info ${LIBRARIES} "-framework AppKit -framework QuartzCore")
+    target_include_directories(${API_LOWERCASE}info PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
+else()
+    target_link_libraries(${API_LOWERCASE}info ${LIBRARIES})
+endif()
+
 if(APPLE)
     set_target_properties(${API_LOWERCASE}info PROPERTIES
         INSTALL_RPATH "@loader_path/../lib"

@@ -9,12 +9,15 @@ add_executable(vulkaninfo-bundle MACOSX_BUNDLE
     ${CMAKE_CURRENT_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/vulkaninfo.sh
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/Resources/LunarGIcon.icns
+    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h
 )
 set_target_properties(vulkaninfo-bundle PROPERTIES
     OUTPUT_NAME vulkaninfo
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/Info.plist
 )
-target_link_libraries(vulkaninfo-bundle ${LIBRARIES})
+target_link_libraries(vulkaninfo-bundle ${LIBRARIES} "-framework AppKit -framework QuartzCore")
+target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
 add_dependencies(vulkaninfo-bundle MoltenVK_icd-staging-json)
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/vulkaninfo.sh PROPERTIES
     MACOSX_PACKAGE_LOCATION "MacOS"
