@@ -55,23 +55,15 @@ function create_APK() {
 }
 
 #
-# build cube APKs (with and without layers)
+# build cube APK
 #
 (
 pushd $DEMO_BUILD_DIR
 ndk-build -j $cores
-# Package one APK without validation layers
 mkdir -p $DEMO_BUILD_DIR/cube/bin/libs/lib
 cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube/bin/libs/lib/
 cd $DEMO_BUILD_DIR/cube
 create_APK cube
-# Todo: support cube with layers
-# And one with validation layers
-#mkdir -p $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib
-#cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
-#cp -r $LAYER_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube-with-layers/bin/libs/lib/
-#cd $DEMO_BUILD_DIR/cube-with-layers
-#create_APK cube-with-layers
 popd
 )
 
