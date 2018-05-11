@@ -30,7 +30,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(TOOLS_TARGET_FOLDER lvl_cmake_targets)
 
 # Header file for CMake settings
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}/Vulkan-Headers/include")
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(COMMON_COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers")
@@ -60,7 +60,7 @@ option(BUILD_ICD "Build icd" ON)
 
 if(UNIX)
     if(INSTALL_LVL_FILES)
-        install(DIRECTORY "${PROJECT_SOURCE_DIR}/include/vulkan" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        install(DIRECTORY "${PROJECT_SOURCE_DIR}/Vulkan-Headers/include/vulkan" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     endif()
 
     # uninstall target
