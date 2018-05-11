@@ -1,32 +1,23 @@
 # Vulkan Ecosystem Components
 
-This project provides the Khronos official Vulkan ICD desktop loader and the Vulkan validation layers for Windows, Linux, Android, and MacOS.
+This project provides Khronos official Vulkan Tools and Utilities for Windows, Linux, Android, and MacOS.
 
 ## CI Build Status
 | Platform | Build Status |
 |:--------:|:------------:|
-| Linux/Android | [![Build Status](https://travis-ci.org/KhronosGroup/Vulkan-LoaderAndValidationLayers.svg?branch=master)](https://travis-ci.org/KhronosGroup/Vulkan-LoaderAndValidationLayers) |
-| Windows |[![Build status](https://ci.appveyor.com/api/projects/status/ri4584d6qramrjiv/branch/master?svg=true)](https://ci.appveyor.com/project/Khronoswebmaster/vulkan-loaderandvalidationlayers/branch/master) |
+| Linux/Android | [![Build Status](https://travis-ci.org/KhronosGroup/Vulkan-Tools.svg?branch=master)](https://travis-ci.org/KhronosGroup/Vulkan-Tools) |
+| Windows |[![Build status](https://ci.appveyor.com/api/projects/status/ri4584d6qramrjiv/branch/master?svg=true)](https://ci.appveyor.com/project/Khronoswebmaster/vulkan-tools/branch/master) |
 
 
 ## Introduction
 
-Vulkan is an Explicit API, enabling direct control over how GPUs actually work. By design, minimal error checking is done inside
-a Vulkan driver. Applications have full control and responsibility for correct operation. Any errors in
-how Vulkan is used can result in a crash. This project provides Vulkan validation layers that can be enabled
-to assist development by enabling developers to verify their applications correct use of the Vulkan API.
-
-Vulkan supports multiple GPUs and multiple global contexts (VkInstance). The ICD loader is necessary to
-support multiple GPUs and VkInstance-level Vulkan commands.  Additionally, the loader manages inserting
-Vulkan layer libraries such as validation layers between the application and the ICD.
+This project provides Vulkan tools and utilities that can assist development by enabling developers to
+verify their applications correct use of the Vulkan API.
 
 The following components are available in this repository:
-- [Vulkan header files](include/vulkan/)
-- [*ICD Loader*](loader/)
-- [*Validation Layers*](layers/)
 - [*Mock ICD*](icd/)
-- [*Demos*](demos/)
-- [*Tests*](tests/)
+- [*Cube and Cube++ Demo*](cube/)
+- [*VulkanInfo*](vulkaninfo/)
 
 ## Contact Information
 * [Tobin Ehlis](mailto:tobine@google.com)
@@ -40,13 +31,7 @@ Please see the [GOVERNANCE.md](GOVERNANCE.md) file in this repository for reposi
 ## How to Build and Run
 
 [BUILD.md](BUILD.md)
-Includes directions for building all components as well as running validation tests and demo applications.
-
-Information on how to enable the various Validation layers is in
-[layers/README.md](layers/README.md).
-
-Architecture and interface information for the loader is in
-[loader/LoaderAndLayerInterface.md](loader/LoaderAndLayerInterface.md).
+Includes directions for building all components as well as running the cube demo applications.
 
 ## License
 This work is released as open source under a Apache-style license from Khronos including a Khronos copyright.

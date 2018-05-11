@@ -3,14 +3,14 @@
 # **Open Source Project – Objectives**
 
 * Alignment with the Vulkan Specification
-  - The goal is for validation layer behavior to enforce the vulkan specification on applications. Questions on specification
+  - The goal is for tool and utility behavior to assist in enforcing the vulkan specification on applications. Questions on specification
 interpretations may require consulting with the Khronos Vulkan Workgroup for resolution
     - [Core Specification](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html)
     - [Header Files](https://www.khronos.org/registry/vulkan/#headers)
     - [SDK Resources](https://vulkan.lunarg.com)
 * ISV Enablement
-  - Updates of loader and validation layer functionality should be available in a timely fashion
-  - Every effort will be made to be responsive to ISV issues with validation layers
+  - Updates of tools and utilities should be available in a timely fashion
+  - Every effort will be made to be responsive to ISV issues
 * Cross Platform Compatibility
   - Google and LunarG collaboration:
     - Google: Monitor for Android

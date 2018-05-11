@@ -2,35 +2,14 @@
 
 ### **The Repository**
 
-The source code for The Vulkan-LoaderAndValidationLayer components is sponsored by Khronos and LunarG.
-* [Khronos Vulkan-LoaderAndValidationLayers](https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers)
+The source code for The Vulkan-Tools components is sponsored by Khronos and LunarG.
+* [Khronos Vulkan-Tools](https://github.com/KhronosGroup/Vulkan-Tools)
 
-
-### **The Vulkan Ecosystem Needs Your Help**
-
-The Vulkan validation layers are one of the larger and more important components in this repository.
-While there are often active and organized development efforts underway to improve their coverage,
-there are always opportunities for anyone to help by contributing additional validation layer checks
-and tests for these validation checks.
-
-There are a couple of methods to identify areas of need:
-* Examine the [issues list](https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/issues)
-in this repository and look for issues that are of interest
-* Alternatively, examine the [vk_validation_error_database.txt](layers/vk_validation_error_database.txt) file -- unimplemented validation checks are marked
-with an 'N' in the 'check_implemented' column and each of these needs coverage in the validation layers.
-
-Of course, if you have your own work in mind, please open an issue to describe it and assign it to yourself.
-Finally, please feel free to contact any of the developers that are actively contributing should you
-wish to coordinate further.
-Please see the [section about Validation Layers](#special-considerations-for-validation-layers)
-later on this page.
 
 Repository Issue labels:
 
 * _Bug_:          These issues refer to invalid or broken functionality and are the highest priority.
-* _Incomplete_:   These issues refer to missing validation checks that users have encountered during application
-development that would have been directly useful, and are high priority.
-* _Enhancement_:  These issues refer to ideas for extending or improving the loader, demos, or validation layers.
+* _Enhancement_:  These issues refer to ideas for extending or improving tools and utilities
 
 It is the maintainers goal for all issues to be assigned within one business day of their submission. If you choose
 to work on an issue that is assigned, simply coordinate with the current assignee.
@@ -57,8 +36,8 @@ a good reason is "This violates the style guide, but it improves type safety."
 * Run **clang-format** on your changes to maintain consistent formatting
     * There are `.clang-format files` present in the repository to define clang-format settings
       which are found and used automatically by clang-format.
-	* **clang-format** binaries are available from the LLVM orginization, here: https://clang.llvm.org/. Our CI system (Travis-CI) 
-	  currently uses clang-format version 5.0.0 to check that the lines of code you have changed are formatted properly. It is 
+	* **clang-format** binaries are available from the LLVM orginization, here: https://clang.llvm.org/. Our CI system (Travis-CI)
+	  currently uses clang-format version 5.0.0 to check that the lines of code you have changed are formatted properly. It is
 	  recommended that you use the same version to format your code prior to submission.
     * A sample git workflow may look like:
 
@@ -85,48 +64,18 @@ that to be accepted into the repository, the pull request must [pass all tests](
 -- the automatic Github Travis and AppVeyor continuous integration features will assist in enforcing this requirement.
 
 #### **Testing Your Changes**
-* Run the existing tests in the repository before and after each if your commits to check for any regressions.
-  There are some tests that appear in all repositories.
-  These tests can be found in the following folders inside of your target build directory:
+* Run the repository components with the Vulkan Validation Layers before and after each if your commits to check for any regressions.
 
   (These instructions are for Linux)
 * In the `demos` directory, run:
 
 >        cube
 >        cube --validate
->        smoke
->        smoke --validate
 >        vulkaninfo
 
-* In the `tests` directory, run:
-
->        run_all_tests.sh
-
-* On Windows, a quick sanity check can be run from inside Visual Studio -- just run the `vk_layer_validation_tests` project,
-or you can run `run_all_tests.ps1` from a PowerShell window
-
-* Note that some tests may fail with known issues or driver-specific problems.
-  The idea here is that your changes should not change the test results, unless that was the intent of your changes.
 * Run tests that explicitly exercise your changes.
 * Feel free to subject your code changes to other tests as well!
 
-
-#### **Special Considerations for Validation Layers**
-* **Validation Tests**  If you are submitting a change that adds a new validation check, you should also construct a "negative" test function.
-The negative test function purposely violates the validation rule that the new validation check is looking for.
-The test should cause your new validation check to identify the violation and issue a validation error report.
-And finally, the test should check that the validation error report is generated and consider the test as "passing"
-if the report is received.  Otherwise, the test should indicate "failure".
-This new test should be added to the validation layer test program in the `tests` directory and contributed
-at the same time as the new validation check itself, along with appropriate updates to `layers\vk_validation_error_database.txt`.
-There are many existing validation tests in this directory that can be used as a starting point.
-* **Validation Checks**  The majority of validation checks are carried out by the Core Validation layer. In general, this layer
-contains checks that require some amount of application state to carry out. In contrast, the parameter validation layer contains
-checks that require (mostly) no state at all. Please inquire if you are unsure of the location for your contribution. The other
-layers (threading, object_tracker, unique_objects) are more special-purpose and are mostly code-generated from the specification.
-* **Validation Error/Warning Messages**  Strive to give specific information describing the particulars of the failure, including
-output all of the applicable Vulkan Objects and related values. Also, ensure that when messages can give suggestions about _how_ to
-fix the problem, they should do so to better assist the user.
 
 ### **Contributor License Agreement (CLA)**
 
@@ -135,7 +84,7 @@ or other contribution to GitHub.
 
 ### **License and Copyrights**
 
-All contributions made to the Vulkan-LoaderAndValidationLayers repository are Khronos branded and as such,
+All contributions made to the Vulkan-Tools repository are Khronos branded and as such,
 any new files need to have the Khronos license (Apache 2.0 style) and copyright included.
 Please see an existing file in this repository for an example.
 
