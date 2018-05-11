@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # This must come before the project command.
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 
-project (VULKAN)
+project (Vulkan-Tools)
 # set (CMAKE_VERBOSE_MAKEFILE 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
