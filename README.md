@@ -6,7 +6,7 @@ This project provides Khronos official Vulkan Tools and Utilities for Windows, L
 | Platform | Build Status |
 |:--------:|:------------:|
 | Linux/Android | [![Build Status](https://travis-ci.org/KhronosGroup/Vulkan-Tools.svg?branch=master)](https://travis-ci.org/KhronosGroup/Vulkan-Tools) |
-| Windows |[![Build status](https://ci.appveyor.com/api/projects/status/ri4584d6qramrjiv/branch/master?svg=true)](https://ci.appveyor.com/project/Khronoswebmaster/vulkan-tools/branch/master) |
+| Windows |[![Build status](https://ci.appveyor.com/api/projects/status/hwc1hy417hf42xnf?svg=true)](https://ci.appveyor.com/project/Khronoswebmaster/vulkan-tools/branch/master) |
 
 
 ## Introduction
