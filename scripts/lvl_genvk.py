@@ -20,6 +20,7 @@ from generator import write
 from cgenerator import CGeneratorOptions, COutputGenerator
 # Generator Modifications
 from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
+from helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
 
 # Simple timer functions
 startTime = None
@@ -114,6 +115,30 @@ def makeGenOpts(args):
 
     # Defaults for generating re-inclusion protection wrappers (or not)
     protectFeature = protect
+
+    # Helper file generator options for typemap_helper.h
+    genOpts['vk_typemap_helper.h'] = [
+          HelperFileOutputGenerator,
+          HelperFileOutputGeneratorOptions(
+            filename          = 'vk_typemap_helper.h',
+            directory         = directory,
+            apiname           = 'vulkan',
+            profile           = None,
+            versions          = featuresPat,
+            emitversions      = featuresPat,
+            defaultExtensions = 'vulkan',
+            addExtensions     = addExtensionsPat,
+            removeExtensions  = removeExtensionsPat,
+            emitExtensions    = emitExtensionsPat,
+            prefixText        = prefixStrings + vkPrefixStrings,
+            protectFeature    = False,
+            apicall           = 'VKAPI_ATTR ',
+            apientry          = 'VKAPI_CALL ',
+            apientryp         = 'VKAPI_PTR *',
+            alignFuncParam    = 48,
+            expandEnumerants  = False,
+            helper_file_type  = 'typemap_helper_header')
+        ]
 
     # Options for mock ICD header
     genOpts['mock_icd.h'] = [

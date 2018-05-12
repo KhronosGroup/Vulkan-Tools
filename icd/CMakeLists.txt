@@ -99,13 +99,21 @@ else()
         endforeach(config_file)
     endif()
 endif()
+
+# Custom target for generated vulkan helper file dependencies
+set(generate_helper_files_DEPENDS)
+add_custom_target(generate_helper_files DEPENDS
+    vk_typemap_helper.h
+    )
+set_target_properties(generate_helper_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+run_vk_xml_generate(helper_file_generator.py vk_typemap_helper.h)
+
 # For ICD with a direct dependency on a project with the same name, use it.
 if (NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
     foreach (config_file ${ICD_JSON_FILES})
         add_dependencies(${config_file}-json ${config_file})
     endforeach(config_file)
 endif()
-
 add_custom_target(generate_icd_files DEPENDS
     mock_icd.h
     mock_icd.cpp
