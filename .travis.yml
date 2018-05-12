@@ -46,6 +46,14 @@ before_install:
       # Install the appropriate Linux packages.
       sudo apt-get -qq update
       sudo apt-get -y install libxkbcommon-dev libwayland-dev libmirclient-dev libxrandr-dev libx11-xcb-dev
+      # Get a prebuilt shader compiler (glslangValidator) so that we don't have to build all of glslang
+      mkdir glslang
+      cd glslang
+      wget https://github.com/KhronosGroup/glslang/releases/download/master-tot/glslang-master-linux-Release.zip
+      unzip -u -q glslang-master-linux-Release.zip
+      cd ..
+      export PATH=${TRAVIS_BUILD_DIR}/glslang/bin:$PATH
+      glslangValidator --version
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "ANDROID" ]]; then
@@ -71,40 +79,34 @@ script:
   - set -e
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Get VulkanTools and build DevSim
-      mkdir -p external
-      cd external
-      git clone https://github.com/LunarG/VulkanTools.git
-      cd VulkanTools
-      # Get as little as possible from external sources
-      ./update_external_sources.sh --glslang --no-build
-      # Build as few components as possible
-      cmake -H. -Bbuild -DBUILD_LOADER=NO -DBUILD_TESTS=NO \
-          -DBUILD_LAYERS=NO -DBUILD_DEMOS=NO -DBUILD_VKTRACE=NO \
-          -DBUILD_VKJSON=NO -DBUILD_VIA=NO -DBUILD_ICD=NO
-      make -C build -j $core_count
+      # Build Vulkan-Loader for Vulkan-Tools
+      cd ${TRAVIS_BUILD_DIR}
+      git clone --recurse-submodules https://github.com/KhronosGroup/Vulkan-Loader.git
+      cd Vulkan-Loader
+      mkdir build
+      cd build
+      cmake -DCMAKE_BUILD_TYPE=Debug ..
+      make -j $core_count
       cd ${TRAVIS_BUILD_DIR}
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Build LVL
-      ./update_external_sources.sh
-      cmake -H. -Bdbuild -DCMAKE_BUILD_TYPE=Debug
-      make -C dbuild -j $core_count
+      # Build Vulkan-Tools
+      cd ${TRAVIS_BUILD_DIR}
+      mkdir build
+      cd build
+      cmake -DLOADER_REPO_ROOT=${TRAVIS_BUILD_DIR}/Vulkan-Loader -DCMAKE_BUILD_TYPE=Debug ..
+      make -j $core_count
+      cd ${TRAVIS_BUILD_DIR}
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Run Tests
-      (cd dbuild/tests; ./vkvalidatelayerdoc.sh)
-      export LD_LIBRARY_PATH=dbuild/loader:$LD_LIBRARY_PATH
-      export VK_LAYER_PATH=external/VulkanTools/build/layersvt:dbuild/layers
-      export VK_ICD_FILENAMES=dbuild/icd/VkICD_mock_icd.json
-      dbuild/tests/vk_layer_validation_tests
-      for profile in tests/device_profiles/*.json
-      do
-        echo Testing with profile $profile
-        VK_DEVSIM_FILENAME=$profile dbuild/tests/vk_layer_validation_tests --devsim
-      done
+      # Run vulkaninfo as a test
+      cd ${TRAVIS_BUILD_DIR}
+      cd build/vulkaninfo
+      ldd vulkaninfo
+      VK_ICD_FILENAMES=../icd/VkICD_mock_icd.json ./vulkaninfo
+      cd ${TRAVIS_BUILD_DIR}
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "ANDROID" ]]; then
