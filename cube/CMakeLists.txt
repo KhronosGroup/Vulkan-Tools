@@ -113,23 +113,34 @@ file(COPY ${TEXTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-if(WIN32)
-  set (LIBRARIES "Vulkan::Vulkan")
-elseif(UNIX)
-  set (LIBRARIES "Vulkan::Vulkan")
+if(APPLE)
+    # TODO: Set libs for apple
 else()
+    if(DEFINED LOADER_REPO_ROOT)
+        message(STATUS "Using user-supplied path to locate Vulkan")
+        if(WIN32)
+            set (LOADER_SEARCH_PATHS
+                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${DEBUG_DECORATION}"
+                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${RELEASE_DECORATION}"
+                )
+        elseif(UNIX)
+            set (LOADER_SEARCH_PATHS
+                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader"
+                )
+        endif()
+
+        find_library(LIBVK NAMES vulkan vulkan-1
+            HINTS ${LOADER_SEARCH_PATHS}
+            )
+        message(STATUS "Found Vulkan: ${LIBVK}")
+    else()
+        message(STATUS "Using find_package to locate Vulkan")
+        find_package(Vulkan)
+        set (LIBVK "Vulkan::Vulkan")
+    endif()
 endif()
 
 if(WIN32)
-    # For Windows, since 32-bit and 64-bit items can co-exist, we build each in its own build directory.
-    # 32-bit target data goes in build32, and 64-bit target data goes into build.  So, include/link the
-    # appropriate data at build time.
-    if (CMAKE_CL_64)
-        set (BUILDTGT_DIR build)
-    else ()
-        set (BUILDTGT_DIR build32)
-    endif()
-
     # Use static MSVCRT libraries
     foreach(configuration in CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
                              CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELWITHDEBINFO)
@@ -181,7 +192,7 @@ if(APPLE)
 elseif(NOT WIN32)
     if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
         add_executable(cube cube.c ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-        target_link_libraries(cube ${LIBRARIES})
+        target_link_libraries(cube ${LIBVK})
     endif()
 else()
     if (CMAKE_CL_64)
@@ -191,7 +202,7 @@ else()
     endif()
 
     add_executable(cube WIN32 cube.c ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-    target_link_libraries(cube ${LIBRARIES})
+    target_link_libraries(cube ${LIBVK})
 endif()
 
 ######################################################################################
@@ -202,7 +213,7 @@ if(APPLE)
 elseif(NOT WIN32)
     if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
         add_executable(cubepp cube.cpp ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-        target_link_libraries(cubepp ${LIBRARIES})
+        target_link_libraries(cubepp ${LIBVK})
     endif()
 else()
     if (CMAKE_CL_64)
@@ -212,5 +223,5 @@ else()
     endif()
 
     add_executable(cubepp WIN32 cube.cpp ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-    target_link_libraries(cubepp ${LIBRARIES})
+    target_link_libraries(cubepp ${LIBVK})
 endif()

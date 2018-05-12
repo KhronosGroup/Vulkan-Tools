@@ -29,6 +29,11 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(TOOLS_TARGET_FOLDER lvl_cmake_targets)
 
+# Output warning if vulkan headers submodule contents are not present
+if (NOT EXISTS "${PROJECT_SOURCE_DIR}/Vulkan-Headers/include/vulkan/vulkan_core.h")
+    message(FATAL_ERROR "Please run 'git submodule update --init' before running cmake")
+endif()
+
 # Header file for CMake settings
 include_directories("${PROJECT_SOURCE_DIR}/Vulkan-Headers/include")
 
@@ -53,6 +58,38 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
     endif()
 endif()
+
+if(NOT WIN32)
+    set (BUILDTGT_DIR build)
+    set (BINDATA_DIR Bin)
+    set (LIBSOURCE_DIR Lib)
+else()
+    # For Windows, since 32-bit and 64-bit items can co-exist, we build each in its own build directory.
+    # 32-bit target data goes in build32, and 64-bit target data goes into build.  So, include/link the
+    # appropriate data at build time.
+    if (DISABLE_BUILDTGT_DIR_DECORATION)
+        set (BUILDTGT_DIR "")
+        set (BINDATA_DIR "")
+        set (LIBSOURCE_DIR "")
+    elseif (CMAKE_CL_64)
+        set (BUILDTGT_DIR build)
+        set (BINDATA_DIR Bin)
+        set (LIBSOURCE_DIR Lib)
+    else()
+        set (BUILDTGT_DIR build32)
+        set (BINDATA_DIR Bin32)
+        set (LIBSOURCE_DIR Lib32)
+    endif()
+    if(DISABLE_BUILD_PATH_DECORATION)
+        set (DEBUG_DECORATION "")
+        set (RELEASE_DECORATION "")
+    else()
+        set (DEBUG_DECORATION "Debug")
+        set (RELEASE_DECORATION "Release")
+    endif()
+
+endif()
+
 
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
