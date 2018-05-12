@@ -13,6 +13,8 @@ else()
     find_program(GLSLANG_VALIDATOR names glslangValidator
         HINTS "${GLSLANG_REPO_ROOT}/build/standalone/release"
         HINTS "${GLSLANG_REPO_ROOT}/build/standalone/debug"
+        HINTS "${GLSLANG_REPO_ROOT}/build/StandAlone"
+        HINTS "${GLSLANG_REPO_ROOT}/dbuild/StandAlone"
         HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/release"
         HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/debug"
         )
