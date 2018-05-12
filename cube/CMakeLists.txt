@@ -172,42 +172,6 @@ include_directories(
     ${CUBE_INCLUDE_DIRS}
     )
 
-# vulkaninfo
-if(WIN32)
-    add_executable(vulkaninfo vulkaninfo.c vulkaninfo.rc)
-elseif(APPLE)
-    add_executable(vulkaninfo vulkaninfo.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
-        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h
-        )
-else()
-    add_executable(vulkaninfo vulkaninfo.c)
-endif()
-
-if(APPLE)
-    target_link_libraries(${API_LOWERCASE}info ${LIBRARIES} "-framework AppKit -framework QuartzCore")
-    target_include_directories(${API_LOWERCASE}info PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
-else()
-    target_link_libraries(vulkaninfo Vulkan::Vulkan)
-endif()
-
-if(APPLE)
-    set_target_properties(${API_LOWERCASE}info PROPERTIES
-        INSTALL_RPATH "@loader_path/../lib"
-    )
-    install(TARGETS ${API_LOWERCASE}info DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
-
-# Create vulkaninfo application bundle for MacOS
-if(APPLE)
-    include(macOS/vulkaninfo/vulkaninfo.cmake)
-endif()
-
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    if(INSTALL_LVL_FILES)
-        install(TARGETS ${API_LOWERCASE}info DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
-endif()
 
 ######################################################################################
 # cube
