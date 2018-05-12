@@ -3,11 +3,20 @@ set(CUBE_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
-find_program(GLSLANG_VALIDATOR NAMES glslangValidator
-             HINTS "${EXTERNAL_SOURCE_ROOT}/glslang/${BUILDTGT_DIR}/install/bin"
-                   "$ENV{VK_SDK_PATH}/bin"
-                   "${GLSLANG_BINARY_ROOT}/StandAlone"
-                   "${PROJECT_SOURCE_DIR}/external/${BINDATA_DIR}")
+if(NOT DEFINED GLSLANG_REPO_ROOT)
+    message(STATUS "Using cmake find_program to look for glslangValidator")
+    find_program(GLSLANG_VALIDATOR NAMES glslangValidator
+        HINTS "$ENV{VULKAN_SDK}/bin"
+        )
+else()
+    message(STATUS "Using glslang_repo_root to look for glslangValidator")
+    find_program(GLSLANG_VALIDATOR names glslangValidator
+        HINTS "${GLSLANG_REPO_ROOT}/build/standalone/release"
+        HINTS "${GLSLANG_REPO_ROOT}/build/standalone/debug"
+        HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/release"
+        HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/debug"
+        )
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     include(FindPkgConfig)
