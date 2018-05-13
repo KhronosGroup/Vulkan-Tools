@@ -29,13 +29,17 @@ branches:
 
 before_build:
   - "SET PATH=C:\\Python35;C:\\Python35\\Scripts;%PATH%"
+  # Get a prebuilt shader compiler (glslangValidator) so that we don't have to build all of glslang
+  - mkdir glslang
+  - cd glslang
+  - curl -fsSL -o glslang-master-windows-x64-Release.zip https://github.com/KhronosGroup/glslang/releases/download/master-tot/glslang-master-windows-x64-Release.zip
+  - 7z x glslang-master-windows-x64-Release.zip
+  - cd ..
+  - "SET PATH=%APPVEYOR_BUILD_FOLDER%\\glslang\\bin;%PATH%"
+  - glslangValidator.exe --version
   - echo.
-  - echo Starting build for %APPVEYOR_REPO_NAME%
-  - echo Update external sources
-  - if %PLATFORM% == Win32 (if %CONFIGURATION% == Debug (update_external_sources.bat --32 --debug))
-  - if %PLATFORM% == Win32 (if %CONFIGURATION% == Release (update_external_sources.bat --32 --release))
-  - if %PLATFORM% == x64 (if %CONFIGURATION% == Debug (update_external_sources.bat --64 --debug))
-  - if %PLATFORM% == x64 (if %CONFIGURATION% == Release (update_external_sources.bat --64 --release))
+  - echo Starting build for %APPVEYOR_REPO_NAME% in %APPVEYOR_BUILD_FOLDER%
+  - git submodule update --init --recursive
   # Determine the appropriate CMake generator for the current version of Visual Studio
   - echo Determining VS version
   - python .\scripts\determine_vs_version.py > vsversion.tmp
@@ -44,12 +48,23 @@ before_build:
   - del /Q /F vsversion.tmp
   - if %PLATFORM% == Win32 (set GENERATOR="Visual Studio %VS_VERSION%")
   - if %PLATFORM% == x64 (set GENERATOR="Visual Studio %VS_VERSION% Win64")
+  - if %PLATFORM% == Win32 (set BUILD_DIR="build32")
+  - if %PLATFORM% == x64 (set BUILD_DIR="build")
+  # Build Vulkan-Loader
+  - echo Building Vulkan-Loader for %PLATFORM% %CONFIGURATION%
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - git clone --recurse-submodules https://github.com/KhronosGroup/Vulkan-Loader.git
+  - cd Vulkan-Loader
+  - mkdir %BUILD_DIR%
+  - cd %BUILD_DIR%
+  - cmake -G %GENERATOR% ..
+  - cmake --build . --config %CONFIGURATION% -- /maxcpucount
   # Generate build files using CMake for the build step.
-  - echo Generating CMake files for %GENERATOR%
-  - cd %TOP_DIR%
+  - echo Generating Vulkan-Tools CMake files for %PLATFORM% %CONFIGURATION%
+  - cd %APPVEYOR_BUILD_FOLDER%
   - mkdir build
   - cd build
-  - cmake -G %GENERATOR% ..
+  - cmake -G %GENERATOR% -DLOADER_REPO_ROOT=%APPVEYOR_BUILD_FOLDER%\Vulkan-Loader ..
   - echo Building platform=%PLATFORM% configuration=%CONFIGURATION%
 
 platform:
@@ -62,5 +77,5 @@ configuration:
 
 build:
   parallel: true                  # enable MSBuild parallel builds
-  project: build/VULKAN.sln       # path to Visual Studio solution or project
+  project: build/Vulkan-Tools.sln # path to Visual Studio solution or project
   verbosity: quiet                # quiet|minimal|normal|detailed
