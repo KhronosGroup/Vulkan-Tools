@@ -52,19 +52,12 @@ Windows 7+ with the following software packages:
   - Tell the installer to treat line endings "as is" (i.e. both DOS and Unix-style line endings).
   - Install both the 32-bit and 64-bit versions, as the 64-bit installer does not install the
     32-bit libraries and tools.
-- Notes for using [Cygwin](https://www.cygwin.com)
-  - First, in a Cygwin shell:
-    - `./update_external_sources.sh --no-build`
-  - Then, in a Visual Studio Developer Command Prompt:
-    - Ensure python3.x and CMake in are in the path
-    - Run `update_external_sources.bat --no-sync`
-    - Run build_windows_targets.bat cmake
 
 ### Windows Build - Microsoft Visual Studio
 
 1. Open a Developer Command Prompt for VS201x
 2. Change directory to `Vulkan-LoaderAndValidationLayers` -- the root of the cloned git repository
-3. Run `update_external_sources.bat` -- this will download and build external components
+3. Run 'git submodule update --init --recursive' -- this will download in-tree external dependencies
 4. Create a `build` directory, change into that directory, and run cmake
 
 For example, for VS2017 (generators for other versions are [specified here](#cmake-visual-studio-generators)):
@@ -78,11 +71,6 @@ You may select "Debug" or "Release" from the Solution Configurations drop-down l
 Start a build by selecting the Build->Build Solution menu item.
 This solution copies the loader it built to each program's build directory
 to ensure that the program uses the loader built from this solution.
-
-#### The Update External Sources Batch File
-
-Employing [optional parameters](#update-external-sources-optional-parameters)
-to the **update_external_sources.bat** script can streamline repository set-up.
 
 ### Windows Tests and Demos
 
@@ -118,10 +106,9 @@ To run the Cube demo with validation in a Debug build configuration:
 - From the main menu, select Debug->Start Debugging, or from the toolbar click
  `Local Windows Debugger`
 
-Other demos that can be found in the build/demos directory are:
+Other applications that can be found in the Vulkan-Tools repository are:
 
 - `vulkaninfo`: Report GPU properties
-- `smoketest`: A "smoke" test using more complex Vulkan rendering
 
 ### Windows Notes
 
@@ -138,13 +125,11 @@ The chosen generator should match your Visual Studio version. Appropriate Visual
 
 #### The Vulkan Loader Library
 
+TODO: LOADER_REPO_ROOT
+
 Vulkan programs must be able to find and use the vulkan-1.dll library.
 While several of the test and demo projects in the Windows solution set this up automatically, doing so manually may be necessary for custom projects or solutions.
 Make sure the library is either installed in the C:\Windows\System32 folder, or that the PATH environment variable includes the folder where the library resides.
-
-To run Vulkan programs you must tell the Vulkan Loader where to find the libraries.
-This is described in a `LoaderAndLayerInterface` document in the `loader` folder in this repository.
-This describes both how ICDs and layers should be properly packaged, and how developers can point to ICDs and layers within their builds.
 
 ## Building On Linux
 
@@ -160,12 +145,12 @@ It should be straightforward to adapt this repository to other Linux distributio
 
 ### Linux Build
 
-Example debug build (Note that the update\_external\_sources script used below builds external tools into predefined locations.
+Example debug build
+
 See **Loader and Validation Layer Dependencies** for more information and other options):
 
-1. In a Linux terminal, `cd Vulkan-LoaderAndValidationLayers` -- the root of the
- cloned git repository
-2. Execute `./update_external_sources.sh` -- this will download and build external components
+1. In a Linux terminal, `cd Vulkan-Tools` -- the root of the cloned git repository
+2. Execute 'git submodule update --init --recursive' -- this will download in-tree external components
 3. Create a `build` directory, change into that directory, and run cmake:
 
         mkdir build
@@ -176,11 +161,6 @@ See **Loader and Validation Layer Dependencies** for more information and other 
 
 If your build system supports ccache, you can enable that via CMake option `-DUSE_CCACHE=On`
 
-#### The Update External Sources script
-
-Employing [optional parameters](#update-external-sources-optional-parameters)
-to the **update_external_sources.sh** script can streamline repository set-up.
-
 #### Using the new loader and layers
 
     export LD_LIBRARY_PATH=<path to your repository root>/build/loader
@@ -188,13 +168,9 @@ to the **update_external_sources.sh** script can streamline repository set-up.
 
 You can run the `vulkaninfo` application to see which driver, loader and layers are being used.
 
-The `LoaderAndLayerInterface` document in the `loader` folder in this repository
-is a specification that describes both how ICDs and layers should be properly packaged,
-and how developers can point to ICDs and layers within their builds.
-
 ### WSI Support Build Options
 
-By default, the Vulkan Loader and Validation Layers are built with support for all 4 Vulkan-defined WSI display servers: Xcb, Xlib, Wayland, and Mir.
+By default, the Vulkan Tools are built with support for all 4 Vulkan-defined WSI display servers: Xcb, Xlib, Wayland, and Mir.
 It is recommended to build the repository components with support for these display servers to maximize their usability across Linux platforms.
 If it is necessary to build these modules without support for one of the display servers, the appropriate CMake option of the form `BUILD_WSI_xxx_SUPPORT` can be set to `OFF`.
 See the top-level CMakeLists.txt file for more info.
@@ -205,16 +181,17 @@ Installing the files resulting from your build to the systems directories is opt
 There are also risks with interfering with binaries installed by packages.
 If you are certain that you would like to install your binaries to system directories, you can proceed with these instructions.
 
-Assuming that you've built the code as described above and the current directory is still `build`, you can execute:
+Assuming that you have built the code as described above and the current directory is still `build`, you can execute:
 
     sudo make install
 
 This command installs files to:
 
 - `/usr/local/include/vulkan`:  Vulkan include files
-- `/usr/local/lib`:  Vulkan loader and layers shared objects
+- `/usr/local/lib`:  Vulkan Tools shared objects
 - `/usr/local/bin`:  vulkaninfo application
-- `/usr/local/etc/vulkan/explicit_layer.d`:  Layer JSON files
+- `/usr/local/bin`:  cube application
+- `/usr/local/bin`:  cubepp application
 
 You may need to run `ldconfig` in order to refresh the system loader search cache on some Linux systems.
 
@@ -226,14 +203,6 @@ For example, if you would like to install to `/tmp/build` instead of `/usr/local
 
 Then run `make install` as before. The install step places the files in `/tmp/build`.
 
-Using the `CMAKE_INSTALL_PREFIX` to customize the install location also modifies
-the loader search paths to include searching for layers in the specified install location.
-In this example, setting `CMAKE_INSTALL_PREFIX` to `/tmp/build` causes the loader to search
-`/tmp/build/etc/vulkan/explicit_layer.d` and `/tmp/build/share/vulkan/explicit_layer.d`
-for the layer JSON files.
-The loader also searches the "standard" system locations of `/etc/vulkan/explicit_layer.d` and
-`/usr/share/vulkan/explicit_layer.d` after searching the two locations under `/tmp/build`.
-
 You can further customize the installation directories by using the CMake variables
 `CMAKE_INSTALL_SYSCONFDIR` to rename the `etc` directory and `CMAKE_INSTALL_DATADIR`
 to rename the `share` directory.
@@ -241,47 +210,23 @@ to rename the `share` directory.
 See the CMake documentation for more details on using these variables
 to further customize your installation.
 
-Also see the `LoaderAndLayerInterface` document in the `loader` folder in this
-repository for more information about loader operation.
-
-Note that some executables in this repository (e.g., `cube`) use the "rpath" linker directive to
-load the Vulkan loader from the build directory, `build` in this example.
-This means that even after installing the loader to the system directories, these executables still
-use the loader from the build directory.
-
 ### Linux Uninstall
 
 To uninstall the files from the system directories, you can execute:
 
     sudo make uninstall
 
-### Linux Tests and Demos
+### Linux Tests
 
-After making any changes to the repository, you should perform some quick sanity tests, including
-the run_all_tests shell script and the cube demo with validation enabled.
+After making any changes to the repository, you should perform some quick sanity tests, such as
+running the cube demo with validation enabled.
 
-To run the **validation test script**, in a terminal change to the build/tests directory and run:
-
-    VK_LAYER_PATH=../layers ./run_all_tests.sh
-
-This script will run the following tests:
-
-- `vk_loader_validation_tests`: Tests Vulkan Loader handle wrapping
-- `vk_layer_validation_tests`: Test Vulkan validation layers
-- `vkvalidatelayerdoc`: Tests that validation database is in up-to-date and in synchronization with
-  the validation source code
-
-To run the **Cube demo** with validation, in a terminal change to the `build/demos`
+To run the **Cube application** with validation, in a terminal change to the `build/cube`
 directory and run:
 
-    VK_LAYER_PATH=../layers ./cube --validate
+    VK_LAYER_PATH=../path/to/validation/layers ./cube --validate
 
-Other demos that can be found in the `build/demos` directory are:
-
-- `vulkaninfo`: report GPU properties
-- `smoketest`: A "smoke" test using more complex Vulkan rendering
-
-You can select which WSI subsystem is used to build the demos using a CMake option
+You can select which WSI subsystem is used to build the cube applications using a CMake option
 called DEMOS_WSI_SELECTION.
 Supported options are XCB (default), XLIB, WAYLAND, and MIR.
 Note that you must build using the corresponding BUILD_WSI_*_SUPPORT enabled at the
@@ -295,7 +240,7 @@ your CMake command line might look like:
 
 #### Linux 32-bit support
 
-Usage of this repository's contents in 32-bit Linux environments is not officially supported.
+Usage of the contents of this repository in 32-bit Linux environments is not officially supported.
 However, since this repository is supported on 32-bit Windows,
 these modules should generally work on 32-bit Linux.
 
@@ -315,12 +260,6 @@ Set up your environment for building 32-bit targets:
     export PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu
 
 Again, your PKG_CONFIG configuration may be different, depending on your distribution.
-
-If the libraries in the `external` directory have already been built for 64-bit targets,
-delete or "clean" this directory and rebuild it with the above settings using the
-`update_external_sources` shell script.
-This is required because the libraries in `external` must be built for 32-bit in order
-to be usable by the rest of the components in the repository.
 
 Finally, rebuild the repository using `cmake` and `make`, as explained above.
 
@@ -390,7 +329,7 @@ Setup Homebrew and components
 
 ### Android Build
 
-There are two options for building the Android layers.
+There are two options for building the Android tools.
 Either using the SPIRV tools provided as part of the Android NDK, or using upstream sources.
 To build with SPIRV tools from the NDK, remove the build-android/third_party directory created by
 running update_external_sources_android.sh, (or avoid running update_external_sources_android.sh).
@@ -400,8 +339,7 @@ layers, tests, demos, and APK packaging: This script does retrieve and use the u
     cd build-android
     ./build_all.sh
 
-Resulting validation layer binaries will be in build-android/libs.
-Test and demo APKs can be installed on production devices with:
+Test and application APKs can be installed on production devices with:
 
     ./install_all.sh [-s <serial number>]
 
@@ -444,9 +382,11 @@ Alternatively, you can use the test_APK script to install and run the layer vali
 
     test_APK.sh -s <serial number> -p <plaform name> -f <gtest_filter>
 
-#### Run Cube and Smoke with Validation
+#### Run Cube with Validation
 
-Use the following steps to build, install, and run Cube and Smoke for Android:
+TODO: This must be reworked to pull in layers from the ValidationLayers repo
+
+Use the following steps to build, install, and run Cube for Android:
 
     cd build-android
     ./build_all.sh
@@ -467,15 +407,6 @@ first build layers using steps above, then run:
 ##### Run with validation enabled
 
     adb shell am start -a android.intent.action.MAIN -c android-intent.category.LAUNCH -n com.example.CubeWithLayers/android.app.NativeActivity --es args "--validate"
-
-To build, install, and run the Smoke demo for Android, run the following, and any prompts that come back from the script:
-
-    ./update_external_sources.sh --glslang
-    cd demos/smoke/android
-    export ANDROID_SDK_HOME=<path to Android/Sdk>
-    export ANDROID_NDK_HOME=<path to Android/Sdk/ndk-bundle>
-    ./build-and-install
-    adb shell am start -a android.intent.action.MAIN -c android-intent.category.LAUNCH -n com.example.Smoke/android.app.NativeActivity --es args "--validate"
 
 ## Building on MacOS
 
@@ -505,11 +436,7 @@ Clone the Vulkan-LoaderAndValidationLayers repository:
 
 ### Get the External Libraries
 
-Change to the cloned directory (`cd Vulkan-LoaderAndValidationLayers`) and run the script:
-
-    ./update_external_sources.sh
-
-This script downloads and builds the `glslang` and `MoltenVK` repositories.
+TODO: Update with macOS procedure for satisfying external dependencies
 
 ### MacOS build
 
@@ -542,7 +469,6 @@ You can now run the demo applications from the command line:
 
     open demos/cube.app
     open demos/cubepp.app
-    open demos/smoketest.app
     open demos/vulkaninfo.app
 
 Or you can locate them from `Finder` and launch them from there.
@@ -626,8 +552,6 @@ build files for one to many targets concurrently.
 Alternatively, when invoking CMake, use the `-G "Codeblocks - Ninja"` option to generate Ninja build
 files to be used as project files for QtCreator
 
-- Follow the steps defined elsewhere for the OS using the update\_external\_sources script or as
-  shown in **Loader and Validation Layer Dependencies** below
 - Open, configure, and build the glslang CMakeList.txt files. Note that building the glslang
   project will provide access to spirv-tools and spirv-headers
 - Then do the same with the Vulkan-LoaderAndValidationLayers CMakeList.txt file
@@ -637,65 +561,25 @@ files to be used as project files for QtCreator
 Note that installing the WDK breaks the MSVC vcvarsall.bat build scripts provided by MSVC,
 requiring that the LIB, INCLUDE, and PATHenv variables be set to the WDK paths by some other means
 
-## Update External Sources Optional Parameters
+## Vulkan-Tools Dependencies
 
-This script will default to building 64-bit _and_ 32-bit versions of debug _and_ release
-configurations, which can take a substantial amount of time.
-However, it supports the following options to select a particular build configuration which can
-reduce the time needed for repository set-up:
+The glslang repository is required to build and run Vulkan Tools components.
+It is not a git sub-module of Vulkan-Tools, but glslang components are required to build
+the cube and vulkaninfo applications.
 
-| Command Line Option  |  Function                                    |
-|----------------------|----------------------------------------------|
-|   --32               | Build 32-bit targets only                    |
-|   --64               | Build 64-bit targets only                    |
-|   --release          | Perform release builds only                  |
-|   --debug            | Perform debug builds only                    |
-|   --no-build         | Sync without building targets                |
-|   --no-sync          | Skip repository sync step                    |
-
-For example, to target a Windows 64-bit debug development configuration, invoke the batch file as follows:
-
-`update_external_sources.bat --64 --debug`
-
-Similarly, invoking the same configuration for Linux would be:
-
-`update_external_sources.sh --64 --debug`
-
-## Loader and Validation Layer Dependencies
-
-The glslang repository is required to build and run Loader and Validation Layer components.
-It is not a git sub-module of Vulkan-LoaderAndValidationLayers but Vulkan-LoaderAndValidationLayers
-is linked to a specific revision of glslang.
-This can be automatically cloned and built to predefined locations with the
-`update_external_sources` scripts.
-If a custom configuration is required, do the following steps:
+If an existing glslang repository installation is unavailable, do the following steps:
 
 1) clone the repository:
 
     `git clone https://github.com/KhronosGroup/glslang.git`
 
-2) checkout the correct version of the tree based on the contents of the
-glslang\_revision file at the root of the Vulkan-LoaderAndValidationLayers tree
-(do the same anytime that Vulkan-LoaderAndValidationLayers is updated from remote)
+2) Configure the glslang source tree with CMake and build it with your IDE of choice
 
-    - On Windows
+3) Pass the location of the glslang repository via your cmake command like so:
 
-    ```script
-        git checkout < [path to Vulkan-LoaderAndValidationLayers]\glslang_revision [in glslang repo]
-    ```
+    cmake -DGLSLANG_REPO_ROOT=c:\development\glslang
 
-    - Non Windows
-
-    ```script
-        git checkout `cat [path to Vulkan-LoaderAndValidationLayers]\glslang_revision` [in glslang repo]
-    ```
-
-3) Configure the glslang source tree with CMake and build it with your IDE of choice
-
-4) Enable the `CUSTOM_GLSLANG_BIN_PATH` and `CUSTOM_SPIRV_TOOLS_BIN_PATH` options in the Vulkan-LoaderAndValidationLayers
-   CMake configuration and point the `GLSLANG_BINARY_PATH`  and `SPIRV_TOOLS_BINARY_PATH` variables to the correct location
-
-5) If building on Windows with MSVC, set `DISABLE_BUILDTGT_DIR_DECORATION` to _On_.
+4) If building on Windows with MSVC, set `DISABLE_BUILDTGT_DIR_DECORATION` to _On_.
  If building on Windows, but without MSVC set `DISABLE_BUILD_PATH_DECORATION` to _On_
 
 ## Optional software packages
