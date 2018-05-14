@@ -30,7 +30,7 @@ graphics hardware vendor and install it properly.
 
 To create your local git repository:
 
-    git clone https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers
+    git clone https://github.com/KhronosGroup/Vulkan-ValidationLayers
 
 ## Building On Windows
 
@@ -52,6 +52,16 @@ Windows 7+ with the following software packages:
   - Tell the installer to treat line endings "as is" (i.e. both DOS and Unix-style line endings).
   - Install both the 32-bit and 64-bit versions, as the 64-bit installer does not install the
     32-bit libraries and tools.
+- Vulkan Loader Library
+  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (vulkan-1.dll).
+    Locating the library for this repo can be done in two different ways:
+      -  The Vulkan SDK can be installed. In this case, cmake should be able to locate the loader repo through the VulkanSDK
+         environment variable
+      -  The library can be built from the [Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader.git) repository.
+         In this case, the following option should be used on the cmake command line:
+             LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
+         and use absolute (not relative) paths, like so:
+             cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
 
 ### Windows Build - Microsoft Visual Studio
 
@@ -62,7 +72,7 @@ Windows 7+ with the following software packages:
 
 For example, for VS2017 (generators for other versions are [specified here](#cmake-visual-studio-generators)):
 
-    cmake -G "Visual Studio 15 2017 Win64" ..
+    cmake -DLOADER_REPO_ROOT=c:/absolute_path_to/Vulkan-Loader -G "Visual Studio 15 2017 Win64" ..
 
 This will create a Windows solution file named `VULKAN.sln` in the build directory.
 
@@ -123,14 +133,6 @@ The chosen generator should match your Visual Studio version. Appropriate Visual
 | Microsoft Visual Studio 2015 | "Visual Studio 14 2015 Win64" | "Visual Studio 14 2015" |
 | Microsoft Visual Studio 2017 | "Visual Studio 15 2017 Win64" | "Visual Studio 15 2017" |
 
-#### The Vulkan Loader Library
-
-TODO: LOADER_REPO_ROOT
-
-Vulkan programs must be able to find and use the vulkan-1.dll library.
-While several of the test and demo projects in the Windows solution set this up automatically, doing so manually may be necessary for custom projects or solutions.
-Make sure the library is either installed in the C:\Windows\System32 folder, or that the PATH environment variable includes the folder where the library resides.
-
 ## Building On Linux
 
 ### Linux Build Requirements
@@ -143,11 +145,18 @@ It should be straightforward to adapt this repository to other Linux distributio
 
     sudo apt-get install git cmake build-essential libx11-xcb-dev libxkbcommon-dev libmirclient-dev libwayland-dev libxrandr-dev
 
+Vulkan Loader Library
+  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan-1.so).
+      - The following option should be used on the cmake command line to specify a vulkan loader library:
+             LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
+         makeing sure to specify an absoute path, like so:
+             cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
+
 ### Linux Build
 
 Example debug build
 
-See **Loader and Validation Layer Dependencies** for more information and other options):
+See **Loader and Validation Layer Dependencies** for more information and other options:
 
 1. In a Linux terminal, `cd Vulkan-Tools` -- the root of the cloned git repository
 2. Execute 'git submodule update --init --recursive' -- this will download in-tree external components
@@ -155,18 +164,11 @@ See **Loader and Validation Layer Dependencies** for more information and other 
 
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DCMAKE_BUILD_TYPE=Debug ..
 
 4. Run `make -j8` to begin the build
 
 If your build system supports ccache, you can enable that via CMake option `-DUSE_CCACHE=On`
-
-#### Using the new loader and layers
-
-    export LD_LIBRARY_PATH=<path to your repository root>/build/loader
-    export VK_LAYER_PATH=<path to your repository root>/build/layers
-
-You can run the `vulkaninfo` application to see which driver, loader and layers are being used.
 
 ### WSI Support Build Options
 
@@ -575,9 +577,9 @@ If an existing glslang repository installation is unavailable, do the following 
 
 2) Configure the glslang source tree with CMake and build it with your IDE of choice
 
-3) Pass the location of the glslang repository via your cmake command like so:
+3) Pass the location of the glslang repository using an absolute path via your cmake command like so:
 
-    cmake -DGLSLANG_REPO_ROOT=c:\development\glslang
+    cmake -DGLSLANG_REPO_ROOT=c:\absolute_path_to\glslang
 
 4) If building on Windows with MSVC, set `DISABLE_BUILDTGT_DIR_DECORATION` to _On_.
  If building on Windows, but without MSVC set `DISABLE_BUILD_PATH_DECORATION` to _On_
