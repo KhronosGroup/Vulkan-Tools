@@ -15,14 +15,14 @@
 
 LOCAL_PATH := $(abspath $(call my-dir))
 SRC_DIR := $(LOCAL_PATH)/../../..
-DEMO_DIR := $(SRC_DIR)/demos
+DEMO_DIR := $(SRC_DIR)/cube
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := Cube
 LOCAL_SRC_FILES += $(DEMO_DIR)/cube.c \
                    $(SRC_DIR)/common/vulkan_wrapper.cpp \
                    $(SRC_DIR)/common/android_util.cpp
-LOCAL_C_INCLUDES += $(SRC_DIR)/include \
+LOCAL_C_INCLUDES += $(SRC_DIR)/Vulkan-Headers/include \
                     $(DEMO_DIR)/android/include \
                     $(SRC_DIR)/libs \
                     $(SRC_DIR)/common \
