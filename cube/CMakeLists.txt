@@ -3,10 +3,24 @@ set(CUBE_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
+find_package(PythonInterp 3 REQUIRED)
+set(PYTHON_CMD ${PYTHON_EXECUTABLE})
+
+set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
+
 if(NOT DEFINED GLSLANG_REPO_ROOT)
+    set(GLSLANG_VALIDATOR_NAME "glslangValidator")
     message(STATUS "Using cmake find_program to look for glslangValidator")
-    find_program(GLSLANG_VALIDATOR NAMES glslangValidator
-        HINTS "$ENV{VULKAN_SDK}/bin"
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-windows-x64-Release.zip)
+        set(GLSLANG_VALIDATOR_NAME "glslangValidator.exe")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-linux-Release.zip)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-osx-Release.zip)
+    endif()
+    find_program(GLSLANG_VALIDATOR NAMES ${GLSLANG_VALIDATOR_NAME}
+        HINTS "${PROJECT_SOURCE_DIR}/glslang/bin"
         )
 else()
     message(STATUS "Using glslang_repo_root to look for glslangValidator")
