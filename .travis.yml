@@ -110,9 +110,7 @@ script:
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "ANDROID" ]]; then
-      pushd build-android
-      ./update_external_sources_android.sh --abi $ANDROID_ABI --no-build
-      ./android-generate.sh
+      pushd ${TRAVIS_BUILD_DIR}/cube/android
       USE_CCACHE=1 NDK_CCACHE=ccache ndk-build APP_ABI=$ANDROID_ABI -j $core_count
       popd
     fi
