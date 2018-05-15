@@ -96,10 +96,7 @@ option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
 
 if(UNIX)
-    if(INSTALL_LVL_FILES)
-        install(DIRECTORY "${PROJECT_SOURCE_DIR}/Vulkan-Headers/include/vulkan" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-    endif()
-
+    include(GNUInstallDirs)
     # uninstall target
     configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"

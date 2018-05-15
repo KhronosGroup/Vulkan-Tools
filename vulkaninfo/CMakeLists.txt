@@ -53,12 +53,6 @@ if(APPLE)
     include(macOS/vulkaninfo/vulkaninfo.cmake)
 endif()
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    if(INSTALL_LVL_FILES)
-        install(TARGETS vulkaninfo DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
-endif()
-
 if(WIN32)
     target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS)
 
@@ -74,8 +68,6 @@ if(WIN32)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    if(INSTALL_LVL_FILES)
-        install(TARGETS vulkaninfo DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
+    install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
