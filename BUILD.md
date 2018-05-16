@@ -62,11 +62,14 @@ Windows 7+ with the following software packages:
              LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
          and use absolute (not relative) paths, like so:
              cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
+- [glslang](https://github.com/KhronosGroup/glslang)
+  - By default, the build scripts will attempt to download the necessary components from the glslang repo.
+    However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
 
 ### Windows Build - Microsoft Visual Studio
 
 1. Open a Developer Command Prompt for VS201x
-2. Change directory to `Vulkan-LoaderAndValidationLayers` -- the root of the cloned git repository
+2. Change directory to `Vulkan-Tools` -- the root of the cloned git repository
 3. Run 'git submodule update --init --recursive' -- this will download in-tree external dependencies
 4. Create a `build` directory, change into that directory, and run cmake
 
@@ -76,49 +79,11 @@ For example, for VS2017 (generators for other versions are [specified here](#cma
 
 This will create a Windows solution file named `VULKAN.sln` in the build directory.
 
-Launch Visual Studio and open the "VULKAN.sln" solution file in the build folder.
+Launch Visual Studio and open the "Vulkan-Tools.sln" solution file in the build folder.
 You may select "Debug" or "Release" from the Solution Configurations drop-down list.
 Start a build by selecting the Build->Build Solution menu item.
 This solution copies the loader it built to each program's build directory
 to ensure that the program uses the loader built from this solution.
-
-### Windows Tests and Demos
-
-After making any changes to the repository, you should perform some quick sanity tests,
-including the run_all_tests Powershell script and the cube demo with validation enabled.
-
-To run the validation test script, open a Powershell Console,
-change to the build/tests directory, and run:
-
-For Release builds:
-
-    .\run_all_tests.ps1
-
-For Debug builds:
-
-    .\run_all_tests.ps1 -Debug
-
-This script will run the following tests:
-
-- `vk_loader_validation_tests`:
-  Vulkan loader handle wrapping, allocation callback, and loader/layer interface tests
-- `vk_layer_validation_tests`:
-  Test Vulkan validation layers
-- `vkvalidatelayerdoc`:
-  Tests that validation database is up-to-date and is synchronized with the validation source code
-
-To run the Cube demo with validation in a Debug build configuration:
-
-- In the MSVC solution explorer, right-click on the `cube` project and select
- `Set As Startup Project`
-- Right click on cube again, select properties->Debugging->Command Arguments, change to
- `--validate`, and save
-- From the main menu, select Debug->Start Debugging, or from the toolbar click
- `Local Windows Debugger`
-
-Other applications that can be found in the Vulkan-Tools repository are:
-
-- `vulkaninfo`: Report GPU properties
 
 ### Windows Notes
 
@@ -144,6 +109,10 @@ It should be straightforward to adapt this repository to other Linux distributio
 **Required Package List:**
 
     sudo apt-get install git cmake build-essential libx11-xcb-dev libxkbcommon-dev libmirclient-dev libwayland-dev libxrandr-dev
+
+- [glslang](https://github.com/KhronosGroup/glslang)
+  - By default, the build scripts will attempt to download the necessary components from the glslang repo.
+    However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
 
 Vulkan Loader Library
   - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan-1.so).
@@ -430,6 +399,10 @@ Setup Homebrew and components
 
       brew install cmake python python3 git
 
+- [glslang](https://github.com/KhronosGroup/glslang)
+  - By default, the build scripts will attempt to download the necessary components from the glslang repo.
+    However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
+
 ### Clone the Repository
 
 Clone the Vulkan-LoaderAndValidationLayers repository:
@@ -554,24 +527,22 @@ build files for one to many targets concurrently.
 Alternatively, when invoking CMake, use the `-G "Codeblocks - Ninja"` option to generate Ninja build
 files to be used as project files for QtCreator
 
-- Open, configure, and build the glslang CMakeList.txt files. Note that building the glslang
-  project will provide access to spirv-tools and spirv-headers
-- Then do the same with the Vulkan-LoaderAndValidationLayers CMakeList.txt file
+- Open, configure, and build the Vulkan-Tools CMakeList.txt file
 - In order to debug with QtCreator, a
   [Microsoft WDK: eg WDK 10](http://go.microsoft.com/fwlink/p/?LinkId=526733) is required.
 
 Note that installing the WDK breaks the MSVC vcvarsall.bat build scripts provided by MSVC,
 requiring that the LIB, INCLUDE, and PATHenv variables be set to the WDK paths by some other means
 
-## Vulkan-Tools Dependencies
+## Custom glslang version
 
-The glslang repository is required to build and run Vulkan Tools components.
-It is not a git sub-module of Vulkan-Tools, but glslang components are required to build
-the cube and vulkaninfo applications.
+The Glslang repository is not a git sub-module of Vulkan-Tools, but glslang components are required to build
+the cube and vulkaninfo applications. By default, the cmake scripts will download the required
+components into the repo 'glslang' directory.
 
-If an existing glslang repository installation is unavailable, do the following steps:
+If a specific version of the glslang components is desired, perform the following steps:
 
-1) clone the repository:
+1) clone the glslang repository:
 
     `git clone https://github.com/KhronosGroup/glslang.git`
 
