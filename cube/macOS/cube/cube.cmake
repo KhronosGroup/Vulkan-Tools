@@ -11,7 +11,7 @@ set(cube_HDRS
 )
 set(cube_RESOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/lunarg.ppm
-    ${CMAKE_CURRENT_BINARY_DIR}/staging-json/MoltenVK_icd.json
+    ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Resources/LunarGIcon.icns
 )
 
@@ -50,7 +50,7 @@ target_include_directories(cube PRIVATE
     ${MOLTENVK_DIR}/MoltenVK/include
 )
 
-target_link_libraries(cube ${LIBRARIES} "-framework Cocoa -framework QuartzCore")
+target_link_libraries(cube ${LIBVK} "-framework Cocoa -framework QuartzCore")
 
 set_target_properties(cube PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Info.plist
@@ -64,20 +64,20 @@ set_target_properties(cube PROPERTIES
 set_source_files_properties(${cube_RESOURCES} PROPERTIES
     MACOSX_PACKAGE_LOCATION "Resources"
 )
-set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/staging-json/MoltenVK_icd.json" PROPERTIES
+set_source_files_properties("${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json" PROPERTIES
     MACOSX_PACKAGE_LOCATION "Resources/vulkan/icd.d"
 )
 
 # Copy the MoltenVK lib into the bundle.
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     add_custom_command(TARGET cube POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
+        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib"
             ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/cube.app/Contents/Frameworks/libMoltenVK.dylib
         DEPENDS vulkan
     )
 else()
     add_custom_command(TARGET cube POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
+        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib"
             ${CMAKE_CURRENT_BINARY_DIR}/cube.app/Contents/Frameworks/libMoltenVK.dylib
         DEPENDS vulkan
     )
@@ -86,7 +86,7 @@ endif()
 # Fix up the library search path in the executable to find (loader) libraries in the bundle.
 install(CODE "
     include(BundleUtilities)
-    fixup_bundle(${CMAKE_INSTALL_PREFIX}/demos/cube.app \"\" \"\")
+    fixup_bundle(${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"\")
     " COMPONENT Runtime
 )
 
