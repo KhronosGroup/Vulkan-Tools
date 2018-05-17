@@ -30,7 +30,7 @@ graphics hardware vendor and install it properly.
 
 To create your local git repository:
 
-    git clone https://github.com/KhronosGroup/Vulkan-ValidationLayers
+    git clone https://github.com/KhronosGroup/Vulkan-Tools
 
 ## Building On Windows
 
@@ -438,7 +438,19 @@ Clone the Vulkan-LoaderAndValidationLayers repository:
 
 ### Get the External Libraries
 
-TODO: Update with macOS procedure for satisfying external dependencies
+[MoltenVK](https://github.com/KhronosGroup/MoltenVK) Library
+
+- Building the cube and vulkaninfo applications require linking to the MoltenVK Library (libMoltenVK.dylib)
+  - The following option should be used on the cmake command line to specify a vulkan loader library:
+    MOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK making sure to specify an absolute path, like so:
+    cmake -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ....
+
+Vulkan Loader Library
+
+- Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan.1.dylib)
+  - The following option should be used on the cmake command line to specify a vulkan loader library:
+    LOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader making sure to specify an absolute path, like so:
+    cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader ....
 
 ### MacOS build
 
@@ -458,7 +470,7 @@ build is:
 
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ..
         make
 
 To speed up the build on a multi-core machine, use the `-j` option for `make`
@@ -469,9 +481,9 @@ For example:
 
 You can now run the demo applications from the command line:
 
-    open demos/cube.app
-    open demos/cubepp.app
-    open demos/vulkaninfo.app
+    open cube/cube.app
+    open cube/cubepp.app
+    open vulkaninfo/vulkaninfo.app
 
 Or you can locate them from `Finder` and launch them from there.
 
@@ -483,7 +495,7 @@ in your build tree.
 
 To see this, run this command from your `build` directory:
 
-    otool -l demos/cube.app/Contents/MacOS/cube
+    otool -l cube/cube.app/Contents/MacOS/cube
 
 and note that the `cube` executable contains loader commands:
 
@@ -520,19 +532,19 @@ In both cases, the "install" target operations clean up the `RPATH`.
 There is also a non-bundled version of the `vulkaninfo` application that you can
 run from the command line:
 
-    demos/vulkaninfo
+    vulkaninfo/vulkaninfo
 
 If you run this before you run "make install", vulkaninfo's RPATH is already set
 to point to the Vulkan loader in the build tree, so it has no trouble finding it.
 But the loader will not find the MoltenVK driver and you'll see a message about an
 incompatible driver.  To remedy this:
 
-    VK_ICD_FILENAMES=../external/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
+    VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
 
 If you run `vulkaninfo` after doing a "make install", the `RPATH` in the `vulkaninfo` application
 got removed and the OS needs extra help to locate the Vulkan loader:
 
-    DYLD_LIBRARY_PATH=loader VK_ICD_FILENAMES=../external/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
+    DYLD_LIBRARY_PATH=<path-to>/Vulkan-Loader/loader VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
 
 #### Building with the Xcode Generator
 
@@ -540,7 +552,7 @@ To create and open an Xcode project:
 
         mkdir build-xcode
         cd build-xcode
-        cmake -GXcode ..
+        cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK -GXcode ..
         open VULKAN.xcodeproj
 
 Within Xcode, you can select Debug or Release builds in the project's Build Settings.
