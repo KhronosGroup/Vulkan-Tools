@@ -12,32 +12,40 @@ else()
 endif()
 
 if(APPLE)
-    target_link_libraries(${API_LOWERCASE}info ${LIBRARIES} "-framework AppKit -framework QuartzCore")
-    target_include_directories(${API_LOWERCASE}info PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
-else()
-    if(DEFINED LOADER_REPO_ROOT)
-        message(STATUS "Using user-supplied path to locate Vulkan")
-        if(WIN32)
-            set (LOADER_SEARCH_PATHS
-                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${DEBUG_DECORATION}"
-                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${RELEASE_DECORATION}"
-                )
-        elseif(UNIX)
-            set (LOADER_SEARCH_PATHS
-                "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader"
-                )
-        endif()
+endif()
 
-        find_library(LIBVK NAMES vulkan vulkan-1
-            HINTS ${LOADER_SEARCH_PATHS}
+if(DEFINED LOADER_REPO_ROOT)
+    message(STATUS "Using user-supplied path to locate Vulkan")
+    if(WIN32)
+        set (LOADER_SEARCH_PATHS
+            "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${DEBUG_DECORATION}"
+            "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${RELEASE_DECORATION}"
             )
-        message(STATUS "Found Vulkan: ${LIBVK}")
-        target_link_libraries(vulkaninfo ${LIBVK})
     else()
-        message(STATUS "Using find_package to locate Vulkan")
-        find_package(Vulkan)
-        set (LIBVK "Vulkan::Vulkan")
-        target_link_libraries(vulkaninfo Vulkan::Vulkan)
+        set (LOADER_SEARCH_PATHS
+            "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader"
+            )
+    endif()
+
+    find_library(LIBVK NAMES vulkan vulkan-1
+        HINTS ${LOADER_SEARCH_PATHS}
+        )
+    message(STATUS "Found Vulkan: ${LIBVK}")
+    if(APPLE)
+        target_link_libraries(vulkaninfo ${LIBVK} "-framework AppKit -framework QuartzCore")
+        target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
+    else()
+        target_link_libraries(vulkaninfo ${LIBVK})
+    endif()
+ else()
+    message(STATUS "Using find_package to locate Vulkan")
+    find_package(Vulkan)
+    set (LIBVK "Vulkan::Vulkan")
+    if(APPLE)
+        target_link_libraries(vulkaninfo ${LIBVK} "-framework AppKit -framework QuartzCore")
+        target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
+    else()
+        target_link_libraries(vulkaninfo ${LIBVK})
     endif()
 endif()
 
@@ -50,7 +58,7 @@ endif()
 
 # Create vulkaninfo application bundle for MacOS
 if(APPLE)
-    include(macOS/vulkaninfo/vulkaninfo.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.cmake)
 endif()
 
 if(WIN32)
@@ -65,6 +73,8 @@ if(WIN32)
     endforeach()
 
     file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
+elseif(APPLE)
+    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

@@ -11,7 +11,7 @@ set(cubepp_HDRS
 )
 set(cubepp_RESOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/lunarg.ppm
-    ${CMAKE_CURRENT_BINARY_DIR}/staging-json/MoltenVK_icd.json
+    ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/LunarGIcon.icns
 )
 
@@ -50,7 +50,7 @@ target_include_directories(cubepp PRIVATE
     ${MOLTENVK_DIR}/MoltenVK/include
 )
 
-target_link_libraries(cubepp ${LIBRARIES} "-framework Cocoa -framework QuartzCore")
+target_link_libraries(cubepp ${LIBVK} "-framework Cocoa -framework QuartzCore")
 
 set_target_properties(cubepp PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Info.plist
@@ -64,12 +64,12 @@ set_target_properties(cubepp PROPERTIES
 set_source_files_properties(${cubepp_RESOURCES} PROPERTIES
     MACOSX_PACKAGE_LOCATION "Resources"
 )
-set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/staging-json/MoltenVK_icd.json" PROPERTIES
+set_source_files_properties("${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json" PROPERTIES
     MACOSX_PACKAGE_LOCATION "Resources/vulkan/icd.d"
 )
 
 # Direct the MoltenVK library to the right place.
-install(FILES "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
+install(FILES "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib"
         DESTINATION "demos/cubepp.app/Contents/Frameworks"
         COMPONENT Runtime
 )
@@ -77,13 +77,13 @@ install(FILES "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
 # Copy the MoltenVK lib into the bundle.
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     add_custom_command(TARGET cubepp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
+        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib"
             ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/cubepp.app/Contents/Frameworks/libMoltenVK.dylib
         DEPENDS vulkan
     )
 else()
     add_custom_command(TARGET cubepp POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/MacOS/libMoltenVK.dylib"
+        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib"
             ${CMAKE_CURRENT_BINARY_DIR}/cubepp.app/Contents/Frameworks/libMoltenVK.dylib
         DEPENDS vulkan
     )
@@ -92,7 +92,7 @@ endif()
 # Fix up the library search path in the executable to find (loader) libraries in the bundle.
 install(CODE "
     include(BundleUtilities)
-    fixup_bundle(${CMAKE_INSTALL_PREFIX}/demos/cubepp.app \"\" \"\")
+    fixup_bundle(${CMAKE_INSTALL_PREFIX}/cube/cubepp.app \"\" \"\")
     " COMPONENT Runtime
 )
 
