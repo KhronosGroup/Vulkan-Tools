@@ -62,6 +62,7 @@ Windows 7+ with the following software packages:
              LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
          and use absolute (not relative) paths, like so:
              cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
+    Currently, the build directory *must* be named either 'build' or 'build32'.
 - [glslang](https://github.com/KhronosGroup/glslang)
   - By default, the build scripts will attempt to download the necessary components from the glslang repo.
     However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
@@ -124,6 +125,7 @@ Vulkan Loader Library
              LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
          makeing sure to specify an absoute path, like so:
              cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
+    Currently, the build directory *must* be named either 'build' or 'build32'.
 
 ### Linux Build
 
