@@ -14,7 +14,10 @@ endif()
 if(APPLE)
 endif()
 
-if(DEFINED LOADER_REPO_ROOT)
+# Predefine loader root as a cmake cache variable for cmake-gui
+set(LOADER_REPO_ROOT "LOADER-NOTFOUND" CACHE PATH "Absolute path to the root of the loader repository")
+
+if(LOADER_REPO_ROOT)
     message(STATUS "Using user-supplied path to locate Vulkan")
     if(WIN32)
         set (LOADER_SEARCH_PATHS

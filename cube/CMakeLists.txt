@@ -9,12 +9,12 @@ set(PYTHON_CMD ${PYTHON_EXECUTABLE})
 set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
 
 
-if(DEFINED GLSLANG_INSTALL_DIR)
+if(GLSLANG_INSTALL_DIR)
     message(STATUS "Using GLSLANG_INSTALL_DIR to look for glslangValidator")
     find_program(GLSLANG_VALIDATOR names glslangValidator
         HINTS "${GLSLANG_INSTALL_DIR}/bin"
         )
-elseif(DEFINED GLSLANG_REPO_ROOT)
+elseif(GLSLANG_REPO_ROOT)
     message(STATUS "Using glslang_repo_root to look for glslangValidator")
     find_program(GLSLANG_VALIDATOR names glslangValidator
         HINTS "${GLSLANG_REPO_ROOT}/build/standalone/release"
@@ -144,7 +144,10 @@ file(COPY ${TEXTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-if(DEFINED LOADER_REPO_ROOT)
+# Predefine loader root as a cmake cache variable for cmake-gui
+set(LOADER_REPO_ROOT "LOADER-NOTFOUND" CACHE PATH "Absolute path to the root of the loader repository")
+
+if(LOADER_REPO_ROOT)
     message(STATUS "Using user-supplied path to locate Vulkan")
     if(WIN32)
         set (LOADER_SEARCH_PATHS
