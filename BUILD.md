@@ -558,23 +558,21 @@ requiring that the LIB, INCLUDE, and PATHenv variables be set to the WDK paths b
 ## Custom glslang version
 
 The Glslang repository is not a git sub-module of Vulkan-Tools, but glslang components are required to build
-the cube and vulkaninfo applications. By default, the cmake scripts will download the required
+the cube and cubepp applications. By default, the cmake scripts will download the required
 components into the repo 'glslang' directory.
 
-If a specific version of the glslang components is desired, perform the following steps:
+If a *specific* version of the glslang components is desired, perform the following steps:
 
 1) clone the glslang repository:
 
     `git clone https://github.com/KhronosGroup/glslang.git`
 
-2) Configure the glslang source tree with CMake and build it with your IDE of choice
+2) Configure the glslang source tree with CMake and build it with your IDE of choice, following the instructions
+   in the glslang BUILD.md document including using the INSTALL_PREFIX and 'make install'. Note the install directory.
 
-3) Pass the location of the glslang repository using an absolute path via your cmake command like so:
+3) Pass the location of the glslang install directory using an absolute path via your cmake command like so:
 
-    cmake -DGLSLANG_REPO_ROOT=c:\absolute_path_to\glslang
-
-4) If building on Windows with MSVC, set `DISABLE_BUILDTGT_DIR_DECORATION` to _On_.
- If building on Windows, but without MSVC set `DISABLE_BUILD_PATH_DECORATION` to _On_
+    cmake -DGLSLANG_INSTALL_DIR=c:\absolute_path_to\glslang\build\install
 
 ## Optional software packages
 
