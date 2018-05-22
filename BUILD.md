@@ -194,7 +194,7 @@ to further customize your installation.
 
 To uninstall the files from the system directories, you can execute:
 
-    sudo make uninstall
+    sudo make uninstall-Vulkan-Tools
 
 ### Linux Tests
 
