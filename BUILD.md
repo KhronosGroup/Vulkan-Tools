@@ -150,10 +150,12 @@ If your build system supports ccache, you can enable that via CMake option `-DUS
 
 ### WSI Support Build Options
 
-By default, the Vulkan Tools are built with support for all 4 Vulkan-defined WSI display servers: Xcb, Xlib, Wayland, and Mir.
+By default, the Vulkan Tools cube and cubepp are built with support for all 4 Vulkan-defined WSI display servers: Xcb, Xlib, Wayland, and Mir.
 It is recommended to build the repository components with support for these display servers to maximize their usability across Linux platforms.
 If it is necessary to build these modules without support for one of the display servers, the appropriate CMake option of the form `BUILD_WSI_xxx_SUPPORT` can be set to `OFF`.
-See the top-level CMakeLists.txt file for more info.
+See the CMakeLists.txt file in `Vulkan-Tools/cube` for more info.
+
+Note vulkaninfo currently only supports Xcb and Xlib WSI display servers.  See the CMakeLists.txt file in `Vulkan-Tools/vulkaninfo` for more info.
 
 ### Linux Install to System Directories
 
