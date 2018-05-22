@@ -153,10 +153,14 @@ if(LOADER_REPO_ROOT)
         set (LOADER_SEARCH_PATHS
             "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${DEBUG_DECORATION}"
             "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader/${RELEASE_DECORATION}"
+            "${LOADER_REPO_ROOT}/lib"
+            "${LOADER_REPO_ROOT}/lib32"
             )
     else()
         set (LOADER_SEARCH_PATHS
             "${LOADER_REPO_ROOT}/${BUILDTGT_DIR}/loader"
+            "${LOADER_REPO_ROOT}/x86_64/lib"
+            "${LOADER_REPO_ROOT}/source/lib"
             )
     endif()
 
