@@ -31,7 +31,8 @@ import subprocess
 import urllib.request
 import zipfile
 
-REPO_DIR = os.path.join(os.getcwd(), "..")
+SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.join(SCRIPTS_DIR, '..')
 GLSLANG_URL = "https://github.com/KhronosGroup/glslang/releases/download/master-tot"
 
 if __name__ == '__main__':
