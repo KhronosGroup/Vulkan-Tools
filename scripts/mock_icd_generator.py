@@ -795,6 +795,33 @@ CUSTOM_C_INTERCEPTS = {
         write_props->maxDescriptorSetUpdateAfterBindInputAttachments = 500000;
     }
 ''',
+'vkGetPhysicalDeviceExternalSemaphoreProperties':'''
+    // Hard code support for all handle types and features
+    pExternalSemaphoreProperties->exportFromImportedHandleTypes = 0x1F;
+    pExternalSemaphoreProperties->compatibleHandleTypes = 0x1F;
+    pExternalSemaphoreProperties->externalSemaphoreFeatures = 0x3;
+''',
+'vkGetPhysicalDeviceExternalSemaphorePropertiesKHR':'''
+    GetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
+''',
+'vkGetPhysicalDeviceExternalFenceProperties':'''
+    // Hard-code support for all handle types and features
+    pExternalFenceProperties->exportFromImportedHandleTypes = 0xF;
+    pExternalFenceProperties->compatibleHandleTypes = 0xF;
+    pExternalFenceProperties->externalFenceFeatures = 0x3;
+''',
+'vkGetPhysicalDeviceExternalFencePropertiesKHR':'''
+    GetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
+''',
+'vkGetPhysicalDeviceExternalBufferProperties':'''
+    // Hard-code support for all handle types and features
+    pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
+    pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = 0x1FF;
+    pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = 0x1FF;
+''',
+'vkGetPhysicalDeviceExternalBufferPropertiesKHR':'''
+    GetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
+''',
 'vkGetBufferMemoryRequirements': '''
     // TODO: Just hard-coding reqs for now
     pMemoryRequirements->size = 4096;
