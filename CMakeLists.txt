@@ -1,6 +1,3 @@
-# The name of our project is "VULKAN". CMakeLists files in this project can
-# refer to the root source directory of the project as ${VULKAN_SOURCE_DIR} and
-# to the root binary directory of the project as ${VULKAN_BINARY_DIR}.
 cmake_minimum_required(VERSION 2.8.11)
 
 # This must come before the project command.
@@ -90,10 +87,13 @@ else()
 
 endif()
 
-
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
+# Installing the Mock ICD to system directories is probably not desired since
+# this ICD is not a very complete implementation.
+# Require the user to ask that it be installed if they really want it.
+option(INSTALL_ICD "Install icd" OFF)
 
 if(UNIX)
     include(GNUInstallDirs)

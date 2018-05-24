@@ -120,11 +120,11 @@ It should be straightforward to adapt this repository to other Linux distributio
     However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
 
 Vulkan Loader Library
-  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan-1.so).
+  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan.so.1).
       - The following option should be used on the cmake command line to specify a vulkan loader library:
-             LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
-         makeing sure to specify an absoute path, like so:
-             cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
+             LOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader
+         making sure to specify an absoute path, like so:
+             cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader ....
     Currently, the build directory *must* be named either 'build' or 'build32'.
 
 ### Linux Build
@@ -167,13 +167,19 @@ Assuming that you have built the code as described above and the current directo
 
 This command installs files to:
 
-- `/usr/local/include/vulkan`:  Vulkan include files
-- `/usr/local/lib`:  Vulkan Tools shared objects
+- `/usr/local/lib`:  Vulkan Tools shared objects  (e.g., Mock ICD shared library)
 - `/usr/local/bin`:  vulkaninfo application
-- `/usr/local/bin`:  cube application
-- `/usr/local/bin`:  cubepp application
+- `/usr/local/share/vulkan/icd.d`:  Mock ICD JSON file
 
 You may need to run `ldconfig` in order to refresh the system loader search cache on some Linux systems.
+
+Note:  The Mock ICD is not installed by default since it is a "null" driver that does not render anything
+and is used for testing purposes.
+Installing it to system directories may cause some applications to discover and use
+this driver instead of other full drivers installed on the system.
+If you really want to install this null driver, use:
+
+    -DINSTALL_ICD=ON
 
 You can further customize the installation location by setting additional CMake variables to override their defaults.
 For example, if you would like to install to `/tmp/build` instead of `/usr/local`, on your CMake command line specify:
