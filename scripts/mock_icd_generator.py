@@ -847,7 +847,9 @@ CUSTOM_C_INTERCEPTS = {
     // TODO: Just hard-coding reqs for now
     pMemoryRequirements->size = 4096;
     pMemoryRequirements->alignment = 1;
-    pMemoryRequirements->memoryTypeBits = 0xFFFF;
+
+    // Here we hard-code that the memory type at index 3 doesn't support this image.
+    pMemoryRequirements->memoryTypeBits = 0xFFFF & ~(0x1 << 3);
 ''',
 'vkGetImageMemoryRequirements2KHR': '''
     GetImageMemoryRequirements(device, pInfo->image, &pMemoryRequirements->memoryRequirements);
