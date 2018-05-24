@@ -794,6 +794,12 @@ CUSTOM_C_INTERCEPTS = {
         write_props->maxDescriptorSetUpdateAfterBindStorageImages = 500000;
         write_props->maxDescriptorSetUpdateAfterBindInputAttachments = 500000;
     }
+
+    const auto *push_descriptor_props = lvl_find_in_chain<VkPhysicalDevicePushDescriptorPropertiesKHR>(pProperties->pNext);
+    if (push_descriptor_props) {
+        VkPhysicalDevicePushDescriptorPropertiesKHR* write_props = (VkPhysicalDevicePushDescriptorPropertiesKHR*)push_descriptor_props;
+        write_props->maxPushDescriptors = 256;
+    }
 ''',
 'vkGetBufferMemoryRequirements': '''
     // TODO: Just hard-coding reqs for now
@@ -1025,7 +1031,7 @@ class MockICDOutputGenerator(OutputGenerator):
             device_exts = []
             instance_exts = []
             # Ignore extensions that ICDs should not implement or are not safe to report
-            ignore_exts = ['VK_EXT_validation_cache', 'VK_KHR_push_descriptor']
+            ignore_exts = ['VK_EXT_validation_cache']
             for ext in self.registry.tree.findall("extensions/extension"):
                 if ext.attrib['supported'] != 'disabled': # Only include enabled extensions
                     if (ext.attrib['name'] in ignore_exts):
