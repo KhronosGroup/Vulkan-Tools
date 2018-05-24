@@ -739,12 +739,18 @@ CUSTOM_C_INTERCEPTS = {
     GetPhysicalDeviceFormatProperties(physicalDevice, format, &pFormatProperties->formatProperties);
 ''',
 'vkGetPhysicalDeviceImageFormatProperties': '''
+    // A hardcoded unsupported format
+    if (format == VK_FORMAT_E5B9G9R9_UFLOAT_PACK32) {
+        return VK_ERROR_FORMAT_NOT_SUPPORTED;
+    }
+
     // TODO: Just hard-coding some values for now
     // TODO: If tiling is linear, limit the mips, levels, & sample count
     if (VK_IMAGE_TILING_LINEAR == tiling) {
         *pImageFormatProperties = { { 4096, 4096, 256 }, 1, 1, VK_SAMPLE_COUNT_1_BIT, 4294967296 };
     } else {
-        *pImageFormatProperties = { { 4096, 4096, 256 }, 12, 256, 0x7F, 4294967296 };
+        // We hard-code support for all sample counts except 64 bits.
+        *pImageFormatProperties = { { 4096, 4096, 256 }, 12, 256, 0x7F & ~VK_SAMPLE_COUNT_64_BIT, 4294967296 };
     }
     return VK_SUCCESS;
 ''',
