@@ -42,9 +42,10 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
+# Copy or link the JSON files to the binary directory for ease of use in the build tree.
 set(ICD_JSON_FILES VkICD_mock_icd)
-
 if (WIN32)
+    # extra setup for out-of-tree builds
     if (NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         if (CMAKE_GENERATOR MATCHES "^Visual Studio.*")
             foreach (config_file ${ICD_JSON_FILES})
@@ -131,6 +132,9 @@ if (WIN32)
     add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
     add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
     #target_link_Libraries(VkICD_${target} VkICD_utils)
+    if(INSTALL_ICD)
+        install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    endif()
     endmacro()
 elseif(APPLE)
     macro(add_vk_icd target)
@@ -138,7 +142,9 @@ elseif(APPLE)
     #target_link_Libraries(VkICD_${target} VkICD_utils)
     add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
     set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl")
-    install(TARGETS VkICD_${target} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    if(INSTALL_ICD)
+        install(TARGETS VkICD_${target} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
     endmacro()
 else()
     macro(add_vk_icd target)
@@ -148,18 +154,6 @@ else()
     set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl,-export-dynamic,-Bsymbolic,--exclude-libs,ALL")
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND INSTALL_ICD)
         install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        # Add targets for JSON file install on Linux.
-        # Need to remove the "./" from the library path before installing to system directories.
-        foreach (config_file ${ICD_JSON_FILES})
-            add_custom_target(${config_file}-staging-json ALL
-                COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                COMMAND sed -i -e "/\"library_path\":/s$./libVkICD$libVkICD$" ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
-                VERBATIM
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json
-                )
-            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d)
-        endforeach(config_file)
     endif()
     endmacro()
 endif()
@@ -192,4 +186,26 @@ run_vk_xml_generate(mock_icd_generator.py mock_icd.h)
 run_vk_xml_generate(mock_icd_generator.py mock_icd.cpp)
 
 add_vk_icd(mock_icd mock_icd.cpp mock_icd.h)
+
+# JSON file(s) install targets.
+# For Linux, need to remove the "./" from the library path before installing to system directories.
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND INSTALL_ICD)
+    foreach (config_file ${ICD_JSON_FILES})
+        add_custom_target(${config_file}-staging-json ALL
+            COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
+            COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json ${CMAKE_CURRENT_BINARY_DIR}/staging-json
+            COMMAND sed -i -e "/\"library_path\":/s$./libVkICD$libVkICD$" ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
+            VERBATIM
+            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json
+            )
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d)
+    endforeach(config_file)
+endif()
+
+# Windows uses the JSON file as-is.
+if(WIN32 AND INSTALL_ICD)
+    foreach (config_file ${ICD_JSON_FILES})
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    endforeach(config_file)
+endif()
 

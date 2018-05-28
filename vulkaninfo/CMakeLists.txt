@@ -52,13 +52,6 @@ if(LOADER_REPO_ROOT)
     endif()
 endif()
 
-if(APPLE)
-    set_target_properties(vulkaninfo PROPERTIES
-        INSTALL_RPATH "@loader_path/../lib"
-    )
-    install(TARGETS vulkaninfo DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
-
 # Create vulkaninfo application bundle for MacOS
 if(APPLE)
     include(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.cmake)
@@ -80,7 +73,12 @@ elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 endif()
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(APPLE)
+    set_target_properties(vulkaninfo PROPERTIES
+        INSTALL_RPATH "@loader_path/../lib"
+    )
+    install(TARGETS vulkaninfo DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
     install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 

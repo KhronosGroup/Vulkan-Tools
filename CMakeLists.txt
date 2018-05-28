@@ -14,6 +14,12 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
     find_package(Vulkan)
 endif()
 
+include(GNUInstallDirs)
+# Set a better default install location for Windows only if the user did not provide one.
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
+    set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE )
+endif()
+
 if(APPLE)
     # CMake versions 3 or later need CMAKE_MACOSX_RPATH defined.
     # This avoids the CMP0042 policy message.
@@ -95,17 +101,14 @@ option(BUILD_ICD "Build icd" ON)
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
 
-if(UNIX)
-    include(GNUInstallDirs)
-    # uninstall target
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
+# uninstall target
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
 
-    add_custom_target(uninstall-Vulkan-Tools
-        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-endif()
+add_custom_target(uninstall-Vulkan-Tools
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
 if(APPLE)
     include(mac_common.cmake)
