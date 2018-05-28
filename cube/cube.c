@@ -994,6 +994,7 @@ void DemoUpdateTargetIPD(struct demo *demo) {
             int64_t multiple = demo->next_present_id - past[count - 1].presentID;
             demo->prev_desired_present_time = (past[count - 1].actualPresentTime + (multiple * demo->target_IPD));
         }
+        free(past);
     }
 }
 
