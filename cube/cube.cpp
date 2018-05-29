@@ -2301,58 +2301,38 @@ void Demo::update_data_buffer() {
     device.unmapMemory(swapchain_image_resources[current_buffer].uniform_memory);
 }
 
+/* Convert ppm image data from header file into RGBA texture image */
+#include "lunarg.ppm.h"
 bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout *layout, int32_t *width, int32_t *height) {
-#if (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
-    filename = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@(filename)].UTF8String;
-#endif
-
-    FILE *fPtr = fopen(filename, "rb");
-    if (!fPtr) {
+    (void)filename;
+    char *cPtr;
+    cPtr = (char *)lunarg_ppm;
+    if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "P6\n", 3)) {
         return false;
     }
-
-    char header[256];
-    char *cPtr = fgets(header, 256, fPtr);  // P6
-    if (cPtr == nullptr || strncmp(header, "P6\n", 3)) {
-        fclose(fPtr);
-        return false;
-    }
-
-    do {
-        cPtr = fgets(header, 256, fPtr);
-        if (cPtr == nullptr) {
-            fclose(fPtr);
-            return false;
-        }
-    } while (!strncmp(header, "#", 1));
-
-    sscanf(header, "%" SCNd32 " %" SCNd32, width, height);
-    if (rgba_data == nullptr) {
-        fclose(fPtr);
+    while (strncmp(cPtr++, "\n", 1))
+        ;
+    sscanf(cPtr, "%u %u", width, height);
+    if (rgba_data == NULL) {
         return true;
     }
-
-    char *result = fgets(header, 256, fPtr);  // Format
-    VERIFY(result != nullptr);
-    if (cPtr == nullptr || strncmp(header, "255\n", 3)) {
-        fclose(fPtr);
+    while (strncmp(cPtr++, "\n", 1))
+        ;
+    if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "255\n", 4)) {
         return false;
     }
-
+    while (strncmp(cPtr++, "\n", 1))
+        ;
     for (int y = 0; y < *height; y++) {
         uint8_t *rowPtr = rgba_data;
-
         for (int x = 0; x < *width; x++) {
-            size_t s = fread(rowPtr, 3, 1, fPtr);
-            (void)s;
+            memcpy(rowPtr, cPtr, 3);
             rowPtr[3] = 255; /* Alpha of 1 */
             rowPtr += 4;
+            cPtr += 3;
         }
-
         rgba_data += layout->rowPitch;
     }
-
-    fclose(fPtr);
     return true;
 }
 

@@ -10,7 +10,6 @@ set(cubepp_HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/DemoViewController.h
 )
 set(cubepp_RESOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/lunarg.ppm
     ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/LunarGIcon.icns
 )
