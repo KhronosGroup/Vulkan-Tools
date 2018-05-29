@@ -26,6 +26,7 @@
  */
 
 #define _GNU_SOURCE
+#define _CRT_NO_TIME_T
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -33,6 +34,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <signal.h>
+#include <time.h>
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
@@ -93,6 +95,21 @@ void DbgMsg(char *fmt, ...) {
     printf(fmt, va);
     fflush(stdout);
     va_end(va);
+}
+
+// Windows definition of clock_gettime
+#define CLOCK_MONOTONIC 1
+struct timespec {
+    long tv_sec;
+    long tv_nsec;
+};
+int clock_gettime(int clk_id, struct timespec *spec) {
+    __int64 wintime;
+    GetSystemTimeAsFileTime((FILETIME *)&wintime);
+    wintime -= 116444736000000000i64;
+    spec->tv_sec = wintime / 10000000i64;
+    spec->tv_nsec = wintime % 10000000i64 * 100;
+    return 0;
 }
 
 #elif defined __ANDROID__
@@ -419,6 +436,7 @@ struct demo {
     float spin_angle;
     float spin_increment;
     bool pause;
+    struct timespec last_update_time;
 
     VkShaderModule vert_shader_module;
     VkShaderModule frag_shader_module;
@@ -864,11 +882,18 @@ void demo_update_data_buffer(struct demo *demo) {
     uint8_t *pData;
     VkResult U_ASSERT_ONLY err;
 
+    struct timespec current_time;
+    clock_gettime(CLOCK_MONOTONIC, &current_time);
+    float delta_seconds = ((current_time.tv_nsec * 1.e-9) + (double)current_time.tv_sec) -
+                          ((demo->last_update_time.tv_nsec * 1.e-9) + (double)demo->last_update_time.tv_sec);
+    demo->last_update_time = current_time;
+    float delta_angle = demo->spin_angle * delta_seconds;
+
     mat4x4_mul(VP, demo->projection_matrix, demo->view_matrix);
 
     // Rotate around the Y axis
     mat4x4_dup(Model, demo->model_matrix);
-    mat4x4_rotate(demo->model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(demo->spin_angle));
+    mat4x4_rotate(demo->model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(delta_angle));
     mat4x4_mul(MVP, VP, demo->model_matrix);
 
     err = vkMapMemory(demo->device, demo->swapchain_image_resources[demo->current_buffer].uniform_memory, 0, VK_WHOLE_SIZE, 0,
@@ -3747,8 +3772,8 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     demo->width = 500;
     demo->height = 500;
 
-    demo->spin_angle = 4.0f;
-    demo->spin_increment = 0.2f;
+    demo->spin_angle = 100.0f;
+    demo->spin_increment = 10.f;
     demo->pause = false;
 
     mat4x4_perspective(demo->projection_matrix, (float)degreesToRadians(45.0f), 1.0f, 0.1f, 100.0f);
@@ -3857,7 +3882,6 @@ static void demo_main(struct demo *demo, void *view, int argc, const char *argv[
     demo->window = view;
     demo_init_vk_swapchain(demo);
     demo_prepare(demo);
-    demo->spin_angle = 0.4f;
 }
 
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)

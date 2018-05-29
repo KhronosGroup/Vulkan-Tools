@@ -31,6 +31,7 @@
 #include <cstring>
 #include <csignal>
 #include <memory>
+#include <chrono>
 
 #define VULKAN_HPP_NO_SMART_HANDLE
 #define VULKAN_HPP_NO_EXCEPTIONS
@@ -367,6 +368,7 @@ struct Demo {
     float spin_angle;
     float spin_increment;
     bool pause;
+    std::chrono::time_point<std::chrono::high_resolution_clock> last_update_time;
 
     vk::ShaderModule vert_shader_module;
     vk::ShaderModule frag_shader_module;
@@ -952,8 +954,8 @@ void Demo::init(int argc, char **argv) {
     width = 500;
     height = 500;
 
-    spin_angle = 4.0f;
-    spin_increment = 0.2f;
+    spin_angle = 100.0f;
+    spin_increment = 10.0f;
     pause = false;
 
     mat4x4_perspective(projection_matrix, (float)degreesToRadians(45.0f), 1.0f, 0.1f, 100.0f);
@@ -2323,10 +2325,15 @@ void Demo::update_data_buffer() {
     mat4x4 VP;
     mat4x4_mul(VP, projection_matrix, view_matrix);
 
+    auto current_time = std::chrono::high_resolution_clock::now();
+    float delta_seconds = (float)std::chrono::duration_cast<std::chrono::duration<float>>(current_time - last_update_time).count();
+    last_update_time = current_time;
+    float delta_angle = spin_angle * delta_seconds;
+
     // Rotate around the Y axis
     mat4x4 Model;
     mat4x4_dup(Model, model_matrix);
-    mat4x4_rotate(model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(spin_angle));
+    mat4x4_rotate(model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(delta_angle));
 
     mat4x4 MVP;
     mat4x4_mul(MVP, VP, model_matrix);
@@ -3030,7 +3037,6 @@ static void demo_main(struct Demo &demo, void *view, int argc, const char *argv[
     demo.window = view;
     demo.init_vk_swapchain();
     demo.prepare();
-    demo.spin_angle = 0.4f;
 }
 
 #else
