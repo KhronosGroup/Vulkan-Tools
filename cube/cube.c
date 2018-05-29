@@ -1451,14 +1451,10 @@ static void demo_prepare_depth(struct demo *demo) {
     assert(!err);
 }
 
-/* Load a ppm file into memory */
+/* Convert ppm image data from header file into RGBA texture image */
+#include "lunarg.ppm.h"
 bool loadTexture(const char *filename, uint8_t *rgba_data, VkSubresourceLayout *layout, int32_t *width, int32_t *height) {
-#if (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
-    filename = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@(filename)].UTF8String;
-#endif
-
-#ifdef __ANDROID__
-#include <lunarg.ppm.h>
+    (void)filename;
     char *cPtr;
     cPtr = (char *)lunarg_ppm;
     if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "P6\n", 3)) {
@@ -1477,7 +1473,6 @@ bool loadTexture(const char *filename, uint8_t *rgba_data, VkSubresourceLayout *
     }
     while (strncmp(cPtr++, "\n", 1))
         ;
-
     for (int y = 0; y < *height; y++) {
         uint8_t *rowPtr = rgba_data;
         for (int x = 0; x < *width; x++) {
@@ -1488,53 +1483,7 @@ bool loadTexture(const char *filename, uint8_t *rgba_data, VkSubresourceLayout *
         }
         rgba_data += layout->rowPitch;
     }
-
     return true;
-#else
-    FILE *fPtr = fopen(filename, "rb");
-    char header[256], *cPtr, *tmp;
-
-    if (!fPtr) return false;
-
-    cPtr = fgets(header, 256, fPtr);  // P6
-    if (cPtr == NULL || strncmp(header, "P6\n", 3)) {
-        fclose(fPtr);
-        return false;
-    }
-
-    do {
-        cPtr = fgets(header, 256, fPtr);
-        if (cPtr == NULL) {
-            fclose(fPtr);
-            return false;
-        }
-    } while (!strncmp(header, "#", 1));
-
-    sscanf(header, "%u %u", width, height);
-    if (rgba_data == NULL) {
-        fclose(fPtr);
-        return true;
-    }
-    tmp = fgets(header, 256, fPtr);  // Format
-    (void)tmp;
-    if (cPtr == NULL || strncmp(header, "255\n", 3)) {
-        fclose(fPtr);
-        return false;
-    }
-
-    for (int y = 0; y < *height; y++) {
-        uint8_t *rowPtr = rgba_data;
-        for (int x = 0; x < *width; x++) {
-            size_t s = fread(rowPtr, 3, 1, fPtr);
-            (void)s;
-            rowPtr[3] = 255; /* Alpha of 1 */
-            rowPtr += 4;
-        }
-        rgba_data += layout->rowPitch;
-    }
-    fclose(fPtr);
-    return true;
-#endif
 }
 
 static void demo_prepare_texture_image(struct demo *demo, const char *filename, struct texture_object *tex_obj,

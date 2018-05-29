@@ -90,6 +90,22 @@ Start a build by selecting the Build->Build Solution menu item.
 This solution copies the loader it built to each program's build directory
 to ensure that the program uses the loader built from this solution.
 
+#### Windows Install Target
+
+The CMake project also generates an "install" target that you can use to
+copy the primary build artifacts to a specific location using a
+"bin, include, lib" style directory structure.
+This may be useful for collecting the artifacts and providing them to
+another project that is dependent on them.
+
+The default location is `$CMAKE_BINARY_DIR\install`, but can be changed
+with the `CMAKE_INSTALL_PREFIX` variable.
+You can build the install target with:
+
+    cmake --build . --config Release --target install
+
+or build the `INSTALL` target from the Visual Studio solution explorer.
+
 ### Windows Notes
 
 #### CMake Visual Studio Generators
@@ -170,7 +186,7 @@ Assuming that you have built the code as described above and the current directo
 This command installs files to:
 
 - `/usr/local/lib`:  Vulkan Tools shared objects  (e.g., Mock ICD shared library)
-- `/usr/local/bin`:  vulkaninfo application
+- `/usr/local/bin`:  cube, cubepp, and vulkaninfo applications
 - `/usr/local/share/vulkan/icd.d`:  Mock ICD JSON file
 
 You may need to run `ldconfig` in order to refresh the system loader search cache on some Linux systems.

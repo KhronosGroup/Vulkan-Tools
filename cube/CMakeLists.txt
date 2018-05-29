@@ -239,6 +239,15 @@ else()
     target_link_libraries(cube ${LIBVK})
 endif()
 
+if(APPLE)
+    set_target_properties(cube PROPERTIES
+        INSTALL_RPATH "@loader_path/../lib"
+    )
+    install(TARGETS cube DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
+    install(TARGETS cube RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+
 ######################################################################################
 # cubepp
 
@@ -258,4 +267,13 @@ else()
 
     add_executable(cubepp WIN32 cube.cpp ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
     target_link_libraries(cubepp ${LIBVK})
+endif()
+
+if(APPLE)
+    set_target_properties(cubepp PROPERTIES
+        INSTALL_RPATH "@loader_path/../lib"
+    )
+    install(TARGETS cubepp DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
+    install(TARGETS cubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
