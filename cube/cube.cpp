@@ -571,7 +571,7 @@ void Demo::build_image_ownership_cmd(uint32_t const &i) {
     auto const image_ownership_barrier =
         vk::ImageMemoryBarrier()
             .setSrcAccessMask(vk::AccessFlags())
-            .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite)
+            .setDstAccessMask(vk::AccessFlags())
             .setOldLayout(vk::ImageLayout::ePresentSrcKHR)
             .setNewLayout(vk::ImageLayout::ePresentSrcKHR)
             .setSrcQueueFamilyIndex(graphics_queue_family_index)
@@ -580,8 +580,8 @@ void Demo::build_image_ownership_cmd(uint32_t const &i) {
             .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
 
     swapchain_image_resources[i].graphics_to_present_cmd.pipelineBarrier(
-        vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::DependencyFlagBits(), 0, nullptr, 0, nullptr, 1, &image_ownership_barrier);
+        vk::PipelineStageFlagBits::eBottomOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe, vk::DependencyFlagBits(), 0, nullptr, 0,
+        nullptr, 1, &image_ownership_barrier);
 
     result = swapchain_image_resources[i].graphics_to_present_cmd.end();
     VERIFY(result == vk::Result::eSuccess);
@@ -845,7 +845,7 @@ void Demo::draw_build_cmd(vk::CommandBuffer commandBuffer) {
         auto const image_ownership_barrier =
             vk::ImageMemoryBarrier()
                 .setSrcAccessMask(vk::AccessFlags())
-                .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite)
+                .setDstAccessMask(vk::AccessFlags())
                 .setOldLayout(vk::ImageLayout::ePresentSrcKHR)
                 .setNewLayout(vk::ImageLayout::ePresentSrcKHR)
                 .setSrcQueueFamilyIndex(graphics_queue_family_index)
@@ -853,7 +853,7 @@ void Demo::draw_build_cmd(vk::CommandBuffer commandBuffer) {
                 .setImage(swapchain_image_resources[current_buffer].image)
                 .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
 
-        commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eBottomOfPipe,
+        commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eBottomOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe,
                                       vk::DependencyFlagBits(), 0, nullptr, 0, nullptr, 1, &image_ownership_barrier);
     }
 
