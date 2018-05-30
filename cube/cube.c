@@ -3011,11 +3011,6 @@ static void demo_init_vk(struct demo *demo) {
                 demo->extension_names[demo->enabled_extension_count++] = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
             }
 #endif
-            if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                if (demo->validate) {
-                    demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
-                }
-            }
             if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 if (demo->validate) {
                     demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
