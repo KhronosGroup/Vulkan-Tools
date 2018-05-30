@@ -657,6 +657,8 @@ static void demo_set_image_layout(struct demo *demo, VkImage image, VkImageAspec
                                                  .pNext = NULL,
                                                  .srcAccessMask = srcAccessMask,
                                                  .dstAccessMask = 0,
+                                                 .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+                                                 .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
                                                  .oldLayout = old_image_layout,
                                                  .newLayout = new_image_layout,
                                                  .image = image,

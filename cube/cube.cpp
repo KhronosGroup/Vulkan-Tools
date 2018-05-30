@@ -2273,8 +2273,8 @@ void Demo::set_image_layout(vk::Image image, vk::ImageAspectFlags aspectMask, vk
                              .setDstAccessMask(DstAccessMask(newLayout))
                              .setOldLayout(oldLayout)
                              .setNewLayout(newLayout)
-                             .setSrcQueueFamilyIndex(0)
-                             .setDstQueueFamilyIndex(0)
+                             .setSrcQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED)
+                             .setDstQueueFamilyIndex(VK_QUEUE_FAMILY_IGNORED)
                              .setImage(image)
                              .setSubresourceRange(vk::ImageSubresourceRange(aspectMask, 0, 1, 0, 1));
 
