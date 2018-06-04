@@ -438,9 +438,7 @@ Setup Homebrew and components
 
 ### Clone the Repository
 
-Clone the Vulkan-LoaderAndValidationLayers repository:
-
-    git clone https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers.git
+Clone the Vulkan-Tools repository as defined above in the [Download the Repository](#download-the-repository) section.
 
 ### Get the External Libraries
 
