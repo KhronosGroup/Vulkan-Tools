@@ -77,16 +77,28 @@ before_install:
 
 script:
   - set -e
+    if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
+      # Build Vulkan-Headers
+      cd ${TRAVIS_BUILD_DIR}
+      # Need different name here until Vulkan-Tools stops having Vulkan-Headers as a submodule.
+      git clone https://github.com/KhronosGroup/Vulkan-Headers.git Vulkan-Headers-TMP
+      cd Vulkan-Headers-TMP
+      mkdir build
+      cd build
+      cmake -DCMAKE_INSTALL_PREFIX=install ..
+      make -j $core_count install
+      cd ${TRAVIS_BUILD_DIR}
+    fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
       # Build Vulkan-Loader for Vulkan-Tools
       cd ${TRAVIS_BUILD_DIR}
-      git clone --recurse-submodules https://github.com/KhronosGroup/Vulkan-Loader.git
+      git clone https://github.com/KhronosGroup/Vulkan-Loader.git
       cd Vulkan-Loader
       mkdir build
       cd build
-      cmake -DCMAKE_BUILD_TYPE=Debug ..
-      make -j $core_count
+      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers-TMP/build/install -DCMAKE_INSTALL_PREFIX=install ..
+      make -j $core_count install
       cd ${TRAVIS_BUILD_DIR}
     fi
   - |
