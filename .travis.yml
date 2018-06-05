@@ -12,13 +12,15 @@ matrix:
     - env: CHECK_COMMIT_FORMAT=ON
   include:
     # Android build.
-    - os: linux
-      compiler: gcc
-      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=armeabi-v7a
+# Temporary Disable
+#    - os: linux
+#      compiler: gcc
+#      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=armeabi-v7a
     # Android 64-bit build.
-    - os: linux
-      compiler: gcc
-      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=arm64-v8a
+# Temporary Disable
+#    - os: linux
+#      compiler: gcc
+#      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=arm64-v8a
     # Linux GCC debug build.
     - os: linux
       compiler: gcc
@@ -81,9 +83,8 @@ script:
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
       # Build Vulkan-Headers
       cd ${TRAVIS_BUILD_DIR}
-      # Need different name here until Vulkan-Tools stops having Vulkan-Headers as a submodule.
-      git clone https://github.com/KhronosGroup/Vulkan-Headers.git Vulkan-Headers-TMP
-      cd Vulkan-Headers-TMP
+      git clone https://github.com/KhronosGroup/Vulkan-Headers.git
+      cd Vulkan-Headers
       mkdir build
       cd build
       cmake -DCMAKE_INSTALL_PREFIX=install ..
@@ -98,7 +99,7 @@ script:
       cd Vulkan-Loader
       mkdir build
       cd build
-      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers-TMP/build/install -DCMAKE_INSTALL_PREFIX=install ..
+      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers/build/install -DCMAKE_INSTALL_PREFIX=install ..
       make -j $core_count install
       cd ${TRAVIS_BUILD_DIR}
     fi
@@ -108,7 +109,7 @@ script:
       cd ${TRAVIS_BUILD_DIR}
       mkdir build
       cd build
-      cmake -DLOADER_REPO_ROOT=${TRAVIS_BUILD_DIR}/Vulkan-Loader -DCMAKE_BUILD_TYPE=Debug ..
+      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers/build/install -DVULKAN_LOADER_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Loader/build/install ..
       make -j $core_count
       cd ${TRAVIS_BUILD_DIR}
     fi

@@ -30,7 +30,7 @@ graphics hardware vendor and install it properly.
 
 To create your local git repository:
 
-    git clone https://github.com/KhronosGroup/Vulkan-Tools
+    git clone https://github.com/KhronosGroup/Vulkan-Tools.git
 
 ## Building On Windows
 
@@ -52,17 +52,22 @@ Windows 7+ with the following software packages:
   - Tell the installer to treat line endings "as is" (i.e. both DOS and Unix-style line endings).
   - Install both the 32-bit and 64-bit versions, as the 64-bit installer does not install the
     32-bit libraries and tools.
-- Vulkan Loader Library
-  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (vulkan-1.dll).
-    Locating the library for this repo can be done in two different ways:
-      -  The Vulkan SDK can be installed. In this case, cmake should be able to locate the loader repo through the VulkanSDK
+- Vulkan Headers and Loader Library
+  - Building the cube and vulkaninfo applications require access to the Vulkan headers and linking to the Vulkan Loader Library (vulkan-1.dll).
+    Locating these components can be done in two different ways:
+      -  The Vulkan SDK can be installed. In this case, cmake should be able to locate the headers and loader through the VulkanSDK
          environment variable.
-      -  The library can be built from the [Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader.git) repository.
-         In this case, the following option should be used on the cmake command line:
-             LOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader
-         and use absolute (not relative) paths, like so:
-             cmake -DLOADER_REPO_ROOT=c:\absolute_path_to\Vulkan-Loader ....
-    Currently, the build directory *must* be named either 'build' or 'build32'.
+      -  The headers can be built from the [Vulkan-Headers](https://github.com/KhronosGroup/Vulkan-Headers.git) repository and the
+         loader library can be built from the [Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader.git) repository.
+         Follow the instructions in those repositories to build the `install` targets.
+         When building this repo,  the following options should be used on the cmake command line:
+
+            VULKAN_HEADERS_INSTALL_DIR=\absolute_path_to\Vulkan-Headers install dir
+            VULKAN_LOADER_INSTALL_DIR=\absolute_path_to\Vulkan-Loader install dir
+         
+         Be sure to use absolute (not relative) paths, like so:
+         
+             cmake -DVULKAN_LOADER_INSTALL_DIR=c:\src\Vulkan-Loader\build\install
 - [glslang](https://github.com/KhronosGroup/glslang)
   - By default, the build scripts will attempt to download the necessary components from the glslang repo.
     However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
@@ -71,16 +76,17 @@ Windows 7+ with the following software packages:
 
 1. Open a Developer Command Prompt for VS201x
 2. Change directory to `Vulkan-Tools` -- the root of the cloned git repository
-3. Run 'git submodule update --init --recursive' -- this will download in-tree external dependencies
-4. Create a `build` directory, change into that directory, and run cmake
+3. Create a `build` directory, change into that directory, and run cmake
 
 For example, assuming an SDK is installed, for VS2017 (generators for other versions are [specified here](#cmake-visual-studio-generators)):
 
-    cmake "Visual Studio 15 2017 Win64" ..
+    cmake -G "Visual Studio 15 2017 Win64" ..
 
-If a specific version of the Loader is requred, specify the root of the loader repository, like so:
+If a specific version of the Headers or Loader is requred, specify the install dirs of these repositories, like so:
 
-    cmake -DLOADER_REPO_ROOT=c:/absolute_path_to/Vulkan-Loader -G "Visual Studio 15 2017 Win64" ..
+    cmake -DVULKAN_HEADERS_INSTALL_PATH=c:/absolute_path_to/Vulkan-Headers install dir
+          -DVULKAN_LOADER_INSTALL_PATH=c:/absolute_path_to/Vulkan-Loader install dir
+          -G "Visual Studio 15 2017 Win64" ..
 
 This will create a Windows solution file named `Vulkan-Tools.sln` in the build directory.
 
@@ -89,6 +95,10 @@ You may select "Debug" or "Release" from the Solution Configurations drop-down l
 Start a build by selecting the Build->Build Solution menu item.
 This solution copies the loader it built to each program's build directory
 to ensure that the program uses the loader built from this solution.
+
+You can also build from the command line with:
+
+    cmake --build . --config (Release or Debug)
 
 #### Windows Install Target
 
@@ -136,12 +146,23 @@ It should be straightforward to adapt this repository to other Linux distributio
     However, if a specific version of this file is required, please see the [Custom glslang Version](#custom-glslang-version) section below.
 
 Vulkan Loader Library
-  - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan.so.1).
-      - The following option should be used on the cmake command line to specify a vulkan loader library:
-             LOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader
-         making sure to specify an absoute path, like so:
-             cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader ....
-    Currently, the build directory *must* be named either 'build' or 'build32'.
+
+- Vulkan Headers and Loader Library
+  - Building the cube and vulkaninfo applications require access to the Vulkan headers and linking to the Vulkan Loader Library (libvulkan.so.1).
+    Locating these components can be done in two different ways:
+      -  The Vulkan SDK can be installed. In this case, cmake should be able to locate the headers and loader through the VulkanSDK
+         environment variable.
+      -  The headers are built with the [Vulkan-Headers](https://github.com/KhronosGroup/Vulkan-Headers.git) repository and the
+         loader library can be built from the [Vulkan-Loader](https://github.com/KhronosGroup/Vulkan-Loader.git) repository.
+         Follow the instructions in those repositories to build the `install` targets.
+         When building this repo,  the following options should be used on the cmake command line:
+
+             VULKAN_HEADERS_INSTALL_DIR=absolute_path_to Vulkan-Headers install dir
+             VULKAN_LOADER_INSTALL_DIR=absolute_path_to Vulkan-Loader install dir
+
+         Be sure to use absolute (not relative) paths, like so:
+
+             cmake -DVULKAN_LOADER_INSTALL_DIR=~/src/Vulkan-Loader/build/install
 
 ### Linux Build
 
@@ -150,15 +171,16 @@ Example debug build
 See **Loader and Validation Layer Dependencies** for more information and other options:
 
 1. In a Linux terminal, `cd Vulkan-Tools` -- the root of the cloned git repository
-2. Execute 'git submodule update --init --recursive' -- this will download in-tree external components
-3. Create a `build` directory, change into that directory, and run cmake:
+2. Create a `build` directory, change into that directory, and run cmake:
 
         mkdir build
         cd build
         # If an SDK is installed and the setup-env.sh script has been run,
         cmake -DCMAKE_BUILD_TYPE=Debug ..
         # Else if a specific version of the loader is desired, indicate the root of the loader repository like so:
-        cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DCMAKE_BUILD_TYPE=Debug ..
+        cmake -DVULKAN_HEADERS_INSTALL_DIR=/absolute_path_to/Vulkan-Headers/build/install \
+              -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader/build/install \
+              -DCMAKE_BUILD_TYPE=Debug ..
 
 4. Run `make -j8` to begin the build
 
