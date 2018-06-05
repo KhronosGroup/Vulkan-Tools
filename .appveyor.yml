@@ -50,14 +50,24 @@ before_build:
   - if %PLATFORM% == x64 (set GENERATOR="Visual Studio %VS_VERSION% Win64")
   - if %PLATFORM% == Win32 (set BUILD_DIR="build32")
   - if %PLATFORM% == x64 (set BUILD_DIR="build")
+  # Build Vulkan-Headers
+  - echo Building Vulkan-Headers for %PLATFORM% %CONFIGURATION%
+  - cd %APPVEYOR_BUILD_FOLDER%
+  # Need different name here until Vulkan-Tools stops having Vulkan-Headers as a submodule.
+  - git clone https://github.com/KhronosGroup/Vulkan-Headers.git Vulkan-Headers-TMP
+  - cd Vulkan-Headers-TMP
+  - mkdir %BUILD_DIR%
+  - cd %BUILD_DIR%
+  - cmake -G %GENERATOR% -DCMAKE_INSTALL_PREFIX=install ..
+  - cmake --build . --config %CONFIGURATION% --target install -- /maxcpucount
   # Build Vulkan-Loader
   - echo Building Vulkan-Loader for %PLATFORM% %CONFIGURATION%
   - cd %APPVEYOR_BUILD_FOLDER%
-  - git clone --recurse-submodules https://github.com/KhronosGroup/Vulkan-Loader.git
+  - git clone https://github.com/KhronosGroup/Vulkan-Loader.git
   - cd Vulkan-Loader
   - mkdir %BUILD_DIR%
   - cd %BUILD_DIR%
-  - cmake -G %GENERATOR% ..
+  - cmake -G %GENERATOR% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers-TMP/%BUILD_DIR%/install ..
   - cmake --build . --config %CONFIGURATION% -- /maxcpucount
   # Generate build files using CMake for the build step.
   - echo Generating Vulkan-Tools CMake files for %PLATFORM% %CONFIGURATION%
