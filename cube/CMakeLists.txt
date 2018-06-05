@@ -1,6 +1,7 @@
 set(CUBE_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/..
+    ${Vulkan_INCLUDE_DIR}
 )
 
 find_package(PythonInterp 3 REQUIRED)
@@ -136,14 +137,10 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
-file(GLOB TEXTURES
-  "${PROJECT_SOURCE_DIR}/cube/*.ppm"
-  )
-file(COPY ${TEXTURES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
+# LOADER_REPO_ROOT is going away soon
 # Predefine loader root as a cmake cache variable for cmake-gui
 set(LOADER_REPO_ROOT "LOADER-NOTFOUND" CACHE PATH "Absolute path to the root of the loader repository")
 
@@ -168,10 +165,6 @@ if(LOADER_REPO_ROOT)
         HINTS ${LOADER_SEARCH_PATHS}
         )
     message(STATUS "Found Vulkan: ${LIBVK}")
-else()
-    message(STATUS "Using find_package to locate Vulkan")
-    find_package(Vulkan)
-    set (LIBVK "Vulkan::Vulkan")
 endif()
 
 if(WIN32)

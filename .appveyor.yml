@@ -39,7 +39,6 @@ before_build:
   - glslangValidator.exe --version
   - echo.
   - echo Starting build for %APPVEYOR_REPO_NAME% in %APPVEYOR_BUILD_FOLDER%
-  - git submodule update --init --recursive
   # Determine the appropriate CMake generator for the current version of Visual Studio
   - echo Determining VS version
   - python .\scripts\determine_vs_version.py > vsversion.tmp
@@ -53,9 +52,8 @@ before_build:
   # Build Vulkan-Headers
   - echo Building Vulkan-Headers for %PLATFORM% %CONFIGURATION%
   - cd %APPVEYOR_BUILD_FOLDER%
-  # Need different name here until Vulkan-Tools stops having Vulkan-Headers as a submodule.
-  - git clone https://github.com/KhronosGroup/Vulkan-Headers.git Vulkan-Headers-TMP
-  - cd Vulkan-Headers-TMP
+  - git clone https://github.com/KhronosGroup/Vulkan-Headers.git
+  - cd Vulkan-Headers
   - mkdir %BUILD_DIR%
   - cd %BUILD_DIR%
   - cmake -G %GENERATOR% -DCMAKE_INSTALL_PREFIX=install ..
@@ -67,14 +65,14 @@ before_build:
   - cd Vulkan-Loader
   - mkdir %BUILD_DIR%
   - cd %BUILD_DIR%
-  - cmake -G %GENERATOR% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers-TMP/%BUILD_DIR%/install ..
-  - cmake --build . --config %CONFIGURATION% -- /maxcpucount
+  - cmake -G %GENERATOR% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers/%BUILD_DIR%/install -DCMAKE_INSTALL_PREFIX=install ..
+  - cmake --build . --config %CONFIGURATION% --target install -- /maxcpucount
   # Generate build files using CMake for the build step.
   - echo Generating Vulkan-Tools CMake files for %PLATFORM% %CONFIGURATION%
   - cd %APPVEYOR_BUILD_FOLDER%
   - mkdir build
   - cd build
-  - cmake -G %GENERATOR% -DLOADER_REPO_ROOT=%APPVEYOR_BUILD_FOLDER%\Vulkan-Loader ..
+  - cmake -G %GENERATOR% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers/%BUILD_DIR%/install -DVULKAN_LOADER_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Loader/%BUILD_DIR%/install ..
   - echo Building platform=%PLATFORM% configuration=%CONFIGURATION%
 
 platform:
