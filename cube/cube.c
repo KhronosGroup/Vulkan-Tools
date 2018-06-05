@@ -815,7 +815,7 @@ static void demo_draw_build_cmd(struct demo *demo, VkCommandBuffer cmd_buf) {
         VkImageMemoryBarrier image_ownership_barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
                                                         .pNext = NULL,
                                                         .srcAccessMask = 0,
-                                                        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                        .dstAccessMask = 0,
                                                         .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
                                                         .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
                                                         .srcQueueFamilyIndex = demo->graphics_queue_family_index,
@@ -823,8 +823,8 @@ static void demo_draw_build_cmd(struct demo *demo, VkCommandBuffer cmd_buf) {
                                                         .image = demo->swapchain_image_resources[demo->current_buffer].image,
                                                         .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1}};
 
-        vkCmdPipelineBarrier(cmd_buf, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
-                             NULL, 0, NULL, 1, &image_ownership_barrier);
+        vkCmdPipelineBarrier(cmd_buf, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0,
+                             NULL, 1, &image_ownership_barrier);
     }
     if (demo->validate) {
         demo->CmdEndDebugUtilsLabelEXT(cmd_buf);
@@ -848,7 +848,7 @@ void demo_build_image_ownership_cmd(struct demo *demo, int i) {
     VkImageMemoryBarrier image_ownership_barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
                                                     .pNext = NULL,
                                                     .srcAccessMask = 0,
-                                                    .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                                    .dstAccessMask = 0,
                                                     .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
                                                     .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
                                                     .srcQueueFamilyIndex = demo->graphics_queue_family_index,
@@ -856,8 +856,8 @@ void demo_build_image_ownership_cmd(struct demo *demo, int i) {
                                                     .image = demo->swapchain_image_resources[i].image,
                                                     .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1}};
 
-    vkCmdPipelineBarrier(demo->swapchain_image_resources[i].graphics_to_present_cmd, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &image_ownership_barrier);
+    vkCmdPipelineBarrier(demo->swapchain_image_resources[i].graphics_to_present_cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_ownership_barrier);
     err = vkEndCommandBuffer(demo->swapchain_image_resources[i].graphics_to_present_cmd);
     assert(!err);
 }
