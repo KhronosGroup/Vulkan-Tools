@@ -12,15 +12,13 @@ matrix:
     - env: CHECK_COMMIT_FORMAT=ON
   include:
     # Android build.
-# Temporary Disable
-#    - os: linux
-#      compiler: gcc
-#      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=armeabi-v7a
+    - os: linux
+      compiler: gcc
+      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=armeabi-v7a
     # Android 64-bit build.
-# Temporary Disable
-#    - os: linux
-#      compiler: gcc
-#      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=arm64-v8a
+    - os: linux
+      compiler: gcc
+      env: VULKAN_BUILD_TARGET=ANDROID ANDROID_TARGET=android-23 ANDROID_ABI=arm64-v8a
     # Linux GCC debug build.
     - os: linux
       compiler: gcc
@@ -124,6 +122,9 @@ script:
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "ANDROID" ]]; then
+      pushd ${TRAVIS_BUILD_DIR}/build-android
+      ./update_external_sources_android.sh  --abi $ANDROID_ABI --no-build
+      popd
       pushd ${TRAVIS_BUILD_DIR}/cube/android
       USE_CCACHE=1 NDK_CCACHE=ccache ndk-build APP_ABI=$ANDROID_ABI -j $core_count
       popd
