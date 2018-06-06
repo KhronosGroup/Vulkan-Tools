@@ -1,5 +1,5 @@
 #!/bin/bash
-# Update source for glslang, spirv-tools, shaderc
+# Update source for glslang, spirv-tools, shaderc, vulkan-headers
 
 # Copyright 2016 The Android Open Source Project
 # Copyright (C) 2015 Valve Corporation
@@ -18,6 +18,12 @@
 
 set -e
 
+sync_glslang=0
+sync_spirv_tools=0
+sync_spirv_headers=0
+sync_shaderc=0
+sync_vulkan_headers=1
+
 ANDROIDBUILDDIR=$PWD
 BUILDDIR=$ANDROIDBUILDDIR
 BASEDIR=$BUILDDIR/third_party
@@ -26,21 +32,25 @@ GLSLANG_REVISION=$(cat $ANDROIDBUILDDIR/glslang_revision_android)
 SPIRV_TOOLS_REVISION=$(cat $ANDROIDBUILDDIR/spirv-tools_revision_android)
 SPIRV_HEADERS_REVISION=$(cat $ANDROIDBUILDDIR/spirv-headers_revision_android)
 SHADERC_REVISION=$(cat $ANDROIDBUILDDIR/shaderc_revision_android)
+VULKAN_HEADERS_REVISION=$(cat $ANDROIDBUILDDIR/vulkan-headers_revision_android)
 
 echo "GLSLANG_REVISION=$GLSLANG_REVISION"
 echo "SPIRV_TOOLS_REVISION=$SPIRV_TOOLS_REVISION"
 echo "SPIRV_HEADERS_REVISION=$SPIRV_HEADERS_REVISION"
 echo "SHADERC_REVISION=$SHADERC_REVISION"
+echo "VULKAN_HEADERS_REVISION=$VULKAN_HEADERS_REVISION"
 
 GLSLANG_URL=$(cat $ANDROIDBUILDDIR/glslang_url_android)
 SPIRV_TOOLS_URL=$(cat $ANDROIDBUILDDIR/spirv-tools_url_android)
 SPIRV_HEADERS_URL=$(cat $ANDROIDBUILDDIR/spirv-headers_url_android)
 SHADERC_URL=$(cat $ANDROIDBUILDDIR/shaderc_url_android)
+VULKAN_HEADERS_URL=$(cat $ANDROIDBUILDDIR/vulkan-headers_url_android)
 
 echo "GLSLANG_URL=$GLSLANG_URL"
 echo "SPIRV_TOOL_URLS_=$SPIRV_TOOLS_URL"
 echo "SPIRV_HEADERS_URL=$SPIRV_HEADERS_URL"
 echo "SHADERC_URL=$SHADERC_URL"
+echo "VULKAN_HEADERS_URL=$VULKAN_HEADERS_URL"
 
 if [[ $(uname) == "Linux" ]]; then
     cores="$(nproc || echo 4)"
@@ -188,25 +198,61 @@ function build_shaderc () {
    fi
 }
 
-if [ ! -d "$BASEDIR/shaderc" -o ! -d "$BASEDIR/shaderc/.git" ]; then
-     create_shaderc
-fi
-update_shaderc
+function create_vulkan-headers () {
+   rm -rf $BASEDIR/Vulkan-Headers
+   echo "Creating local Vulkan-Headers repository ($BASEDIR/Vulkan-Headers)."
+   mkdir -p $BASEDIR/Vulkan-Headers
+   cd $BASEDIR/Vulkan-Headers
+   git clone $VULKAN_HEADERS_URL .
+   git checkout $VULKAN_HEADERS_REVISION
+}
 
-if [ ! -d "$BASEDIR/shaderc/third_party/glslang" -o ! -d "$BASEDIR/shaderc/third_party/glslang/.git" -o -d "$BASEDIR/shaderc/third_party/glslang/.svn" ]; then
-   create_glslang
-fi
-update_glslang
+function update_vulkan-headers () {
+   echo "Updating $BASEDIR/Vulkan-Headers"
+   cd $BASEDIR/Vulkan-Headers
+   if [[ $(git config --get remote.origin.url) != $VULKAN_HEADERS_URL ]]; then
+      echo "Vulkan-Headers URL mismatch, recreating local repo"
+      create_vulkan-headers
+      return
+   fi
+   git fetch --all
+   git checkout $VULKAN_HEADERS_REVISION
+}
 
-if [ ! -d "$BASEDIR/shaderc/third_party/spirv-tools" -o ! -d "$BASEDIR/shaderc/third_party/spirv-tools/.git" ]; then
-   create_spirv-tools
+if [ $sync_shaderc -eq 1 ]; then
+    if [ ! -d "$BASEDIR/shaderc" -o ! -d "$BASEDIR/shaderc/.git" ]; then
+        create_shaderc
+    fi
+    update_shaderc
 fi
-update_spirv-tools
 
-if [ ! -d "$BASEDIR/shaderc/third_party/spirv-tools/external/spirv-headers" -o ! -d "$BASEDIR/shaderc/third_party/spirv-tools/external/spirv-headers/.git" ]; then
-   create_spirv-headers
+if [ $sync_glslang -eq 1 ]; then
+    if [ ! -d "$BASEDIR/shaderc/third_party/glslang" -o ! -d "$BASEDIR/shaderc/third_party/glslang/.git" -o -d "$BASEDIR/shaderc/third_party/glslang/.svn" ]; then
+    create_glslang
+    fi
+    update_glslang
 fi
-update_spirv-headers
+
+if [ $sync_spirv_tools -eq 1 ]; then
+    if [ ! -d "$BASEDIR/shaderc/third_party/spirv-tools" -o ! -d "$BASEDIR/shaderc/third_party/spirv-tools/.git" ]; then
+    create_spirv-tools
+    fi
+    update_spirv-tools
+fi
+
+if [ $sync_spirv_headers -eq 1 ]; then
+    if [ ! -d "$BASEDIR/shaderc/third_party/spirv-tools/external/spirv-headers" -o ! -d "$BASEDIR/shaderc/third_party/spirv-tools/external/spirv-headers/.git" ]; then
+    create_spirv-headers
+    fi
+    update_spirv-headers
+fi
+
+if [ $sync_vulkan_headers -eq 1 ]; then
+    if [ ! -d "$BASEDIR/Vulkan-Headers" -o ! -d "$BASEDIR/Vulkan-Headers/.git" ]; then
+    create_vulkan-headers
+    fi
+    update_vulkan-headers
+fi
 
 if [[ -z $nobuild ]]
 then

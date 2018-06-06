@@ -22,7 +22,7 @@ LOCAL_MODULE := Cube
 LOCAL_SRC_FILES += $(DEMO_DIR)/cube.c \
                    $(SRC_DIR)/common/vulkan_wrapper.cpp \
                    $(SRC_DIR)/common/android_util.cpp
-LOCAL_C_INCLUDES += $(SRC_DIR)/Vulkan-Headers/include \
+LOCAL_C_INCLUDES += $(SRC_DIR)/build-android/third_party/Vulkan-Headers/include \
                     $(DEMO_DIR)/android/include \
                     $(SRC_DIR)/libs \
                     $(SRC_DIR)/common \
