@@ -240,7 +240,7 @@ to further customize your installation.
 
 To uninstall the files from the system directories, you can execute:
 
-    sudo make uninstall-Vulkan-Tools
+    sudo make uninstall
 
 ### Linux Tests
 
@@ -475,8 +475,7 @@ Vulkan Loader Library
 
 - Building the cube and vulkaninfo applications require linking to the Vulkan Loader Library (libvulkan.1.dylib)
   - The following option should be used on the cmake command line to specify a vulkan loader library:
-    LOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader making sure to specify an absolute path, like so:
-    cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader ....
+    VULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir making sure to specify an absolute path.
 
 ### MacOS build
 
@@ -496,7 +495,7 @@ build is:
 
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ..
         make
 
 To speed up the build on a multi-core machine, use the `-j` option for `make`
@@ -578,7 +577,7 @@ To create and open an Xcode project:
 
         mkdir build-xcode
         cd build-xcode
-        cmake -DLOADER_REPO_ROOT=/absolute_path_to/Vulkan-Loader -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK -GXcode ..
+        cmake -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK -GXcode ..
         open VULKAN.xcodeproj
 
 Within Xcode, you can select Debug or Release builds in the project's Build Settings.
