@@ -49,7 +49,8 @@ target_include_directories(cubepp PRIVATE
     ${MOLTENVK_DIR}/MoltenVK/include
 )
 
-target_link_libraries(cubepp ${LIBVK} "-framework Cocoa -framework QuartzCore")
+# We do this so vulkaninfo is linked to an individual library and NOT a framework.
+target_link_libraries(cubepp ${Vulkan_LIBRARY} "-framework Cocoa -framework QuartzCore")
 
 set_target_properties(cubepp PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Info.plist

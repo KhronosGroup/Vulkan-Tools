@@ -66,8 +66,9 @@ if(LOADER_REPO_ROOT)
 endif()
 
 if(APPLE)
-    target_link_libraries(vulkaninfo ${LIBVK} "-framework AppKit -framework QuartzCore")
-    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
+    # We do this so vulkaninfo is linked to an individual library and NOT a framework.
+    target_link_libraries(vulkaninfo ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
+    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${Vulkan_INCLUDE_DIR})
 else()
     target_link_libraries(vulkaninfo ${LIBVK})
 endif()
