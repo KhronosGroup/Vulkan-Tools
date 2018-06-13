@@ -32,11 +32,13 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${VULKAN_HEADERS_INSTALL_DIR};${VULKA
                        $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
 message(STATUS "Using find_package to locate Vulkan")
 find_package(Vulkan)
+find_package(VulkanHeaders)
 # "Vulkan::Vulkan" on macOS causes the framework to be linked to the app instead of an individual library
 set(LIBVK "Vulkan::Vulkan")
 message(STATUS "Vulkan FOUND = ${Vulkan_FOUND}")
-message(STATUS "Vulkan Include = ${Vulkan_INCLUDE_DIR}")
 message(STATUS "Vulkan Lib = ${Vulkan_LIBRARY}")
+message(STATUS "Vulkan Headers Include = ${VulkanHeaders_INCLUDE_DIR}")
+message(STATUS "Vulkan Headers Registry = ${VulkanRegistry_DIR}")
 
 # Install-related settings
 include(GNUInstallDirs)

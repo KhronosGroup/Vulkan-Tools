@@ -24,7 +24,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     if (BUILD_WSI_XLIB_SUPPORT)
         find_package(X11 REQUIRED)
     endif()
-    
+
     if (VULKANINFO_WSI_SELECTION STREQUAL "XCB")
         if (NOT BUILD_WSI_XCB_SUPPORT)
             message( FATAL_ERROR "Selected XCB for vulkaninfo build but not building Xcb support" )
@@ -45,7 +45,7 @@ endif()
 if(APPLE)
     # We do this so vulkaninfo is linked to an individual library and NOT a framework.
     target_link_libraries(vulkaninfo ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
-    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${Vulkan_INCLUDE_DIR})
+    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
 else()
     target_link_libraries(vulkaninfo ${LIBVK})
 endif()
