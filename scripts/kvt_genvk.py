@@ -20,7 +20,7 @@ from generator import write
 from cgenerator import CGeneratorOptions, COutputGenerator
 # Generator Modifications
 from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
-from helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
+from vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
 
 # Simple timer functions
 startTime = None
