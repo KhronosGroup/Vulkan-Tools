@@ -1,7 +1,7 @@
 set(CUBE_INCLUDE_DIRS
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}/..
-    ${Vulkan_INCLUDE_DIR}
+    ${VulkanHeaders_INCLUDE_DIR}
 )
 
 find_package(PythonInterp 3 REQUIRED)
