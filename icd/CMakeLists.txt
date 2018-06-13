@@ -9,8 +9,8 @@ set (PYTHON_CMD ${PYTHON_EXECUTABLE})
 # Define macro used for building vk.xml generated files
 macro(run_vk_xml_generate dependency output)
     add_custom_command(OUTPUT ${output}
-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/lvl_genvk.py -registry ${SCRIPTS_DIR}/vk.xml ${output}
-    DEPENDS ${SCRIPTS_DIR}/vk.xml ${SCRIPTS_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/lvl_genvk.py ${SCRIPTS_DIR}/reg.py
+    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/v_t_genvk.py -registry ${VulkanRegistry_DIR}/vk.xml -scripts ${VulkanRegistry_DIR} ${output}
+    DEPENDS ${VulkanRegistry_DIR}/vk.xml ${VulkanRegistry_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/v_t_genvk.py ${VulkanRegistry_DIR}/reg.py
     )
 endmacro()
 
@@ -107,7 +107,7 @@ add_custom_target(icd_generate_helper_files DEPENDS
     vk_typemap_helper.h
     )
 set_target_properties(icd_generate_helper_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
-run_vk_xml_generate(helper_file_generator.py vk_typemap_helper.h)
+run_vk_xml_generate(vulkan_tools_helper_file_generator.py vk_typemap_helper.h)
 
 # For ICD with a direct dependency on a project with the same name, use it.
 if (NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
@@ -160,7 +160,7 @@ endif()
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${Vulkan_INCLUDE_DIR}
+    ${VulkanHeaders_INCLUDE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${PROJECT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}

@@ -14,13 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse, cProfile, pdb, string, sys, time
-from reg import *
-from generator import write
-from cgenerator import CGeneratorOptions, COutputGenerator
-# Generator Modifications
-from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
-from helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
+import argparse, cProfile, pdb, string, sys, time, os
 
 # Simple timer functions
 startTime = None
@@ -283,7 +277,23 @@ if __name__ == '__main__':
     parser.add_argument('-verbose', action='store_false', dest='quiet', default=True,
                         help='Enable script output during normal execution.')
 
+    # This argument tells us where to load the script from the Vulkan-Headers registry
+    parser.add_argument('-scripts', action='store',
+                        help='Find additional scripts in this directory')
+
     args = parser.parse_args()
+
+    scripts_directory_path = os.path.dirname(os.path.abspath(__file__))
+    registry_headers_path = os.path.join(scripts_directory_path, args.scripts)
+    sys.path.insert(0, registry_headers_path)
+
+    from reg import *
+    from generator import write
+    from cgenerator import CGeneratorOptions, COutputGenerator
+
+    # Generator Modifications
+    from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
+    from vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
 
     # This splits arguments which are space-separated lists
     args.feature = [name for arg in args.feature for name in arg.split()]

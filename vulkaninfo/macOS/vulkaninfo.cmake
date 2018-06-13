@@ -18,7 +18,7 @@ set_target_properties(vulkaninfo-bundle PROPERTIES
 )
 # We do this so vulkaninfo is linked to an individual library and NOT a framework.
 target_link_libraries(vulkaninfo-bundle ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
-target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${Vulkan_INCLUDE_DIR})
+target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
 add_dependencies(vulkaninfo-bundle MoltenVK_icd-staging-json)
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.sh PROPERTIES
     MACOSX_PACKAGE_LOCATION "MacOS"
