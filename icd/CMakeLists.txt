@@ -107,7 +107,7 @@ add_custom_target(icd_generate_helper_files DEPENDS
     vk_typemap_helper.h
     )
 set_target_properties(icd_generate_helper_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
-run_vk_xml_generate(helper_file_generator.py vk_typemap_helper.h)
+run_vk_xml_generate(vulkan_tools_helper_file_generator.py vk_typemap_helper.h)
 
 # For ICD with a direct dependency on a project with the same name, use it.
 if (NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))

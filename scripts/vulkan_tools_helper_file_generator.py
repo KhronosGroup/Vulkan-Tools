@@ -110,7 +110,7 @@ class HelperFileOutputGenerator(OutputGenerator):
         self.library_name = genOpts.library_name
         # File Comment
         file_comment = '// *** THIS FILE IS GENERATED - DO NOT EDIT ***\n'
-        file_comment += '// See helper_file_generator.py for modifications\n'
+        file_comment += '// See vulkan_tools_helper_file_generator.py for modifications\n'
         write(file_comment, file=self.outFile)
         # Copyright Notice
         copyright = ''
