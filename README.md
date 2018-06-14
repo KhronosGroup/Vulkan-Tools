@@ -18,6 +18,7 @@ The following components are available in this repository:
 - [*Mock ICD*](icd/)
 - [*Cube and Cube++ Demo*](cube/)
 - [*VulkanInfo*](vulkaninfo/)
+- [*Windows Runtime*](winrt/)
 
 ## Contact Information
 * [Tobin Ehlis](mailto:tobine@google.com)
