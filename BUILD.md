@@ -84,8 +84,8 @@ For example, assuming an SDK is installed, for VS2017 (generators for other vers
 
 If a specific version of the Headers or Loader is requred, specify the install dirs of these repositories, like so:
 
-    cmake -DVULKAN_HEADERS_INSTALL_PATH=c:/absolute_path_to/Vulkan-Headers install dir
-          -DVULKAN_LOADER_INSTALL_PATH=c:/absolute_path_to/Vulkan-Loader install dir
+    cmake -DVULKAN_HEADERS_INSTALL_DIR=c:/absolute_path_to/Vulkan-Headers install dir
+          -DVULKAN_LOADER_INSTALL_DIR=c:/absolute_path_to/Vulkan-Loader install dir
           -G "Visual Studio 15 2017 Win64" ..
 
 This will create a Windows solution file named `Vulkan-Tools.sln` in the build directory.
