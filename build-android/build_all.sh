@@ -54,6 +54,8 @@ function create_APK() {
     zipalign -f 4 bin/$1-unaligned.apk bin/$1.apk
 }
 
+./update_external_sources_android.sh --no-build
+
 #
 # build cube APK
 #
