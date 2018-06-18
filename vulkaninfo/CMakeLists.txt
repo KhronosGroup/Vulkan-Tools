@@ -66,7 +66,7 @@ if(WIN32)
         endif()
     endforeach()
 
-    file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/demos)
+    file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/vulkaninfo)
 elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 endif()
