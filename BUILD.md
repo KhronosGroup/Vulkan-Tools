@@ -312,7 +312,7 @@ CMake with the `--build` option or `make` to build from the command line.
     cd Vulkan-Tools
     mkdir build
     cd build
-    cmake -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir
+    cmake -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir ..
     make
 
 See below for the details.
