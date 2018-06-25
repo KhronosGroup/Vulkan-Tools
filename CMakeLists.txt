@@ -25,11 +25,26 @@ set(TOOLS_TARGET_FOLDER "Helper Targets")
 #  User-supplied CMAKE_PREFIX_PATH containing paths to the header and/or loader install dirs
 #  CMake options VULKAN_HEADERS_INSTALL_DIR and/or VULKAN_LOADER_INSTALL_DIR
 #  Env vars VULKAN_HEADERS_INSTALL_DIR and/or VULKAN_LOADER_INSTALL_DIR
+#  If on MacOS
+#   CMake option MOTLENVK_REPO_ROOT
+#   Env vars MOLTENVK_REPO_ROOT
 #  Fallback to FindVulkan operation using SDK install or system installed components.
 set(VULKAN_HEADERS_INSTALL_DIR "HEADERS-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Headers install directory")
 set(VULKAN_LOADER_INSTALL_DIR "LOADER-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Loader install directory")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${VULKAN_HEADERS_INSTALL_DIR};${VULKAN_LOADER_INSTALL_DIR};
                        $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
+
+if (APPLE)
+    set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
+    if (NOT MOLTENVK_REPO_ROOT AND NOT DEFINED ENV{MOLTENVK_REPO_ROOT})
+        message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
+    endif()
+
+    if (NOT MOLTENVK_REPO_ROOT)
+        set(MOLTENVK_REPO_ROOT $ENV{MOLTENVK_REPO_ROOT})
+    endif()
+    message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
+endif()
 message(STATUS "Using find_package to locate Vulkan")
 find_package(Vulkan)
 find_package(VulkanHeaders)
