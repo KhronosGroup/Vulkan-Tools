@@ -5,7 +5,7 @@ Maintainer: Brett Johnson <brett@lunarg.com>
 Build-Depends: debhelper (>=10),
  cmake,
  vulkan-headers,
- vulkan-loader,
+ libvulkan1,
  vulkan-validation-layers,
  glslang,
  pkg-config,
