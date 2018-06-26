@@ -1,0 +1,30 @@
+Source: vulkan-tools
+Section: devel
+Priority: optional
+Maintainer: Brett Johnson <brett@lunarg.com>
+Build-Depends: debhelper (>=10),
+ cmake,
+ vulkan-headers,
+ vulkan-loader,
+ vulkan-validation-layers,
+ glslang,
+ pkg-config,
+ quilt
+Standards-Version: 4.1.3
+Homepage: https://github.com/KhronosGroup/Vulkan-Tools
+Vcs-Git: 
+Vcs-Browser: 
+
+Package: vulkan-tools
+Architecture: linux-any
+Depends: ${shlibs:Depends},${misc:Depends},vulkan-loader,vulkan-validation-layers
+Breaks: 
+Multi-Arch: same
+Description: Khronos Vulkan Development tools and utilities
+ This package provides Vulkan tools and utilities that can assist development by
+ enabling developers to verify their applications correct use of the Vulkan API.
+ .
+ The following components are available in this package:
+ * Mock ICD
+ * Cube and Cube++ Demo
+ * VulkanInfo
