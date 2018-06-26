@@ -17,7 +17,7 @@ Vcs-Browser:
 
 Package: vulkan-tools
 Architecture: linux-any
-Depends: ${shlibs:Depends},${misc:Depends},vulkan-loader,vulkan-validation-layers
+Depends: ${shlibs:Depends},${misc:Depends},libvulkan1,vulkan-validation-layers
 Breaks: 
 Multi-Arch: same
 Description: Khronos Vulkan Development tools and utilities
