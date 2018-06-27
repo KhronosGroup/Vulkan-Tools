@@ -78,19 +78,3 @@ else()
                                ${CMAKE_CURRENT_BINARY_DIR}/cube.app/Contents/Frameworks/libMoltenVK.dylib
                        DEPENDS vulkan)
 endif()
-
-# Fix up the library search path in the executable to find (loader) libraries in the bundle.
-install(CODE "
-    include(BundleUtilities)
-    fixup_bundle(${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"\")
-    "
-        COMPONENT Runtime)
-
-# ~~~
-# Not sure this is needed.  When activated, it makes a symlink from
-# libvulkan.dylib to libvulkan.1.dylib (which in turn symlinks to libvulkan.1.0.xx.dylib.)
-#        install(FILES
-#            "${CMAKE_BINARY_DIR}/loader/libvulkan.dylib"
-#            DESTINATION "demos/cube.app/Contents/MacOS"
-#            COMPONENT Runtime)
-# ~~~
