@@ -976,6 +976,8 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
         inst->vkGetPhysicalDeviceMemoryProperties2KHR(gpu->obj, &gpu->memory_props2);
 
         struct pNextChainBuildingBlockInfo chain_info[] = {
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR,
+             .mem_size = sizeof(VkPhysicalDevice8BitStorageFeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDevice16BitStorageFeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR,
@@ -1937,7 +1939,23 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
         void *place = gpu->features2.pNext;
         while (place) {
             struct VkStructureHeader *structure = (struct VkStructureHeader*) place;
-            if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+            if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDevice8BitStorageFeaturesKHR *b8_store_features = (VkPhysicalDevice8BitStorageFeaturesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevice8BitStorageFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>storageBuffer8BitAccess           = <div class='val'>%u</div></summary></details>\n", b8_store_features->storageBuffer8BitAccess);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>uniformAndStorageBuffer8BitAccess = <div class='val'>%u</div></summary></details>\n", b8_store_features->uniformAndStorageBuffer8BitAccess);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>storagePushConstant8              = <div class='val'>%u</div></summary></details>\n", b8_store_features->storagePushConstant8);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                }
+                else if (human_readable_output) {
+                    printf("\nVkPhysicalDevice8BitStorageFeatures:\n");
+                    printf("=====================================\n");
+                    printf("\tstorageBuffer8BitAccess           = %u\n", b8_store_features->storageBuffer8BitAccess);
+                    printf("\tuniformAndStorageBuffer8BitAccess = %u\n", b8_store_features->uniformAndStorageBuffer8BitAccess);
+                    printf("\tstoragePushConstant8              = %u\n", b8_store_features->storagePushConstant8);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDevice16BitStorageFeaturesKHR *b16_store_features = (VkPhysicalDevice16BitStorageFeaturesKHR*)structure;
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevice16BitStorageFeatures</summary>\n");
