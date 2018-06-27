@@ -200,8 +200,17 @@ else()
 endif()
 
 if(APPLE)
-    set_target_properties(cube PROPERTIES INSTALL_RPATH "@loader_path/../lib")
-    install(TARGETS cube DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    # Keep RPATH so fixup_bundle can use it to find libraries
+    set_target_properties(cube PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    install(TARGETS cube BUNDLE DESTINATION "cube")
+    # Fix up the library references to be self-contained within the bundle.
+    install(
+        CODE
+        "
+        include(BundleUtilities)
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"\")
+        "
+    )
 else()
     install(TARGETS cube RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
@@ -230,8 +239,17 @@ else()
 endif()
 
 if(APPLE)
-    set_target_properties(cubepp PROPERTIES INSTALL_RPATH "@loader_path/../lib")
-    install(TARGETS cubepp DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    # Keep RPATH so fixup_bundle can use it to find libraries
+    set_target_properties(cubepp PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    install(TARGETS cubepp BUNDLE DESTINATION "cube")
+    # Fix up the library references to be self-contained within the bundle.
+    install(
+        CODE
+        "
+        include(BundleUtilities)
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cubepp.app \"\" \"\")
+        "
+    )
 else()
     install(TARGETS cubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

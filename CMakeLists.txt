@@ -93,8 +93,6 @@ endif()
 if(APPLE)
     # CMake versions 3 or later need CMAKE_MACOSX_RPATH defined. This avoids the CMP0042 policy message.
     set(CMAKE_MACOSX_RPATH 1)
-    # The "install" target for MacOS fixes up bundles in place.
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")

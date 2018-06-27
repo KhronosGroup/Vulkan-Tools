@@ -44,9 +44,6 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
                             MACOSX_PACKAGE_LOCATION
                             "Resources/vulkan/icd.d")
 
-# Direct the MoltenVK library to the right place.
-install(FILES "${MOLTENVK_DIR}/MoltenVK/macOS/libMoltenVK.dylib" DESTINATION "demos/vulkaninfo.app/Contents/Frameworks"
-        COMPONENT Runtime)
 # Xcode projects need some extra help with what would be install steps.
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     add_custom_command(TARGET vulkaninfo-bundle POST_BUILD
@@ -60,13 +57,18 @@ else()
                        DEPENDS vulkan)
 endif()
 
-# Fix up the library search path in the executable to find (loader) libraries in the bundle. When fixup_bundle() is passed a bundle
-# in the first argument, it looks at the Info.plist file to determine the BundleExecutable.  In this case, the executable is a
-# script, which can't be fixed up. Instead pass it the explicit name of the executable.
+# Keep RPATH so fixup_bundle can use it to find libraries
+set_target_properties(vulkaninfo-bundle PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+install(TARGETS vulkaninfo-bundle BUNDLE DESTINATION "vulkaninfo")
+# Fix up the library search path in the executable to find (loader) libraries
+# in the bundle. When fixup_bundle() is passed a bundle in the first argument,
+# it looks at the Info.plist file to determine the BundleExecutable. In this
+# case, the executable is a script, which can't be fixed up. Instead pass it
+# the explicit name of the executable.
 install(
     CODE
     "
     include(BundleUtilities)
-    fixup_bundle(${CMAKE_INSTALL_PREFIX}/vulkaninfo/vulkaninfo.app/Contents/MacOS/vulkaninfo \"\" \"\")
+    fixup_bundle(\${CMAKE_INSTALL_PREFIX}/vulkaninfo/vulkaninfo.app/Contents/MacOS/vulkaninfo \"\" \"\")
     "
-    COMPONENT Runtime)
+)

@@ -697,7 +697,10 @@ build is:
 
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ..
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+              -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir \
+              -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK \
+              -DCMAKE_INSTALL_PREFIX=install ..
         make
 
 To speed up the build on a multi-core machine, use the `-j` option for `make`
@@ -738,20 +741,16 @@ To address this problem, run:
 
     make install
 
-This step "cleans up" the `RPATH` to remove any external references and
-performs other bundle fix-ups. After running `make install`, re-run the
-`otool` command again and note:
+This step copies the bundled applications to the location specified by
+CMAKE_INSTALL_PREFIX and "cleans up" the `RPATH` to remove any external
+references and performs other bundle fix-ups. After running `make install`,
+run the `otool` command again from the `build/install` directory and note:
 
 - `LC_LOAD_DYLIB` is now `@executable_path/../MacOS/libvulkan.1.dylib`
 - `LC_RPATH` is no longer present
 
 The "bundle fix-up" operation also puts a copy of the Vulkan loader into the
 bundle, making the bundle completely self-contained and self-referencing.
-
-Note that the "install" target has a very different meaning compared to the
-Linux "make install" target. The Linux "install" copies the targets to system
-directories. In MacOS, "install" means fixing up application bundles. In both
-cases, the "install" target operations clean up the `RPATH`.
 
 ##### The Non-bundled vulkaninfo Application
 
@@ -760,18 +759,18 @@ can run from the command line:
 
     vulkaninfo/vulkaninfo
 
-If you run this before you run "make install", vulkaninfo's RPATH is already
+If you run this from the build directory, vulkaninfo's RPATH is already
 set to point to the Vulkan loader in the build tree, so it has no trouble
 finding it. But the loader will not find the MoltenVK driver and you'll see a
 message about an incompatible driver. To remedy this:
 
-    VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
+    VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json vulkaninfo/vulkaninfo
 
-If you run `vulkaninfo` after doing a "make install", the `RPATH` in the
-`vulkaninfo` application got removed and the OS needs extra help to locate the
-Vulkan loader:
+If you run `vulkaninfo` from the install directory, the `RPATH` in the
+`vulkaninfo` application got removed and the OS needs extra help to locate
+the Vulkan loader:
 
-    DYLD_LIBRARY_PATH=<path-to>/Vulkan-Loader/loader VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json demos/vulkaninfo
+    DYLD_LIBRARY_PATH=<path-to>/Vulkan-Loader/loader VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json vulkaninfo/vulkaninfo
 
 #### Building with the Xcode Generator
 
