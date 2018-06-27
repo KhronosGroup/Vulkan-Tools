@@ -885,7 +885,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceDiscardRectanglePropertiesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceMultiviewPropertiesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceMultiviewPropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceMaintenance3PropertiesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2548,6 +2550,19 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("=========================================\n");
                     printf("\tmaxMultiviewViewCount     = %u\n", multiview_props->maxMultiviewViewCount    );
                     printf("\tmaxMultiviewInstanceIndex = %u\n", multiview_props->maxMultiviewInstanceIndex);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR) {
+                VkPhysicalDeviceMaintenance3PropertiesKHR *maintenance3_props = (VkPhysicalDeviceMaintenance3PropertiesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMaintenance3Properties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxPerSetDescriptors    = <div class='val'>" PRIuLEAST32 "</div></summary></details>\n", maintenance3_props->maxPerSetDescriptors);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxMemoryAllocationSize = <div class='val'>" PRIuLEAST32 "</div></summary></details>\n", maintenance3_props->maxMemoryAllocationSize);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceMaintenance3Properties:\n");
+                    printf("=======================================\n");
+                    printf("\tmaxPerSetDescriptors    = " PRIuLEAST32 "\n", maintenance3_props->maxPerSetDescriptors   );
+                    printf("\tmaxMemoryAllocationSize = " PRIuLEAST32 "\n", maintenance3_props->maxMemoryAllocationSize);
                 }
             }
             place = structure->pNext;
