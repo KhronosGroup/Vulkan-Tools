@@ -27,8 +27,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
-# Installing the Mock ICD to system directories is probably not desired since
-# this ICD is not a very complete implementation.
+# Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
 
@@ -37,6 +36,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # "Helper" targets that don't have interesting source code should set their FOLDER property to this
 set(TOOLS_TARGET_FOLDER "Helper Targets")
 
+# ~~~
 # Find Vulkan Headers and Loader
 # Search order:
 #  User-supplied CMAKE_PREFIX_PATH containing paths to the header and/or loader install dirs
@@ -46,18 +46,19 @@ set(TOOLS_TARGET_FOLDER "Helper Targets")
 #   CMake option MOTLENVK_REPO_ROOT
 #   Env vars MOLTENVK_REPO_ROOT
 #  Fallback to FindVulkan operation using SDK install or system installed components.
+# ~~~
 set(VULKAN_HEADERS_INSTALL_DIR "HEADERS-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Headers install directory")
 set(VULKAN_LOADER_INSTALL_DIR "LOADER-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Loader install directory")
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${VULKAN_HEADERS_INSTALL_DIR};${VULKAN_LOADER_INSTALL_DIR};
-                       $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
+    $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
 
-if (APPLE)
+if(APPLE)
     set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
-    if (NOT MOLTENVK_REPO_ROOT AND NOT DEFINED ENV{MOLTENVK_REPO_ROOT})
+    if(NOT MOLTENVK_REPO_ROOT AND NOT DEFINED ENV{MOLTENVK_REPO_ROOT})
         message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
     endif()
 
-    if (NOT MOLTENVK_REPO_ROOT)
+    if(NOT MOLTENVK_REPO_ROOT)
         set(MOLTENVK_REPO_ROOT $ENV{MOLTENVK_REPO_ROOT})
     endif()
     message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
@@ -75,47 +76,44 @@ message(STATUS "Vulkan Headers Registry = ${VulkanRegistry_DIR}")
 # Install-related settings
 include(GNUInstallDirs)
 # Set a better default install location for Windows only if the user did not provide one.
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE )
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE)
 endif()
 
 # uninstall target
-if (NOT TARGET uninstall)
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
+if(NOT TARGET uninstall)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+                   IMMEDIATE
+                   @ONLY)
 
-    add_custom_target(uninstall
-        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+    add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
     set_target_properties(uninstall PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
 endif()
 
 if(APPLE)
-    # CMake versions 3 or later need CMAKE_MACOSX_RPATH defined.
-    # This avoids the CMP0042 policy message.
+    # CMake versions 3 or later need CMAKE_MACOSX_RPATH defined. This avoids the CMP0042 policy message.
     set(CMAKE_MACOSX_RPATH 1)
     # The "install" target for MacOS fixes up bundles in place.
     set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 endif()
 
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(COMMON_COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers")
     set(COMMON_COMPILE_FLAGS "${COMMON_COMPILE_FLAGS} -fno-strict-aliasing -fno-builtin-memcmp")
 
-    # For GCC version 7.1 or greater, we need to disable the implicit fallthrough warning since
-    # there's no consistent way to satisfy all compilers until they all accept the C++17 standard
-    if (CMAKE_COMPILER_IS_GNUCC AND NOT (CMAKE_CXX_COMPILER_VERSION LESS 7.1))
+    # For GCC version 7.1 or greater, we need to disable the implicit fallthrough warning since there's no consistent way to satisfy
+    # all compilers until they all accept the C++17 standard
+    if(CMAKE_COMPILER_IS_GNUCC AND NOT (CMAKE_CXX_COMPILER_VERSION LESS 7.1))
         set(COMMON_COMPILE_FLAGS "${COMMON_COMPILE_FLAGS} -Wimplicit-fallthrough=0")
     endif()
 
-    if (APPLE)
+    if(APPLE)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_COMPILE_FLAGS}")
     else()
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ${COMMON_COMPILE_FLAGS}")
     endif()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_COMPILE_FLAGS} -std=c++11 -fno-rtti")
-    if (UNIX)
+    if(UNIX)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
     endif()

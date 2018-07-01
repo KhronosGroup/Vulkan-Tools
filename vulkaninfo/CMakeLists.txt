@@ -20,10 +20,10 @@
 if(WIN32)
     add_executable(vulkaninfo vulkaninfo.c vulkaninfo.rc)
 elseif(APPLE)
-    add_executable(vulkaninfo vulkaninfo.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
-        ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h
-        )
+    add_executable(vulkaninfo
+                   vulkaninfo.c
+                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
 else()
     add_executable(vulkaninfo vulkaninfo.c)
 endif()
@@ -34,24 +34,24 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     set(VULKANINFO_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for vulkaninfo (XCB, XLIB)")
 
-    if (BUILD_WSI_XCB_SUPPORT)
+    if(BUILD_WSI_XCB_SUPPORT)
         find_package(XCB REQUIRED)
     endif()
 
-    if (BUILD_WSI_XLIB_SUPPORT)
+    if(BUILD_WSI_XLIB_SUPPORT)
         find_package(X11 REQUIRED)
     endif()
 
-    if (VULKANINFO_WSI_SELECTION STREQUAL "XCB")
-        if (NOT BUILD_WSI_XCB_SUPPORT)
-            message( FATAL_ERROR "Selected XCB for vulkaninfo build but not building Xcb support" )
+    if(VULKANINFO_WSI_SELECTION STREQUAL "XCB")
+        if(NOT BUILD_WSI_XCB_SUPPORT)
+            message(FATAL_ERROR "Selected XCB for vulkaninfo build but not building Xcb support")
         endif()
         target_include_directories(vulkaninfo PRIVATE ${XCB_INCLUDE_DIRS})
         target_link_libraries(vulkaninfo ${XCB_LIBRARIES})
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XCB_KHR)
-    elseif (VULKANINFO_WSI_SELECTION STREQUAL "XLIB")
-        if (NOT BUILD_WSI_XLIB_SUPPORT)
-            message( FATAL_ERROR "Selected XLIB for vulkaninfo build but not building Xlib support" )
+    elseif(VULKANINFO_WSI_SELECTION STREQUAL "XLIB")
+        if(NOT BUILD_WSI_XLIB_SUPPORT)
+            message(FATAL_ERROR "Selected XLIB for vulkaninfo build but not building Xlib support")
         endif()
         target_include_directories(vulkaninfo PRIVATE ${X11_INCLUDE_DIR})
         target_link_libraries(vulkaninfo ${X11_LIBRARIES})
@@ -76,8 +76,16 @@ if(WIN32)
     target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS)
 
     # Use static MSVCRT libraries
-    foreach(configuration in CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
-                             CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    foreach(configuration
+            in
+            CMAKE_C_FLAGS_DEBUG
+            CMAKE_C_FLAGS_MINSIZEREL
+            CMAKE_C_FLAGS_RELEASE
+            CMAKE_C_FLAGS_RELWITHDEBINFO
+            CMAKE_CXX_FLAGS_DEBUG
+            CMAKE_CXX_FLAGS_MINSIZEREL
+            CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_RELWITHDEBINFO)
         if(${configuration} MATCHES "/MD")
             string(REGEX REPLACE "/MD" "/MT" ${configuration} "${${configuration}}")
         endif()
@@ -89,9 +97,7 @@ elseif(APPLE)
 endif()
 
 if(APPLE)
-    set_target_properties(vulkaninfo PROPERTIES
-        INSTALL_RPATH "@loader_path/../lib"
-    )
+    set_target_properties(vulkaninfo PROPERTIES INSTALL_RPATH "@loader_path/../lib")
     install(TARGETS vulkaninfo DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 else()
     install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

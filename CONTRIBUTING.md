@@ -1,6 +1,6 @@
-## How to Contribute to Vulkan Source Repositories
+# How to Contribute to Vulkan Source Repositories
 
-### **The Repository**
+## **The Repository**
 
 The source code for The Vulkan-Tools components is sponsored by Khronos and LunarG.
 * [Khronos Vulkan-Tools](https://github.com/KhronosGroup/Vulkan-Tools)
@@ -34,9 +34,9 @@ decision during code review. This should be used responsibly. An example of a ba
 a good reason is "This violates the style guide, but it improves type safety."
 
 * Run **clang-format** on your changes to maintain consistent formatting
-    * There are `.clang-format files` present in the repository to define clang-format settings
+    * There are `.clang-format` files present in the repository to define clang-format settings
       which are found and used automatically by clang-format.
-	* **clang-format** binaries are available from the LLVM orginization, here: https://clang.llvm.org/. Our CI system (Travis-CI)
+	* **clang-format** binaries are available from the LLVM orginization, here: [LLVM](https://clang.llvm.org/). Our CI system (Travis-CI)
 	  currently uses clang-format version 5.0.0 to check that the lines of code you have changed are formatted properly. It is
 	  recommended that you use the same version to format your code prior to submission.
     * A sample git workflow may look like:
@@ -76,6 +76,28 @@ that to be accepted into the repository, the pull request must [pass all tests](
 * Run tests that explicitly exercise your changes.
 * Feel free to subject your code changes to other tests as well!
 
+#### Coding Conventions for [CMake](http://cmake.org) files
+
+* When editing configuration files for CMake, follow the style conventions of the surrounding code.
+  * The column limit is 132.
+  * The indent is 4 spaces.
+  * CMake functions are lower-case.
+  * Variable and keyword names are upper-case.
+* The format is defined by
+  [cmake-format](https://github.com/cheshirekow/cmake_format)
+  using the `.cmake-format.py` file in the repository to define the settings.
+  See the cmake-format page for information about its simple markup for comments.
+* Disable reformatting of a block of comment lines by inserting
+  a `# ~~~` comment line before and after that block.
+* Disable any formatting of a block of lines by surrounding that block with
+  `# cmake-format: off` and `# cmake-format: on` comment lines.
+* To install: `sudo pip install cmake_format`
+* To run: `cmake-format --in-place $FILENAME`
+* **IMPORTANT (June 2018)** cmake-format v0.3.6 has a
+  [bug]( https://github.com/cheshirekow/cmake_format/issues/50)
+  that can corrupt the formatting of comment lines in CMake files.
+  A workaround is to use the following command _before_ running cmake-format:
+  `sed --in-place='' 's/^  *#/#/' $FILENAME`
 
 ### **Contributor License Agreement (CLA)**
 
