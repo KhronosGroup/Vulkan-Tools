@@ -949,7 +949,11 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
              .mem_size = sizeof(VkPhysicalDeviceMultiviewPropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceMaintenance3PropertiesKHR)},
-            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR, .mem_size = sizeof(VkPhysicalDeviceIDPropertiesKHR)}};
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR, .mem_size = sizeof(VkPhysicalDeviceIDPropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceDriverPropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -1047,7 +1051,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceMultiviewFeaturesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceMultiviewFeaturesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceFloat16Int8FeaturesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2209,6 +2215,20 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\tmultiviewGeometryShader     = %u\n", multiview_features->multiviewGeometryShader    );
                     printf("\tmultiviewTessellationShader = %u\n", multiview_features->multiviewTessellationShader);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceFloat16Int8FeaturesKHR *float_int_features = (VkPhysicalDeviceFloat16Int8FeaturesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFloat16Int8Features</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderFloat16 = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_int_features->shaderFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt8    = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_int_features->shaderInt8);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                }
+                else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceFloat16Int8Features:\n");
+                    printf("====================================\n");
+                    printf("\tshaderFloat16 = %" PRIuLEAST32 "\n", float_int_features->shaderFloat16);
+                    printf("\tshaderInt8    = %" PRIuLEAST32 "\n", float_int_features->shaderInt8);
+                }
             }
             place = structure->pNext;
         }
@@ -2742,7 +2762,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceDiscardRectangleProperties:\n");
-                    printf("=========================================\n");
+                    printf("===========================================\n");
                     printf("\tmaxDiscardRectangles               = %u\n", discard_rect_props->maxDiscardRectangles);
                 }
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
@@ -2754,7 +2774,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceMultiviewProperties:\n");
-                    printf("=========================================\n");
+                    printf("====================================\n");
                     printf("\tmaxMultiviewViewCount     = %u\n", multiview_props->maxMultiviewViewCount    );
                     printf("\tmaxMultiviewInstanceIndex = %u\n", multiview_props->maxMultiviewInstanceIndex);
                 }
@@ -2779,107 +2799,176 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     // length modifier so cast the operands and use field width
                     // "2" to fake it.
                     fprintf(out, "\t\t\t\t\t\t<details><summary>deviceUUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x</div></summary></details>\n",
-                            (uint32_t)id_props->deviceUUID[0],
-                            (uint32_t)id_props->deviceUUID[1],
-                            (uint32_t)id_props->deviceUUID[2],
-                            (uint32_t)id_props->deviceUUID[3],
-                            (uint32_t)id_props->deviceUUID[4],
-                            (uint32_t)id_props->deviceUUID[5],
-                            (uint32_t)id_props->deviceUUID[6],
-                            (uint32_t)id_props->deviceUUID[7],
-                            (uint32_t)id_props->deviceUUID[8],
-                            (uint32_t)id_props->deviceUUID[9],
-                            (uint32_t)id_props->deviceUUID[10],
-                            (uint32_t)id_props->deviceUUID[11],
-                            (uint32_t)id_props->deviceUUID[12],
-                            (uint32_t)id_props->deviceUUID[13],
-                            (uint32_t)id_props->deviceUUID[14],
-                            (uint32_t)id_props->deviceUUID[15]);
+                        (uint32_t)id_props->deviceUUID[0],
+                        (uint32_t)id_props->deviceUUID[1],
+                        (uint32_t)id_props->deviceUUID[2],
+                        (uint32_t)id_props->deviceUUID[3],
+                        (uint32_t)id_props->deviceUUID[4],
+                        (uint32_t)id_props->deviceUUID[5],
+                        (uint32_t)id_props->deviceUUID[6],
+                        (uint32_t)id_props->deviceUUID[7],
+                        (uint32_t)id_props->deviceUUID[8],
+                        (uint32_t)id_props->deviceUUID[9],
+                        (uint32_t)id_props->deviceUUID[10],
+                        (uint32_t)id_props->deviceUUID[11],
+                        (uint32_t)id_props->deviceUUID[12],
+                        (uint32_t)id_props->deviceUUID[13],
+                        (uint32_t)id_props->deviceUUID[14],
+                        (uint32_t)id_props->deviceUUID[15]);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>driverUUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x</div></summary></details>\n",
-                            (uint32_t)id_props->driverUUID[0],
-                            (uint32_t)id_props->driverUUID[1],
-                            (uint32_t)id_props->driverUUID[2],
-                            (uint32_t)id_props->driverUUID[3],
-                            (uint32_t)id_props->driverUUID[4],
-                            (uint32_t)id_props->driverUUID[5],
-                            (uint32_t)id_props->driverUUID[6],
-                            (uint32_t)id_props->driverUUID[7],
-                            (uint32_t)id_props->driverUUID[8],
-                            (uint32_t)id_props->driverUUID[9],
-                            (uint32_t)id_props->driverUUID[10],
-                            (uint32_t)id_props->driverUUID[11],
-                            (uint32_t)id_props->driverUUID[12],
-                            (uint32_t)id_props->driverUUID[13],
-                            (uint32_t)id_props->driverUUID[14],
-                            (uint32_t)id_props->driverUUID[15]);
+                        (uint32_t)id_props->driverUUID[0],
+                        (uint32_t)id_props->driverUUID[1],
+                        (uint32_t)id_props->driverUUID[2],
+                        (uint32_t)id_props->driverUUID[3],
+                        (uint32_t)id_props->driverUUID[4],
+                        (uint32_t)id_props->driverUUID[5],
+                        (uint32_t)id_props->driverUUID[6],
+                        (uint32_t)id_props->driverUUID[7],
+                        (uint32_t)id_props->driverUUID[8],
+                        (uint32_t)id_props->driverUUID[9],
+                        (uint32_t)id_props->driverUUID[10],
+                        (uint32_t)id_props->driverUUID[11],
+                        (uint32_t)id_props->driverUUID[12],
+                        (uint32_t)id_props->driverUUID[13],
+                        (uint32_t)id_props->driverUUID[14],
+                        (uint32_t)id_props->driverUUID[15]);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>deviceLUIDValid = <div class='val'>%s</div></summary></details>\n",
-                            id_props->deviceLUIDValid ? "true" : "false" );
+                        id_props->deviceLUIDValid ? "true" : "false");
                     if (id_props->deviceLUIDValid) {
                         fprintf(out, "\t\t\t\t\t\t<details><summary>deviceLUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x%02x%02x</div></summary></details>\n",
-                                (uint32_t)id_props->deviceLUID[0],
-                                (uint32_t)id_props->deviceLUID[1],
-                                (uint32_t)id_props->deviceLUID[2],
-                                (uint32_t)id_props->deviceLUID[3],
-                                (uint32_t)id_props->deviceLUID[4],
-                                (uint32_t)id_props->deviceLUID[5],
-                                (uint32_t)id_props->deviceLUID[6],
-                                (uint32_t)id_props->deviceLUID[7]);
+                            (uint32_t)id_props->deviceLUID[0],
+                            (uint32_t)id_props->deviceLUID[1],
+                            (uint32_t)id_props->deviceLUID[2],
+                            (uint32_t)id_props->deviceLUID[3],
+                            (uint32_t)id_props->deviceLUID[4],
+                            (uint32_t)id_props->deviceLUID[5],
+                            (uint32_t)id_props->deviceLUID[6],
+                            (uint32_t)id_props->deviceLUID[7]);
                         fprintf(out, "\t\t\t\t\t\t<details><summary>deviceNodeMask  = <div class='val'>0x%08x</div></summary></details>\n",
-                                id_props->deviceNodeMask);
+                            id_props->deviceNodeMask);
                     }
                     fprintf(out, "\t\t\t\t\t</details>\n");
-                } else if (human_readable_output) {
+                }
+                else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceIDProperties:\n");
                     printf("=========================================\n");
                     printf("\tdeviceUUID      = %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
-                            (uint32_t)id_props->deviceUUID[0],
-                            (uint32_t)id_props->deviceUUID[1],
-                            (uint32_t)id_props->deviceUUID[2],
-                            (uint32_t)id_props->deviceUUID[3],
-                            (uint32_t)id_props->deviceUUID[4],
-                            (uint32_t)id_props->deviceUUID[5],
-                            (uint32_t)id_props->deviceUUID[6],
-                            (uint32_t)id_props->deviceUUID[7],
-                            (uint32_t)id_props->deviceUUID[8],
-                            (uint32_t)id_props->deviceUUID[9],
-                            (uint32_t)id_props->deviceUUID[10],
-                            (uint32_t)id_props->deviceUUID[11],
-                            (uint32_t)id_props->deviceUUID[12],
-                            (uint32_t)id_props->deviceUUID[13],
-                            (uint32_t)id_props->deviceUUID[14],
-                            (uint32_t)id_props->deviceUUID[15]);
+                        (uint32_t)id_props->deviceUUID[0],
+                        (uint32_t)id_props->deviceUUID[1],
+                        (uint32_t)id_props->deviceUUID[2],
+                        (uint32_t)id_props->deviceUUID[3],
+                        (uint32_t)id_props->deviceUUID[4],
+                        (uint32_t)id_props->deviceUUID[5],
+                        (uint32_t)id_props->deviceUUID[6],
+                        (uint32_t)id_props->deviceUUID[7],
+                        (uint32_t)id_props->deviceUUID[8],
+                        (uint32_t)id_props->deviceUUID[9],
+                        (uint32_t)id_props->deviceUUID[10],
+                        (uint32_t)id_props->deviceUUID[11],
+                        (uint32_t)id_props->deviceUUID[12],
+                        (uint32_t)id_props->deviceUUID[13],
+                        (uint32_t)id_props->deviceUUID[14],
+                        (uint32_t)id_props->deviceUUID[15]);
                     printf("\tdriverUUID      = %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
-                            (uint32_t)id_props->driverUUID[0],
-                            (uint32_t)id_props->driverUUID[1],
-                            (uint32_t)id_props->driverUUID[2],
-                            (uint32_t)id_props->driverUUID[3],
-                            (uint32_t)id_props->driverUUID[4],
-                            (uint32_t)id_props->driverUUID[5],
-                            (uint32_t)id_props->driverUUID[6],
-                            (uint32_t)id_props->driverUUID[7],
-                            (uint32_t)id_props->driverUUID[8],
-                            (uint32_t)id_props->driverUUID[9],
-                            (uint32_t)id_props->driverUUID[10],
-                            (uint32_t)id_props->driverUUID[11],
-                            (uint32_t)id_props->driverUUID[12],
-                            (uint32_t)id_props->driverUUID[13],
-                            (uint32_t)id_props->driverUUID[14],
-                            (uint32_t)id_props->driverUUID[15]);
+                        (uint32_t)id_props->driverUUID[0],
+                        (uint32_t)id_props->driverUUID[1],
+                        (uint32_t)id_props->driverUUID[2],
+                        (uint32_t)id_props->driverUUID[3],
+                        (uint32_t)id_props->driverUUID[4],
+                        (uint32_t)id_props->driverUUID[5],
+                        (uint32_t)id_props->driverUUID[6],
+                        (uint32_t)id_props->driverUUID[7],
+                        (uint32_t)id_props->driverUUID[8],
+                        (uint32_t)id_props->driverUUID[9],
+                        (uint32_t)id_props->driverUUID[10],
+                        (uint32_t)id_props->driverUUID[11],
+                        (uint32_t)id_props->driverUUID[12],
+                        (uint32_t)id_props->driverUUID[13],
+                        (uint32_t)id_props->driverUUID[14],
+                        (uint32_t)id_props->driverUUID[15]);
                     printf("\tdeviceLUIDValid = %s\n",
-                           id_props->deviceLUIDValid ? "true" : "false" );
+                        id_props->deviceLUIDValid ? "true" : "false");
                     if (id_props->deviceLUIDValid) {
                         printf("\tdeviceLUID      = %02x%02x%02x%02x-%02x%02x%02x%02x\n",
-                                (uint32_t)id_props->deviceLUID[0],
-                                (uint32_t)id_props->deviceLUID[1],
-                                (uint32_t)id_props->deviceLUID[2],
-                                (uint32_t)id_props->deviceLUID[3],
-                                (uint32_t)id_props->deviceLUID[4],
-                                (uint32_t)id_props->deviceLUID[5],
-                                (uint32_t)id_props->deviceLUID[6],
-                                (uint32_t)id_props->deviceLUID[7]);
+                            (uint32_t)id_props->deviceLUID[0],
+                            (uint32_t)id_props->deviceLUID[1],
+                            (uint32_t)id_props->deviceLUID[2],
+                            (uint32_t)id_props->deviceLUID[3],
+                            (uint32_t)id_props->deviceLUID[4],
+                            (uint32_t)id_props->deviceLUID[5],
+                            (uint32_t)id_props->deviceLUID[6],
+                            (uint32_t)id_props->deviceLUID[7]);
                         printf("\tdeviceNodeMask  = 0x%08x\n",
-                                id_props->deviceNodeMask);
+                            id_props->deviceNodeMask);
                     }
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceDriverPropertiesKHR *driver_props = (VkPhysicalDeviceDriverPropertiesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDriverProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>driverID   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", driver_props->driverID);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>driverName = %s</summary></details>\n", driver_props->driverName);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>driverInfo = %s</summary></details>\n", driver_props->driverInfo);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>conformanceVersion:</summary></details>\n");
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>major    = <div class='val'>%" PRIuLEAST8 "</div></summary></details>\n", driver_props->conformanceVersion.major);
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>minor    = <div class='val'>%" PRIuLEAST8 "</div></summary></details>\n", driver_props->conformanceVersion.minor);
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>subminor = <div class='val'>%" PRIuLEAST8 "</div></summary></details>\n", driver_props->conformanceVersion.subminor);
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>patch    = <div class='val'>%" PRIuLEAST8 "</div></summary></details>\n", driver_props->conformanceVersion.patch);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceDriverProperties:\n");
+                    printf("=================================\n");
+                    printf("\tdriverID   = %" PRIuLEAST32 "\n", driver_props->driverID);
+                    printf("\tdriverName = %s\n", driver_props->driverName);
+                    printf("\tdriverInfo = %s\n", driver_props->driverInfo);
+                    printf("\tconformanceVersion:\n");
+                    printf("\t\tmajor    = %" PRIuLEAST8 "\n", driver_props->conformanceVersion.major);
+                    printf("\t\tminor    = %" PRIuLEAST8 "\n", driver_props->conformanceVersion.minor);
+                    printf("\t\tsubminor = %" PRIuLEAST8 "\n", driver_props->conformanceVersion.subminor);
+                    printf("\t\tpatch    = %" PRIuLEAST8 "\n", driver_props->conformanceVersion.patch);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceFloatControlsPropertiesKHR *float_control_props = (VkPhysicalDeviceFloatControlsPropertiesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFloatControlsProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>separateDenormSettings       = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->separateDenormSettings);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>separateRoundingModeSettings = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->separateRoundingModeSettings);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSignedZeroInfNanPreserveFloat16 = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderSignedZeroInfNanPreserveFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSignedZeroInfNanPreserveFloat32 = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderSignedZeroInfNanPreserveFloat32);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSignedZeroInfNanPreserveFloat64 = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderSignedZeroInfNanPreserveFloat64);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormPreserveFloat16           = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormPreserveFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormPreserveFloat32           = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormPreserveFloat32);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormPreserveFloat64           = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormPreserveFloat64);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormFlushToZeroFloat16        = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormFlushToZeroFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormFlushToZeroFloat32        = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormFlushToZeroFloat32);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderDenormFlushToZeroFloat64        = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderDenormFlushToZeroFloat64);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTEFloat16          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTEFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTEFloat32          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTEFloat32);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTEFloat64          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTEFloat64);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTZFloat16          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTZFloat16);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTZFloat32          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTZFloat32);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderRoundingModeRTZFloat64          = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_control_props->shaderRoundingModeRTZFloat64);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceFloatControlsProperties:\n");
+                    printf("========================================\n");
+                    printf("\tseparateDenormSettings       = %" PRIuLEAST32 "\n", float_control_props->separateDenormSettings);
+                    printf("\tseparateRoundingModeSettings = %" PRIuLEAST32 "\n", float_control_props->separateRoundingModeSettings);
+                    printf("\tshaderSignedZeroInfNanPreserveFloat16 = %" PRIuLEAST32 "\n", float_control_props->shaderSignedZeroInfNanPreserveFloat16);
+                    printf("\tshaderSignedZeroInfNanPreserveFloat32 = %" PRIuLEAST32 "\n", float_control_props->shaderSignedZeroInfNanPreserveFloat32);
+                    printf("\tshaderSignedZeroInfNanPreserveFloat64 = %" PRIuLEAST32 "\n", float_control_props->shaderSignedZeroInfNanPreserveFloat64);
+                    printf("\tshaderDenormPreserveFloat16          = %" PRIuLEAST32 "\n", float_control_props->shaderDenormPreserveFloat16);
+                    printf("\tshaderDenormPreserveFloat32           = %" PRIuLEAST32 "\n", float_control_props->shaderDenormPreserveFloat32);
+                    printf("\tshaderDenormPreserveFloat64           = %" PRIuLEAST32 "\n", float_control_props->shaderDenormPreserveFloat64);
+                    printf("\tshaderDenormFlushToZeroFloat16        = %" PRIuLEAST32 "\n", float_control_props->shaderDenormFlushToZeroFloat16);
+                    printf("\tshaderDenormFlushToZeroFloat32        = %" PRIuLEAST32 "\n", float_control_props->shaderDenormFlushToZeroFloat32);
+                    printf("\tshaderDenormFlushToZeroFloat64        = %" PRIuLEAST32 "\n", float_control_props->shaderDenormFlushToZeroFloat64);
+                    printf("\tshaderRoundingModeRTEFloat16          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTEFloat16);
+                    printf("\tshaderRoundingModeRTEFloat32          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTEFloat32);
+                    printf("\tshaderRoundingModeRTEFloat64         = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTEFloat64);
+                    printf("\tshaderRoundingModeRTZFloat16          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat16);
+                    printf("\tshaderRoundingModeRTZFloat32          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat32);
+                    printf("\tshaderRoundingModeRTZFloat64          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat64);
                 }
             }
             place = structure->pNext;
