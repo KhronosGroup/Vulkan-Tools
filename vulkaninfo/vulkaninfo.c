@@ -758,6 +758,7 @@ static void AppCreateInstance(struct AppInstance *inst) {
     const char *info_instance_extensions[] = {VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
                                               VK_KHR_DISPLAY_EXTENSION_NAME,
                                               VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+                                              VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
                                               VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
                                               VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME,
                                               VK_KHR_SURFACE_EXTENSION_NAME,
@@ -887,7 +888,8 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceMultiviewPropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceMaintenance3PropertiesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceMaintenance3PropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR, .mem_size = sizeof(VkPhysicalDeviceIDPropertiesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2563,6 +2565,116 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("=======================================\n");
                     printf("\tmaxPerSetDescriptors    = %" PRIuLEAST32 "\n", maintenance3_props->maxPerSetDescriptors   );
                     printf("\tmaxMemoryAllocationSize = %" PRIuLEAST64 "\n", maintenance3_props->maxMemoryAllocationSize);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR) {
+                const VkPhysicalDeviceIDPropertiesKHR *id_props = (VkPhysicalDeviceIDPropertiesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceIDProperties</summary>\n");
+                    // Visual Studio 2013's printf does not support the "hh"
+                    // length modifier so cast the operands and use field width
+                    // "2" to fake it.
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>deviceUUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x</div></summary></details>\n",
+                            (uint32_t)id_props->deviceUUID[0],
+                            (uint32_t)id_props->deviceUUID[1],
+                            (uint32_t)id_props->deviceUUID[2],
+                            (uint32_t)id_props->deviceUUID[3],
+                            (uint32_t)id_props->deviceUUID[4],
+                            (uint32_t)id_props->deviceUUID[5],
+                            (uint32_t)id_props->deviceUUID[6],
+                            (uint32_t)id_props->deviceUUID[7],
+                            (uint32_t)id_props->deviceUUID[8],
+                            (uint32_t)id_props->deviceUUID[9],
+                            (uint32_t)id_props->deviceUUID[10],
+                            (uint32_t)id_props->deviceUUID[11],
+                            (uint32_t)id_props->deviceUUID[12],
+                            (uint32_t)id_props->deviceUUID[13],
+                            (uint32_t)id_props->deviceUUID[14],
+                            (uint32_t)id_props->deviceUUID[15]);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>driverUUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x</div></summary></details>\n",
+                            (uint32_t)id_props->driverUUID[0],
+                            (uint32_t)id_props->driverUUID[1],
+                            (uint32_t)id_props->driverUUID[2],
+                            (uint32_t)id_props->driverUUID[3],
+                            (uint32_t)id_props->driverUUID[4],
+                            (uint32_t)id_props->driverUUID[5],
+                            (uint32_t)id_props->driverUUID[6],
+                            (uint32_t)id_props->driverUUID[7],
+                            (uint32_t)id_props->driverUUID[8],
+                            (uint32_t)id_props->driverUUID[9],
+                            (uint32_t)id_props->driverUUID[10],
+                            (uint32_t)id_props->driverUUID[11],
+                            (uint32_t)id_props->driverUUID[12],
+                            (uint32_t)id_props->driverUUID[13],
+                            (uint32_t)id_props->driverUUID[14],
+                            (uint32_t)id_props->driverUUID[15]);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>deviceLUIDValid = <div class='val'>%s</div></summary></details>\n",
+                            id_props->deviceLUIDValid ? "true" : "false" );
+                    if (id_props->deviceLUIDValid) {
+                        fprintf(out, "\t\t\t\t\t\t<details><summary>deviceLUID      = <div class='val'>%02x%02x%02x%02x-%02x%02x%02x%02x</div></summary></details>\n",
+                                (uint32_t)id_props->deviceLUID[0],
+                                (uint32_t)id_props->deviceLUID[1],
+                                (uint32_t)id_props->deviceLUID[2],
+                                (uint32_t)id_props->deviceLUID[3],
+                                (uint32_t)id_props->deviceLUID[4],
+                                (uint32_t)id_props->deviceLUID[5],
+                                (uint32_t)id_props->deviceLUID[6],
+                                (uint32_t)id_props->deviceLUID[7]);
+                        fprintf(out, "\t\t\t\t\t\t<details><summary>deviceNodeMask  = <div class='val'>0x%08x</div></summary></details>\n",
+                                id_props->deviceNodeMask);
+                    }
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceIDProperties:\n");
+                    printf("=========================================\n");
+                    printf("\tdeviceUUID      = %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
+                            (uint32_t)id_props->deviceUUID[0],
+                            (uint32_t)id_props->deviceUUID[1],
+                            (uint32_t)id_props->deviceUUID[2],
+                            (uint32_t)id_props->deviceUUID[3],
+                            (uint32_t)id_props->deviceUUID[4],
+                            (uint32_t)id_props->deviceUUID[5],
+                            (uint32_t)id_props->deviceUUID[6],
+                            (uint32_t)id_props->deviceUUID[7],
+                            (uint32_t)id_props->deviceUUID[8],
+                            (uint32_t)id_props->deviceUUID[9],
+                            (uint32_t)id_props->deviceUUID[10],
+                            (uint32_t)id_props->deviceUUID[11],
+                            (uint32_t)id_props->deviceUUID[12],
+                            (uint32_t)id_props->deviceUUID[13],
+                            (uint32_t)id_props->deviceUUID[14],
+                            (uint32_t)id_props->deviceUUID[15]);
+                    printf("\tdriverUUID      = %02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
+                            (uint32_t)id_props->driverUUID[0],
+                            (uint32_t)id_props->driverUUID[1],
+                            (uint32_t)id_props->driverUUID[2],
+                            (uint32_t)id_props->driverUUID[3],
+                            (uint32_t)id_props->driverUUID[4],
+                            (uint32_t)id_props->driverUUID[5],
+                            (uint32_t)id_props->driverUUID[6],
+                            (uint32_t)id_props->driverUUID[7],
+                            (uint32_t)id_props->driverUUID[8],
+                            (uint32_t)id_props->driverUUID[9],
+                            (uint32_t)id_props->driverUUID[10],
+                            (uint32_t)id_props->driverUUID[11],
+                            (uint32_t)id_props->driverUUID[12],
+                            (uint32_t)id_props->driverUUID[13],
+                            (uint32_t)id_props->driverUUID[14],
+                            (uint32_t)id_props->driverUUID[15]);
+                    printf("\tdeviceLUIDValid = %s\n",
+                           id_props->deviceLUIDValid ? "true" : "false" );
+                    if (id_props->deviceLUIDValid) {
+                        printf("\tdeviceLUID      = %02x%02x%02x%02x-%02x%02x%02x%02x\n",
+                                (uint32_t)id_props->deviceLUID[0],
+                                (uint32_t)id_props->deviceLUID[1],
+                                (uint32_t)id_props->deviceLUID[2],
+                                (uint32_t)id_props->deviceLUID[3],
+                                (uint32_t)id_props->deviceLUID[4],
+                                (uint32_t)id_props->deviceLUID[5],
+                                (uint32_t)id_props->deviceLUID[6],
+                                (uint32_t)id_props->deviceLUID[7]);
+                        printf("\tdeviceNodeMask  = 0x%08x\n",
+                                id_props->deviceNodeMask);
+                    }
                 }
             }
             place = structure->pNext;
