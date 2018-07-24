@@ -1,5 +1,5 @@
-vulkan-tools (1.1.77.0~1lunarg1) UNRELEASED; urgency=medium
+vulkan-tools (1.1.79.0) UNRELEASED; urgency=medium
 
-  * First try
+  * New upstream version
 
- -- Brett Johnson <brett@linuxturtle.net>  Wed, 13 Jun 2018 13:57:32 -0600
+ -- Brett Johnson <brett@linuxturtle.net>  Tue, 26 Jun 2018 17:48:21 -0600
