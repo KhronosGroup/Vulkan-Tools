@@ -631,7 +631,7 @@ void PrintHtmlHeader(FILE *out) {
     fprintf(out, "<!doctype html>\n");
     fprintf(out, "<html>\n");
     fprintf(out, "\t<head>\n");
-    fprintf(out, "\t\t<title>Vulkan Info</title>\n");
+    fprintf(out, "\t\t<title>vulkaninfo</title>\n");
     fprintf(out, "\t\t<style type='text/css'>\n");
     fprintf(out, "\t\thtml {\n");
     fprintf(out, "\t\t\tbackground-color: #0b1e48;\n");
@@ -713,7 +713,7 @@ void PrintHtmlHeader(FILE *out) {
     fprintf(out, "\t</head>\n");
     fprintf(out, "\t<body>\n");
     fprintf(out, "\t\t<div id='header'>\n");
-    fprintf(out, "\t\t\t<h1>Vulkan Info</h1>\n");
+    fprintf(out, "\t\t\t<h1>vulkaninfo</h1>\n");
     fprintf(out, "\t\t</div>\n");
     fprintf(out, "\t\t<div id='wrapper'>\n");
 }
@@ -3318,9 +3318,9 @@ int main(int argc, char **argv) {
         PrintHtmlHeader(out);
         fprintf(out, "\t\t\t<details><summary>");
     } else if (human_readable_output) {
-        printf("===========\n");
-        printf("VULKAN INFO\n");
-        printf("===========\n\n");
+        printf("==========\n");
+        printf("VULKANINFO\n");
+        printf("==========\n\n");
     }
     if (html_output || human_readable_output) {
         fprintf(out, "Vulkan Instance Version: ");
