@@ -1,0 +1,45 @@
+{
+  "repos" : [
+    {
+      "name" : "glslang",
+      "url" : "https://github.com/KhronosGroup/glslang.git",
+      "sub_dir" : "glslang",
+      "build_dir" : "glslang/build",
+      "install_dir" : "glslang/build/install",
+      "commit" : "e99a26810f65314183163c07664a40e05647c15f",
+      "prebuild" : [
+        "python update_glslang_sources.py"
+      ]
+    },
+    {
+      "name" : "Vulkan-Headers",
+      "url" : "https://github.com/KhronosGroup/Vulkan-Headers.git",
+      "sub_dir" : "Vulkan-Headers",
+      "build_dir" : "Vulkan-Headers/build",
+      "install_dir" : "Vulkan-Headers/build/install",
+      "commit" : "c4e056d365472174471a243dfefbfe66a03564af"
+    },
+    {
+      "name" : "Vulkan-Loader",
+      "url" : "https://github.com/KhronosGroup/Vulkan-Loader.git",
+      "sub_dir" : "Vulkan-Loader",
+      "build_dir" : "Vulkan-Loader/build",
+      "install_dir" : "Vulkan-Loader/build/install",
+      "commit" : "dbf8f2cd85190ac902f1da57482a6e340f05e860",
+      "deps" : [
+        {
+          "var_name" : "VULKAN_HEADERS_INSTALL_DIR",
+          "repo_name" : "Vulkan-Headers"
+        }
+      ],
+      "cmake_options" : [
+        "-DBUILD_TESTS=NO"
+      ]
+    }
+  ],
+  "install_names" : {
+      "glslang" : "GLSLANG_INSTALL_DIR",
+      "Vulkan-Headers" : "VULKAN_HEADERS_INSTALL_DIR",
+      "Vulkan-Loader" : "VULKAN_LOADER_INSTALL_DIR"
+    }
+}
