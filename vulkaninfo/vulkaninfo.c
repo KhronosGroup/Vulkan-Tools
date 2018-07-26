@@ -1231,7 +1231,7 @@ static void AppCreateMacOSSurface(struct AppInstance *inst) {
     surface.pNext = NULL;
     surface.flags = 0;
     surface.pView = inst->window;
-    
+
     err = vkCreateMacOSSurfaceMVK(inst->instance, &surface, NULL, &inst->surface);
     assert(!err);
 }
@@ -2112,19 +2112,19 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
         fprintf(out, "\t\t\t\t\t\t<details><summary>maxViewports                            = <div class='val'>%u</div></summary></details>\n",                 limits->maxViewports                           );
         fprintf(out, "\t\t\t\t\t\t<details><summary>maxViewportDimensions[0]                = <div class='val'>%u</div></summary></details>\n",                 limits->maxViewportDimensions[0]               );
         fprintf(out, "\t\t\t\t\t\t<details><summary>maxViewportDimensions[1]                = <div class='val'>%u</div></summary></details>\n",                 limits->maxViewportDimensions[1]               );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>viewportBoundsRange[0]                  =<div class='val'>%13f</div></summary></details>\n",                limits->viewportBoundsRange[0]                 );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>viewportBoundsRange[1]                  =<div class='val'>%13f</div></summary></details>\n",                limits->viewportBoundsRange[1]                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>viewportBoundsRange[0]                  = <div class='val'>%13f</div></summary></details>\n",               limits->viewportBoundsRange[0]                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>viewportBoundsRange[1]                  = <div class='val'>%13f</div></summary></details>\n",               limits->viewportBoundsRange[1]                 );
         fprintf(out, "\t\t\t\t\t\t<details><summary>viewportSubPixelBits                    = <div class='val'>%u</div></summary></details>\n",                 limits->viewportSubPixelBits                   );
         fprintf(out, "\t\t\t\t\t\t<details><summary>minMemoryMapAlignment                   = <div class='val'>" PRINTF_SIZE_T_SPECIFIER "</div></summary></details>\n", limits->minMemoryMapAlignment         );
         fprintf(out, "\t\t\t\t\t\t<details><summary>minTexelBufferOffsetAlignment           = <div class='val'>0x%" PRIxLEAST64 "</div></summary></details>\n", limits->minTexelBufferOffsetAlignment          );
         fprintf(out, "\t\t\t\t\t\t<details><summary>minUniformBufferOffsetAlignment         = <div class='val'>0x%" PRIxLEAST64 "</div></summary></details>\n", limits->minUniformBufferOffsetAlignment        );
         fprintf(out, "\t\t\t\t\t\t<details><summary>minStorageBufferOffsetAlignment         = <div class='val'>0x%" PRIxLEAST64 "</div></summary></details>\n", limits->minStorageBufferOffsetAlignment        );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>minTexelOffset                          =<div class='val'>%3d</div></summary></details>\n",                 limits->minTexelOffset                         );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>maxTexelOffset                          =<div class='val'>%3d</div></summary></details>\n",                 limits->maxTexelOffset                         );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>minTexelGatherOffset                    =<div class='val'>%3d</div></summary></details>\n",                 limits->minTexelGatherOffset                   );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>maxTexelGatherOffset                    =<div class='val'>%3d</div></summary></details>\n",                 limits->maxTexelGatherOffset                   );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>minInterpolationOffset                  =<div class='val'>%9f</div></summary></details>\n",                 limits->minInterpolationOffset                 );
-        fprintf(out, "\t\t\t\t\t\t<details><summary>maxInterpolationOffset                  =<div class='val'>%9f</div></summary></details>\n",                 limits->maxInterpolationOffset                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>minTexelOffset                          = <div class='val'>%3d</div></summary></details>\n",                limits->minTexelOffset                         );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>maxTexelOffset                          = <div class='val'>%3d</div></summary></details>\n",                limits->maxTexelOffset                         );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>minTexelGatherOffset                    = <div class='val'>%3d</div></summary></details>\n",                limits->minTexelGatherOffset                   );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>maxTexelGatherOffset                    = <div class='val'>%3d</div></summary></details>\n",                limits->maxTexelGatherOffset                   );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>minInterpolationOffset                  = <div class='val'>%9f</div></summary></details>\n",                limits->minInterpolationOffset                 );
+        fprintf(out, "\t\t\t\t\t\t<details><summary>maxInterpolationOffset                  = <div class='val'>%9f</div></summary></details>\n",                limits->maxInterpolationOffset                 );
         fprintf(out, "\t\t\t\t\t\t<details><summary>subPixelInterpolationOffsetBits         = <div class='val'>%u</div></summary></details>\n",                 limits->subPixelInterpolationOffsetBits        );
         fprintf(out, "\t\t\t\t\t\t<details><summary>maxFramebufferWidth                     = <div class='val'>%u</div></summary></details>\n",                 limits->maxFramebufferWidth                    );
         fprintf(out, "\t\t\t\t\t\t<details><summary>maxFramebufferHeight                    = <div class='val'>%u</div></summary></details>\n",                 limits->maxFramebufferHeight                   );
@@ -2230,19 +2230,19 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
         printf("\t\tmaxViewports                            = %u\n",                 limits->maxViewports                           );
         printf("\t\tmaxViewportDimensions[0]                = %u\n",                 limits->maxViewportDimensions[0]               );
         printf("\t\tmaxViewportDimensions[1]                = %u\n",                 limits->maxViewportDimensions[1]               );
-        printf("\t\tviewportBoundsRange[0]                  =%13f\n",                limits->viewportBoundsRange[0]                 );
-        printf("\t\tviewportBoundsRange[1]                  =%13f\n",                limits->viewportBoundsRange[1]                 );
+        printf("\t\tviewportBoundsRange[0]                  = %13f\n",               limits->viewportBoundsRange[0]                 );
+        printf("\t\tviewportBoundsRange[1]                  = %13f\n",               limits->viewportBoundsRange[1]                 );
         printf("\t\tviewportSubPixelBits                    = %u\n",                 limits->viewportSubPixelBits                   );
         printf("\t\tminMemoryMapAlignment                   = " PRINTF_SIZE_T_SPECIFIER "\n", limits->minMemoryMapAlignment         );
         printf("\t\tminTexelBufferOffsetAlignment           = 0x%" PRIxLEAST64 "\n", limits->minTexelBufferOffsetAlignment          );
         printf("\t\tminUniformBufferOffsetAlignment         = 0x%" PRIxLEAST64 "\n", limits->minUniformBufferOffsetAlignment        );
         printf("\t\tminStorageBufferOffsetAlignment         = 0x%" PRIxLEAST64 "\n", limits->minStorageBufferOffsetAlignment        );
-        printf("\t\tminTexelOffset                          =%3d\n",                 limits->minTexelOffset                         );
-        printf("\t\tmaxTexelOffset                          =%3d\n",                 limits->maxTexelOffset                         );
-        printf("\t\tminTexelGatherOffset                    =%3d\n",                 limits->minTexelGatherOffset                   );
-        printf("\t\tmaxTexelGatherOffset                    =%3d\n",                 limits->maxTexelGatherOffset                   );
-        printf("\t\tminInterpolationOffset                  =%9f\n",                 limits->minInterpolationOffset                 );
-        printf("\t\tmaxInterpolationOffset                  =%9f\n",                 limits->maxInterpolationOffset                 );
+        printf("\t\tminTexelOffset                          = %3d\n",                limits->minTexelOffset                         );
+        printf("\t\tmaxTexelOffset                          = %3d\n",                limits->maxTexelOffset                         );
+        printf("\t\tminTexelGatherOffset                    = %3d\n",                limits->minTexelGatherOffset                   );
+        printf("\t\tmaxTexelGatherOffset                    = %3d\n",                limits->maxTexelGatherOffset                   );
+        printf("\t\tminInterpolationOffset                  = %9f\n",                limits->minInterpolationOffset                 );
+        printf("\t\tmaxInterpolationOffset                  = %9f\n",                limits->maxInterpolationOffset                 );
         printf("\t\tsubPixelInterpolationOffsetBits         = %u\n",                 limits->subPixelInterpolationOffsetBits        );
         printf("\t\tmaxFramebufferWidth                     = %u\n",                 limits->maxFramebufferWidth                    );
         printf("\t\tmaxFramebufferHeight                    = %u\n",                 limits->maxFramebufferHeight                   );
