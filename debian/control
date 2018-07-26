@@ -13,7 +13,7 @@ Build-Depends: debhelper (>=9),
  libvulkan1,
  vulkan-validation-layers,
  spirv-tools,
- glslang,
+ glslang-tools,
  pkg-config,
  quilt
 Standards-Version: 4.1.3

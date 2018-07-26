@@ -3,6 +3,12 @@
 %:
 	dh $@ 
 
+override_dh_clean:
+	dh_clean
+	rm -rf 	glslang \
+		__pycache__ \
+		scripts/__pycache__
+
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	-DUSE_CCACHE=On \
