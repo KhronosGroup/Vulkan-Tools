@@ -126,6 +126,7 @@ FunctionEnd
 # Installer
 Section
     Delete "$INSTDIR\install.log"
+    Delete "$INSTDIR\VULKANRT_LICENSE.rtf"
     LogSet on
 
     # Disable filesystem redirection
