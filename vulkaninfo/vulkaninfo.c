@@ -210,8 +210,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkFlags msgFlags, VkDebugRepor
         sprintf(message, "DEBUG: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
     }
 
-    printf("%s\n", message);
-    fflush(stdout);
+    fprintf(stderr, "%s\n", message);
+    fflush(stderr);
     free(message);
 
     /*
