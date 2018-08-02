@@ -25,15 +25,6 @@ set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
 if(GLSLANG_INSTALL_DIR)
     message(STATUS "Using GLSLANG_INSTALL_DIR to look for glslangValidator")
     find_program(GLSLANG_VALIDATOR names glslangValidator HINTS "${GLSLANG_INSTALL_DIR}/bin")
-elseif(GLSLANG_REPO_ROOT)
-    message(STATUS "Using glslang_repo_root to look for glslangValidator")
-    find_program(GLSLANG_VALIDATOR names glslangValidator
-                 HINTS "${GLSLANG_REPO_ROOT}/build/standalone/release"
-                 HINTS "${GLSLANG_REPO_ROOT}/build/standalone/debug"
-                 HINTS "${GLSLANG_REPO_ROOT}/build/StandAlone"
-                 HINTS "${GLSLANG_REPO_ROOT}/dbuild/StandAlone"
-                 HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/release"
-                 HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/debug")
 else()
     set(GLSLANG_VALIDATOR_NAME "glslangValidator")
     message(STATUS "Using cmake find_program to look for glslangValidator")
