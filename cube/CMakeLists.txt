@@ -78,7 +78,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
     set(DisplayServer Win32)
-    if(NOT MSVC_VERSION LESS 1900)
+    if(MSVC AND NOT MSVC_VERSION LESS 1900)
         # Enable control flow guard
         message(STATUS "Building cube with control flow guard")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/guard:cf>")
@@ -151,8 +151,9 @@ if(WIN32)
             string(REGEX REPLACE "/MD" "/MT" ${configuration} "${${configuration}}")
         endif()
     endforeach()
-
-    file(COPY cube.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/cube)
+    if(MSVC)
+        file(COPY cube.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/cube)
+    endif()
 endif()
 
 add_custom_command(COMMENT "Compiling cube vertex shader"

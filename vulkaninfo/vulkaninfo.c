@@ -23,10 +23,8 @@
  * Author: Shannon McPherson <shannon@lunarg.com>
  */
 
-#ifdef __GNUC__
-#ifndef _POSIX_C_SOURCE
-#define _POSIX_C_SOURCE 200809L
-#endif
+#ifdef __STDC_ALLOC_LIB__
+#define __STDC_WANT_LIB_EXT2__ 1
 #else
 #define strndup(p, n) strdup(p)
 #endif
