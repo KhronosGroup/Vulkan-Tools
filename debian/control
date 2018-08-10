@@ -3,14 +3,14 @@ Section: devel
 Priority: optional
 Maintainer: Brett Johnson <brett@lunarg.com>
 Build-Depends: debhelper (>=9),
+ vulkan-headers (>=1.1.82.0),
+ libvulkan1 (>=1.1.82.0),
  cmake,
  python3,
  libwayland-dev,
  libx11-dev,
  libxcb1-dev,
  libxrandr-dev,
- vulkan-headers,
- libvulkan1,
  vulkan-validation-layers,
  spirv-tools,
  glslang-tools,
@@ -23,7 +23,9 @@ Vcs-Browser:
 
 Package: vulkan-tools
 Architecture: linux-any
-Depends: ${shlibs:Depends},${misc:Depends},libvulkan1,vulkan-validation-layers
+Depends: ${shlibs:Depends},${misc:Depends},
+ libvulkan1 (>=${source:Upstream-Version}),
+ vulkan-validation-layers (>=${source:Upstream-Version})
 Breaks: 
 Multi-Arch: same
 Description: Khronos Vulkan Development tools and utilities
