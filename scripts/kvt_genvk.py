@@ -19,13 +19,19 @@ import argparse, cProfile, pdb, string, sys, time, os
 # Simple timer functions
 startTime = None
 
+# time.clock() is deprecated since python 3.3
+if sys.version_info >= (3,3):
+    clock = time.process_time
+else:
+    clock = time.clock
+
 def startTimer(timeit):
     global startTime
-    startTime = time.clock()
+    startTime = clock()
 
 def endTimer(timeit, msg):
     global startTime
-    endTime = time.clock()
+    endTime = clock()
     if (timeit):
         write(msg, endTime - startTime, file=sys.stderr)
         startTime = None
