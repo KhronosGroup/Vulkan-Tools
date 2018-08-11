@@ -2963,7 +2963,6 @@ int main(int argc, char **argv) {
 
 // Global function invoked from NS or UI views and controllers to create demo
 static void demo_main(struct Demo &demo, void *view, int argc, const char *argv[]) {
-
     demo.init(argc, (char **)argv);
     demo.window = view;
     demo.init_vk_swapchain();
