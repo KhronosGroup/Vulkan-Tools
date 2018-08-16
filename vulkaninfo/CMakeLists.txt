@@ -28,7 +28,7 @@ else()
     add_executable(vulkaninfo vulkaninfo.c)
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(UNIX AND NOT APPLE) # i.e. Linux
     include(FindPkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
@@ -64,7 +64,7 @@ if(APPLE)
     target_link_libraries(vulkaninfo ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
     target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
 else()
-    target_link_libraries(vulkaninfo ${LIBVK})
+    target_link_libraries(vulkaninfo Vulkan::Vulkan)
 endif()
 
 # Create vulkaninfo application bundle for MacOS
@@ -87,7 +87,11 @@ if(WIN32)
             CMAKE_CXX_FLAGS_RELEASE
             CMAKE_CXX_FLAGS_RELWITHDEBINFO)
         if(${configuration} MATCHES "/MD")
-            string(REGEX REPLACE "/MD" "/MT" ${configuration} "${${configuration}}")
+            string(REGEX
+                   REPLACE "/MD"
+                           "/MT"
+                           ${configuration}
+                           "${${configuration}}")
         endif()
     endforeach()
 
@@ -101,4 +105,3 @@ if(APPLE)
 else()
     install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
-

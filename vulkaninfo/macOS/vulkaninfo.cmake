@@ -28,8 +28,11 @@ add_executable(vulkaninfo-bundle
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Resources/LunarGIcon.icns
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
-set_target_properties(
-    vulkaninfo-bundle PROPERTIES OUTPUT_NAME vulkaninfo MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Info.plist)
+set_target_properties(vulkaninfo-bundle
+                      PROPERTIES OUTPUT_NAME
+                                 vulkaninfo
+                                 MACOSX_BUNDLE_INFO_PLIST
+                                 ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Info.plist)
 # We do this so vulkaninfo is linked to an individual library and NOT a framework.
 target_link_libraries(vulkaninfo-bundle ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
 target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
@@ -60,15 +63,10 @@ endif()
 # Keep RPATH so fixup_bundle can use it to find libraries
 set_target_properties(vulkaninfo-bundle PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 install(TARGETS vulkaninfo-bundle BUNDLE DESTINATION "vulkaninfo")
-# Fix up the library search path in the executable to find (loader) libraries
-# in the bundle. When fixup_bundle() is passed a bundle in the first argument,
-# it looks at the Info.plist file to determine the BundleExecutable. In this
-# case, the executable is a script, which can't be fixed up. Instead pass it
-# the explicit name of the executable.
-install(
-    CODE
-    "
+# Fix up the library search path in the executable to find (loader) libraries in the bundle. When fixup_bundle() is passed a bundle
+# in the first argument, it looks at the Info.plist file to determine the BundleExecutable. In this case, the executable is a
+# script, which can't be fixed up. Instead pass it the explicit name of the executable.
+install(CODE "
     include(BundleUtilities)
     fixup_bundle(\${CMAKE_INSTALL_PREFIX}/vulkaninfo/vulkaninfo.app/Contents/MacOS/vulkaninfo \"\" \"\")
-    "
-)
+    ")

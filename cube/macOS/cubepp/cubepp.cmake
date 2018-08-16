@@ -22,8 +22,9 @@ set(cubepp_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/AppDelegate.mm
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/DemoViewController.mm)
 
-set(cubepp_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/AppDelegate.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/DemoViewController.h)
+set(
+    cubepp_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/AppDelegate.h ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/DemoViewController.h
+    )
 
 set(cubepp_RESOURCES ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/LunarGIcon.icns)
@@ -39,10 +40,13 @@ add_executable(cubepp MACOSX_BUNDLE ${cubepp_SRCS} ${cubepp_HDRS} ${cubepp_RESOU
 if(NOT ${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     # Compile the storyboard file with the ibtool.
     add_custom_command(TARGET cubepp POST_BUILD
-                       COMMAND ${IBTOOL} --errors --warnings --notices
+                       COMMAND ${IBTOOL}
+                               --errors
+                               --warnings
+                               --notices
                                --output-format human-readable-text
                                --compile ${CMAKE_CURRENT_BINARY_DIR}/cubepp.app/Contents/Resources/Main.storyboardc
-                               ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/Main.storyboard
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/Main.storyboard
                        COMMENT "Compiling storyboard")
 endif()
 

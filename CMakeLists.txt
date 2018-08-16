@@ -15,12 +15,23 @@
 # limitations under the License.
 # ~~~
 
-cmake_minimum_required(VERSION 2.8.11)
+# CMake project initialization ---------------------------------------------------------------------------------------------------
+# This section contains pre-project() initialization, and ends with the project() command.
 
-# This must come before the project command.
+cmake_minimum_required(VERSION 3.4)
+
+# Apple: Must be set before enable_language() or project() as it may influence configuration of the toolchain and flags.
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
 
 project(Vulkan-Tools)
+
+# find_package(), include() and global project settings --------------------------------------------------------------------------
+
+find_package(PythonInterp 3 REQUIRED)
+
+# User-interface declarations ----------------------------------------------------------------------------------------------------
+# This section contains variables that affect development GUIs (e.g. CMake GUI and IDEs), such as option(), folders, and variables
+# with the CACHE property.
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -34,7 +45,15 @@ option(INSTALL_ICD "Install icd" OFF)
 # Enable IDE GUI folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # "Helper" targets that don't have interesting source code should set their FOLDER property to this
-set(TOOLS_TARGET_FOLDER "Helper Targets")
+set(TOOLS_HELPER_FOLDER "Helper Targets")
+
+option(USE_CCACHE "Use ccache" OFF)
+if(USE_CCACHE)
+    find_program(CCACHE_FOUND ccache)
+    if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    endif()
+endif()
 
 # ~~~
 # Find Vulkan Headers and Loader
@@ -66,28 +85,27 @@ endif()
 message(STATUS "Using find_package to locate Vulkan")
 find_package(Vulkan)
 find_package(VulkanHeaders)
-# "Vulkan::Vulkan" on macOS causes the framework to be linked to the app instead of an individual library
-set(LIBVK "Vulkan::Vulkan")
 message(STATUS "Vulkan FOUND = ${Vulkan_FOUND}")
 message(STATUS "Vulkan Lib = ${Vulkan_LIBRARY}")
 message(STATUS "Vulkan Headers Include = ${VulkanHeaders_INCLUDE_DIR}")
 message(STATUS "Vulkan Headers Registry = ${VulkanRegistry_DIR}")
 
-# Install-related settings
 include(GNUInstallDirs)
-# Set a better default install location for Windows only if the user did not provide one.
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
+
+if(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    # Windows: if install locations not set by user, set install prefix to "<build_dir>\install".
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE)
 endif()
 
 # uninstall target
 if(NOT TARGET uninstall)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+                   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
                    IMMEDIATE
                    @ONLY)
 
     add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-    set_target_properties(uninstall PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+    set_target_properties(uninstall PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 endif()
 
 if(APPLE)
@@ -120,12 +138,15 @@ endif()
 if(APPLE)
     include(mac_common.cmake)
 endif()
+
 if(BUILD_CUBE)
     add_subdirectory(cube)
 endif()
+
 if(BUILD_VULKANINFO)
     add_subdirectory(vulkaninfo)
 endif()
+
 if(BUILD_ICD)
     add_subdirectory(icd)
 endif()

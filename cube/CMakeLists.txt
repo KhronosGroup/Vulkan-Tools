@@ -17,38 +17,27 @@
 
 set(CUBE_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/.. ${VulkanHeaders_INCLUDE_DIR})
 
-find_package(PythonInterp 3 REQUIRED)
-set(PYTHON_CMD ${PYTHON_EXECUTABLE})
-
 set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
 
 if(GLSLANG_INSTALL_DIR)
     message(STATUS "Using GLSLANG_INSTALL_DIR to look for glslangValidator")
     find_program(GLSLANG_VALIDATOR names glslangValidator HINTS "${GLSLANG_INSTALL_DIR}/bin")
-elseif(GLSLANG_REPO_ROOT)
-    message(STATUS "Using glslang_repo_root to look for glslangValidator")
-    find_program(GLSLANG_VALIDATOR names glslangValidator
-                 HINTS "${GLSLANG_REPO_ROOT}/build/standalone/release"
-                 HINTS "${GLSLANG_REPO_ROOT}/build/standalone/debug"
-                 HINTS "${GLSLANG_REPO_ROOT}/build/StandAlone"
-                 HINTS "${GLSLANG_REPO_ROOT}/dbuild/StandAlone"
-                 HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/release"
-                 HINTS "${GLSLANG_REPO_ROOT}/build32/standalone/debug")
 else()
     set(GLSLANG_VALIDATOR_NAME "glslangValidator")
     message(STATUS "Using cmake find_program to look for glslangValidator")
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-windows-x64-Release.zip)
+    if(WIN32)
+        execute_process(
+            COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-windows-x64-Release.zip)
         set(GLSLANG_VALIDATOR_NAME "glslangValidator.exe")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-linux-Release.zip)
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        execute_process(COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-osx-Release.zip)
+    elseif(APPLE)
+        execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-osx-Release.zip)
+    elseif(UNIX AND NOT APPLE) # i.e. Linux
+        execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-linux-Release.zip)
     endif()
     find_program(GLSLANG_VALIDATOR NAMES ${GLSLANG_VALIDATOR_NAME} HINTS "${PROJECT_SOURCE_DIR}/glslang/bin")
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(UNIX AND NOT APPLE) # i.e. Linux
     include(FindPkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
@@ -75,9 +64,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
-    set(DisplayServer Win32)
     if(NOT MSVC_VERSION LESS 1900)
         # Enable control flow guard
         message(STATUS "Building cube with control flow guard")
@@ -85,9 +73,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
     endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+elseif(APPLE)
+    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
+elseif(UNIX AND NOT APPLE) # i.e. Linux
     if(NOT CUBE_WSI_SELECTION)
         set(CUBE_WSI_SELECTION "XCB")
     endif()
@@ -126,8 +116,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
 
     link_libraries(${API_LOWERCASE} m)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
@@ -148,7 +136,11 @@ if(WIN32)
             CMAKE_CXX_FLAGS_RELEASE
             CMAKE_CXX_FLAGS_RELWITHDEBINFO)
         if(${configuration} MATCHES "/MD")
-            string(REGEX REPLACE "/MD" "/MT" ${configuration} "${${configuration}}")
+            string(REGEX
+                   REPLACE "/MD"
+                           "/MT"
+                           ${configuration}
+                           "${${configuration}}")
         endif()
     endforeach()
 
@@ -183,9 +175,13 @@ if(APPLE)
     include(macOS/cube/cube.cmake)
 elseif(NOT WIN32)
     if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-        add_executable(
-            cube cube.c ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-        target_link_libraries(cube ${LIBVK})
+        add_executable(cube
+                       cube.c
+                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                       cube.vert.inc
+                       cube.frag.inc)
+        target_link_libraries(cube Vulkan::Vulkan)
     endif()
 else()
     if(CMAKE_CL_64)
@@ -194,9 +190,14 @@ else()
         set(LIB_DIR "Win32")
     endif()
 
-    add_executable(
-        cube WIN32 cube.c ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-    target_link_libraries(cube ${LIBVK})
+    add_executable(cube
+                   WIN32
+                   cube.c
+                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                   cube.vert.inc
+                   cube.frag.inc)
+    target_link_libraries(cube Vulkan::Vulkan)
 endif()
 
 if(APPLE)
@@ -204,13 +205,10 @@ if(APPLE)
     set_target_properties(cube PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     install(TARGETS cube BUNDLE DESTINATION "cube")
     # Fix up the library references to be self-contained within the bundle.
-    install(
-        CODE
-        "
+    install(CODE "
         include(BundleUtilities)
         fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"\")
-        "
-    )
+        ")
 else()
     install(TARGETS cube RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
@@ -222,9 +220,13 @@ if(APPLE)
     include(macOS/cubepp/cubepp.cmake)
 elseif(NOT WIN32)
     if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-        add_executable(
-            cubepp cube.cpp ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-        target_link_libraries(cubepp ${LIBVK})
+        add_executable(cubepp
+                       cube.cpp
+                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                       cube.vert.inc
+                       cube.frag.inc)
+        target_link_libraries(cubepp Vulkan::Vulkan)
     endif()
 else()
     if(CMAKE_CL_64)
@@ -233,9 +235,14 @@ else()
         set(LIB_DIR "Win32")
     endif()
 
-    add_executable(
-        cubepp WIN32 cube.cpp ${PROJECT_SOURCE_DIR}/cube/cube.vert ${PROJECT_SOURCE_DIR}/cube/cube.frag cube.vert.inc cube.frag.inc)
-    target_link_libraries(cubepp ${LIBVK})
+    add_executable(cubepp
+                   WIN32
+                   cube.cpp
+                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                   cube.vert.inc
+                   cube.frag.inc)
+    target_link_libraries(cubepp Vulkan::Vulkan)
 endif()
 
 if(APPLE)
@@ -243,13 +250,10 @@ if(APPLE)
     set_target_properties(cubepp PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     install(TARGETS cubepp BUNDLE DESTINATION "cube")
     # Fix up the library references to be self-contained within the bundle.
-    install(
-        CODE
-        "
+    install(CODE "
         include(BundleUtilities)
         fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cubepp.app \"\" \"\")
-        "
-    )
+        ")
 else()
     install(TARGETS cubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

@@ -174,6 +174,7 @@ on/off options currently supported by this repository:
 | BUILD_WSI_XLIB_SUPPORT | Linux | `ON` | Build the components with Xlib support. |
 | BUILD_WSI_WAYLAND_SUPPORT | Linux | `ON` | Build the components with Wayland support. |
 | BUILD_WSI_MIR_SUPPORT | Linux | `OFF` | Build the components with Mir support. |
+| USE_CCACHE | Linux | `OFF` | Enable caching with the CCache program. |
 
 The following is a table of all string options currently supported by this repository:
 

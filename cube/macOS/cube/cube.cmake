@@ -38,10 +38,13 @@ add_executable(cube MACOSX_BUNDLE ${cube_SRCS} ${cube_HDRS} ${cube_RESOURCES} cu
 if(NOT ${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     # Compile the storyboard file with the ibtool.
     add_custom_command(TARGET cube POST_BUILD
-                       COMMAND ${IBTOOL} --errors --warnings --notices
+                       COMMAND ${IBTOOL}
+                               --errors
+                               --warnings
+                               --notices
                                --output-format human-readable-text
                                --compile ${CMAKE_CURRENT_BINARY_DIR}/cube.app/Contents/Resources/Main.storyboardc
-                               ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Resources/Main.storyboard
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Resources/Main.storyboard
                        COMMENT "Compiling storyboard")
 endif()
 

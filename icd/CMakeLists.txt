@@ -15,18 +15,12 @@
 # limitations under the License.
 # ~~~
 
-cmake_minimum_required(VERSION 2.8.11)
-
-find_package(PythonInterp 3 REQUIRED)
-
 set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
-
-set(PYTHON_CMD ${PYTHON_EXECUTABLE})
 
 # Define macro used for building vk.xml generated files
 macro(run_vk_xml_generate dependency output)
     add_custom_command(OUTPUT ${output}
-                       COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/kvt_genvk.py -registry ${VulkanRegistry_DIR}/vk.xml -scripts
+                       COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/kvt_genvk.py -registry ${VulkanRegistry_DIR}/vk.xml -scripts
                                ${VulkanRegistry_DIR} ${output}
                        DEPENDS ${VulkanRegistry_DIR}/vk.xml
                                ${VulkanRegistry_DIR}/generator.py
@@ -35,12 +29,13 @@ macro(run_vk_xml_generate dependency output)
                                ${VulkanRegistry_DIR}/reg.py)
 endmacro()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
-    set(DisplayServer Win32)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR -DVK_USE_PLATFORM_ANDROID_KHX)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+elseif(APPLE)
+    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
+elseif(UNIX AND NOT APPLE) # i.e. Linux
     if(BUILD_WSI_XCB_SUPPORT)
         add_definitions(-DVK_USE_PLATFORM_XCB_KHR -DVK_USE_PLATFORM_XCB_KHX)
     endif()
@@ -57,8 +52,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         add_definitions(-DVK_USE_PLATFORM_MIR_KHR -DVK_USE_PLATFORM_MIR_KHX)
         include_directories(${MIR_INCLUDE_DIR})
     endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
@@ -71,9 +64,9 @@ if(WIN32)
         if(CMAKE_GENERATOR MATCHES "^Visual Studio.*")
             foreach(config_file ${ICD_JSON_FILES})
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json src_json)
-                file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/${config_file}.json dst_json)
+                file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${config_file}.json dst_json)
                 add_custom_target(${config_file}-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
-                set_target_properties(${config_file}-json PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+                set_target_properties(${config_file}-json PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
@@ -92,13 +85,15 @@ elseif(APPLE)
             foreach(config_file ${ICD_JSON_FILES})
                 add_custom_target(${config_file}-json ALL
                                   DEPENDS mk_icd_config_dir
-                                  COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json $<CONFIG>
+                                  COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
+                                          $<CONFIG> ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${config_file}.json
                                   VERBATIM)
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
                 add_custom_target(${config_file}-json ALL
-                                  COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
+                                  COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
+                                          ${config_file}.json
                                   VERBATIM)
             endforeach(config_file)
         endif()
@@ -107,7 +102,10 @@ else()
     # extra setup for out-of-tree builds
     if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         foreach(config_file ${ICD_JSON_FILES})
-            add_custom_target(${config_file}-json ALL COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json VERBATIM)
+            add_custom_target(${config_file}-json ALL
+                              COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json
+                                      ${config_file}.json
+                              VERBATIM)
         endforeach(config_file)
     endif()
 endif()
@@ -115,7 +113,7 @@ endif()
 # Custom target for generated vulkan helper file dependencies
 set(icd_generate_helper_files_DEPENDS)
 add_custom_target(icd_generate_helper_files DEPENDS vk_typemap_helper.h)
-set_target_properties(icd_generate_helper_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+set_target_properties(icd_generate_helper_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 run_vk_xml_generate(vulkan_tools_helper_file_generator.py vk_typemap_helper.h)
 
 # For ICD with a direct dependency on a project with the same name, use it.
@@ -125,7 +123,7 @@ if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
     endforeach(config_file)
 endif()
 add_custom_target(generate_icd_files DEPENDS mock_icd.h mock_icd.cpp)
-set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 
 if(WIN32)
     macro(add_vk_icd target)
@@ -133,7 +131,7 @@ if(WIN32)
         add_custom_target(copy-${target}-def-file ALL
                           COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} VkICD_${target}.def
                           VERBATIM)
-        set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
+        set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
         add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
         add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
         # target_link_Libraries(VkICD_${target} VkICD_utils)
@@ -157,14 +155,17 @@ else()
         # target_link_Libraries(VkICD_${target} VkICD_utils)
         add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
         set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl,-export-dynamic,-Bsymbolic,--exclude-libs,ALL")
-        if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND INSTALL_ICD)
+        if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endmacro()
 endif()
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR} ${VulkanHeaders_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_BINARY_DIR} ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                    ${VulkanHeaders_INCLUDE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR}
+                    ${PROJECT_BINARY_DIR}
+                    ${CMAKE_BINARY_DIR})
 
 if(WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
@@ -187,7 +188,7 @@ run_vk_xml_generate(mock_icd_generator.py mock_icd.cpp)
 add_vk_icd(mock_icd mock_icd.cpp mock_icd.h)
 
 # JSON file(s) install targets. For Linux, need to remove the "./" from the library path before installing to system directories.
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND INSTALL_ICD)
+if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
     foreach(config_file ${ICD_JSON_FILES})
         add_custom_target(${config_file}-staging-json ALL
                           COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
@@ -196,8 +197,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND INSTALL_ICD)
                                   ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
                           VERBATIM
                           DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json)
-        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json DESTINATION
-                      ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d)
     endforeach(config_file)
 endif()
 
@@ -207,4 +208,3 @@ if(WIN32 AND INSTALL_ICD)
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endforeach(config_file)
 endif()
-
