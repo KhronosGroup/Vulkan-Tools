@@ -1,8 +1,8 @@
 {
     "file_format_version" : "1.0.1",
     "ICD": {
-        "library_path": "./libVkICD_mock_icd.dylib",
-        "api_version": "1.1.83"
+        "library_path": "@RELATIVE_LAYER_BINARY@",
+        "api_version": "@VK_VERSION@",
     }
 }
 

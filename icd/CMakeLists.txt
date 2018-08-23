@@ -65,6 +65,17 @@ endif()
 
 # Copy or link the JSON files to the binary directory for ease of use in the build tree.
 set(ICD_JSON_FILES VkICD_mock_icd)
+
+# The output file needs Unix "/" separators or Windows "\" separators
+# On top of that, Windows separators actually need to be doubled because the json format uses backslash escapes
+file(TO_NATIVE_PATH "./" RELATIVE_PATH_PREFIX)
+string(REPLACE "\\" "\\\\" RELATIVE_PATH_PREFIX "${RELATIVE_PATH_PREFIX}")
+
+# Run each .json.in file through the generator
+# We need to create the generator.cmake script so that the generator can be run at compile time, instead of configure time
+# Running at compile time lets us use cmake generator expressions (TARGET_FILE_NAME and TARGET_FILE_DIR, specifically)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake" "configure_file(\"\${INPUT_FILE}\" \"\${OUTPUT_FILE}\")")
+
 if(WIN32)
     # extra setup for out-of-tree builds
     if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
@@ -72,14 +83,28 @@ if(WIN32)
             foreach(config_file ${ICD_JSON_FILES})
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json src_json)
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIGURATION>/${config_file}.json dst_json)
-                add_custom_target(${config_file}-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
+                set(CONFIG_DEFINES
+                    -DINPUT_FILE="${src_json}"
+                    -DVK_VERSION="${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}"
+                    -DOUTPUT_FILE="${dst_json}"
+                    -DRELATIVE_LAYER_BINARY="${RELATIVE_PATH_PREFIX}$<TARGET_FILE_NAME:${config_file}>"
+                )
+                add_custom_target(${config_file}-json ALL
+                    COMMAND ${CMAKE_COMMAND} ${CONFIG_DEFINES} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake")
                 set_target_properties(${config_file}-json PROPERTIES FOLDER ${TOOLS_TARGET_FOLDER})
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json src_json)
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${config_file}.json dst_json)
-                add_custom_target(${config_file}-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
+                set(CONFIG_DEFINES
+                    -DINPUT_FILE="${src_json}"
+                    -DVK_VERSION="${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}"
+                    -DOUTPUT_FILE="${dst_json}"
+                    -DRELATIVE_LAYER_BINARY="${RELATIVE_PATH_PREFIX}$<TARGET_FILE_NAME:${config_file}>"
+                )
+                add_custom_target(${config_file}-json ALL
+                    COMMAND ${CMAKE_COMMAND} ${CONFIG_DEFINES} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake")
             endforeach(config_file)
         endif()
     endif()
@@ -90,16 +115,30 @@ elseif(APPLE)
             add_custom_target(mk_icd_config_dir ALL
                               COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
             foreach(config_file ${ICD_JSON_FILES})
+                file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json src_json)
+                file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${config_file}.json dst_json)
+                set(CONFIG_DEFINES
+                    -DINPUT_FILE="${src_json}"
+                    -DVK_VERSION="${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}"
+                    -DOUTPUT_FILE="${dst_json}"
+                    -DRELATIVE_LAYER_BINARY="${RELATIVE_PATH_PREFIX}$<TARGET_FILE_NAME:${config_file}>"
+                )
                 add_custom_target(${config_file}-json ALL
                                   DEPENDS mk_icd_config_dir
-                                  COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json $<CONFIG>
-                                  VERBATIM)
+                                  COMMAND ${CMAKE_COMMAND} ${CONFIG_DEFINES} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake")
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
+                file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json src_json)
+                file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${config_file}.json dst_json)
+                set(CONFIG_DEFINES
+                    -DINPUT_FILE="${src_json}"
+                    -DVK_VERSION="${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}"
+                    -DOUTPUT_FILE="${dst_json}"
+                    -DRELATIVE_LAYER_BINARY="${RELATIVE_PATH_PREFIX}$<TARGET_FILE_NAME:${config_file}>"
+                )
                 add_custom_target(${config_file}-json ALL
-                                  COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
-                                  VERBATIM)
+                                  COMMAND ${CMAKE_COMMAND} ${CONFIG_DEFINES} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake")
             endforeach(config_file)
         endif()
     endif()
@@ -107,7 +146,16 @@ else()
     # extra setup for out-of-tree builds
     if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         foreach(config_file ${ICD_JSON_FILES})
-            add_custom_target(${config_file}-json ALL COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json VERBATIM)
+            file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json src_json)
+            file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${config_file}.json dst_json)
+            set(CONFIG_DEFINES
+                -DINPUT_FILE="${src_json}"
+                -DVK_VERSION="${VulkanHeaders_VERSION_MAJOR}.${VulkanHeaders_VERSION_MINOR}.${VulkanHeaders_VERSION_PATCH}"
+                -DOUTPUT_FILE="${dst_json}"
+                -DRELATIVE_LAYER_BINARY="${RELATIVE_PATH_PREFIX}$<TARGET_FILE_NAME:${config_file}>"
+            )
+            add_custom_target(${config_file}-json ALL
+                COMMAND ${CMAKE_COMMAND} ${CONFIG_DEFINES} -P "${CMAKE_CURRENT_BINARY_DIR}/generator.cmake")
         endforeach(config_file)
     endif()
 endif()
