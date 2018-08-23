@@ -3,15 +3,15 @@ Section: devel
 Priority: optional
 Maintainer: Brett Johnson <brett@lunarg.com>
 Build-Depends: debhelper (>=9),
- vulkan-headers (>=1.1.82.0),
- libvulkan1 (>=1.1.82.0),
+ vulkan-headers (>=1.1.82), vulkan-headers (<<1.1.83),
+ libvulkan1 (>=1.1.82), libvulkan1 (<<1.1.83),
+ vulkan-validataion-layers (>=1.1.82), vulkan-validataion-layers (<<1.1.83),
  cmake,
  python3,
  libwayland-dev,
  libx11-dev,
  libxcb1-dev,
  libxrandr-dev,
- vulkan-validation-layers,
  spirv-tools,
  glslang-tools,
  pkg-config,
@@ -33,6 +33,5 @@ Description: Khronos Vulkan Development tools and utilities
  enabling developers to verify their applications correct use of the Vulkan API.
  .
  The following components are available in this package:
- * Mock ICD
  * Cube and Cube++ Demo
  * VulkanInfo

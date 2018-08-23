@@ -1,0 +1,23 @@
+.TH VULKANINFO "1" "August 2018" "vulkan-tools" "vulkan-tools"
+.SH NAME
+vulkaninfo \- Summarize Vulkan information in relation to the current environment.
+.SH DESCRIPTION
+.PP
+USAGE: vulkaninfo [options]
+.PP
+OPTIONS:
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print this help.
+.TP
+\fB\-\-html\fR
+Produce an html version of vulkaninfo output, saved as "vulkaninfo.html"
+in the directory in which the command is run.
+.TP
+\fB\-j\fR, \fB\-\-json\fR
+Produce a json version of vulkaninfo output to standard output.
+.TP
+\fB\-\-json=\fR<gpu\-number>
+For a multi\-gpu system, a single gpu can be targetted by specifying the gpu\-number
+associated with the gpu of interest.
+This number can be determined by running vulkaninfo without any options specified.
