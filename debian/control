@@ -5,7 +5,7 @@ Maintainer: Brett Johnson <brett@lunarg.com>
 Build-Depends: debhelper (>=9),
  vulkan-headers (>=1.1.82), vulkan-headers (<<1.1.83),
  libvulkan1 (>=1.1.82), libvulkan1 (<<1.1.83),
- vulkan-validataion-layers (>=1.1.82), vulkan-validataion-layers (<<1.1.83),
+ vulkan-validation-layers (>=1.1.82), vulkan-validation-layers (<<1.1.83),
  cmake,
  python3,
  libwayland-dev,
