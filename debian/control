@@ -24,5 +24,7 @@ Breaks: vulkan-sdk-runtime,
  vulkan-utils,
 Replaces: vulkan-sdk-runtime,
  vulkan-utils,
+Provides:
+ vulkan-utils,
 Description: Miscellaneous Vulkan utilities
  This package provides utilities for Vulkan, including vulkaninfo.
