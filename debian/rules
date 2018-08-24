@@ -17,8 +17,8 @@ override_dh_auto_install:
 	mv debian/tmp/usr/bin/cube debian/tmp/usr/bin/vulkan-cube
 	mv debian/tmp/usr/bin/cubepp debian/tmp/usr/bin/vulkan-cubepp
 
-override_dh_install:
-	dh_install --fail-missing
+override_dh_missing:
+	dh_missing --fail-missing
 
 override_dh_clean:
 	dh_clean
