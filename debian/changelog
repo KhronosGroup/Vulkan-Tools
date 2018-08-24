@@ -1,0 +1,5 @@
+vulkan-tools (1.1.82.0+dfsg1-1) UNRELEASED; urgency=medium
+
+  * Initial upload.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 24 Aug 2018 10:45:33 +0300
