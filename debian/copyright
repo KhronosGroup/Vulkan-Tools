@@ -3,6 +3,8 @@ Upstream-Name: Vulkan-Tools
 Source: https://github.com/KhronosGroup/Vulkan-Tools
 Files-Excluded: 
  build-android
+ cube/android
+ cube/macOS
  winrt
 
 Files: *
