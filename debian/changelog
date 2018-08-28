@@ -1,12 +1,5 @@
-vulkan-tools (1.1.82.0-2) UNRELEASED; urgency=medium
+vulkan-tools (1.1.82.0+dfsg1-1) UNRELEASED; urgency=medium
 
-  * New upstream version
-  * Update packaging and add man pages
+  * Initial upload.
 
- -- Brett Johnson <brett@linuxturtle.net>  Thu, 09 Aug 2018 19:08:44 -0600
-
-vulkan-tools (1.1.79.0-1) unstable; urgency=medium
-
-  * New upstream version
-
- -- Brett Johnson <brett@linuxturtle.net>  Tue, 26 Jun 2018 17:48:21 -0600
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 24 Aug 2018 10:45:33 +0300

@@ -1,4 +1,4 @@
 version=3
 
-opts="filenamemangle=s/(?:.*?)?v?(\d[\d.]*)\.tar\.gz/vulkan-$1.tar.gz/" \
+opts="repack,uversionmangle=s/$/+dfsg1/,filenamemangle=s/(?:.*?)?v?(\d[\d.]*)\.tar\.gz/vulkan-tools-$1.tar.gz/" \
  https://github.com/KhronosGroup/Vulkan-Tools/tags (?:.*?/)sdk[_-](\d[\d.]*)\.tar\.gz
