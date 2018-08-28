@@ -1,0 +1,19 @@
+.TH VULKAN-CUBE "1" "August 2018" "vulkan-tools" "vulkan-tools"
+.SH NAME
+vulkan-cube - Vulkan spinning cube demo app
+.SH DESCRIPTION
+.SS "Usage:"
+.TP
+.B vulkan-cube
+.nf
+[\-\-use_staging] [\-\-validate] [\-\-validate\-checks\-disabled]
+[\-\-break] [\-\-c <framecount>] [\-\-suppress_popups]
+[\-\-incremental_present] [\-\-display_timing]
+[\-\-present_mode <present mode enum>]
+.TP
+<present_mode_enum>
+.nf
+VK_PRESENT_MODE_IMMEDIATE_KHR = 0
+VK_PRESENT_MODE_MAILBOX_KHR = 1
+VK_PRESENT_MODE_FIFO_KHR = 2
+VK_PRESENT_MODE_FIFO_RELAXED_KHR = 3

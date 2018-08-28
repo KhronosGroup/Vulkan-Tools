@@ -1,23 +1,14 @@
-.TH VULKANINFO "1" "August 2018" "vulkan-tools" "vulkan-tools"
+.TH vulkaninfo 1 "2018-01-25"
 .SH NAME
-vulkaninfo \- Summarize Vulkan information in relation to the current environment.
+vulkaninfo \- show Vulkan information
+.SH SYNOPSIS
+.B vulkaninfo
 .SH DESCRIPTION
+The \fIvulkaninfo\fP program shows information about the supported Vulkan
+capabilities. It lists not only device properties and features, but also
+supported Vulkan layers and extensions.
+.SH AUTHOR
+vulkaninfo was originally written by LunarG, Inc.
 .PP
-USAGE: vulkaninfo [options]
-.PP
-OPTIONS:
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-Print this help.
-.TP
-\fB\-\-html\fR
-Produce an html version of vulkaninfo output, saved as "vulkaninfo.html"
-in the directory in which the command is run.
-.TP
-\fB\-j\fR, \fB\-\-json\fR
-Produce a json version of vulkaninfo output to standard output.
-.TP
-\fB\-\-json=\fR<gpu\-number>
-For a multi\-gpu system, a single gpu can be targetted by specifying the gpu\-number
-associated with the gpu of interest.
-This number can be determined by running vulkaninfo without any options specified.
+This manual page was written by Andreas Boll <andreas.boll.dev@gmail.com>, for
+the Debian project (but may be used by others).
