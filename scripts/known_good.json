@@ -20,6 +20,22 @@
       "commit" : "2fd5a24ec4a6df303b2155b3f85b6b8c1d56f6c0"
     },
     {
+      "name" : "MoltenVK",
+      "url" : "https://github.com/KhronosGroup/MoltenVK.git",
+      "sub_dir" : "MoltenVK",
+      "build_dir" : "MoltenVK",
+      "install_dir" : "MoltenVK",
+      "commit" : "4c8c14a7ad756e73b172edc16dceaca4e8dbe90c",
+      "custom_build" : [
+        "./fetchDependencies --v-headers-root {0[Vulkan-Headers][repo_dir]} --glslang-root {0[glslang][repo_dir]}",
+        "xcodebuild -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK ({2})\" build"
+      ],
+      "build_step" : "custom",
+      "build_platforms" : [
+        "darwin"
+      ]
+    },
+    {
       "name" : "Vulkan-Loader",
       "url" : "https://github.com/KhronosGroup/Vulkan-Loader.git",
       "sub_dir" : "Vulkan-Loader",
@@ -40,6 +56,7 @@
   "install_names" : {
       "glslang" : "GLSLANG_INSTALL_DIR",
       "Vulkan-Headers" : "VULKAN_HEADERS_INSTALL_DIR",
-      "Vulkan-Loader" : "VULKAN_LOADER_INSTALL_DIR"
+      "Vulkan-Loader" : "VULKAN_LOADER_INSTALL_DIR",
+      "MoltenVK" : "MOLTENVK_REPO_ROOT"
     }
 }
