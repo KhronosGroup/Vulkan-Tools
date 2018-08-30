@@ -32,6 +32,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     include(FindPkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
+    option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
 
     if(BUILD_WSI_XCB_SUPPORT)
         find_package(XCB REQUIRED)
@@ -45,6 +46,13 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         target_include_directories(vulkaninfo PRIVATE ${X11_INCLUDE_DIR})
         target_link_libraries(vulkaninfo ${X11_LIBRARIES})
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XLIB_KHR)
+    endif()
+
+    if(BUILD_WSI_WAYLAND_SUPPORT)
+        find_package(Wayland REQUIRED)
+        target_include_directories(vulkaninfo PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
+        target_link_libraries(vulkaninfo ${WAYLAND_CLIENT_LIBRARIES})
+        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR)
     endif()
 endif()
 

@@ -166,6 +166,10 @@ struct AppInstance {
 #ifdef VK_USE_PLATFORM_MACOS_MVK
     void *window;
 #endif
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+    struct wl_display *wayland_display;
+    struct wl_surface *wayland_surface;
+#endif
 };
 
 struct AppGpu {
@@ -460,7 +464,7 @@ static const char *VkFormatString(VkFormat fmt) {
     }
 }
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK)
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
 static const char *VkPresentModeString(VkPresentModeKHR mode) {
     switch (mode) {
 #define STR(r)                \
@@ -1108,7 +1112,8 @@ static void AppDestroyWin32Window(struct AppInstance *inst) {
 #if defined(VK_USE_PLATFORM_XCB_KHR)     || \
     defined(VK_USE_PLATFORM_XLIB_KHR)    || \
     defined(VK_USE_PLATFORM_WIN32_KHR)   || \
-    defined(VK_USE_PLATFORM_MACOS_MVK)
+    defined(VK_USE_PLATFORM_MACOS_MVK)   || \
+    defined(VK_USE_PLATFORM_WAYLAND_KHR)
 static void AppDestroySurface(struct AppInstance *inst) { //same for all platforms
     vkDestroySurfaceKHR(inst->instance, inst->surface, NULL);
 }
@@ -1248,11 +1253,54 @@ static void AppDestroyMacOSWindow(struct AppInstance *inst) {
     DestroyMetalView(inst->window);
 }
 #endif //VK_USE_PLATFORM_MACOS_MVK
+//-----------------------------------------------------------
+
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+
+static void wayland_registry_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface, uint32_t version) {
+    struct AppInstance *inst = (struct AppInstance *)data;
+    if (strcmp(interface, "wl_compositor") == 0) {
+        struct wl_compositor *compositor = (struct wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+        inst->wayland_surface = wl_compositor_create_surface(compositor);
+    }
+}
+static void wayland_registry_global_remove(void *data, struct wl_registry *registry, uint32_t id) {
+}
+static const struct wl_registry_listener wayland_registry_listener = {
+    wayland_registry_global,
+    wayland_registry_global_remove
+};
+
+static void AppCreateWaylandWindow(struct AppInstance *inst) {
+    inst->wayland_display = wl_display_connect(NULL);
+    struct wl_registry *registry = wl_display_get_registry(inst->wayland_display);
+    wl_registry_add_listener(wl_display_get_registry(inst->wayland_display), &wayland_registry_listener, inst);
+    wl_display_roundtrip(inst->wayland_display);
+    wl_registry_destroy(registry);
+}
+
+static void AppCreateWaylandSurface(struct AppInstance *inst) {
+    VkResult U_ASSERT_ONLY err;
+    VkWaylandSurfaceCreateInfoKHR createInfo;
+    createInfo.sType   = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext   = NULL;
+    createInfo.flags   = 0;
+    createInfo.display = inst->wayland_display;
+    createInfo.surface = inst->wayland_surface;
+    err = vkCreateWaylandSurfaceKHR(inst->instance, &createInfo, NULL, &inst->surface);
+    assert(!err);
+}
+
+static void AppDestroyWaylandWindow(struct AppInstance *inst) {
+    wl_display_disconnect(inst->wayland_display);
+}
+#endif //VK_USE_PLATFORM_WAYLAND_KHR
 
 #if defined(VK_USE_PLATFORM_XCB_KHR)     || \
     defined(VK_USE_PLATFORM_XLIB_KHR)    || \
     defined(VK_USE_PLATFORM_WIN32_KHR)   || \
-    defined(VK_USE_PLATFORM_MACOS_MVK)
+    defined(VK_USE_PLATFORM_MACOS_MVK)   || \
+    defined(VK_USE_PLATFORM_WAYLAND_KHR)
 static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, FILE *out) {
     // Get the list of VkFormat's that are supported
     VkResult U_ASSERT_ONLY err;
@@ -3561,6 +3609,15 @@ int main(int argc, char **argv) {
     }
 #endif
 
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+    struct wl_display *wayland_display = wl_display_connect(NULL);
+    bool has_wayland_display = false;
+    if (wayland_display != NULL) {
+        wl_display_disconnect(wayland_display);
+        has_wayland_display = true;
+    }
+#endif
+
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     struct SurfaceExtensionInfo surface_ext_win32;
@@ -3601,8 +3658,19 @@ int main(int argc, char **argv) {
     surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
     AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_macos, &format_count, &present_mode_count, out);
 #endif
+//--WAYLAND--
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+    struct SurfaceExtensionInfo surface_ext_wayland;
+    surface_ext_wayland.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
+    surface_ext_wayland.create_window = AppCreateWaylandWindow;
+    surface_ext_wayland.create_surface = AppCreateWaylandSurface;
+    surface_ext_wayland.destroy_window = AppDestroyWaylandWindow;
+    if (has_wayland_display) {
+        AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_wayland, &format_count, &present_mode_count, out);
+    }
+#endif
 
-    // TODO: Android / Wayland
+    // TODO: Android
     if (!format_count && !present_mode_count) {
         if (html_output) {
             fprintf(out, "\t\t\t\t<details><summary>None found</summary></details>\n");
