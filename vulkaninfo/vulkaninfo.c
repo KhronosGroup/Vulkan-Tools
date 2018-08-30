@@ -150,16 +150,20 @@ struct AppInstance {
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     HINSTANCE h_instance;  // Windows Instance
     HWND h_wnd;            // window handle
-#elif VK_USE_PLATFORM_XCB_KHR
+#endif
+#ifdef VK_USE_PLATFORM_XCB_KHR
     xcb_connection_t *xcb_connection;
     xcb_screen_t *xcb_screen;
     xcb_window_t xcb_window;
-#elif VK_USE_PLATFORM_XLIB_KHR
+#endif
+#ifdef VK_USE_PLATFORM_XLIB_KHR
     Display *xlib_display;
     Window xlib_window;
-#elif VK_USE_PLATFORM_ANDROID_KHR  // TODO
+#endif
+#ifdef VK_USE_PLATFORM_ANDROID_KHR  // TODO
     ANativeWindow *window;
-#elif VK_USE_PLATFORM_MACOS_MVK
+#endif
+#ifdef VK_USE_PLATFORM_MACOS_MVK
     void *window;
 #endif
 };
@@ -751,26 +755,32 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     //---Build a list of extensions to load---
 
-    const char *info_instance_extensions[] = {VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
-                                              VK_KHR_DISPLAY_EXTENSION_NAME,
-                                              VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-                                              VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
-                                              VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
-                                              VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME,
-                                              VK_KHR_SURFACE_EXTENSION_NAME,
-                                              VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME,
+    const char *info_instance_extensions[] = {
+        VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
+        VK_KHR_DISPLAY_EXTENSION_NAME,
+        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
+        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
+        VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME,
+        VK_KHR_SURFACE_EXTENSION_NAME,
+        VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME,
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-                                              VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-#elif VK_USE_PLATFORM_XCB_KHR
-                                              VK_KHR_XCB_SURFACE_EXTENSION_NAME
-#elif VK_USE_PLATFORM_XLIB_KHR
-                                              VK_KHR_XLIB_SURFACE_EXTENSION_NAME
-#elif VK_USE_PLATFORM_WAYLAND_KHR
-                                              VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
-#elif VK_USE_PLATFORM_ANDROID_KHR
-                                              VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
-#elif VK_USE_PLATFORM_MACOS_MVK
-                                              VK_MVK_MACOS_SURFACE_EXTENSION_NAME
+        VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+#endif
+#ifdef VK_USE_PLATFORM_XCB_KHR
+        VK_KHR_XCB_SURFACE_EXTENSION_NAME,
+#endif
+#ifdef VK_USE_PLATFORM_XLIB_KHR
+        VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
+#endif
+#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+        VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
+#endif
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+        VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
+#endif
+#ifdef VK_USE_PLATFORM_MACOS_MVK
+        VK_MVK_MACOS_SURFACE_EXTENSION_NAME,
 #endif
     };
     const uint32_t info_instance_extensions_count = ARRAY_SIZE(info_instance_extensions);
@@ -1166,11 +1176,11 @@ static void AppDestroyXcbWindow(struct AppInstance *inst) {
     xcb_destroy_window(inst->xcb_connection, inst->xcb_window);
     xcb_disconnect(inst->xcb_connection);
 }
-//VK_USE_PLATFORM_XCB_KHR
+#endif //VK_USE_PLATFORM_XCB_KHR
 //-----------------------------------------------------------
 
 //----------------------------XLib---------------------------
-#elif VK_USE_PLATFORM_XLIB_KHR
+#ifdef VK_USE_PLATFORM_XLIB_KHR
 static void AppCreateXlibWindow(struct AppInstance *inst) {
     long visualMask = VisualScreenMask;
     int numberOfVisuals;
@@ -1451,8 +1461,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
             }
             fprintf(out, "\t\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
-            printf("\nVkSurfaceCapabilitiesKHR:\n");
-            printf("=========================\n");
+            printf("VkSurfaceCapabilitiesKHR:\n");
             printf("\tminImageCount       = %u\n", inst->surface_capabilities.minImageCount);
             printf("\tmaxImageCount       = %u\n", inst->surface_capabilities.maxImageCount);
             printf("\tcurrentExtent:\n");
@@ -1650,6 +1659,8 @@ static void AppDumpSurfaceExtension(struct AppInstance *inst, struct AppGpu *gpu
         AppDestroySurface(inst);
         if (html_output) {
             fprintf(out, "\t\t\t\t</details>\n");
+        } else if (human_readable_output) {
+            printf("\n");
         }
     }
     surface_extension->destroy_window(inst);
@@ -3558,8 +3569,9 @@ int main(int argc, char **argv) {
     surface_ext_win32.create_surface = AppCreateWin32Surface;
     surface_ext_win32.destroy_window = AppDestroyWin32Window;
     AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_win32, &format_count, &present_mode_count, out);
+#endif
 //--XCB--
-#elif VK_USE_PLATFORM_XCB_KHR
+#ifdef VK_USE_PLATFORM_XCB_KHR
     struct SurfaceExtensionInfo surface_ext_xcb;
     surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
     surface_ext_xcb.create_window = AppCreateXcbWindow;
@@ -3568,8 +3580,9 @@ int main(int argc, char **argv) {
     if (has_display) {
         AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_xcb, &format_count, &present_mode_count, out);
     }
+#endif
 //--XLIB--
-#elif VK_USE_PLATFORM_XLIB_KHR
+#ifdef VK_USE_PLATFORM_XLIB_KHR
     struct SurfaceExtensionInfo surface_ext_xlib;
     surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
     surface_ext_xlib.create_window = AppCreateXlibWindow;
@@ -3578,8 +3591,9 @@ int main(int argc, char **argv) {
     if (has_display) {
         AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_xlib, &format_count, &present_mode_count, out);
     }
+#endif
 //--MACOS--
-#elif VK_USE_PLATFORM_MACOS_MVK
+#ifdef VK_USE_PLATFORM_MACOS_MVK
     struct SurfaceExtensionInfo surface_ext_macos;
     surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
     surface_ext_macos.create_window = AppCreateMacOSWindow;
@@ -3593,14 +3607,12 @@ int main(int argc, char **argv) {
         if (html_output) {
             fprintf(out, "\t\t\t\t<details><summary>None found</summary></details>\n");
         } else if (human_readable_output) {
-            printf("None found\n");
+            printf("None found\n\n");
         }
     }
 
     if (html_output) {
         fprintf(out, "\t\t\t</details>\n");
-    } else if (human_readable_output) {
-        printf("\n");
     }
     //---------
 
