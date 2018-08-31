@@ -1617,6 +1617,44 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
     }
 }
 
+struct SurfaceExtensionInfo {
+    const char *name;
+    void (*create_window)(struct AppInstance *);
+    void (*create_surface)(struct AppInstance *);
+    void (*destroy_window)(struct AppInstance *);
+};
+
+static void AppDumpSurfaceExtension(struct AppInstance *inst, struct AppGpu *gpus, uint32_t gpu_count,
+                                    struct SurfaceExtensionInfo *surface_extension, int *format_count, int *present_mode_count,
+                                    FILE *out) {
+
+    if (!CheckExtensionEnabled(surface_extension->name, inst->inst_extensions, inst->inst_extensions_count)) {
+        return;
+    }
+
+    surface_extension->create_window(inst);
+    for (uint32_t i = 0; i < gpu_count; ++i) {
+        surface_extension->create_surface(inst);
+        if (html_output) {
+            fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary>\n", i,
+                    gpus[i].props.deviceName);
+            fprintf(out, "\t\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
+                    surface_extension->name);
+        } else if (human_readable_output) {
+            printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
+            printf("Surface type : %s\n", surface_extension->name);
+        }
+        *format_count += AppDumpSurfaceFormats(inst, &gpus[i], out);
+        *present_mode_count += AppDumpSurfacePresentModes(inst, &gpus[i], out);
+        AppDumpSurfaceCapabilities(inst, &gpus[i], out);
+        AppDestroySurface(inst);
+        if (html_output) {
+            fprintf(out, "\t\t\t\t</details>\n");
+        }
+    }
+    surface_extension->destroy_window(inst);
+}
+
 #endif
 
 static void AppDevDumpFormatProps(const struct AppGpu *gpu, VkFormat fmt, bool *first_in_list, FILE *out) {
@@ -3514,96 +3552,40 @@ int main(int argc, char **argv) {
 
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-    if (CheckExtensionEnabled(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        AppCreateWin32Window(&inst);
-        for (uint32_t i = 0; i < gpu_count; ++i) {
-            AppCreateWin32Surface(&inst);
-            if (html_output) {
-                fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary>\n", i,
-                        gpus[i].props.deviceName);
-                fprintf(out, "\t\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
-                        VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-            } else if (human_readable_output) {
-                printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
-                printf("Surface type : %s\n", VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-            }
-            format_count += AppDumpSurfaceFormats(&inst, &gpus[i], out);
-            present_mode_count += AppDumpSurfacePresentModes(&inst, &gpus[i], out);
-            AppDumpSurfaceCapabilities(&inst, &gpus[i], out);
-            AppDestroySurface(&inst);
-            if (html_output) {
-                fprintf(out, "\t\t\t\t</details>\n");
-            }
-        }
-        AppDestroyWin32Window(&inst);
-    }
+    struct SurfaceExtensionInfo surface_ext_win32;
+    surface_ext_win32.name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+    surface_ext_win32.create_window = AppCreateWin32Window;
+    surface_ext_win32.create_surface = AppCreateWin32Surface;
+    surface_ext_win32.destroy_window = AppDestroyWin32Window;
+    AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_win32, &format_count, &present_mode_count, out);
 //--XCB--
 #elif VK_USE_PLATFORM_XCB_KHR
-    if (has_display && CheckExtensionEnabled(VK_KHR_XCB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        AppCreateXcbWindow(&inst);
-        for (uint32_t i = 0; i < gpu_count; ++i) {
-            AppCreateXcbSurface(&inst);
-            if (html_output) {
-                fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary></details>\n", i,
-                        gpus[i].props.deviceName);
-                fprintf(out, "\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
-                        VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-            } else if (human_readable_output) {
-                printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
-                printf("Surface type : %s\n", VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-            }
-            format_count += AppDumpSurfaceFormats(&inst, &gpus[i], out);
-            present_mode_count += AppDumpSurfacePresentModes(&inst, &gpus[i], out);
-            AppDumpSurfaceCapabilities(&inst, &gpus[i], out);
-            AppDestroySurface(&inst);
-        }
-        AppDestroyXcbWindow(&inst);
+    struct SurfaceExtensionInfo surface_ext_xcb;
+    surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
+    surface_ext_xcb.create_window = AppCreateXcbWindow;
+    surface_ext_xcb.create_surface = AppCreateXcbSurface;
+    surface_ext_xcb.destroy_window = AppDestroyXcbWindow;
+    if (has_display) {
+        AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_xcb, &format_count, &present_mode_count, out);
     }
 //--XLIB--
 #elif VK_USE_PLATFORM_XLIB_KHR
-    if (has_display &&
-        CheckExtensionEnabled(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        AppCreateXlibWindow(&inst);
-        for (uint32_t i = 0; i < gpu_count; ++i) {
-            AppCreateXlibSurface(&inst);
-            if (html_output) {
-                fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary></details>\n", i,
-                        gpus[i].props.deviceName);
-                fprintf(out, "\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
-                        VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
-            } else if (human_readable_output) {
-                printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
-                printf("Surface type : %s\n", VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
-            }
-            format_count += AppDumpSurfaceFormats(&inst, &gpus[i], out);
-            present_mode_count += AppDumpSurfacePresentModes(&inst, &gpus[i], out);
-            AppDumpSurfaceCapabilities(&inst, &gpus[i], out);
-            AppDestroySurface(&inst);
-        }
-        AppDestroyXlibWindow(&inst);
+    struct SurfaceExtensionInfo surface_ext_xlib;
+    surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
+    surface_ext_xlib.create_window = AppCreateXlibWindow;
+    surface_ext_xlib.create_surface = AppCreateXlibSurface;
+    surface_ext_xlib.destroy_window = AppDestroyXlibWindow;
+    if (has_display) {
+        AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_xlib, &format_count, &present_mode_count, out);
     }
 //--MACOS--
 #elif VK_USE_PLATFORM_MACOS_MVK
-    if (CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        AppCreateMacOSWindow(&inst);
-        for (uint32_t i = 0; i < gpu_count; ++i) {
-            AppCreateMacOSSurface(&inst);
-            if (html_output) {
-                fprintf(out, "\t\t\t\t<details><summary>GPU id : <div class='val'>%u</div> (%s)</summary></details>\n", i,
-                        gpus[i].props.deviceName);
-                fprintf(out, "\t\t\t\t<details><summary>Surface type : <div class='type'>%s</div></summary></details>\n",
-                        VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
-            } else if (human_readable_output) {
-                printf("GPU id       : %u (%s)\n", i, gpus[i].props.deviceName);
-                printf("Surface type : %s\n", VK_MVK_MACOS_SURFACE_EXTENSION_NAME);
-            }
-            format_count += AppDumpSurfaceFormats(&inst, &gpus[i], out);
-            present_mode_count += AppDumpSurfacePresentModes(&inst, &gpus[i], out);
-            AppDumpSurfaceCapabilities(&inst, &gpus[i], out);
-            AppDestroySurface(&inst);
-        }
-        AppDestroyMacOSWindow(&inst);
-    }
+    struct SurfaceExtensionInfo surface_ext_macos;
+    surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
+    surface_ext_macos.create_window = AppCreateMacOSWindow;
+    surface_ext_macos.create_surface = AppCreateMacOSSurface;
+    surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
+    AppDumpSurfaceExtension(&inst, gpus, gpu_count, &surface_ext_macos, &format_count, &present_mode_count, out);
 #endif
 
     // TODO: Android / Wayland
