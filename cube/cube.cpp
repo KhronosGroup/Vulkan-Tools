@@ -1825,7 +1825,7 @@ void Demo::prepare_descriptor_set() {
     for (uint32_t i = 0; i < texture_count; i++) {
         tex_descs[i].setSampler(textures[i].sampler);
         tex_descs[i].setImageView(textures[i].view);
-        tex_descs[i].setImageLayout(vk::ImageLayout::eGeneral);
+        tex_descs[i].setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
     }
 
     vk::WriteDescriptorSet writes[2];
