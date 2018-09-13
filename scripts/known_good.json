@@ -25,10 +25,10 @@
       "sub_dir" : "MoltenVK",
       "build_dir" : "MoltenVK",
       "install_dir" : "MoltenVK",
-      "commit" : "4c8c14a7ad756e73b172edc16dceaca4e8dbe90c",
+      "commit" : "48718dcaf0c274547e08413e98e2b3ac949d7aa1",
       "custom_build" : [
         "./fetchDependencies --v-headers-root {0[Vulkan-Headers][repo_dir]} --glslang-root {0[glslang][repo_dir]}",
-        "xcodebuild -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK ({2})\" build"
+        "xcodebuild -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package ({2})\" build"
       ],
       "build_step" : "custom",
       "build_platforms" : [
