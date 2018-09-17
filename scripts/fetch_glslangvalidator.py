@@ -35,7 +35,7 @@ import zipfile
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.join(SCRIPTS_DIR, '..')
-GLSLANG_URL = "https://github.com/KhronosGroup/glslang/releases/download/master-tot"
+GLSLANG_URL = "https://github.com/KhronosGroup/glslang/releases/download/7.9.2888"
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:

@@ -24,15 +24,6 @@ branches:
 
 before_build:
   - "SET PATH=C:\\Python35;C:\\Python35\\Scripts;%PATH%"
-  # Get a prebuilt shader compiler (glslangValidator) so that we don't have to build all of glslang
-  - mkdir glslang
-  - cd glslang
-  - curl -fsSL -o glslang-master-windows-x64-Release.zip https://github.com/KhronosGroup/glslang/releases/download/master-tot/glslang-master-windows-x64-Release.zip
-  - 7z x glslang-master-windows-x64-Release.zip
-  - cd ..
-  - "SET PATH=%APPVEYOR_BUILD_FOLDER%\\glslang\\bin;%PATH%"
-  - glslangValidator.exe --version
-  - echo.
   - echo Starting build for %APPVEYOR_REPO_NAME% in %APPVEYOR_BUILD_FOLDER%
   # Build Vulkan-Headers
   - echo Building Vulkan-Headers for %PLATFORM% %CONFIGURATION%
