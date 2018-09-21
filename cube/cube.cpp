@@ -78,6 +78,7 @@ struct texture_object {
     vk::Sampler sampler;
 
     vk::Image image;
+    vk::Buffer buffer;
     vk::ImageLayout imageLayout{vk::ImageLayout::eUndefined};
 
     vk::MemoryAllocateInfo mem_alloc;
@@ -216,7 +217,7 @@ struct Demo {
     vk::Bool32 check_layers(uint32_t, const char *const *, uint32_t, vk::LayerProperties *);
     void cleanup();
     void create_device();
-    void destroy_texture_image(texture_object *);
+    void destroy_texture(texture_object *);
     void draw();
     void draw_build_cmd(vk::CommandBuffer);
     void flush_init_cmd();
@@ -238,6 +239,7 @@ struct Demo {
     void prepare_pipeline();
     void prepare_render_pass();
     void prepare_texture_image(const char *, texture_object *, vk::ImageTiling, vk::ImageUsageFlags, vk::MemoryPropertyFlags);
+    void prepare_texture_buffer(const char *, texture_object *);
     void prepare_textures();
 
     void resize();
@@ -710,10 +712,11 @@ void Demo::create_device() {
     VERIFY(result == vk::Result::eSuccess);
 }
 
-void Demo::destroy_texture_image(texture_object *tex_objs) {
+void Demo::destroy_texture(texture_object *tex_objs) {
     // clean up staging resources
     device.freeMemory(tex_objs->mem, nullptr);
-    device.destroyImage(tex_objs->image, nullptr);
+    if (tex_objs->image) device.destroyImage(tex_objs->image, nullptr);
+    if (tex_objs->buffer) device.destroyBuffer(tex_objs->buffer, nullptr);
 }
 
 void Demo::draw() {
@@ -1499,8 +1502,8 @@ void Demo::prepare() {
      * that need to be flushed before beginning the render loop.
      */
     flush_init_cmd();
-    if (staging_texture.image) {
-        destroy_texture_image(&staging_texture);
+    if (staging_texture.buffer) {
+        destroy_texture(&staging_texture);
     }
 
     current_buffer = 0;
@@ -2016,6 +2019,56 @@ vk::ShaderModule Demo::prepare_shader_module(const uint32_t *code, size_t size) 
     return module;
 }
 
+void Demo::prepare_texture_buffer(const char *filename, texture_object *tex_obj) {
+    int32_t tex_width;
+    int32_t tex_height;
+
+    if (!loadTexture(filename, NULL, NULL, &tex_width, &tex_height)) {
+        ERR_EXIT("Failed to load textures", "Load Texture Failure");
+    }
+
+    tex_obj->tex_width = tex_width;
+    tex_obj->tex_height = tex_height;
+
+    auto const buffer_create_info = vk::BufferCreateInfo()
+                                        .setSize(tex_width * tex_height * 4)
+                                        .setUsage(vk::BufferUsageFlagBits::eTransferSrc)
+                                        .setSharingMode(vk::SharingMode::eExclusive)
+                                        .setQueueFamilyIndexCount(0)
+                                        .setPQueueFamilyIndices(nullptr);
+
+    auto result = device.createBuffer(&buffer_create_info, nullptr, &tex_obj->buffer);
+    VERIFY(result == vk::Result::eSuccess);
+
+    vk::MemoryRequirements mem_reqs;
+    device.getBufferMemoryRequirements(tex_obj->buffer, &mem_reqs);
+
+    tex_obj->mem_alloc.setAllocationSize(mem_reqs.size);
+    tex_obj->mem_alloc.setMemoryTypeIndex(0);
+
+    vk::MemoryPropertyFlags requirements = vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent;
+    auto pass = memory_type_from_properties(mem_reqs.memoryTypeBits, requirements, &tex_obj->mem_alloc.memoryTypeIndex);
+    VERIFY(pass == true);
+
+    result = device.allocateMemory(&tex_obj->mem_alloc, nullptr, &(tex_obj->mem));
+    VERIFY(result == vk::Result::eSuccess);
+
+    result = device.bindBufferMemory(tex_obj->buffer, tex_obj->mem, 0);
+    VERIFY(result == vk::Result::eSuccess);
+
+    vk::SubresourceLayout layout;
+    memset(&layout, 0, sizeof(layout));
+    layout.rowPitch = tex_width * 4;
+    auto data = device.mapMemory(tex_obj->mem, 0, tex_obj->mem_alloc.allocationSize);
+    VERIFY(data.result == vk::Result::eSuccess);
+
+    if (!loadTexture(filename, (uint8_t *)data.value, &layout, &tex_width, &tex_height)) {
+        fprintf(stderr, "Error loading texture: %s\n", filename);
+    }
+
+    device.unmapMemory(tex_obj->mem);
+}
+
 void Demo::prepare_texture_image(const char *filename, texture_object *tex_obj, vk::ImageTiling tiling, vk::ImageUsageFlags usage,
                                  vk::MemoryPropertyFlags required_props) {
     int32_t tex_width;
@@ -2096,16 +2149,11 @@ void Demo::prepare_textures() {
         } else if (props.optimalTilingFeatures & vk::FormatFeatureFlagBits::eSampledImage) {
             /* Must use staging buffer to copy linear texture to optimized */
 
-            prepare_texture_image(tex_files[i], &staging_texture, vk::ImageTiling::eLinear, vk::ImageUsageFlagBits::eTransferSrc,
-                                  vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent);
+            prepare_texture_buffer(tex_files[i], &staging_texture);
 
             prepare_texture_image(tex_files[i], &textures[i], vk::ImageTiling::eOptimal,
                                   vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
                                   vk::MemoryPropertyFlagBits::eDeviceLocal);
-
-            set_image_layout(staging_texture.image, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::ePreinitialized,
-                             vk::ImageLayout::eTransferSrcOptimal, vk::AccessFlagBits(), vk::PipelineStageFlagBits::eTopOfPipe,
-                             vk::PipelineStageFlagBits::eTransfer);
 
             set_image_layout(textures[i].image, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::ePreinitialized,
                              vk::ImageLayout::eTransferDstOptimal, vk::AccessFlagBits(), vk::PipelineStageFlagBits::eTopOfPipe,
@@ -2117,15 +2165,16 @@ void Demo::prepare_textures() {
                                          .setBaseArrayLayer(0)
                                          .setLayerCount(1);
 
-            auto const copy_region = vk::ImageCopy()
-                                         .setSrcSubresource(subresource)
-                                         .setSrcOffset({0, 0, 0})
-                                         .setDstSubresource(subresource)
-                                         .setDstOffset({0, 0, 0})
-                                         .setExtent({(uint32_t)staging_texture.tex_width, (uint32_t)staging_texture.tex_height, 1});
+            auto const copy_region =
+                vk::BufferImageCopy()
+                    .setBufferOffset(0)
+                    .setBufferRowLength(staging_texture.tex_width)
+                    .setBufferImageHeight(staging_texture.tex_height)
+                    .setImageSubresource(subresource)
+                    .setImageOffset({0, 0, 0})
+                    .setImageExtent({(uint32_t)staging_texture.tex_width, (uint32_t)staging_texture.tex_height, 1});
 
-            cmd.copyImage(staging_texture.image, vk::ImageLayout::eTransferSrcOptimal, textures[i].image,
-                          vk::ImageLayout::eTransferDstOptimal, 1, &copy_region);
+            cmd.copyBufferToImage(staging_texture.buffer, textures[i].image, vk::ImageLayout::eTransferDstOptimal, 1, &copy_region);
 
             set_image_layout(textures[i].image, vk::ImageAspectFlagBits::eColor, vk::ImageLayout::eTransferDstOptimal,
                              textures[i].imageLayout, vk::AccessFlagBits::eTransferWrite, vk::PipelineStageFlagBits::eTransfer,

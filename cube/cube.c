@@ -161,6 +161,7 @@ struct texture_object {
     VkSampler sampler;
 
     VkImage image;
+    VkBuffer buffer;
     VkImageLayout imageLayout;
 
     VkMemoryAllocateInfo mem_alloc;
@@ -1488,6 +1489,65 @@ bool loadTexture(const char *filename, uint8_t *rgba_data, VkSubresourceLayout *
     return true;
 }
 
+static void demo_prepare_texture_buffer(struct demo *demo, const char *filename, struct texture_object *tex_obj) {
+    int32_t tex_width;
+    int32_t tex_height;
+    VkResult U_ASSERT_ONLY err;
+    bool U_ASSERT_ONLY pass;
+
+    if (!loadTexture(filename, NULL, NULL, &tex_width, &tex_height)) {
+        ERR_EXIT("Failed to load textures", "Load Texture Failure");
+    }
+
+    tex_obj->tex_width = tex_width;
+    tex_obj->tex_height = tex_height;
+
+    const VkBufferCreateInfo buffer_create_info = {.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                                   .pNext = NULL,
+                                                   .flags = 0,
+                                                   .size = tex_width * tex_height * 4,
+                                                   .usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                                                   .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+                                                   .queueFamilyIndexCount = 0,
+                                                   .pQueueFamilyIndices = NULL};
+
+    err = vkCreateBuffer(demo->device, &buffer_create_info, NULL, &tex_obj->buffer);
+    assert(!err);
+
+    VkMemoryRequirements mem_reqs;
+    vkGetBufferMemoryRequirements(demo->device, tex_obj->buffer, &mem_reqs);
+
+    tex_obj->mem_alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    tex_obj->mem_alloc.pNext = NULL;
+    tex_obj->mem_alloc.allocationSize = mem_reqs.size;
+    tex_obj->mem_alloc.memoryTypeIndex = 0;
+
+    VkFlags requirements = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    pass = memory_type_from_properties(demo, mem_reqs.memoryTypeBits, requirements, &tex_obj->mem_alloc.memoryTypeIndex);
+    assert(pass);
+
+    err = vkAllocateMemory(demo->device, &tex_obj->mem_alloc, NULL, &(tex_obj->mem));
+    assert(!err);
+
+    /* bind memory */
+    err = vkBindBufferMemory(demo->device, tex_obj->buffer, tex_obj->mem, 0);
+    assert(!err);
+
+    VkSubresourceLayout layout;
+    memset(&layout, 0, sizeof(layout));
+    layout.rowPitch = tex_width * 4;
+
+    void *data;
+    err = vkMapMemory(demo->device, tex_obj->mem, 0, tex_obj->mem_alloc.allocationSize, 0, &data);
+    assert(!err);
+
+    if (!loadTexture(filename, data, &layout, &tex_width, &tex_height)) {
+        fprintf(stderr, "Error loading texture: %s\n", filename);
+    }
+
+    vkUnmapMemory(demo->device, tex_obj->mem);
+}
+
 static void demo_prepare_texture_image(struct demo *demo, const char *filename, struct texture_object *tex_obj,
                                        VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props) {
     const VkFormat tex_format = VK_FORMAT_R8G8B8A8_UNORM;
@@ -1565,10 +1625,11 @@ static void demo_prepare_texture_image(struct demo *demo, const char *filename, 
     tex_obj->imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-static void demo_destroy_texture_image(struct demo *demo, struct texture_object *tex_objs) {
+static void demo_destroy_texture(struct demo *demo, struct texture_object *tex_objs) {
     /* clean up staging resources */
     vkFreeMemory(demo->device, tex_objs->mem, NULL);
-    vkDestroyImage(demo->device, tex_objs->image, NULL);
+    if (tex_objs->image) vkDestroyImage(demo->device, tex_objs->image, NULL);
+    if (tex_objs->buffer) vkDestroyBuffer(demo->device, tex_objs->buffer, NULL);
 }
 
 static void demo_prepare_textures(struct demo *demo) {
@@ -1595,31 +1656,27 @@ static void demo_prepare_textures(struct demo *demo) {
             /* Must use staging buffer to copy linear texture to optimized */
 
             memset(&demo->staging_texture, 0, sizeof(demo->staging_texture));
-            demo_prepare_texture_image(demo, tex_files[i], &demo->staging_texture, VK_IMAGE_TILING_LINEAR,
-                                       VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-                                       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+            demo_prepare_texture_buffer(demo, tex_files[i], &demo->staging_texture);
 
             demo_prepare_texture_image(demo, tex_files[i], &demo->textures[i], VK_IMAGE_TILING_OPTIMAL,
                                        (VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT),
                                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-            demo_set_image_layout(demo, demo->staging_texture.image, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED,
-                                  VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                  VK_PIPELINE_STAGE_TRANSFER_BIT);
-
             demo_set_image_layout(demo, demo->textures[i].image, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_PREINITIALIZED,
                                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                                   VK_PIPELINE_STAGE_TRANSFER_BIT);
 
-            VkImageCopy copy_region = {
-                .srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
-                .srcOffset = {0, 0, 0},
-                .dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
-                .dstOffset = {0, 0, 0},
-                .extent = {demo->staging_texture.tex_width, demo->staging_texture.tex_height, 1},
+            VkBufferImageCopy copy_region = {
+                .bufferOffset = 0,
+                .bufferRowLength = demo->staging_texture.tex_width,
+                .bufferImageHeight = demo->staging_texture.tex_height,
+                .imageSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
+                .imageOffset = {0, 0, 0},
+                .imageExtent = {demo->staging_texture.tex_width, demo->staging_texture.tex_height, 1},
             };
-            vkCmdCopyImage(demo->cmd, demo->staging_texture.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, demo->textures[i].image,
-                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
+
+            vkCmdCopyBufferToImage(demo->cmd, demo->staging_texture.buffer, demo->textures[i].image,
+                                   VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
 
             demo_set_image_layout(demo, demo->textures[i].image, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                                   demo->textures[i].imageLayout, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -2186,8 +2243,8 @@ static void demo_prepare(struct demo *demo) {
      * that need to be flushed before beginning the render loop.
      */
     demo_flush_init_cmd(demo);
-    if (demo->staging_texture.image) {
-        demo_destroy_texture_image(demo, &demo->staging_texture);
+    if (demo->staging_texture.buffer) {
+        demo_destroy_texture(demo, &demo->staging_texture);
     }
 
     demo->current_buffer = 0;
