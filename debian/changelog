@@ -1,0 +1,9 @@
+vulkan-tools (1.1.82.0+dfsg1-2) UNRELEASED; urgency=medium
+
+  [ Timo Aaltonen ]
+  * Initial upload.
+
+  [ Brett Johnson ]
+  * Update with man pages, rename cube* binaries to vkcube*
+
+ -- Brett Johnson <brett@linuxturtle.net>  Thu, 30 Aug 2018 17:59:40 -0600
