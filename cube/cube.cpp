@@ -2874,6 +2874,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         case WM_GETMINMAXINFO:  // set window's minimum size
             ((MINMAXINFO *)lParam)->ptMinTrackSize = demo.minsize;
             return 0;
+        case WM_ERASEBKGND:
+            return 1;
         case WM_SIZE:
             // Resize the application to the new window size, except when
             // it was minimized. Vulkan doesn't support images or swapchains
