@@ -1292,7 +1292,10 @@ class MockICDOutputGenerator(OutputGenerator):
 
         # Return result variable, if any.
         if (resulttype != None):
-            self.appendSection('command', '    return VK_SUCCESS;')
+            if api_function_name == 'vkGetEventStatus':
+                self.appendSection('command', '    return VK_EVENT_SET;')
+            else:
+                self.appendSection('command', '    return VK_SUCCESS;')
         self.appendSection('command', '}')
     #
     # override makeProtoName to drop the "vk" prefix
