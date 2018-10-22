@@ -32,10 +32,6 @@
 #include <csignal>
 #include <memory>
 
-#if defined(VK_USE_PLATFORM_MIR_KHR)
-#warning "Cubepp does not have code for Mir at this time"
-#endif
-
 #define VULKAN_HPP_NO_SMART_HANDLE
 #define VULKAN_HPP_NO_EXCEPTIONS
 #include <vulkan/vulkan.hpp>
@@ -265,7 +261,6 @@ struct Demo {
     void create_window();
 #elif defined(VK_USE_PLATFORM_MACOS_MVK)
     void run();
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     vk::Result create_display_surface();
     void run_display();
@@ -295,7 +290,6 @@ struct Demo {
     wl_seat *seat;
     wl_pointer *pointer;
     wl_keyboard *keyboard;
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
     void *window;
 #endif
@@ -504,7 +498,6 @@ static void registry_handle_global(void *data, wl_registry *registry, uint32_t i
 static void registry_handle_global_remove(void *data, wl_registry *registry, uint32_t name) {}
 
 static const wl_registry_listener registry_listener = {registry_handle_global, registry_handle_global_remove};
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #endif
 
 Demo::Demo()
@@ -533,7 +526,6 @@ Demo::Demo()
       seat{nullptr},
       pointer{nullptr},
       keyboard{nullptr},
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #endif
       prepared{false},
       use_staging_buffer{false},
@@ -678,7 +670,6 @@ void Demo::cleanup() {
     wl_compositor_destroy(compositor);
     wl_registry_destroy(registry);
     wl_display_disconnect(display);
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #endif
 
     inst.destroy(nullptr);
@@ -1011,7 +1002,6 @@ void Demo::init_connection() {
     registry = wl_display_get_registry(display);
     wl_registry_add_listener(registry, &registry_listener, this);
     wl_display_dispatch(display);
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #endif
 }
 
@@ -1106,7 +1096,6 @@ void Demo::init_vk() {
                 platformSurfaceExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
             if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 platformSurfaceExtFound = 1;
@@ -1155,7 +1144,6 @@ void Demo::init_vk() {
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
                  "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
                  " extension.\n\n"
@@ -1298,7 +1286,6 @@ void Demo::init_vk_swapchain() {
         auto result = inst.createWaylandSurfaceKHR(&createInfo, nullptr, &surface);
         VERIFY(result == vk::Result::eSuccess);
     }
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
     {
         auto const createInfo = vk::XlibSurfaceCreateInfoKHR().setDpy(display).setWindow(xlib_window);
@@ -2706,7 +2693,6 @@ void Demo::run() {
         quit = true;
     }
 }
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
 
 vk::Result Demo::create_display_surface() {
@@ -2987,7 +2973,6 @@ int main(int argc, char **argv) {
     demo.create_xlib_window();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     demo.create_window();
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #endif
 
     demo.init_vk_swapchain();
@@ -3000,7 +2985,6 @@ int main(int argc, char **argv) {
     demo.run_xlib();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     demo.run();
-#elif defined(VK_USE_PLATFORM_MIR_KHR)
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     demo.run_display();
 #endif

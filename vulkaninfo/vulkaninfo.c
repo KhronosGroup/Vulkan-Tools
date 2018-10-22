@@ -47,10 +47,6 @@
 #include <X11/Xutil.h>
 #endif
 
-#if defined(VK_USE_PLATFORM_MIR_KHR)
-#warning "Vulkaninfo does not have code for Mir at this time"
-#endif
-
 #if defined(VK_USE_PLATFORM_MACOS_MVK)
 #include "metal_view.h"
 #endif
@@ -3610,7 +3606,7 @@ int main(int argc, char **argv) {
     }
 #endif
 
-    // TODO: Android / Wayland / MIR
+    // TODO: Android / Wayland
     if (!format_count && !present_mode_count) {
         if (html_output) {
             fprintf(out, "\t\t\t\t<details><summary>None found</summary></details>\n");
