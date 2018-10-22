@@ -46,8 +46,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
-    option(BUILD_WSI_MIR_SUPPORT "Build Mir WSI support" OFF)
-    set(CUBE_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for cube (XCB, XLIB, WAYLAND, MIR, DISPLAY)")
+    set(CUBE_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for cube (XCB, XLIB, WAYLAND, DISPLAY)")
 
     if(BUILD_WSI_XCB_SUPPORT)
         find_package(XCB REQUIRED)
@@ -61,11 +60,6 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         find_package(Wayland REQUIRED)
         include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
     endif()
-
-    if(BUILD_WSI_MIR_SUPPORT)
-        find_package(Mir REQUIRED)
-    endif()
-
 endif()
 
 if(WIN32)
@@ -107,12 +101,6 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${WAYLAND_CLIENT_LIBRARIES})
         add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR)
-    elseif(CUBE_WSI_SELECTION STREQUAL "MIR")
-        if(NOT BUILD_WSI_MIR_SUPPORT)
-            message(FATAL_ERROR "Selected MIR for cube build but not building Mir support")
-        endif()
-        add_definitions(-DVK_USE_PLATFORM_MIR_KHR)
-        set(CUBE_INCLUDE_DIRS ${MIR_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
     elseif(CUBE_WSI_SELECTION STREQUAL "DISPLAY")
         add_definitions(-DVK_USE_PLATFORM_DISPLAY_KHR)
     else()

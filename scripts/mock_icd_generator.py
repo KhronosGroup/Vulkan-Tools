@@ -322,18 +322,6 @@ EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(
 }
 #endif /* VK_USE_PLATFORM_WAYLAND_KHR */
 
-#ifdef VK_USE_PLATFORM_MIR_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateMirSurfaceKHR(
-    VkInstance                                  instance,
-    const VkMirSurfaceCreateInfoKHR*            pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateMirSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_MIR_KHR */
-
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 
 EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(
