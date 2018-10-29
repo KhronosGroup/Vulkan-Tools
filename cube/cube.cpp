@@ -1022,7 +1022,7 @@ void Demo::init_vk() {
     // Look for validation layers
     vk::Bool32 validation_found = VK_FALSE;
     if (validate) {
-        auto result = vk::enumerateInstanceLayerProperties(&instance_layer_count, nullptr);
+        auto result = vk::enumerateInstanceLayerProperties(&instance_layer_count, static_cast<vk::LayerProperties *>(nullptr));
         VERIFY(result == vk::Result::eSuccess);
 
         instance_validation_layers = instance_validation_layers_alt1;
@@ -1063,7 +1063,8 @@ void Demo::init_vk() {
     vk::Bool32 platformSurfaceExtFound = VK_FALSE;
     memset(extension_names, 0, sizeof(extension_names));
 
-    auto result = vk::enumerateInstanceExtensionProperties(nullptr, &instance_extension_count, nullptr);
+    auto result = vk::enumerateInstanceExtensionProperties(nullptr, &instance_extension_count,
+                                                           static_cast<vk::ExtensionProperties *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     if (instance_extension_count > 0) {
@@ -1206,7 +1207,7 @@ void Demo::init_vk() {
 
     /* Make initial call to query gpu_count, then second call for gpu info*/
     uint32_t gpu_count;
-    result = inst.enumeratePhysicalDevices(&gpu_count, nullptr);
+    result = inst.enumeratePhysicalDevices(&gpu_count, static_cast<vk::PhysicalDevice *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     if (gpu_count > 0) {
@@ -1229,7 +1230,8 @@ void Demo::init_vk() {
     enabled_extension_count = 0;
     memset(extension_names, 0, sizeof(extension_names));
 
-    result = gpu.enumerateDeviceExtensionProperties(nullptr, &device_extension_count, nullptr);
+    result =
+        gpu.enumerateDeviceExtensionProperties(nullptr, &device_extension_count, static_cast<vk::ExtensionProperties *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     if (device_extension_count > 0) {
@@ -1257,7 +1259,7 @@ void Demo::init_vk() {
     gpu.getProperties(&gpu_props);
 
     /* Call with nullptr data to get count */
-    gpu.getQueueFamilyProperties(&queue_family_count, nullptr);
+    gpu.getQueueFamilyProperties(&queue_family_count, static_cast<vk::QueueFamilyProperties *>(nullptr));
     assert(queue_family_count >= 1);
 
     queue_props.reset(new vk::QueueFamilyProperties[queue_family_count]);
@@ -1374,7 +1376,7 @@ void Demo::init_vk_swapchain() {
 
     // Get the list of VkFormat's that are supported:
     uint32_t formatCount;
-    auto result = gpu.getSurfaceFormatsKHR(surface, &formatCount, nullptr);
+    auto result = gpu.getSurfaceFormatsKHR(surface, &formatCount, static_cast<vk::SurfaceFormatKHR *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     std::unique_ptr<vk::SurfaceFormatKHR[]> surfFormats(new vk::SurfaceFormatKHR[formatCount]);
@@ -1506,7 +1508,7 @@ void Demo::prepare_buffers() {
     VERIFY(result == vk::Result::eSuccess);
 
     uint32_t presentModeCount;
-    result = gpu.getSurfacePresentModesKHR(surface, &presentModeCount, nullptr);
+    result = gpu.getSurfacePresentModesKHR(surface, &presentModeCount, static_cast<vk::PresentModeKHR *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     std::unique_ptr<vk::PresentModeKHR[]> presentModes(new vk::PresentModeKHR[presentModeCount]);
@@ -1643,7 +1645,7 @@ void Demo::prepare_buffers() {
         device.destroySwapchainKHR(oldSwapchain, nullptr);
     }
 
-    result = device.getSwapchainImagesKHR(swapchain, &swapchainImageCount, nullptr);
+    result = device.getSwapchainImagesKHR(swapchain, &swapchainImageCount, static_cast<vk::Image *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
     std::unique_ptr<vk::Image[]> swapchainImages(new vk::Image[swapchainImageCount]);
