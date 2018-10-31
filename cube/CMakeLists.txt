@@ -199,7 +199,7 @@ if(APPLE)
     # Fix up the library references to be self-contained within the bundle.
     install(CODE "
         include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"\")
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cube.app \"\" \"${Vulkan_LIBRARY_DIR}\")
         ")
 else()
     install(TARGETS cube RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -244,7 +244,7 @@ if(APPLE)
     # Fix up the library references to be self-contained within the bundle.
     install(CODE "
         include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cubepp.app \"\" \"\")
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/cubepp.app \"\" \"${Vulkan_LIBRARY_DIR}\")
         ")
 else()
     install(TARGETS cubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
