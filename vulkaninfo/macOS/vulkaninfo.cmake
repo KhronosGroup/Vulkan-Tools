@@ -68,5 +68,5 @@ install(TARGETS vulkaninfo-bundle BUNDLE DESTINATION "vulkaninfo")
 # script, which can't be fixed up. Instead pass it the explicit name of the executable.
 install(CODE "
     include(BundleUtilities)
-    fixup_bundle(\${CMAKE_INSTALL_PREFIX}/vulkaninfo/vulkaninfo.app/Contents/MacOS/vulkaninfo \"\" \"\")
+    fixup_bundle(\${CMAKE_INSTALL_PREFIX}/vulkaninfo/vulkaninfo.app/Contents/MacOS/vulkaninfo \"\" \"${Vulkan_LIBRARY_DIR}\")
     ")
