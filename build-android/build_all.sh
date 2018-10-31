@@ -57,7 +57,7 @@ function create_APK() {
 ./update_external_sources_android.sh --no-build
 
 #
-# build cube APK
+# build vkcube APK
 #
 (
 pushd $DEMO_BUILD_DIR
@@ -65,7 +65,7 @@ ndk-build -j $cores
 mkdir -p $DEMO_BUILD_DIR/cube/bin/libs/lib
 cp -r $DEMO_BUILD_DIR/libs/* $DEMO_BUILD_DIR/cube/bin/libs/lib/
 cd $DEMO_BUILD_DIR/cube
-create_APK cube
+create_APK vkcube
 popd
 )
 

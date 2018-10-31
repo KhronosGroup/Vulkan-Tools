@@ -24,7 +24,7 @@ in this repository for more details.
 This repository contains the source code necessary to build the following components:
 
 - vulkaninfo
-- cube and cubepp demos
+- vkcube and vkcubepp demos
 - mock ICD
 
 ### Installed Files
@@ -32,7 +32,7 @@ This repository contains the source code necessary to build the following compon
 The `install` target installs the following files under the directory
 indicated by *install_dir*:
 
-- *install_dir*`/bin` : The vulkaninfo, cube and cubepp executables
+- *install_dir*`/bin` : The vulkaninfo, vkcube and vkcubepp executables
 - *install_dir*`/lib` : The mock ICD library and JSON (Windows) (If INSTALL_ICD=ON)
 - *install_dir*`/share/vulkan/icd.d` : mock ICD JSON (Linux/MacOS) (If INSTALL_ICD=ON)
 
@@ -84,7 +84,7 @@ Note that this dependency can be ignored if not building the mock ICD
 #### glslang
 
 This repository has a required dependency on the `glslangValidator` (shader
-compiler) for compiling the shader programs for the cube demos.
+compiler) for compiling the shader programs for the vkcube demos.
 
 The CMake code in this repository downloads release binaries of glslang if a
 build glslang repository is not provided. The glslangValidator is obtained
@@ -99,7 +99,7 @@ of building glslang. You must also take note of the glslang install directory
 and pass it on the CMake command line for building this repository, as
 described below.
 
-Note that this dependency can be ignored if not building the cube demo
+Note that this dependency can be ignored if not building the vkcube demo
 (CMake option: `-DBUILD_CUBE=OFF`).
 
 ### Build and Install Directories
@@ -166,7 +166,7 @@ on/off options currently supported by this repository:
 
 | Option | Platform | Default | Description |
 | ------ | -------- | ------- | ----------- |
-| BUILD_CUBE | All | `ON` | Controls whether or not the cube demo is built. |
+| BUILD_CUBE | All | `ON` | Controls whether or not the vkcube demo is built. |
 | BUILD_VULKANINFO | All | `ON` | Controls whether or not the vulkaninfo utility is built. |
 | BUILD_ICD | All | `ON` | Controls whether or not the mock ICD is built. |
 | INSTALL_ICD | All | `OFF` | Controls whether or not the mock ICD is installed as part of the install target. |
@@ -423,11 +423,11 @@ CMake option of the form `BUILD_WSI_xxx_SUPPORT` can be set to `OFF`.
 Note vulkaninfo currently only supports Xcb and Xlib WSI display servers. See
 the CMakeLists.txt file in `Vulkan-Tools/vulkaninfo` for more info.
 
-You can select which WSI subsystem is used to execute the cube applications
+You can select which WSI subsystem is used to execute the vkcube applications
 using a CMake option called DEMOS_WSI_SELECTION. Supported options are XCB
 (default), XLIB, and WAYLAND. Note that you must build using the corresponding
 BUILD_WSI_*_SUPPORT enabled at the base repository level. For instance,
-creating a build that will use Xlib when running the cube demos, your CMake
+creating a build that will use Xlib when running the vkcube demos, your CMake
 command line might look like:
 
     cmake -DCMAKE_BUILD_TYPE=Debug -DDEMOS_WSI_SELECTION=XLIB ..
@@ -486,12 +486,12 @@ To uninstall the files from the system directories, you can execute:
 ### Linux Tests
 
 After making any changes to the repository, you should perform some quick
-sanity tests, such as running the cube demo with validation enabled.
+sanity tests, such as running the vkcube demo with validation enabled.
 
-To run the **Cube application** with validation, in a terminal change to the
+To run the **vkcube application** with validation, in a terminal change to the
 `build/cube` directory and run:
 
-    VK_LAYER_PATH=../path/to/validation/layers ./cube --validate
+    VK_LAYER_PATH=../path/to/validation/layers ./vkcube --validate
 
 If you have an SDK installed and have run the setup script to set the
 `VULKAN_SDK` environment variable, it may be unnecessary to specify a
@@ -636,8 +636,8 @@ for VS2013:
 ### Android Tests and Demos
 
 After making any changes to the repository you should perform some quick
-sanity tests, including the layer validation tests and the cube and smoke
-demos with validation enabled.
+sanity tests, including the layer validation tests and the vkcube 
+demo with validation enabled.
 
 #### Run Layer Validation Tests
 
@@ -654,15 +654,15 @@ validation tests:
 
     test_APK.sh -s <serial number> -p <platform name> -f <gtest_filter>
 
-#### Run Cube with Validation
+#### Run vkcube with Validation
 
 TODO: This must be reworked to pull in layers from the ValidationLayers repo
 
-Use the following steps to build, install, and run Cube for Android:
+Use the following steps to build, install, and run vkcube for Android:
 
     cd build-android
     ./build_all.sh
-    adb install -r ../demos/android/cube/bin/cube.apk
+    adb install -r ../demos/android/cube/bin/vkcube.apk
     adb shell am start com.example.Cube/android.app.NativeActivity
 
 To build, install, and run Cube with validation layers,
@@ -710,7 +710,7 @@ section.
 
 [MoltenVK](https://github.com/KhronosGroup/MoltenVK) Library
 
-- Building the cube and vulkaninfo applications require linking to the
+- Building the vkcube and vulkaninfo applications require linking to the
   MoltenVK Library (libMoltenVK.dylib)
   - The following option should be used on the cmake command line to specify a
     vulkan loader library: MOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK
@@ -719,7 +719,7 @@ section.
 
 Vulkan Loader Library
 
-- Building the cube and vulkaninfo applications require linking to the Vulkan
+- Building the vkcube and vulkaninfo applications require linking to the Vulkan
   Loader Library (libvulkan.1.dylib)
   - The following option should be used on the cmake command line to specify a
     vulkan loader library:
@@ -757,8 +757,8 @@ to specify the number of cores to use for the build. For example:
 
 You can now run the demo applications from the command line:
 
-    open cube/cube.app
-    open cube/cubepp.app
+    open cube/vkcube.app
+    open cube/vkcubepp.app
     open vulkaninfo/vulkaninfo.app
 
 Or you can locate them from `Finder` and launch them from there.
@@ -771,9 +771,9 @@ that are still in your build tree.
 
 To see this, run this command from your `build` directory:
 
-    otool -l cube/cube.app/Contents/MacOS/cube
+    otool -l cube/cube.app/Contents/MacOS/vkcube
 
-and note that the `cube` executable contains loader commands:
+and note that the `vkcube` executable contains loader commands:
 
 - `LC_LOAD_DYLIB` to load `libvulkan.1.dylib` via an `@rpath`
 - `LC_RPATH` that contains an absolute path to the build location of the Vulkan loader
@@ -830,4 +830,4 @@ To create and open an Xcode project:
 
 Within Xcode, you can select Debug or Release builds in the project's Build
 Settings. You can also select individual schemes for working with specific
-applications like `cube`.
+applications like `vkcube`.

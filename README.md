@@ -16,7 +16,7 @@ verify their applications correct use of the Vulkan API.
 
 The following components are available in this repository:
 - [*Mock ICD*](icd/)
-- [*Cube and Cube++ Demo*](cube/)
+- [*Vkcube and Vkcube++ Demo*](cube/)
 - [*VulkanInfo*](vulkaninfo/)
 - [*Windows Runtime*](winrt/)
 
@@ -32,7 +32,7 @@ Please see the [GOVERNANCE.md](GOVERNANCE.md) file in this repository for reposi
 ## How to Build and Run
 
 [BUILD.md](BUILD.md)
-Includes directions for building all components as well as running the cube demo applications.
+Includes directions for building all components as well as running the vkcube demo applications.
 
 ## License
 This work is released as open source under a Apache-style license from Khronos including a Khronos copyright.

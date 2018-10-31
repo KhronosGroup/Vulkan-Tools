@@ -19,6 +19,6 @@
 
 <resources>
     <!-- Simple strings. -->
-    <string name="app_name">Cube</string>
+    <string name="app_name">VkCube</string>
 
 </resources>

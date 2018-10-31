@@ -18,7 +18,7 @@ SRC_DIR := $(LOCAL_PATH)/../../..
 DEMO_DIR := $(SRC_DIR)/cube
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := Cube
+LOCAL_MODULE := VkCube
 LOCAL_SRC_FILES += $(DEMO_DIR)/cube.c \
                    $(SRC_DIR)/common/vulkan_wrapper.cpp \
                    $(SRC_DIR)/common/android_util.cpp

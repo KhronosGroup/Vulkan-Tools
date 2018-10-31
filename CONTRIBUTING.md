@@ -67,10 +67,10 @@ that to be accepted into the repository, the pull request must [pass all tests](
 * Run the repository components with the Vulkan Validation Layers before and after each if your commits to check for any regressions.
 
   (These instructions are for Linux)
-* In the `demos` directory, run:
-
->        cube
->        cube --validate
+* In the `cube` directory, run:
+>        vkcube
+>        vkcube --validate
+* In the `vulkaninfo` directory, run:
 >        vulkaninfo
 
 * Run tests that explicitly exercise your changes.
