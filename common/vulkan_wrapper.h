@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Android Open Source Project
+ * Copyright 2018 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,6 +285,12 @@ extern PFN_vkCreateDescriptorUpdateTemplateKHR vkCreateDescriptorUpdateTemplateK
 extern PFN_vkDestroyDescriptorUpdateTemplateKHR vkDestroyDescriptorUpdateTemplateKHR;
 extern PFN_vkUpdateDescriptorSetWithTemplateKHR vkUpdateDescriptorSetWithTemplateKHR;
 
+// VK_KHR_create_renderpass2
+extern PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR;
+extern PFN_vkCmdBeginRenderPass2KHR vkCmdBeginRenderPass2KHR;
+extern PFN_vkCmdNextSubpass2KHR vkCmdNextSubpass2KHR;
+extern PFN_vkCmdEndRenderPass2KHR vkCmdEndRenderPass2KHR;
+
 // VK_KHR_shared_presentable_image
 extern PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR;
 
@@ -304,6 +310,12 @@ extern PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurface
 extern PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR;
 
 // VK_KHR_variable_pointers
+
+// VK_KHR_get_display_properties2
+extern PFN_vkGetPhysicalDeviceDisplayProperties2KHR vkGetPhysicalDeviceDisplayProperties2KHR;
+extern PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR vkGetPhysicalDeviceDisplayPlaneProperties2KHR;
+extern PFN_vkGetDisplayModeProperties2KHR vkGetDisplayModeProperties2KHR;
+extern PFN_vkGetDisplayPlaneCapabilities2KHR vkGetDisplayPlaneCapabilities2KHR;
 
 // VK_KHR_dedicated_allocation
 
@@ -329,15 +341,21 @@ extern PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR;
 // VK_KHR_maintenance3
 extern PFN_vkGetDescriptorSetLayoutSupportKHR vkGetDescriptorSetLayoutSupportKHR;
 
+// VK_KHR_draw_indirect_count
+extern PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR;
+extern PFN_vkCmdDrawIndexedIndirectCountKHR vkCmdDrawIndexedIndirectCountKHR;
+
+// VK_KHR_8bit_storage
+
+// VK_KHR_shader_atomic_int64
+
+// VK_KHR_driver_properties
+
+// VK_KHR_vulkan_memory_model
+
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 // VK_KHR_android_surface
 extern PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
-#endif
-
-#ifdef VK_USE_PLATFORM_MIR_KHR
-// VK_KHR_mir_surface
-extern PFN_vkCreateMirSurfaceKHR vkCreateMirSurfaceKHR;
-extern PFN_vkGetPhysicalDeviceMirPresentationSupportKHR vkGetPhysicalDeviceMirPresentationSupportKHR;
 #endif
 
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
