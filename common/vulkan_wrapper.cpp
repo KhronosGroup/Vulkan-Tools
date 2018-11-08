@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The Android Open Source Project
+ * Copyright 2018 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -306,6 +306,10 @@ int InitVulkan(void) {
         reinterpret_cast<PFN_vkDestroyDescriptorUpdateTemplateKHR>(dlsym(libvulkan, "vkDestroyDescriptorUpdateTemplateKHR"));
     vkUpdateDescriptorSetWithTemplateKHR =
         reinterpret_cast<PFN_vkUpdateDescriptorSetWithTemplateKHR>(dlsym(libvulkan, "vkUpdateDescriptorSetWithTemplateKHR"));
+    vkCreateRenderPass2KHR = reinterpret_cast<PFN_vkCreateRenderPass2KHR>(dlsym(libvulkan, "vkCreateRenderPass2KHR"));
+    vkCmdBeginRenderPass2KHR = reinterpret_cast<PFN_vkCmdBeginRenderPass2KHR>(dlsym(libvulkan, "vkCmdBeginRenderPass2KHR"));
+    vkCmdNextSubpass2KHR = reinterpret_cast<PFN_vkCmdNextSubpass2KHR>(dlsym(libvulkan, "vkCmdNextSubpass2KHR"));
+    vkCmdEndRenderPass2KHR = reinterpret_cast<PFN_vkCmdEndRenderPass2KHR>(dlsym(libvulkan, "vkCmdEndRenderPass2KHR"));
     vkGetSwapchainStatusKHR = reinterpret_cast<PFN_vkGetSwapchainStatusKHR>(dlsym(libvulkan, "vkGetSwapchainStatusKHR"));
     vkGetPhysicalDeviceExternalFencePropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>(
         dlsym(libvulkan, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
@@ -315,6 +319,14 @@ int InitVulkan(void) {
         dlsym(libvulkan, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
     vkGetPhysicalDeviceSurfaceFormats2KHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceFormats2KHR>(dlsym(libvulkan, "vkGetPhysicalDeviceSurfaceFormats2KHR"));
+    vkGetPhysicalDeviceDisplayProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayProperties2KHR>(
+        dlsym(libvulkan, "vkGetPhysicalDeviceDisplayProperties2KHR"));
+    vkGetPhysicalDeviceDisplayPlaneProperties2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR>(
+        dlsym(libvulkan, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR"));
+    vkGetDisplayModeProperties2KHR =
+        reinterpret_cast<PFN_vkGetDisplayModeProperties2KHR>(dlsym(libvulkan, "vkGetDisplayModeProperties2KHR"));
+    vkGetDisplayPlaneCapabilities2KHR =
+        reinterpret_cast<PFN_vkGetDisplayPlaneCapabilities2KHR>(dlsym(libvulkan, "vkGetDisplayPlaneCapabilities2KHR"));
     vkGetImageMemoryRequirements2KHR =
         reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(dlsym(libvulkan, "vkGetImageMemoryRequirements2KHR"));
     vkGetBufferMemoryRequirements2KHR =
@@ -329,15 +341,12 @@ int InitVulkan(void) {
     vkBindImageMemory2KHR = reinterpret_cast<PFN_vkBindImageMemory2KHR>(dlsym(libvulkan, "vkBindImageMemory2KHR"));
     vkGetDescriptorSetLayoutSupportKHR =
         reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupportKHR>(dlsym(libvulkan, "vkGetDescriptorSetLayoutSupportKHR"));
+    vkCmdDrawIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndirectCountKHR>(dlsym(libvulkan, "vkCmdDrawIndirectCountKHR"));
+    vkCmdDrawIndexedIndirectCountKHR =
+        reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountKHR>(dlsym(libvulkan, "vkCmdDrawIndexedIndirectCountKHR"));
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     vkCreateAndroidSurfaceKHR = reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(dlsym(libvulkan, "vkCreateAndroidSurfaceKHR"));
-#endif
-
-#ifdef VK_USE_PLATFORM_MIR_KHR
-    vkCreateMirSurfaceKHR = reinterpret_cast<PFN_vkCreateMirSurfaceKHR>(dlsym(libvulkan, "vkCreateMirSurfaceKHR"));
-    vkGetPhysicalDeviceMirPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceMirPresentationSupportKHR>(
-        dlsym(libvulkan, "vkGetPhysicalDeviceMirPresentationSupportKHR"));
 #endif
 
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
@@ -599,12 +608,20 @@ PFN_vkCmdPushDescriptorSetWithTemplateKHR vkCmdPushDescriptorSetWithTemplateKHR;
 PFN_vkCreateDescriptorUpdateTemplateKHR vkCreateDescriptorUpdateTemplateKHR;
 PFN_vkDestroyDescriptorUpdateTemplateKHR vkDestroyDescriptorUpdateTemplateKHR;
 PFN_vkUpdateDescriptorSetWithTemplateKHR vkUpdateDescriptorSetWithTemplateKHR;
+PFN_vkCreateRenderPass2KHR vkCreateRenderPass2KHR;
+PFN_vkCmdBeginRenderPass2KHR vkCmdBeginRenderPass2KHR;
+PFN_vkCmdNextSubpass2KHR vkCmdNextSubpass2KHR;
+PFN_vkCmdEndRenderPass2KHR vkCmdEndRenderPass2KHR;
 PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR;
 PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR vkGetPhysicalDeviceExternalFencePropertiesKHR;
 PFN_vkImportFenceFdKHR vkImportFenceFdKHR;
 PFN_vkGetFenceFdKHR vkGetFenceFdKHR;
 PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR;
 PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR;
+PFN_vkGetPhysicalDeviceDisplayProperties2KHR vkGetPhysicalDeviceDisplayProperties2KHR;
+PFN_vkGetPhysicalDeviceDisplayPlaneProperties2KHR vkGetPhysicalDeviceDisplayPlaneProperties2KHR;
+PFN_vkGetDisplayModeProperties2KHR vkGetDisplayModeProperties2KHR;
+PFN_vkGetDisplayPlaneCapabilities2KHR vkGetDisplayPlaneCapabilities2KHR;
 PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
 PFN_vkGetBufferMemoryRequirements2KHR vkGetBufferMemoryRequirements2KHR;
 PFN_vkGetImageSparseMemoryRequirements2KHR vkGetImageSparseMemoryRequirements2KHR;
@@ -613,6 +630,8 @@ PFN_vkDestroySamplerYcbcrConversionKHR vkDestroySamplerYcbcrConversionKHR;
 PFN_vkBindBufferMemory2KHR vkBindBufferMemory2KHR;
 PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR;
 PFN_vkGetDescriptorSetLayoutSupportKHR vkGetDescriptorSetLayoutSupportKHR;
+PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR;
+PFN_vkCmdDrawIndexedIndirectCountKHR vkCmdDrawIndexedIndirectCountKHR;
 PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
 PFN_vkDebugReportMessageEXT vkDebugReportMessageEXT;
@@ -621,10 +640,18 @@ PFN_vkDebugMarkerSetObjectNameEXT vkDebugMarkerSetObjectNameEXT;
 PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
 PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
 PFN_vkCmdDebugMarkerInsertEXT vkCmdDebugMarkerInsertEXT;
+PFN_vkCmdBindTransformFeedbackBuffersEXT vkCmdBindTransformFeedbackBuffersEXT;
+PFN_vkCmdBeginTransformFeedbackEXT vkCmdBeginTransformFeedbackEXT;
+PFN_vkCmdEndTransformFeedbackEXT vkCmdEndTransformFeedbackEXT;
+PFN_vkCmdBeginQueryIndexedEXT vkCmdBeginQueryIndexedEXT;
+PFN_vkCmdEndQueryIndexedEXT vkCmdEndQueryIndexedEXT;
+PFN_vkCmdDrawIndirectByteCountEXT vkCmdDrawIndirectByteCountEXT;
 PFN_vkCmdDrawIndirectCountAMD vkCmdDrawIndirectCountAMD;
 PFN_vkCmdDrawIndexedIndirectCountAMD vkCmdDrawIndexedIndirectCountAMD;
 PFN_vkGetShaderInfoAMD vkGetShaderInfoAMD;
 PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV vkGetPhysicalDeviceExternalImageFormatPropertiesNV;
+PFN_vkCmdBeginConditionalRenderingEXT vkCmdBeginConditionalRenderingEXT;
+PFN_vkCmdEndConditionalRenderingEXT vkCmdEndConditionalRenderingEXT;
 PFN_vkCmdProcessCommandsNVX vkCmdProcessCommandsNVX;
 PFN_vkCmdReserveSpaceForCommandsNVX vkCmdReserveSpaceForCommandsNVX;
 PFN_vkCreateIndirectCommandsLayoutNVX vkCreateIndirectCommandsLayoutNVX;
@@ -658,12 +685,36 @@ PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT;
 PFN_vkSubmitDebugUtilsMessageEXT vkSubmitDebugUtilsMessageEXT;
 PFN_vkCmdSetSampleLocationsEXT vkCmdSetSampleLocationsEXT;
 PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT vkGetPhysicalDeviceMultisamplePropertiesEXT;
+PFN_vkGetImageDrmFormatModifierPropertiesEXT vkGetImageDrmFormatModifierPropertiesEXT;
 PFN_vkCreateValidationCacheEXT vkCreateValidationCacheEXT;
 PFN_vkDestroyValidationCacheEXT vkDestroyValidationCacheEXT;
 PFN_vkMergeValidationCachesEXT vkMergeValidationCachesEXT;
 PFN_vkGetValidationCacheDataEXT vkGetValidationCacheDataEXT;
+PFN_vkCmdBindShadingRateImageNV vkCmdBindShadingRateImageNV;
+PFN_vkCmdSetViewportShadingRatePaletteNV vkCmdSetViewportShadingRatePaletteNV;
+PFN_vkCmdSetCoarseSampleOrderNV vkCmdSetCoarseSampleOrderNV;
+PFN_vkCreateAccelerationStructureNV vkCreateAccelerationStructureNV;
+PFN_vkDestroyAccelerationStructureNV vkDestroyAccelerationStructureNV;
+PFN_vkGetAccelerationStructureMemoryRequirementsNV vkGetAccelerationStructureMemoryRequirementsNV;
+PFN_vkBindAccelerationStructureMemoryNV vkBindAccelerationStructureMemoryNV;
+PFN_vkCmdBuildAccelerationStructureNV vkCmdBuildAccelerationStructureNV;
+PFN_vkCmdCopyAccelerationStructureNV vkCmdCopyAccelerationStructureNV;
+PFN_vkCmdTraceRaysNV vkCmdTraceRaysNV;
+PFN_vkCreateRayTracingPipelinesNV vkCreateRayTracingPipelinesNV;
+PFN_vkGetRayTracingShaderGroupHandlesNV vkGetRayTracingShaderGroupHandlesNV;
+PFN_vkGetAccelerationStructureHandleNV vkGetAccelerationStructureHandleNV;
+PFN_vkCmdWriteAccelerationStructuresPropertiesNV vkCmdWriteAccelerationStructuresPropertiesNV;
+PFN_vkCompileDeferredNV vkCompileDeferredNV;
 PFN_vkGetMemoryHostPointerPropertiesEXT vkGetMemoryHostPointerPropertiesEXT;
 PFN_vkCmdWriteBufferMarkerAMD vkCmdWriteBufferMarkerAMD;
+PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsEXT vkGetPhysicalDeviceCalibrateableTimeDomainsEXT;
+PFN_vkGetCalibratedTimestampsEXT vkGetCalibratedTimestampsEXT;
+PFN_vkCmdDrawMeshTasksNV vkCmdDrawMeshTasksNV;
+PFN_vkCmdDrawMeshTasksIndirectNV vkCmdDrawMeshTasksIndirectNV;
+PFN_vkCmdDrawMeshTasksIndirectCountNV vkCmdDrawMeshTasksIndirectCountNV;
+PFN_vkCmdSetExclusiveScissorNV vkCmdSetExclusiveScissorNV;
+PFN_vkCmdSetCheckpointNV vkCmdSetCheckpointNV;
+PFN_vkGetQueueCheckpointDataNV vkGetQueueCheckpointDataNV;
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
@@ -674,17 +725,16 @@ PFN_vkGetAndroidHardwareBufferPropertiesANDROID vkGetAndroidHardwareBufferProper
 PFN_vkGetMemoryAndroidHardwareBufferANDROID vkGetMemoryAndroidHardwareBufferANDROID;
 #endif
 
+#ifdef VK_USE_PLATFORM_FUCHSIA
+PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA;
+#endif
+
 #ifdef VK_USE_PLATFORM_IOS_MVK
 PFN_vkCreateIOSSurfaceMVK vkCreateIOSSurfaceMVK;
 #endif
 
 #ifdef VK_USE_PLATFORM_MACOS_MVK
 PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
-#endif
-
-#ifdef VK_USE_PLATFORM_MIR_KHR
-PFN_vkCreateMirSurfaceKHR vkCreateMirSurfaceKHR;
-PFN_vkGetPhysicalDeviceMirPresentationSupportKHR vkGetPhysicalDeviceMirPresentationSupportKHR;
 #endif
 
 #ifdef VK_USE_PLATFORM_VI_NN
