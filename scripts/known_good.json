@@ -25,10 +25,10 @@
       "sub_dir" : "MoltenVK",
       "build_dir" : "MoltenVK",
       "install_dir" : "MoltenVK",
-      "commit" : "e651841e67e6faddaaa8e5848d248c4b1b7ad3cf",
+      "commit" : "9517c58dbdf1b4c269bd700b346361a5dc01f1c0",
       "custom_build" : [
         "./fetchDependencies --v-headers-root {0[Vulkan-Headers][repo_dir]} --glslang-root {0[glslang][repo_dir]}",
-        "xcodebuild -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package ({2})\" build"
+        "xcodebuild -project MoltenVKPackaging.xcodeproj GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS MVK_LOGGING_ENABLED=0' -scheme \"MoltenVK Package\" build"
       ],
       "build_step" : "custom",
       "build_platforms" : [
@@ -41,7 +41,7 @@
       "sub_dir" : "Vulkan-Loader",
       "build_dir" : "Vulkan-Loader/build",
       "install_dir" : "Vulkan-Loader/build/install",
-      "commit" : "9f59673982ff0ef7614adbe4c698b79aef1eaedb",
+      "commit" : "870e969fce61dca455a8339f114d331520486ec0",
       "deps" : [
         {
           "var_name" : "VULKAN_HEADERS_INSTALL_DIR",
