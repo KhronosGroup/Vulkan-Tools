@@ -158,6 +158,7 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${VulkanHeaders_INCLUDE_DIR}
+                    ${WAYLAND_CLIENT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}
                     ${PROJECT_BINARY_DIR}
                     ${CMAKE_BINARY_DIR})
