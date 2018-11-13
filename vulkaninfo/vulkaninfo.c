@@ -1582,8 +1582,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                 fprintf(out, "\t\t\t\t\t\t\t</details>\n");
                 fprintf(out, "\t\t\t\t\t\t</details>\n");
             } else if (human_readable_output) {
-                printf("\nVkSurfaceCapabilities2EXT:\n");
-                printf("==========================\n");
+                printf("VkSurfaceCapabilities2EXT:\n");
                 printf("\tsupportedSurfaceCounters:\n");
                 if (inst->surface_capabilities2_ext.supportedSurfaceCounters == 0) {
                     printf("\t\tNone\n");
@@ -1591,6 +1590,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                 if (inst->surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
                     printf("\t\tVK_SURFACE_COUNTER_VBLANK_EXT\n");
                 }
+                printf("\n");
             }
         }
 
