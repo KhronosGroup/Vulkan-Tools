@@ -1590,7 +1590,6 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                 if (inst->surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
                     printf("\t\tVK_SURFACE_COUNTER_VBLANK_EXT\n");
                 }
-                printf("\n");
             }
         }
 
@@ -1651,8 +1650,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                         fprintf(out, "\t\t\t\t\t\t\t</details>\n");
                         fprintf(out, "\t\t\t\t\t\t</details>\n");
                     } else if (human_readable_output) {
-                        printf("\nVkSharedPresentSurfaceCapabilitiesKHR:\n");
-                        printf("========================================\n");
+                        printf("VkSharedPresentSurfaceCapabilitiesKHR:\n");
                         printf("\tsharedPresentSupportedUsageFlags:\n");
                         if (shared_surface_capabilities->sharedPresentSupportedUsageFlags == 0) { printf("\t\tNone\n"); }
                         if (shared_surface_capabilities->sharedPresentSupportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) { printf("\t\tVK_IMAGE_USAGE_TRANSFER_SRC_BIT\n"); }
