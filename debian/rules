@@ -14,9 +14,6 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	dh_auto_install --destdir=debian/tmp
 
-	mv debian/tmp/usr/bin/cube debian/tmp/usr/bin/vkcube
-	mv debian/tmp/usr/bin/cubepp debian/tmp/usr/bin/vkcubepp
-
 override_dh_missing:
 	dh_missing --fail-missing
 
