@@ -240,14 +240,30 @@ static const char *VkResultString(VkResult err) {
         STR(VK_TIMEOUT);
         STR(VK_EVENT_SET);
         STR(VK_EVENT_RESET);
-        STR(VK_ERROR_INITIALIZATION_FAILED);
+        STR(VK_INCOMPLETE);
         STR(VK_ERROR_OUT_OF_HOST_MEMORY);
         STR(VK_ERROR_OUT_OF_DEVICE_MEMORY);
+        STR(VK_ERROR_INITIALIZATION_FAILED);
         STR(VK_ERROR_DEVICE_LOST);
+        STR(VK_ERROR_MEMORY_MAP_FAILED);
         STR(VK_ERROR_LAYER_NOT_PRESENT);
         STR(VK_ERROR_EXTENSION_NOT_PRESENT);
-        STR(VK_ERROR_MEMORY_MAP_FAILED);
+        STR(VK_ERROR_FEATURE_NOT_PRESENT);
         STR(VK_ERROR_INCOMPATIBLE_DRIVER);
+        STR(VK_ERROR_TOO_MANY_OBJECTS);
+        STR(VK_ERROR_FORMAT_NOT_SUPPORTED);
+        STR(VK_ERROR_FRAGMENTED_POOL);
+        STR(VK_ERROR_OUT_OF_POOL_MEMORY);
+        STR(VK_ERROR_INVALID_EXTERNAL_HANDLE);
+        STR(VK_ERROR_SURFACE_LOST_KHR);
+        STR(VK_ERROR_NATIVE_WINDOW_IN_USE_KHR);
+        STR(VK_SUBOPTIMAL_KHR);
+        STR(VK_ERROR_OUT_OF_DATE_KHR);
+        STR(VK_ERROR_INCOMPATIBLE_DISPLAY_KHR);
+        STR(VK_ERROR_VALIDATION_FAILED_EXT);
+        STR(VK_ERROR_INVALID_SHADER_NV);
+        STR(VK_ERROR_FRAGMENTATION_EXT);
+        STR(VK_ERROR_NOT_PERMITTED_EXT);
 #undef STR
         default:
             return "UNKNOWN_RESULT";
@@ -518,6 +534,8 @@ static const char *VkPresentModeString(VkPresentModeKHR mode) {
         STR(MAILBOX_KHR);
         STR(FIFO_KHR);
         STR(FIFO_RELAXED_KHR);
+        STR(SHARED_DEMAND_REFRESH_KHR);
+        STR(SHARED_CONTINUOUS_REFRESH_KHR);
 #undef STR
         default:
             return "UNKNOWN_FORMAT";
@@ -1919,15 +1937,12 @@ static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
         AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
     }
 
-#ifdef VK_VERSION_1_1
-    for (VkFormat fmt = VK_FORMAT_G8B8G8R8_422_UNORM_KHR; fmt <= VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM_KHR; ++fmt) {
+    for (VkFormat fmt = VK_FORMAT_G8B8G8R8_422_UNORM; fmt <= VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM; ++fmt) {
         AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
     }
-
     for (VkFormat fmt = VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG; fmt <= VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG; ++fmt) {
         AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
     }
-#endif // VK_VERSION_1_1
 
     if (html_output) {
         fprintf(out, "\t\t\t\t\t</details>\n");
