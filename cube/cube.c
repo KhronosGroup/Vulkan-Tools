@@ -60,8 +60,8 @@
 #define BILLION 1000000000L
 
 #define DEMO_TEXTURE_COUNT 1
-#define APP_SHORT_NAME "cube"
-#define APP_LONG_NAME "The Vulkan Cube Demo Program"
+#define APP_SHORT_NAME "vkcube"
+#define APP_LONG_NAME "Vulkan Cube"
 
 // Allow a maximum of two outstanding presentation operations.
 #define FRAME_LAG 2
@@ -99,20 +99,20 @@ void DbgMsg(char *fmt, ...) {
 #include <android/log.h>
 #define ERR_EXIT(err_msg, err_class)                                    \
     do {                                                                \
-        ((void)__android_log_print(ANDROID_LOG_INFO, "Cube", err_msg)); \
+        ((void)__android_log_print(ANDROID_LOG_INFO, "Vulkan Cube", err_msg)); \
         exit(1);                                                        \
     } while (0)
 #ifdef VARARGS_WORKS_ON_ANDROID
 void DbgMsg(const char *fmt, ...) {
     va_list va;
     va_start(va, fmt);
-    __android_log_print(ANDROID_LOG_INFO, "Cube", fmt, va);
+    __android_log_print(ANDROID_LOG_INFO, "Vulkan Cube", fmt, va);
     va_end(va);
 }
 #else  // VARARGS_WORKS_ON_ANDROID
 #define DbgMsg(fmt, ...)                                                           \
     do {                                                                           \
-        ((void)__android_log_print(ANDROID_LOG_INFO, "Cube", fmt, ##__VA_ARGS__)); \
+        ((void)__android_log_print(ANDROID_LOG_INFO, "Vulkan Cube", fmt, ##__VA_ARGS__)); \
     } while (0)
 #endif  // VARARGS_WORKS_ON_ANDROID
 #else
@@ -3707,7 +3707,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
         }
 
 #if defined(ANDROID)
-        ERR_EXIT("Usage: cube [--validate]\n", "Usage");
+        ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
 #else
         fprintf(stderr,
                 "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled] [--break]\n"
@@ -3798,7 +3798,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     }
 
     demo.connection = hInstance;
-    strncpy(demo.name, "cube", APP_NAME_STR_LEN);
+    strncpy(demo.name, "Vulkan Cube", APP_NAME_STR_LEN);
     demo_create_window(&demo);
     demo_init_vk_swapchain(&demo);
 

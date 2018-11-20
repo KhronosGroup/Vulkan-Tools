@@ -45,7 +45,7 @@
 #define VERIFY(x) ((void)(x))
 #endif
 
-#define APP_SHORT_NAME "cube"
+#define APP_SHORT_NAME "vkcube"
 #ifdef _WIN32
 #define APP_NAME_STR_LEN 80
 #endif
@@ -2934,7 +2934,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     }
 
     demo.connection = hInstance;
-    strncpy(demo.name, "cube", APP_NAME_STR_LEN);
+    strncpy(demo.name, "Vulkan Cube", APP_NAME_STR_LEN);
     demo.create_window();
     demo.init_vk_swapchain();
 
