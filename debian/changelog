@@ -1,8 +1,14 @@
+vulkan-tools (1.1.92.0~rc3-1) UNRELEASED; urgency=medium
+
+  * new upstream version
+
+ -- Jeremy Hayes <jeremy@centaurus>  Wed, 21 Nov 2018 13:27:45 -0700
+
 vulkan-tools (1.1.92.0~rc1-1lunarg16.04.1.1) xenial; urgency=medium
 
   * new upstream version
 
- -- Jeremy Hayes <jeremy@centaurus>  Wed, 14 Nov 2018 15:12:58 -0700
+ -- Jeremy Hayes <jeremy@centaurus>  Wed, 21 Nov 2018 13:27:44 -0700
 
 vulkan-tools (1.1.85.0-1) unstable; urgency=medium
 
