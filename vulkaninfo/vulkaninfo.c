@@ -2033,7 +2033,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDevice8BitStorageFeaturesKHR *b8_store_features = (VkPhysicalDevice8BitStorageFeaturesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevice8BitStorageFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDevice8BitStorageFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>storageBuffer8BitAccess           = <div class='val'>%u</div></summary></details>\n", b8_store_features->storageBuffer8BitAccess);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>uniformAndStorageBuffer8BitAccess = <div class='val'>%u</div></summary></details>\n", b8_store_features->uniformAndStorageBuffer8BitAccess);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>storagePushConstant8              = <div class='val'>%u</div></summary></details>\n", b8_store_features->storagePushConstant8);
@@ -2049,7 +2049,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDevice16BitStorageFeaturesKHR *b16_store_features = (VkPhysicalDevice16BitStorageFeaturesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevice16BitStorageFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDevice16BitStorageFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>storageBuffer16BitAccess           = <div class='val'>%u</div></summary></details>\n", b16_store_features->storageBuffer16BitAccess          );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>uniformAndStorageBuffer16BitAccess = <div class='val'>%u</div></summary></details>\n", b16_store_features->uniformAndStorageBuffer16BitAccess);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>storagePushConstant16              = <div class='val'>%u</div></summary></details>\n", b16_store_features->storagePushConstant16             );
@@ -2066,7 +2066,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR *sampler_ycbcr_features = (VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceSamplerYcbcrConversionFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceSamplerYcbcrConversionFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>samplerYcbcrConversion = <div class='val'>%u</div></summary></details>\n", sampler_ycbcr_features->samplerYcbcrConversion);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -2077,7 +2077,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceVariablePointerFeaturesKHR *var_pointer_features = (VkPhysicalDeviceVariablePointerFeaturesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceVariablePointerFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceVariablePointerFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>variablePointersStorageBuffer = <div class='val'>%u</div></summary></details>\n", var_pointer_features->variablePointersStorageBuffer);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>variablePointers              = <div class='val'>%u</div></summary></details>\n", var_pointer_features->variablePointers             );
                     fprintf(out, "\t\t\t\t\t</details>\n");
@@ -2090,7 +2090,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT *blend_op_adv_features = (VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceBlendOperationAdvancedFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceBlendOperationAdvancedFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>advancedBlendCoherentOperations = <div class='val'>%u</div></summary></details>\n", blend_op_adv_features->advancedBlendCoherentOperations);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -2101,7 +2101,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceMultiviewFeaturesKHR *multiview_features = (VkPhysicalDeviceMultiviewFeaturesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewFeatures</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>multiview                   = <div class='val'>%u</div></summary></details>\n", multiview_features->multiview                  );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>multiviewGeometryShader     = <div class='val'>%u</div></summary></details>\n", multiview_features->multiviewGeometryShader    );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>multiviewTessellationShader = <div class='val'>%u</div></summary></details>\n", multiview_features->multiviewTessellationShader);
@@ -2598,7 +2598,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT *blend_op_adv_props = (VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceBlendOperationAdvancedProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceBlendOperationAdvancedProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>advancedBlendMaxColorAttachments                = <div class='val'>%u</div></summary></details>\n", blend_op_adv_props->advancedBlendMaxColorAttachments     );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>advancedBlendIndependentBlend                   = <div class='val'>%u</div></summary></details>\n", blend_op_adv_props->advancedBlendIndependentBlend        );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>advancedBlendNonPremultipliedSrcColor           = <div class='val'>%u</div></summary></details>\n", blend_op_adv_props->advancedBlendNonPremultipliedSrcColor);
@@ -2619,7 +2619,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE2_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDevicePointClippingPropertiesKHR *pt_clip_props = (VkPhysicalDevicePointClippingPropertiesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevicePointClippingProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDevicePointClippingProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>pointClippingBehavior               = <div class='val'>%u</div></summary></details>\n", pt_clip_props->pointClippingBehavior);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -2630,7 +2630,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDevicePushDescriptorPropertiesKHR *push_desc_props = (VkPhysicalDevicePushDescriptorPropertiesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevicePushDescriptorProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDevicePushDescriptorProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxPushDescriptors                = <div class='val'>%u</div></summary></details>\n", push_desc_props->maxPushDescriptors);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -2641,7 +2641,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceDiscardRectanglePropertiesEXT *discard_rect_props = (VkPhysicalDeviceDiscardRectanglePropertiesEXT*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDiscardRectangleProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceDiscardRectangleProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxDiscardRectangles               = <div class='val'>%u</div></summary></details>\n", discard_rect_props->maxDiscardRectangles);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -2652,7 +2652,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
                 VkPhysicalDeviceMultiviewPropertiesKHR *multiview_props = (VkPhysicalDeviceMultiviewPropertiesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxMultiviewViewCount     = <div class='val'>%u</div></summary></details>\n", multiview_props->maxMultiviewViewCount    );
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxMultiviewInstanceIndex = <div class='val'>%u</div></summary></details>\n", multiview_props->maxMultiviewInstanceIndex);
                     fprintf(out, "\t\t\t\t\t</details>\n");
@@ -2665,7 +2665,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR) {
                 VkPhysicalDeviceMaintenance3PropertiesKHR *maintenance3_props = (VkPhysicalDeviceMaintenance3PropertiesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMaintenance3Properties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceMaintenance3Properties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxPerSetDescriptors    = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", maintenance3_props->maxPerSetDescriptors);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxMemoryAllocationSize = <div class='val'>%" PRIuLEAST64 "</div></summary></details>\n", maintenance3_props->maxMemoryAllocationSize);
                     fprintf(out, "\t\t\t\t\t</details>\n");
@@ -2678,7 +2678,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR) {
                 const VkPhysicalDeviceIDPropertiesKHR *id_props = (VkPhysicalDeviceIDPropertiesKHR*)structure;
                 if (html_output) {
-                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceIDProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceIDProperties</summary>\n");
                     // Visual Studio 2013's printf does not support the "hh"
                     // length modifier so cast the operands and use field width
                     // "2" to fake it.
