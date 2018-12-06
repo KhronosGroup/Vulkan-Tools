@@ -509,6 +509,7 @@ static void buildpNextChain(struct VkStructureHeader *first, const struct pNextC
         if (!place->pNext) {
             ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
         }
+        memset(place->pNext, 0, chain_info[i].mem_size);
         place = place->pNext;
         place->sType = chain_info[i].sType;
     }
@@ -1206,6 +1207,7 @@ static void AppCreateXlibWindow(struct AppInstance *inst) {
                 visualInfo->visual, 0, NULL);
 
     XSync(inst->xlib_display,false);
+    XFree(visualInfo);
 }
 
 static void AppCreateXlibSurface(struct AppInstance *inst) {
