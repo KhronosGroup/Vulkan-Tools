@@ -1377,6 +1377,10 @@ static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, F
         surf_formats2 = (VkSurfaceFormat2KHR *)malloc(format_count * sizeof(VkSurfaceFormat2KHR));
         if (!surf_formats2)
             ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+        for (uint32_t i = 0; i < format_count; ++i) {
+            surf_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+            surf_formats2[i].pNext = NULL;
+        }
         err = inst->vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->obj, &inst->surface_info2, &format_count, surf_formats2);
         assert(!err);
     } else {
