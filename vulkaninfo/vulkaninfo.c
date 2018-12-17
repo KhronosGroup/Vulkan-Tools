@@ -953,7 +953,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceDriverPropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2973,6 +2975,22 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("\tshaderRoundingModeRTZFloat16          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat16);
                     printf("\tshaderRoundingModeRTZFloat32          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat32);
                     printf("\tshaderRoundingModeRTZFloat64          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat64);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_PCI_BUS_INFO_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDevicePCIBusInfoPropertiesEXT *pci_bus_properties = (VkPhysicalDevicePCIBusInfoPropertiesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevicePCIBusInfoProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciDomain   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciDomain);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciBus      = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciBus);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciDevice   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciDevice);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciFunction = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciFunction);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDevicePCIBusInfoProperties\n");
+                    printf("====================================\n");
+                    printf("\tpciDomain   = %" PRIuLEAST32 "\n", pci_bus_properties->pciDomain);
+                    printf("\tpciBus      = %" PRIuLEAST32 "\n", pci_bus_properties->pciBus);
+                    printf("\tpciDevice   = %" PRIuLEAST32 "\n", pci_bus_properties->pciDevice);
+                    printf("\tpciFunction = %" PRIuLEAST32 "\n", pci_bus_properties->pciFunction);
                 }
             }
             place = structure->pNext;
