@@ -127,6 +127,7 @@ struct AppInstance {
     const char **inst_extensions;
     uint32_t inst_extensions_count;
 
+    // Functions from vkGetInstanceProcAddress
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
