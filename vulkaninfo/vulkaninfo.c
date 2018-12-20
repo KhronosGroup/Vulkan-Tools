@@ -133,6 +133,7 @@ struct AppInstance {
     const char **inst_extensions;
     uint32_t inst_extensions_count;
 
+    // Functions from vkGetInstanceProcAddress
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
@@ -246,14 +247,31 @@ static const char *VkResultString(VkResult err) {
         STR(VK_TIMEOUT);
         STR(VK_EVENT_SET);
         STR(VK_EVENT_RESET);
-        STR(VK_ERROR_INITIALIZATION_FAILED);
+        STR(VK_INCOMPLETE);
         STR(VK_ERROR_OUT_OF_HOST_MEMORY);
         STR(VK_ERROR_OUT_OF_DEVICE_MEMORY);
+        STR(VK_ERROR_INITIALIZATION_FAILED);
         STR(VK_ERROR_DEVICE_LOST);
+        STR(VK_ERROR_MEMORY_MAP_FAILED);
         STR(VK_ERROR_LAYER_NOT_PRESENT);
         STR(VK_ERROR_EXTENSION_NOT_PRESENT);
-        STR(VK_ERROR_MEMORY_MAP_FAILED);
+        STR(VK_ERROR_FEATURE_NOT_PRESENT);
         STR(VK_ERROR_INCOMPATIBLE_DRIVER);
+        STR(VK_ERROR_TOO_MANY_OBJECTS);
+        STR(VK_ERROR_FORMAT_NOT_SUPPORTED);
+        STR(VK_ERROR_FRAGMENTED_POOL);
+        STR(VK_ERROR_OUT_OF_POOL_MEMORY);
+        STR(VK_ERROR_INVALID_EXTERNAL_HANDLE);
+        STR(VK_ERROR_SURFACE_LOST_KHR);
+        STR(VK_ERROR_NATIVE_WINDOW_IN_USE_KHR);
+        STR(VK_SUBOPTIMAL_KHR);
+        STR(VK_ERROR_OUT_OF_DATE_KHR);
+        STR(VK_ERROR_INCOMPATIBLE_DISPLAY_KHR);
+        STR(VK_ERROR_VALIDATION_FAILED_EXT);
+        STR(VK_ERROR_INVALID_SHADER_NV);
+        STR(VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT);
+        STR(VK_ERROR_FRAGMENTATION_EXT);
+        STR(VK_ERROR_NOT_PERMITTED_EXT);
 #undef STR
         default:
             return "UNKNOWN_RESULT";
@@ -524,6 +542,8 @@ static const char *VkPresentModeString(VkPresentModeKHR mode) {
         STR(MAILBOX_KHR);
         STR(FIFO_KHR);
         STR(FIFO_RELAXED_KHR);
+        STR(SHARED_DEMAND_REFRESH_KHR);
+        STR(SHARED_CONTINUOUS_REFRESH_KHR);
 #undef STR
         default:
             return "UNKNOWN_FORMAT";
@@ -975,7 +995,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceDriverPropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -1950,8 +1972,8 @@ static struct FormatRange {
         // YCBCR extension, standard in Vulkan 1.1
         VK_MAKE_VERSION(1, 1, 0),
         VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME, 
-        VK_FORMAT_G8B8G8R8_422_UNORM_KHR,
-        VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM_KHR,
+        VK_FORMAT_G8B8G8R8_422_UNORM,
+        VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM,
     },
     {
         // Standard image types in Vulkan 1.0
@@ -3046,6 +3068,22 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("\tshaderRoundingModeRTZFloat16          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat16);
                     printf("\tshaderRoundingModeRTZFloat32          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat32);
                     printf("\tshaderRoundingModeRTZFloat64          = %" PRIuLEAST32 "\n", float_control_props->shaderRoundingModeRTZFloat64);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_PCI_BUS_INFO_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDevicePCIBusInfoPropertiesEXT *pci_bus_properties = (VkPhysicalDevicePCIBusInfoPropertiesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDevicePCIBusInfoProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciDomain   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciDomain);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciBus      = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciBus);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciDevice   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciDevice);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>pciFunction = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", pci_bus_properties->pciFunction);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDevicePCIBusInfoProperties\n");
+                    printf("====================================\n");
+                    printf("\tpciDomain   = %" PRIuLEAST32 "\n", pci_bus_properties->pciDomain);
+                    printf("\tpciBus      = %" PRIuLEAST32 "\n", pci_bus_properties->pciBus);
+                    printf("\tpciDevice   = %" PRIuLEAST32 "\n", pci_bus_properties->pciDevice);
+                    printf("\tpciFunction = %" PRIuLEAST32 "\n", pci_bus_properties->pciFunction);
                 }
             }
             place = structure->pNext;
