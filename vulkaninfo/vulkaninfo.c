@@ -21,6 +21,7 @@
  * Author: Rene Lindsay <rene@lunarg.com>
  * Author: Jeremy Kniager <jeremyk@lunarg.com>
  * Author: Shannon McPherson <shannon@lunarg.com>
+ * Author: Bob Ellison <bob@lunarg.com>
  */
 
 #ifdef __GNUC__
@@ -119,6 +120,11 @@ struct LayerExtensionList {
 
 struct AppInstance {
     VkInstance instance;
+    uint32_t instance_version;
+    uint32_t vulkan_major;
+    uint32_t vulkan_minor;
+    uint32_t vulkan_patch;
+
     uint32_t global_layer_count;
     struct LayerExtensionList *global_layers;
     uint32_t global_extension_count;
@@ -820,6 +826,18 @@ bool CheckForJsonOption(const char *arg) {
 
 // static void AppCreateInstance(struct AppInstance *inst, int argc, ...) {
 static void AppCreateInstance(struct AppInstance *inst) {
+    PFN_vkEnumerateInstanceVersion enumerate_instance_version =
+        (PFN_vkEnumerateInstanceVersion)vkGetInstanceProcAddr(NULL, "vkEnumerateInstanceVersion");
+
+    inst->instance_version = VK_API_VERSION_1_0;
+    if (enumerate_instance_version != NULL) {
+        enumerate_instance_version(&inst->instance_version);
+    }
+
+    inst->vulkan_major = VK_VERSION_MAJOR(inst->instance_version);
+    inst->vulkan_minor = VK_VERSION_MINOR(inst->instance_version);
+    inst->vulkan_patch = VK_VERSION_PATCH(VK_HEADER_VERSION);
+
     AppGetInstanceExtensions(inst);
 
     //---Build a list of extensions to load---
@@ -1922,6 +1940,62 @@ static void AppDevDumpFormatProps(const struct AppGpu *gpu, VkFormat fmt, bool *
     }
 }
 
+/* This structure encodes all the format ranges to be queried.
+ * It ensures that a format is not queried if the instance
+ * doesn't support it (either through the instance version or
+ * through extensions).
+ */
+static struct FormatRange {
+    // the Vulkan standard version that supports this format range, or 0 if non-standard
+    uint32_t minimum_instance_version;
+
+    // The name of the extension that supports this format range, or NULL if the range
+    // is only part of the standard
+    char *extension_name;
+
+    // The first and last supported formats within this range.
+    VkFormat first_format;
+    VkFormat last_format;
+} supported_format_ranges[] = {
+    {
+        // Standard formats in Vulkan 1.0
+        VK_MAKE_VERSION(1, 0, 0),
+        NULL,
+        VK_FORMAT_BEGIN_RANGE,
+        VK_FORMAT_END_RANGE,
+    },
+    {
+        // YCBCR extension, standard in Vulkan 1.1
+        VK_MAKE_VERSION(1, 1, 0),
+        VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME, 
+        VK_FORMAT_G8B8G8R8_422_UNORM,
+        VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM,
+    },
+    {
+        // PVRTC extension, not standardized
+        0,
+        VK_IMG_FORMAT_PVRTC_EXTENSION_NAME,
+        VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG,
+        VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG,
+    },
+};
+
+// Helper function to determine whether a format range is currently supported.
+bool FormatRangeSupported(const struct FormatRange *format_range, const struct AppGpu *gpu) {
+    // True if standard and supported by this instance
+    if (format_range->minimum_instance_version > 0 && gpu->inst->instance_version >= format_range->minimum_instance_version) {
+        return true;
+    }
+
+    // True if this extension is present
+    if (format_range->extension_name != NULL) {
+        return CheckExtensionEnabled(format_range->extension_name, gpu->inst->inst_extensions, gpu->inst->inst_extensions_count);
+    }
+
+    // Otherwise, not supported.
+    return false;
+}
+
 static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>Format Properties</summary>\n");
@@ -1935,15 +2009,13 @@ static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
     }
 
     bool first_in_list = true;   // Used for commas in json output
-    for (VkFormat fmt = 0; fmt < VK_FORMAT_RANGE_SIZE; ++fmt) {
-        AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
-    }
-
-    for (VkFormat fmt = VK_FORMAT_G8B8G8R8_422_UNORM; fmt <= VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM; ++fmt) {
-        AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
-    }
-    for (VkFormat fmt = VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG; fmt <= VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG; ++fmt) {
-        AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
+    for (unsigned int i = 0; i < sizeof(supported_format_ranges)/sizeof(supported_format_ranges[0]); i++) {
+        struct FormatRange format_range = supported_format_ranges[i];
+        if (FormatRangeSupported(&format_range, gpu)) {
+            for (VkFormat fmt = format_range.first_format; fmt <= format_range.last_format; ++fmt) {
+                AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
+            }
+        }
     }
 
     if (html_output) {
@@ -3616,18 +3688,6 @@ int main(int argc, char **argv) {
 #ifdef _WIN32
     if (ConsoleIsExclusive()) ConsoleEnlarge();
 #endif
-    PFN_vkEnumerateInstanceVersion enumerate_instance_version =
-        (PFN_vkEnumerateInstanceVersion)vkGetInstanceProcAddr(NULL, "vkEnumerateInstanceVersion");
-
-    uint32_t instance_version = VK_API_VERSION_1_0;
-
-    if (enumerate_instance_version != NULL) {
-        enumerate_instance_version(&instance_version);
-    }
-
-    const uint32_t vulkan_major = VK_VERSION_MAJOR(instance_version);
-    const uint32_t vulkan_minor = VK_VERSION_MINOR(instance_version);
-    const uint32_t vulkan_patch = VK_VERSION_PATCH(VK_HEADER_VERSION);
 
     // Combinations of output: html only, html AND json, json only, human readable only
     for (int i = 1; i < argc; ++i) {
@@ -3646,6 +3706,8 @@ int main(int argc, char **argv) {
         }
     }
 
+    AppCreateInstance(&inst);
+
     if (html_output) {
         out = fopen("vulkaninfo.html", "w");
         PrintHtmlHeader(out);
@@ -3659,13 +3721,12 @@ int main(int argc, char **argv) {
         fprintf(out, "Vulkan Instance Version: ");
     }
     if (html_output) {
-        fprintf(out, "<div class='val'>%d.%d.%d</div></summary></details>\n", vulkan_major, vulkan_minor, vulkan_patch);
+        fprintf(out, "<div class='val'>%d.%d.%d</div></summary></details>\n", inst.vulkan_major, inst.vulkan_minor,
+                inst.vulkan_patch);
         fprintf(out, "\t\t\t<br />\n");
     } else if (human_readable_output) {
-        printf("%d.%d.%d\n\n", vulkan_major, vulkan_minor, vulkan_patch);
+        printf("%d.%d.%d\n\n", inst.vulkan_major, inst.vulkan_minor, inst.vulkan_patch);
     }
-
-    AppCreateInstance(&inst);
 
     err = vkEnumeratePhysicalDevices(inst.instance, &gpu_count, NULL);
     if (err) {
@@ -3699,7 +3760,7 @@ int main(int argc, char **argv) {
         if (selected_gpu >= gpu_count) {
             selected_gpu = 0;
         }
-        PrintJsonHeader(vulkan_major, vulkan_minor, vulkan_patch);
+        PrintJsonHeader(inst.vulkan_major, inst.vulkan_minor, inst.vulkan_patch);
     }
 
     if (human_readable_output) {
