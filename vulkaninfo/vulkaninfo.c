@@ -2009,7 +2009,7 @@ static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
     }
 
     bool first_in_list = true;   // Used for commas in json output
-    for (unsigned int i = 0; i < sizeof(supported_format_ranges)/sizeof(supported_format_ranges[0]); i++) {
+    for (uint32_t i = 0; i < sizeof(supported_format_ranges)/sizeof(supported_format_ranges[0]); i++) {
         struct FormatRange format_range = supported_format_ranges[i];
         if (FormatRangeSupported(&format_range, gpu)) {
             for (VkFormat fmt = format_range.first_format; fmt <= format_range.last_format; ++fmt) {
