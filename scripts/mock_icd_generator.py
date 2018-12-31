@@ -59,6 +59,7 @@ static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
 
 static VkPhysicalDevice physical_device = nullptr;
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
+static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
 
 // TODO: Would like to codegen this but limits aren't in XML
 static VkPhysicalDeviceLimits SetLimits(VkPhysicalDeviceLimits *limits) {
@@ -827,6 +828,14 @@ CUSTOM_C_INTERCEPTS = {
     pMemoryRequirements->size = 4096;
     pMemoryRequirements->alignment = 1;
     pMemoryRequirements->memoryTypeBits = 0xFFFF;
+    // Return a better size based on the buffer size from the create info.
+    auto d_iter = buffer_map.find(device);
+    if (d_iter != buffer_map.end()) {
+        auto iter = d_iter->second.find(buffer);
+        if (iter != d_iter->second.end()) {
+            pMemoryRequirements->size = ((iter->second.size + 4095) / 4096) * 4096;
+        }
+    }
 ''',
 'vkGetBufferMemoryRequirements2KHR': '''
     GetBufferMemoryRequirements(device, pInfo->buffer, &pMemoryRequirements->memoryRequirements);
@@ -877,6 +886,16 @@ CUSTOM_C_INTERCEPTS = {
 'vkAcquireNextImagesKHR': '''
     *pImageIndex = 0;
     return VK_SUCCESS;
+''',
+'vkCreateBuffer': '''
+    unique_lock_t lock(global_lock);
+    *pBuffer = (VkBuffer)global_unique_handle++;
+    buffer_map[device][*pBuffer] = *pCreateInfo;
+    return VK_SUCCESS;
+''',
+'vkDestroyBuffer': '''
+    unique_lock_t lock(global_lock);
+    buffer_map[device].erase(buffer);
 ''',
 }
 
