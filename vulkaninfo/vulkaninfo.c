@@ -993,7 +993,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceFloatControlsPropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
-             .mem_size = sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)}};
+             .mem_size = sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -1095,7 +1097,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceFloat16Int8FeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2337,6 +2341,19 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\tshaderBufferInt64Atomics = %" PRIuLEAST32 "\n", shader_atomic_int64_features->shaderBufferInt64Atomics);
                     printf("\tshaderSharedInt64Atomics = %" PRIuLEAST32 "\n", shader_atomic_int64_features->shaderSharedInt64Atomics);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceTransformFeedbackFeaturesEXT *transform_feedback_features = (VkPhysicalDeviceTransformFeedbackFeaturesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceTransformFeedbackFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>transformFeedback = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_features->transformFeedback);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>geometryStreams   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_features->geometryStreams);
+                }
+                else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceTransformFeedbackFeatures:\n");
+                    printf("==========================================\n");
+                    printf("\ttransformFeedback = %" PRIuLEAST32 "\n", transform_feedback_features->transformFeedback);
+                    printf("\tgeometryStreams   = %" PRIuLEAST32 "\n", transform_feedback_features->geometryStreams);
+                }
             }
             place = structure->pNext;
         }
@@ -3093,6 +3110,34 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("\tpciBus      = %" PRIuLEAST32 "\n", pci_bus_properties->pciBus);
                     printf("\tpciDevice   = %" PRIuLEAST32 "\n", pci_bus_properties->pciDevice);
                     printf("\tpciFunction = %" PRIuLEAST32 "\n", pci_bus_properties->pciFunction);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceTransformFeedbackPropertiesEXT *transform_feedback_properties = (VkPhysicalDeviceTransformFeedbackPropertiesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceTransformFeedbackProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreams                = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackStreams);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBuffers                = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackBuffers);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferSize             = <div class='val'>%" PRIuLEAST64 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackBufferSize);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreamDataSize         = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackStreamDataSize);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataSize         = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackBufferDataSize);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataStride       = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->maxTransformFeedbackBufferDataStride);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>transformFeedbackQueries                   = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->transformFeedbackQueries);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>transformFeedbackStreamsLinesTriangles     = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->transformFeedbackStreamsLinesTriangles);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>transformFeedbackRasterizationStreamSelect = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->transformFeedbackRasterizationStreamSelect);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>transformFeedbackDraw                      = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", transform_feedback_properties->transformFeedbackDraw);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceTransformFeedbackProperties\n");
+                    printf("===========================================\n");
+                    printf("\tmaxTransformFeedbackStreams                = %" PRIuLEAST32 "\n", transform_feedback_properties->maxTransformFeedbackStreams);
+                    printf("\tmaxTransformFeedbackBuffers                = %" PRIuLEAST32 "\n", transform_feedback_properties->maxTransformFeedbackBuffers);
+                    printf("\tmaxTransformFeedbackBufferSize             = %" PRIuLEAST64 "\n", transform_feedback_properties->maxTransformFeedbackBufferSize);
+                    printf("\tmaxTransformFeedbackStreamDataSize         = %" PRIuLEAST32 "\n", transform_feedback_properties->maxTransformFeedbackStreamDataSize);
+                    printf("\tmaxTransformFeedbackBufferDataSize         = %" PRIuLEAST32 "\n", transform_feedback_properties->maxTransformFeedbackBufferDataSize);
+                    printf("\tmaxTransformFeedbackBufferDataStride       = %" PRIuLEAST32 "\n", transform_feedback_properties->maxTransformFeedbackBufferDataStride);
+                    printf("\ttransformFeedbackQueries                   = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackQueries);
+                    printf("\ttransformFeedbackStreamsLinesTriangles     = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackStreamsLinesTriangles);
+                    printf("\ttransformFeedbackRasterizationStreamSelect = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackRasterizationStreamSelect);
+                    printf("\ttransformFeedbackDraw                      = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackDraw);
                 }
             }
             place = structure->pNext;
