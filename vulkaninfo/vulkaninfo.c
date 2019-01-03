@@ -1093,7 +1093,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceMultiviewFeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceFloat16Int8FeaturesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceFloat16Int8FeaturesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2317,12 +2319,23 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\t\t\t\t\t\t<details><summary>shaderFloat16 = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_int_features->shaderFloat16);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>shaderInt8    = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", float_int_features->shaderInt8);
                     fprintf(out, "\t\t\t\t\t</details>\n");
-                }
-                else if (human_readable_output) {
+                } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceFloat16Int8Features:\n");
                     printf("====================================\n");
                     printf("\tshaderFloat16 = %" PRIuLEAST32 "\n", float_int_features->shaderFloat16);
                     printf("\tshaderInt8    = %" PRIuLEAST32 "\n", float_int_features->shaderInt8);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR && CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceShaderAtomicInt64FeaturesKHR *shader_atomic_int64_features = (VkPhysicalDeviceShaderAtomicInt64FeaturesKHR*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceShaderAtomicInt64Features</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderBufferInt64Atomics = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", shader_atomic_int64_features->shaderBufferInt64Atomics);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>shaderSharedInt64Atomics = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", shader_atomic_int64_features->shaderSharedInt64Atomics);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceShaderAtomicInt64Features:\n");
+                    printf("==========================================\n");
+                    printf("\tshaderBufferInt64Atomics = %" PRIuLEAST32 "\n", shader_atomic_int64_features->shaderBufferInt64Atomics);
+                    printf("\tshaderSharedInt64Atomics = %" PRIuLEAST32 "\n", shader_atomic_int64_features->shaderSharedInt64Atomics);
                 }
             }
             place = structure->pNext;
