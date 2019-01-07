@@ -995,7 +995,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
              .mem_size = sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -1101,7 +1103,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2367,6 +2371,21 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("==========================================\n");
                     printf("\tscalarBlockLayout = %" PRIuLEAST32 "\n", scalar_block_layout_features->scalarBlockLayout);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceFragmentDensityMapFeaturesEXT *fragment_density_map_features = (VkPhysicalDeviceFragmentDensityMapFeaturesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFragmentDensityMapFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentDensityMap                    = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_features->fragmentDensityMap);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentDensityMapDynamic             = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_features->fragmentDensityMapDynamic);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentDensityMapNonSubsampledImages = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_features->fragmentDensityMapNonSubsampledImages);
+                }
+                else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceFragmentDensityMapFeatures:\n");
+                    printf("==========================================\n");
+                    printf("\tfragmentDensityMap                    = %" PRIuLEAST32 "\n", fragment_density_map_features->fragmentDensityMap);
+                    printf("\tfragmentDensityMapDynamic             = %" PRIuLEAST32 "\n", fragment_density_map_features->fragmentDensityMapDynamic);
+                    printf("\tfragmentDensityMapNonSubsampledImages = %" PRIuLEAST32 "\n", fragment_density_map_features->fragmentDensityMapNonSubsampledImages);
+                }
             }
             place = structure->pNext;
         }
@@ -3151,6 +3170,28 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("\ttransformFeedbackStreamsLinesTriangles     = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackStreamsLinesTriangles);
                     printf("\ttransformFeedbackRasterizationStreamSelect = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackRasterizationStreamSelect);
                     printf("\ttransformFeedbackDraw                      = %" PRIuLEAST32 "\n", transform_feedback_properties->transformFeedbackDraw);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceFragmentDensityMapPropertiesEXT *fragment_density_map_properties = (VkPhysicalDeviceFragmentDensityMapPropertiesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFragmentDensityMapProperties</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>minFragmentDensityTexelSize</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>width = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_properties->minFragmentDensityTexelSize.width);
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>height = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_properties->minFragmentDensityTexelSize.height);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>maxFragmentDensityTexelSize</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>width = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_properties->maxFragmentDensityTexelSize.width);
+                    fprintf(out, "\t\t\t\t\t\t\t<details><summary>height = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_properties->maxFragmentDensityTexelSize.height);
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>fragmentDensityInvocations = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", fragment_density_map_properties->fragmentDensityInvocations);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceFragmentDensityMapProperties\n");
+                    printf("============================================\n");
+                    printf("\tminFragmentDensityTexelSize\n");
+                    printf("\t\twidth = %" PRIuLEAST32 "\n", fragment_density_map_properties->minFragmentDensityTexelSize.width);
+                    printf("\t\theight = %" PRIuLEAST32 "\n", fragment_density_map_properties->minFragmentDensityTexelSize.height);
+                    printf("\tmaxFragmentDensityTexelSize\n");
+                    printf("\t\twidth = %" PRIuLEAST32 "\n", fragment_density_map_properties->maxFragmentDensityTexelSize.width);
+                    printf("\t\theight = %" PRIuLEAST32 "\n", fragment_density_map_properties->maxFragmentDensityTexelSize.height);
+                    printf("\tfragmentDensityInvocations = %" PRIuLEAST32 "\n", fragment_density_map_properties->fragmentDensityInvocations);
                 }
             }
             place = structure->pNext;
