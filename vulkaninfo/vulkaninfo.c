@@ -1099,7 +1099,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -2353,6 +2355,17 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("==========================================\n");
                     printf("\ttransformFeedback = %" PRIuLEAST32 "\n", transform_feedback_features->transformFeedback);
                     printf("\tgeometryStreams   = %" PRIuLEAST32 "\n", transform_feedback_features->geometryStreams);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT && CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME, gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceScalarBlockLayoutFeaturesEXT *scalar_block_layout_features = (VkPhysicalDeviceScalarBlockLayoutFeaturesEXT*)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceScalarBlockLayoutFeatures</summary>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>scalarBlockLayout = <div class='val'>%" PRIuLEAST32 "</div></summary></details>\n", scalar_block_layout_features->scalarBlockLayout);
+                }
+                else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceScalarBlockLayoutFeatures:\n");
+                    printf("==========================================\n");
+                    printf("\tscalarBlockLayout = %" PRIuLEAST32 "\n", scalar_block_layout_features->scalarBlockLayout);
                 }
             }
             place = structure->pNext;
