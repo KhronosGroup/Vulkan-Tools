@@ -160,7 +160,6 @@ Section
     AccessControl::GrantOnFile  $INSTDIR "Everyone" "GenericRead"
     AccessControl::GrantOnFile  $INSTDIR "Everyone" "ReadAttributes"
     File "${RES}\VulkanRT-License.txt"
-    File /oname=LICENSE.txt "${RES}\..\COPYRIGHT.txt"
 
     LogSet off
 SectionEnd
