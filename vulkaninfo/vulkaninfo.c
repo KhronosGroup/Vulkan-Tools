@@ -2001,24 +2001,192 @@ bool FormatRangeSupported(const struct FormatRange *format_range, const struct A
     return false;
 }
 
+bool FormatPropsEq(const VkFormatProperties *props1, const VkFormatProperties *props2) {
+    if (props1->bufferFeatures == props2->bufferFeatures && props1->linearTilingFeatures == props2->linearTilingFeatures &&
+        props1->optimalTilingFeatures == props2->optimalTilingFeatures) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+struct PropFormats {
+    VkFormatProperties props;
+
+    uint32_t format_count;
+    uint32_t format_reserve;
+    VkFormat *formats;
+};
+
+void FormatPropsShortenedDump(const struct AppGpu *gpu) {
+    const VkFormatProperties unsupported_prop = {0};
+    uint32_t unique_props_count = 1;
+    uint32_t unique_props_reserve = 50;
+    struct PropFormats *prop_map = malloc(sizeof(struct PropFormats) * unique_props_reserve);
+    if (!prop_map) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+    prop_map[0].props = unsupported_prop;
+    prop_map[0].format_count = 0;
+    prop_map[0].format_reserve = 20;
+    prop_map[0].formats = malloc(sizeof(VkFormat) * prop_map[0].format_reserve);
+    if (!prop_map[0].formats) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+
+    for (uint32_t ri = 0; ri < ARRAY_SIZE(supported_format_ranges); ++ri) {
+        struct FormatRange format_range = supported_format_ranges[ri];
+        if (FormatRangeSupported(&format_range, gpu)) {
+            for (VkFormat fmt = format_range.first_format; fmt <= format_range.last_format; ++fmt) {
+                VkFormatProperties props;
+                vkGetPhysicalDeviceFormatProperties(gpu->obj, fmt, &props);
+
+                uint32_t formats_prop_i = 0;
+                for (; formats_prop_i < unique_props_count; ++formats_prop_i) {
+                    if (FormatPropsEq(&prop_map[formats_prop_i].props, &props)) break;
+                }
+
+                if (formats_prop_i < unique_props_count) {
+                    struct PropFormats *propFormats = &prop_map[formats_prop_i];
+                    ++propFormats->format_count;
+
+                    if (propFormats->format_count > propFormats->format_reserve) {
+                        propFormats->format_reserve *= 2;
+                        propFormats->formats = realloc(propFormats->formats, sizeof(VkFormat) * propFormats->format_reserve);
+                        if (!propFormats->formats) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+                    }
+
+                    propFormats->formats[propFormats->format_count - 1] = fmt;
+                } else {
+                    assert(formats_prop_i == unique_props_count);
+                    ++unique_props_count;
+
+                    if (unique_props_count > unique_props_reserve) {
+                        unique_props_reserve *= 2;
+                        prop_map = realloc(prop_map, sizeof(struct PropFormats) * unique_props_reserve);
+                        if (!prop_map) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+                    }
+
+                    struct PropFormats *propFormats = &prop_map[formats_prop_i];
+                    propFormats->props = props;
+                    propFormats->format_count = 1;
+                    propFormats->format_reserve = 20;
+                    propFormats->formats = malloc(sizeof(VkFormat) * propFormats->format_reserve);
+                    if (!propFormats->formats) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+                    propFormats->formats[0] = fmt;
+                }
+            }
+        }
+    }
+
+    for (uint32_t pi = 1; pi < unique_props_count; ++pi) {
+        struct PropFormats *propFormats = &prop_map[pi];
+
+        for (uint32_t fi = 0; fi < propFormats->format_count; ++fi) {
+            const VkFormat fmt = propFormats->formats[fi];
+
+            printf("\nFORMAT_%s", VkFormatString(fmt));
+
+            if (fi < propFormats->format_count - 1)
+                printf(",");
+            else
+                printf(":");
+        }
+
+        struct {
+            const char *name;
+            VkFlags flags;
+        } features[3];
+
+        features[0].name = "linearTiling   FormatFeatureFlags";
+        features[0].flags = propFormats->props.linearTilingFeatures;
+        features[1].name = "optimalTiling  FormatFeatureFlags";
+        features[1].flags = propFormats->props.optimalTilingFeatures;
+        features[2].name = "bufferFeatures FormatFeatureFlags";
+        features[2].flags = propFormats->props.bufferFeatures;
+
+        for (uint32_t i = 0; i < ARRAY_SIZE(features); ++i) {
+            printf("\n\t%s:", features[i].name);
+            if (features[i].flags == 0) {
+                printf("\n\t\tNone");
+            } else {
+                printf(
+                    "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) ? "\n\t\tVK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT"
+                                                                               : ""),  // 0x0001
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ? "\n\t\tVK_FORMAT_FEATURE_STORAGE_IMAGE_BIT"
+                                                                               : ""),  // 0x0002
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT"
+                         : ""),  // 0x0004
+                    ((features[i].flags & VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT"
+                         : ""),  // 0x0008
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT"
+                         : ""),  // 0x0010
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT"
+                         : ""),  // 0x0020
+                    ((features[i].flags & VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) ? "\n\t\tVK_FORMAT_FEATURE_VERTEX_BUFFER_BIT"
+                                                                               : ""),  // 0x0040
+                    ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) ? "\n\t\tVK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT"
+                                                                                  : ""),  // 0x0080
+                    ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT"
+                         : ""),  // 0x0100
+                    ((features[i].flags & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT"
+                         : ""),                                                                                            // 0x0200
+                    ((features[i].flags & VK_FORMAT_FEATURE_BLIT_SRC_BIT) ? "\n\t\tVK_FORMAT_FEATURE_BLIT_SRC_BIT" : ""),  // 0x0400
+                    ((features[i].flags & VK_FORMAT_FEATURE_BLIT_DST_BIT) ? "\n\t\tVK_FORMAT_FEATURE_BLIT_DST_BIT" : ""),  // 0x0800
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)
+                         ? "\n\t\tVK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT"
+                         : ""),  // 0x1000
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG)
+                         ? "\n\t\tVK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG"
+                         : ""),  // 0x2000
+                    ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_SRC_BIT_KHR) ? "\n\t\tVK_FORMAT_FEATURE_TRANSFER_SRC_BIT_KHR"
+                                                                                  : ""),  // 0x4000
+                    ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_DST_BIT_KHR) ? "\n\t\tVK_FORMAT_FEATURE_TRANSFER_DST_BIT_KHR"
+                                                                                  : ""));  // 0x8000
+            }
+
+            printf("\n");
+        }
+    }
+
+    printf("\nUnsupported formats:");
+    if (prop_map[0].format_count == 0) printf("\nNone");
+    for (uint32_t fi = 0; fi < prop_map[0].format_count; ++fi) {
+        const VkFormat fmt = prop_map[0].formats[fi];
+
+        printf("\nFORMAT_%s", VkFormatString(fmt));
+    }
+
+    // cleanup
+    for (uint32_t pi = 0; pi < unique_props_count; ++pi) free(prop_map[pi].formats);
+    free(prop_map);
+}
+
 static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>Format Properties</summary>\n");
     } else if (human_readable_output) {
         printf("Format Properties:\n");
-        printf("==================");
+        printf("==================\n");
     }
     if (json_output) {
         printf(",\n");
         printf("\t\"ArrayOfVkFormatProperties\": [");
     }
 
-    bool first_in_list = true;   // Used for commas in json output
-    for (uint32_t i = 0; i < sizeof(supported_format_ranges)/sizeof(supported_format_ranges[0]); i++) {
-        struct FormatRange format_range = supported_format_ranges[i];
-        if (FormatRangeSupported(&format_range, gpu)) {
-            for (VkFormat fmt = format_range.first_format; fmt <= format_range.last_format; ++fmt) {
-                AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
+    if (human_readable_output) {
+        FormatPropsShortenedDump(gpu);
+    } else {
+        bool first_in_list = true;  // Used for commas in json output
+        for (uint32_t i = 0; i < ARRAY_SIZE(supported_format_ranges); ++i) {
+            struct FormatRange format_range = supported_format_ranges[i];
+            if (FormatRangeSupported(&format_range, gpu)) {
+                for (VkFormat fmt = format_range.first_format; fmt <= format_range.last_format; ++fmt) {
+                    AppDevDumpFormatProps(gpu, fmt, &first_in_list, out);
+                }
             }
         }
     }
