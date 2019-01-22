@@ -1982,8 +1982,10 @@ static struct FormatRange {
 
 // Helper function to determine whether a format range is currently supported.
 bool FormatRangeSupported(const struct FormatRange *format_range, const struct AppGpu *gpu) {
-    // True if standard and supported by this instance
-    if (format_range->minimum_instance_version > 0 && gpu->inst->instance_version >= format_range->minimum_instance_version) {
+    // True if standard and supported by both this instance and this GPU
+    if (format_range->minimum_instance_version > 0 &&
+        gpu->inst->instance_version >= format_range->minimum_instance_version &&
+        gpu->props.apiVersion >= format_range->minimum_instance_version) {
         return true;
     }
 
