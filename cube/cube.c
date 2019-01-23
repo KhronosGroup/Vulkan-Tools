@@ -2397,7 +2397,7 @@ static void demo_run(struct demo *demo) {
 
     demo_draw(demo);
     demo->curFrame++;
-    if (demo->frameCount != INT_MAX && demo->curFrame == demo->frameCount) {
+    if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
         PostQuitMessage(validation_error);
     }
 }
@@ -2431,6 +2431,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 demo_resize(&demo);
             }
             break;
+        case WM_KEYDOWN:
+            switch (wParam) {
+                case VK_ESCAPE:
+                    PostQuitMessage(validation_error);
+                    break;
+                case VK_LEFT:
+                    demo.spin_angle -= demo.spin_increment;
+                    break;
+                case VK_RIGHT:
+                    demo.spin_angle += demo.spin_increment;
+                    break;
+                case VK_SPACE:
+                    demo.pause = !demo.pause;
+                    break;
+            }
+            return 0;
         default:
             break;
     }
@@ -3808,6 +3824,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
     // main message loop
     while (!done) {
+        if (demo.pause) {
+            const BOOL succ = WaitMessage();
+
+            if (!succ) {
+                struct demo *tmp = &demo;
+                struct demo *demo = tmp;
+                ERR_EXIT("WaitMessage() failed on paused demo", "event loop error");
+            }
+        }
         PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
         if (msg.message == WM_QUIT)  // check for a quit message
         {
