@@ -3469,6 +3469,7 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
     VkBool32 supports_present = VK_FALSE;
     if (gpu->inst->surface) {
         VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(gpu->obj, id, gpu->inst->surface, &supports_present);
+        if( err ) ERR_EXIT(err);
     }
 
     if (html_output) {
