@@ -147,7 +147,6 @@ struct AppInstance {
     VkSurfaceCapabilities2EXT surface_capabilities2_ext;
 
     VkSurfaceKHR surface;
-    VkPhysicalDeviceSurfaceInfo2KHR surface_info2;
     int width, height;
 
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -199,37 +198,6 @@ struct AppGpu {
     uint32_t device_extension_count;
     VkExtensionProperties *device_extensions;
 };
-
-static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkFlags msgFlags, VkDebugReportObjectTypeEXT objType, uint64_t srcObject,
-                                                  size_t location, int32_t msgCode, const char *pLayerPrefix, const char *pMsg,
-                                                  void *pUserData) {
-    char *message = (char *)malloc(strlen(pMsg) + 100);
-
-    assert(message);
-
-    if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
-        sprintf(message, "ERROR: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
-    } else if (msgFlags & VK_DEBUG_REPORT_WARNING_BIT_EXT) {
-        sprintf(message, "WARNING: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
-    } else if (msgFlags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT) {
-        sprintf(message, "INFO: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
-    } else if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
-        sprintf(message, "DEBUG: [%s] Code %d : %s", pLayerPrefix, msgCode, pMsg);
-    }
-
-    fprintf(stderr, "%s\n", message);
-    fflush(stderr);
-    free(message);
-
-    /*
-     * false indicates that layer should not bail-out of an
-     * API call that had validation failures. This may mean that the
-     * app dies inside the driver due to invalid parameter(s).
-     * That's what would happen without validation layers, so we'll
-     * keep that behavior here.
-     */
-    return false;
-}
 
 static const char *VkResultString(VkResult err) {
     switch (err) {
@@ -818,14 +786,45 @@ bool CheckForJsonOption(const char *arg) {
     }
 }
 
-// static void AppCreateInstance(struct AppInstance *inst, int argc, ...) {
+static void AppCompileInstanceExtensionsToEnable(struct AppInstance *inst) {
+    // Get all supported Instance extensions (excl. layer-provided ones)
+    inst->inst_extensions_count = inst->global_extension_count;
+    inst->inst_extensions = malloc(sizeof(char *) * inst->inst_extensions_count);
+    if (!inst->inst_extensions) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+
+    for (uint32_t i = 0; i < inst->global_extension_count; ++i) {
+        inst->inst_extensions[i] = inst->global_extensions[i].extensionName;
+    }
+}
+
+static void AppLoadInstanceCommands(struct AppInstance *inst) {
+#define LOAD_INSTANCE_VK_CMD(cmd) inst->cmd = (PFN_##cmd)vkGetInstanceProcAddr(inst->instance, #cmd)
+
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceSupportKHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceFormatsKHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceFormats2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfacePresentModesKHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceProperties2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceFormatProperties2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceQueueFamilyProperties2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceFeatures2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceMemoryProperties2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilities2KHR);
+    LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilities2EXT);
+
+#undef LOAD_INSTANCE_VK_CMD
+}
+
 static void AppCreateInstance(struct AppInstance *inst) {
     PFN_vkEnumerateInstanceVersion enumerate_instance_version =
         (PFN_vkEnumerateInstanceVersion)vkGetInstanceProcAddr(NULL, "vkEnumerateInstanceVersion");
 
-    inst->instance_version = VK_API_VERSION_1_0;
-    if (enumerate_instance_version != NULL) {
-        enumerate_instance_version(&inst->instance_version);
+    if (!enumerate_instance_version) {
+        inst->instance_version = VK_API_VERSION_1_0;
+    } else {
+        const VkResult err = enumerate_instance_version(&inst->instance_version);
+        if (err) ERR_EXIT(err);
     }
 
     inst->vulkan_major = VK_VERSION_MAJOR(inst->instance_version);
@@ -834,79 +833,18 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     AppGetInstanceExtensions(inst);
 
-    //---Build a list of extensions to load---
+    const VkApplicationInfo app_info = {.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+                                        .pApplicationName = APP_SHORT_NAME,
+                                        .applicationVersion = 1,
+                                        .apiVersion = VK_API_VERSION_1_0};
 
-    const char *info_instance_extensions[] = {
-        VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME,
-        VK_KHR_DISPLAY_EXTENSION_NAME,
-        VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-        VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,
-        VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME,
-        VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME,
-        VK_KHR_SURFACE_EXTENSION_NAME,
-        VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME,
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-        VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
-#endif
-#ifdef VK_USE_PLATFORM_XCB_KHR
-        VK_KHR_XCB_SURFACE_EXTENSION_NAME,
-#endif
-#ifdef VK_USE_PLATFORM_XLIB_KHR
-        VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
-#endif
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
-        VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
-#endif
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-        VK_KHR_ANDROID_SURFACE_EXTENSION_NAME,
-#endif
-#ifdef VK_USE_PLATFORM_MACOS_MVK
-        VK_MVK_MACOS_SURFACE_EXTENSION_NAME,
-#endif
-    };
-    const uint32_t info_instance_extensions_count = ARRAY_SIZE(info_instance_extensions);
-    inst->inst_extensions = malloc(sizeof(char *) * ARRAY_SIZE(info_instance_extensions));
-    inst->inst_extensions_count = 0;
+    AppCompileInstanceExtensionsToEnable(inst);
+    const VkInstanceCreateInfo inst_info = {.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+                                            .pApplicationInfo = &app_info,
+                                            .enabledExtensionCount = inst->inst_extensions_count,
+                                            .ppEnabledExtensionNames = inst->inst_extensions};
 
-    for (uint32_t k = 0; (k < info_instance_extensions_count); ++k) {
-        for (uint32_t j = 0; (j < inst->global_extension_count); ++j) {
-            const char *found_name = inst->global_extensions[j].extensionName;
-            if (!strcmp(info_instance_extensions[k], found_name)) {
-                inst->inst_extensions[inst->inst_extensions_count++] = info_instance_extensions[k];
-                break;
-            }
-        }
-    }
-
-    //----------------------------------------
-
-    const VkApplicationInfo app_info = {
-        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pNext = NULL,
-        .pApplicationName = APP_SHORT_NAME,
-        .applicationVersion = 1,
-        .pEngineName = APP_SHORT_NAME,
-        .engineVersion = 1,
-        .apiVersion = VK_API_VERSION_1_0,
-    };
-
-    VkInstanceCreateInfo inst_info = {.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-                                      .pNext = NULL,
-                                      .pApplicationInfo = &app_info,
-                                      .enabledLayerCount = 0,
-                                      .ppEnabledLayerNames = NULL,
-                                      .enabledExtensionCount = inst->inst_extensions_count,
-                                      .ppEnabledExtensionNames = inst->inst_extensions};
-
-    VkDebugReportCallbackCreateInfoEXT dbg_info;
-    memset(&dbg_info, 0, sizeof(dbg_info));
-    dbg_info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-    dbg_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-    dbg_info.pfnCallback = DbgCallback;
-    inst_info.pNext = &dbg_info;
-
-    VkResult err;
-    err = vkCreateInstance(&inst_info, NULL, &inst->instance);
+    VkResult err = vkCreateInstance(&inst_info, NULL, &inst->instance);
     if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
         fprintf(stderr, "Cannot create Vulkan instance.\n");
         ERR_EXIT(err);
@@ -914,36 +852,8 @@ static void AppCreateInstance(struct AppInstance *inst) {
         ERR_EXIT(err);
     }
 
-    inst->vkGetPhysicalDeviceSurfaceSupportKHR =
-        (PFN_vkGetPhysicalDeviceSurfaceSupportKHR)vkGetInstanceProcAddr(inst->instance, "vkGetPhysicalDeviceSurfaceSupportKHR");
-    inst->vkGetPhysicalDeviceSurfaceCapabilitiesKHR = (PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
-    inst->vkGetPhysicalDeviceSurfaceFormatsKHR =
-        (PFN_vkGetPhysicalDeviceSurfaceFormatsKHR)vkGetInstanceProcAddr(inst->instance, "vkGetPhysicalDeviceSurfaceFormatsKHR");
-    inst->vkGetPhysicalDeviceSurfaceFormats2KHR =
-        (PFN_vkGetPhysicalDeviceSurfaceFormats2KHR)vkGetInstanceProcAddr(inst->instance, "vkGetPhysicalDeviceSurfaceFormats2KHR");
-    inst->vkGetPhysicalDeviceSurfacePresentModesKHR = (PFN_vkGetPhysicalDeviceSurfacePresentModesKHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceSurfacePresentModesKHR");
-    inst->vkGetPhysicalDeviceProperties2KHR =
-        (PFN_vkGetPhysicalDeviceProperties2KHR)vkGetInstanceProcAddr(inst->instance, "vkGetPhysicalDeviceProperties2KHR");
-    inst->vkGetPhysicalDeviceFormatProperties2KHR = (PFN_vkGetPhysicalDeviceFormatProperties2KHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceFormatProperties2KHR");
-    inst->vkGetPhysicalDeviceQueueFamilyProperties2KHR = (PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceQueueFamilyProperties2KHR");
-    inst->vkGetPhysicalDeviceFeatures2KHR =
-        (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(inst->instance, "vkGetPhysicalDeviceFeatures2KHR");
-    inst->vkGetPhysicalDeviceMemoryProperties2KHR = (PFN_vkGetPhysicalDeviceMemoryProperties2KHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceMemoryProperties2KHR");
-    inst->vkGetPhysicalDeviceSurfaceCapabilities2KHR = (PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceSurfaceCapabilities2KHR");
-    inst->vkGetPhysicalDeviceSurfaceCapabilities2EXT = (PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT)vkGetInstanceProcAddr(
-        inst->instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT");
-
-    inst->surface_info2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
-    inst->surface_info2.pNext = NULL;
+    AppLoadInstanceCommands(inst);
 }
-
-//-----------------------------------------------------------
 
 static void AppDestroyInstance(struct AppInstance *inst) {
     free(inst->global_extensions);
@@ -1198,7 +1108,6 @@ static void AppCreateWin32Surface(struct AppInstance *inst) {
     createInfo.hwnd = inst->h_wnd;
     VkResult err = vkCreateWin32SurfaceKHR(inst->instance, &createInfo, NULL, &inst->surface);
     if (err) ERR_EXIT(err);
-    inst->surface_info2.surface = inst->surface;
 }
 
 static void AppDestroyWin32Window(struct AppInstance *inst) { DestroyWindow(inst->h_wnd); }
@@ -1261,7 +1170,6 @@ static void AppCreateXcbSurface(struct AppInstance *inst) {
     xcb_createInfo.window = inst->xcb_window;
     VkResult err = vkCreateXcbSurfaceKHR(inst->instance, &xcb_createInfo, NULL, &inst->surface);
     if (err) ERR_EXIT(err);
-    inst->surface_info2.surface = inst->surface;
 }
 
 static void AppDestroyXcbWindow(struct AppInstance *inst) {
@@ -1306,7 +1214,6 @@ static void AppCreateXlibSurface(struct AppInstance *inst) {
     createInfo.window = inst->xlib_window;
     VkResult err = vkCreateXlibSurfaceKHR(inst->instance, &createInfo, NULL, &inst->surface);
     if (err) ERR_EXIT(err);
-    inst->surface_info2.surface = inst->surface;
 }
 
 static void AppDestroyXlibWindow(struct AppInstance *inst) {
@@ -1335,7 +1242,6 @@ static void AppCreateMacOSSurface(struct AppInstance *inst) {
 
     VkResult err = vkCreateMacOSSurfaceMVK(inst->instance, &surface, NULL, &inst->surface);
     if (err) ERR_EXIT(err);
-    inst->surface_info2.surface = inst->surface;
 }
 
 static void AppDestroyMacOSWindow(struct AppInstance *inst) { DestroyMetalView(inst->window); }
@@ -1372,7 +1278,6 @@ static void AppCreateWaylandSurface(struct AppInstance *inst) {
     createInfo.surface = inst->wayland_surface;
     VkResult err = vkCreateWaylandSurfaceKHR(inst->instance, &createInfo, NULL, &inst->surface);
     if (err) ERR_EXIT(err);
-    inst->surface_info2.surface = inst->surface;
 }
 
 static void AppDestroyWaylandWindow(struct AppInstance *inst) { wl_display_disconnect(inst->wayland_display); }
@@ -1387,9 +1292,12 @@ static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, F
     VkSurfaceFormatKHR *surf_formats = NULL;
     VkSurfaceFormat2KHR *surf_formats2 = NULL;
 
+    const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
+                                                           .surface = inst->surface};
+
     if (CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                               gpu->inst->inst_extensions_count)) {
-        err = inst->vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->obj, &inst->surface_info2, &format_count, NULL);
+        err = inst->vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->obj, &surface_info2, &format_count, NULL);
         if (err) ERR_EXIT(err);
         surf_formats2 = (VkSurfaceFormat2KHR *)malloc(format_count * sizeof(VkSurfaceFormat2KHR));
         if (!surf_formats2) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
@@ -1397,7 +1305,7 @@ static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, F
             surf_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
             surf_formats2[i].pNext = NULL;
         }
-        err = inst->vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->obj, &inst->surface_info2, &format_count, surf_formats2);
+        err = inst->vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->obj, &surface_info2, &format_count, surf_formats2);
         if (err) ERR_EXIT(err);
     } else {
         err = inst->vkGetPhysicalDeviceSurfaceFormatsKHR(gpu->obj, inst->surface, &format_count, NULL);
