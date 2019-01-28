@@ -25,7 +25,7 @@
       "sub_dir" : "MoltenVK",
       "build_dir" : "MoltenVK",
       "install_dir" : "MoltenVK",
-      "commit" : "9517c58dbdf1b4c269bd700b346361a5dc01f1c0",
+      "commit" : "f969bcc937674989ee5ea8e3cf8e35184134f29d",
       "custom_build" : [
         "./fetchDependencies --v-headers-root {0[Vulkan-Headers][repo_dir]} --glslang-root {0[glslang][repo_dir]}",
         "xcodebuild -project MoltenVKPackaging.xcodeproj GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS MVK_LOGGING_ENABLED=0' -scheme \"MoltenVK Package\" build"
