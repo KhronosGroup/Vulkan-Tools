@@ -199,6 +199,35 @@ struct AppGpu {
     VkExtensionProperties *device_extensions;
 };
 
+// return most severe flag only
+static const char *DebugReportFlagString(const VkDebugReportFlagsEXT flags) {
+    switch (flags) {
+        case VK_DEBUG_REPORT_ERROR_BIT_EXT:
+            return "ERROR";
+        case VK_DEBUG_REPORT_WARNING_BIT_EXT:
+            return "WARNING";
+        case VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT:
+            return "PERF";
+        case VK_DEBUG_REPORT_INFORMATION_BIT_EXT:
+            return "INFO";
+        case VK_DEBUG_REPORT_DEBUG_BIT_EXT:
+            return "DEBUG";
+        default:
+            return "UNKNOWN";
+    }
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags, VkDebugReportObjectTypeEXT objType,
+                                                  uint64_t srcObject, size_t location, int32_t msgCode, const char *pLayerPrefix,
+                                                  const char *pMsg, void *pUserData) {
+    fprintf(stderr, "%s: [%s] Code %d : %s\n", DebugReportFlagString(msgFlags), pLayerPrefix, msgCode, pMsg);
+    fflush(stderr);
+
+    // True is reserved for layer developers, and MAY mean calls are not distributed down the layer chain after validation error.
+    // False SHOULD always be returned by apps:
+    return VK_FALSE;
+}
+
 static const char *VkResultString(VkResult err) {
     switch (err) {
 #define STR(r) \
@@ -833,6 +862,10 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     AppGetInstanceExtensions(inst);
 
+    const VkDebugReportCallbackCreateInfoEXT dbg_info = {.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+                                                         .flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT,
+                                                         .pfnCallback = DbgCallback};
+
     const VkApplicationInfo app_info = {.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
                                         .pApplicationName = APP_SHORT_NAME,
                                         .applicationVersion = 1,
@@ -840,6 +873,7 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     AppCompileInstanceExtensionsToEnable(inst);
     const VkInstanceCreateInfo inst_info = {.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+                                            .pNext = &dbg_info,
                                             .pApplicationInfo = &app_info,
                                             .enabledExtensionCount = inst->inst_extensions_count,
                                             .ppEnabledExtensionNames = inst->inst_extensions};
