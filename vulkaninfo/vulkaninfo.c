@@ -4698,6 +4698,10 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                 fprintf(out,
                         "\t\t\t\t\t\t\t\t\t<details><summary><div "
                         "class='type'>VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</div></summary></details>\n");
+            if (flags & VK_MEMORY_PROPERTY_PROTECTED_BIT)
+                fprintf(out,
+                        "\t\t\t\t\t\t\t\t\t<details><summary><div "
+                        "class='type'>VK_MEMORY_PROPERTY_PROTECTED_BIT</div></summary></details>\n");
             if (props.memoryTypes[i].propertyFlags > 0) fprintf(out, "\t\t\t\t\t\t\t\t</details>\n");
             fprintf(out, "\t\t\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
@@ -4706,6 +4710,7 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
             if (flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_HOST_COHERENT_BIT\n");
             if (flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_HOST_CACHED_BIT\n");
             if (flags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT\n");
+            if (flags & VK_MEMORY_PROPERTY_PROTECTED_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_PROTECTED_BIT\n");
         }
     }
     if (html_output) {
