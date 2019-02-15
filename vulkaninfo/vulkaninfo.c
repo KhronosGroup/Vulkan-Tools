@@ -163,7 +163,7 @@ struct AppInstance {
     Window xlib_window;
 #endif
 #ifdef VK_USE_PLATFORM_ANDROID_KHR  // TODO
-    ANativeWindow *window;
+    struct ANativeWindow *window;
 #endif
 #ifdef VK_USE_PLATFORM_MACOS_MVK
     void *window;
@@ -1149,7 +1149,7 @@ static void AppDestroyWin32Window(struct AppInstance *inst) { DestroyWindow(inst
 //-----------------------------------------------------------
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void AppDestroySurface(struct AppInstance *inst) {  // same for all platforms
     vkDestroySurfaceKHR(inst->instance, inst->surface, NULL);
 }
