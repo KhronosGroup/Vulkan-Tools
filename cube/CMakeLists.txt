@@ -174,6 +174,13 @@ elseif(NOT WIN32)
                        cube.vert.inc
                        cube.frag.inc)
         target_link_libraries(vkcube Vulkan::Vulkan)
+
+       if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+           find_library(LIBRT rt)
+           if(LIBRT)
+               target_link_libraries(vkcube ${LIBRT})
+           endif()
+        endif()
     endif()
 else()
     if(CMAKE_CL_64)
