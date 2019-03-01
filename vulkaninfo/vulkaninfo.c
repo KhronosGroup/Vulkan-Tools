@@ -2897,6 +2897,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>shaderSharedInt64Atomics = <div class='val'>%" PRIuLEAST32
                             "</div></summary></details>\n",
                             shader_atomic_int64_features->shaderSharedInt64Atomics);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceShaderAtomicInt64Features:\n");
                     printf("==========================================\n");
@@ -2920,6 +2921,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>geometryStreams   = <div class='val'>%" PRIuLEAST32
                             "</div></summary></details>\n",
                             transform_feedback_features->geometryStreams);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceTransformFeedbackFeatures:\n");
                     printf("==========================================\n");
@@ -2937,6 +2939,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>scalarBlockLayout = <div class='val'>%" PRIuLEAST32
                             "</div></summary></details>\n",
                             scalar_block_layout_features->scalarBlockLayout);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceScalarBlockLayoutFeatures:\n");
                     printf("==========================================\n");
@@ -2961,6 +2964,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>fragmentDensityMapNonSubsampledImages = <div class='val'>%" PRIuLEAST32
                             "</div></summary></details>\n",
                             fragment_density_map_features->fragmentDensityMapNonSubsampledImages);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceFragmentDensityMapFeatures:\n");
                     printf("==========================================\n");
