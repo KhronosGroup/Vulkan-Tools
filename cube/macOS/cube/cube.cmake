@@ -25,7 +25,7 @@ set(cube_SRCS
 set(cube_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/AppDelegate.h ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/DemoViewController.h)
 
 set(cube_RESOURCES ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Resources/LunarGIcon.icns)
+    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Resources/VulkanIcon.icns)
 
 # Have Xcode handle the Storyboard
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")

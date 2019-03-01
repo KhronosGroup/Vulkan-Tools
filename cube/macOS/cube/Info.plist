@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>VkCube</string>
 	<key>CFBundleIconFile</key>
-	<string>LunarGIcon.icns</string>
+	<string>VulkanIcon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.lunarg.vkcube</string>
 	<key>CFBundleInfoDictionaryVersion</key>

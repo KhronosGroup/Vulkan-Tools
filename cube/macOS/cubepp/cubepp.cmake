@@ -27,7 +27,7 @@ set(
     )
 
 set(cubepp_RESOURCES ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/LunarGIcon.icns)
+    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/VulkanIcon.icns)
 
 # Have Xcode handle the Storyboard
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
