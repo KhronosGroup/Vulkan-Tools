@@ -1927,7 +1927,7 @@ static void AppDumpSurfaceExtension(struct AppInstance *inst, struct AppGpu *gpu
         *format_count += AppDumpSurfaceFormats(inst, &gpus[i], out);
         *present_mode_count += AppDumpSurfacePresentModes(inst, &gpus[i], out);
         AppDumpSurfaceCapabilities(inst, &gpus[i], out);
-
+        AppDestroySurface(inst);
         if (html_output) {
             fprintf(out, "\t\t\t\t</details>\n");
         } else if (human_readable_output) {
@@ -4460,12 +4460,6 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         props = *props_const;
     }
 
-    VkBool32 supports_present = VK_FALSE;
-    if (gpu->inst->surface) {
-        VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(gpu->obj, id, gpu->inst->surface, &supports_present);
-        if (err) ERR_EXIT(err);
-    }
-
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>VkQueueFamilyProperties[<div class='val'>%d</div>]</summary>\n", id);
         fprintf(out, "\t\t\t\t\t\t<details><summary>queueFlags = ");
@@ -4495,17 +4489,10 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
 
     if (html_output) {
         fprintf(out, "</summary></details>\n");
-        fprintf(out, "\t\t\t\t\t\t<details><summary>queueCount         = <div class='val'>%u</div></summary></details>\n",
-                props.queueCount);
-        fprintf(out, "\t\t\t\t\t\t<details><summary>timestampValidBits = <div class='val'>%u</div></summary></details>\n",
-                props.timestampValidBits);
-        fprintf(out,
-                "\t\t\t\t\t\t<details><summary>minImageTransferGranularity = (<div class='val'>%d</div>, <div "
-                "class='val'>%d</div>, <div class='val'>%d</div>)</summary></details>\n",
-                props.minImageTransferGranularity.width, props.minImageTransferGranularity.height,
-                props.minImageTransferGranularity.depth);
-        fprintf(out, "\t\t\t\t\t\t<details><summary>present support    = <div class='val'>%s</div></summary></details>\n",
-                supports_present ? "true" : "false");
+        fprintf(out, "\t\t\t\t\t\t<details><summary>queueCount         = <div class='val'>%u</div></summary></details>\n", props.queueCount);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>timestampValidBits = <div class='val'>%u</div></summary></details>\n", props.timestampValidBits);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>minImageTransferGranularity = (<div class='val'>%d</div>, <div class='val'>%d</div>, <div class='val'>%d</div>)</summary></details>\n",
+                props.minImageTransferGranularity.width, props.minImageTransferGranularity.height, props.minImageTransferGranularity.depth);
         fprintf(out, "\t\t\t\t\t</details>\n");
     } else if (human_readable_output) {
         printf("\n");
@@ -4513,7 +4500,6 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\ttimestampValidBits = %u\n", props.timestampValidBits);
         printf("\tminImageTransferGranularity = (%d, %d, %d)\n", props.minImageTransferGranularity.width,
                props.minImageTransferGranularity.height, props.minImageTransferGranularity.depth);
-        printf("\tpresent support    = %s\n", supports_present ? "true" : "false");
     }
     if (json_output) {
         printf("\t\t{\n");
@@ -4524,8 +4510,7 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\t\t\t},\n");
         printf("\t\t\t\"queueCount\": %u,\n", props.queueCount);
         printf("\t\t\t\"queueFlags\": %u,\n", props.queueFlags);
-        printf("\t\t\t\"timestampValidBits\": %u,\n", props.timestampValidBits);
-        printf("\t\t\t\"present_support\": %s\n", supports_present ? "\"true\"" : "\"false\"");
+        printf("\t\t\t\"timestampValidBits\": %u\n", props.timestampValidBits);
         printf("\t\t}");
     }
 
@@ -4992,7 +4977,7 @@ void print_usage(char *argv0) {
 int main(int argc, char **argv) {
     uint32_t gpu_count;
     VkResult err;
-    struct AppInstance inst = {0};
+    struct AppInstance inst;
     FILE *out = stdout;
 
 #ifdef _WIN32
@@ -5346,7 +5331,6 @@ int main(int argc, char **argv) {
     free(gpus);
     free(objs);
 
-    AppDestroySurface(&inst);
     AppDestroyInstance(&inst);
 
     if (html_output) {
