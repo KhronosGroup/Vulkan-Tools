@@ -112,12 +112,15 @@ struct LayerExtensionList {
     VkExtensionProperties *extension_properties;
 };
 
-struct SurfaceExtensionInfo {
+struct SurfaceExtensionNode {
+    struct SurfaceExtensionNode *next;
+
     const char *name;
     void (*create_window)(struct AppInstance *);
     VkSurfaceKHR (*create_surface)(struct AppInstance *);
     void (*destroy_window)(struct AppInstance *);
     VkSurfaceKHR surface;
+    VkBool32 supports_present;
 };
 
 struct AppInstance {
@@ -149,8 +152,7 @@ struct AppInstance {
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR;
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT;
 
-    int surface_ext_infos_reserve, surface_ext_infos_count;
-    struct SurfaceExtensionInfo *surface_ext_infos;
+    struct SurfaceExtensionNode *surface_ext_infos_root;
 
     int width, height;
 
@@ -893,13 +895,10 @@ static void AppCreateInstance(struct AppInstance *inst) {
 
     AppLoadInstanceCommands(inst);
 
-    inst->surface_ext_infos_reserve = 10;
-    inst->surface_ext_infos = malloc(inst->surface_ext_infos_reserve * sizeof(struct SurfaceExtensionInfo));
-    inst->surface_ext_infos_count = 0;
+    inst->surface_ext_infos_root = NULL;
 }
 
 static void AppDestroyInstance(struct AppInstance *inst) {
-    free(inst->surface_ext_infos);
     free(inst->global_extensions);
     for (uint32_t i = 0; i < inst->global_layer_count; ++i) {
         free(inst->global_layers[i].extension_properties);
@@ -1920,7 +1919,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
 }
 
 static void AppDumpSurfaceExtension(struct AppInstance *inst, struct AppGpu *gpus, uint32_t gpu_count,
-                                    struct SurfaceExtensionInfo *surface_extension, int *format_count, int *present_mode_count,
+                                    struct SurfaceExtensionNode *surface_extension, int *format_count, int *present_mode_count,
                                     FILE *out) {
     if (!CheckExtensionEnabled(surface_extension->name, inst->inst_extensions, inst->inst_extensions_count)) {
         return;
@@ -4471,11 +4470,8 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         props = *props_const;
     }
 
-    VkBool32 *supports_present = calloc(gpu->inst->surface_ext_infos_count, sizeof(VkBool32));
-    ;
-    for (int i = 0; i < gpu->inst->surface_ext_infos_count; ++i) {
-        VkResult err =
-            vkGetPhysicalDeviceSurfaceSupportKHR(gpu->obj, id, gpu->inst->surface_ext_infos[i].surface, &supports_present[i]);
+    for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+        VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(gpu->obj, id, sen->surface, &sen->supports_present);
         if (err) ERR_EXIT(err);
     }
 
@@ -4517,9 +4513,9 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
                 "class='val'>%d</div>, <div class='val'>%d</div>)</summary></details>\n",
                 props.minImageTransferGranularity.width, props.minImageTransferGranularity.height,
                 props.minImageTransferGranularity.depth);
-        for (int i = 0; i < gpu->inst->surface_ext_infos_count; ++i) {
+        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
             fprintf(out, "\t\t\t\t\t\t<details><summary>present support(%s) = <div class='val'>%s</div></summary></details>\n",
-                    gpu->inst->surface_ext_infos[i].name, supports_present[i] ? "true" : "false");
+                    sen->name, sen->supports_present ? "true" : "false");
         }
         fprintf(out, "\t\t\t\t\t</details>\n");
     } else if (human_readable_output) {
@@ -4528,8 +4524,8 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\ttimestampValidBits = %u\n", props.timestampValidBits);
         printf("\tminImageTransferGranularity = (%d, %d, %d)\n", props.minImageTransferGranularity.width,
                props.minImageTransferGranularity.height, props.minImageTransferGranularity.depth);
-        for (int i = 0; i < gpu->inst->surface_ext_infos_count; ++i) {
-            printf("\tpresent support(%s) = %s\n", gpu->inst->surface_ext_infos[i].name, supports_present ? "true" : "false");
+        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+            printf("\tpresent support(%s) = %s\n", sen->name, sen->supports_present ? "true" : "false");
         }
     }
     if (json_output) {
@@ -4542,9 +4538,8 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\t\t\t\"queueCount\": %u,\n", props.queueCount);
         printf("\t\t\t\"queueFlags\": %u,\n", props.queueFlags);
         printf("\t\t\t\"timestampValidBits\": %u,\n", props.timestampValidBits);
-        for (int i = 0; i < gpu->inst->surface_ext_infos_count; ++i) {
-            printf("\t\t\t\"present_support(%s)\": %s\n", gpu->inst->surface_ext_infos[i].name,
-                   supports_present ? "\"true\"" : "\"false\"");
+        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+            printf("\t\t\t\"present_support(%s)\": %s\n", sen->name, sen->supports_present ? "\"true\"" : "\"false\"");
         }
         printf("\t\t}");
     }
@@ -5238,76 +5233,71 @@ int main(int argc, char **argv) {
 
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-    struct SurfaceExtensionInfo surface_ext_win32;
+    struct SurfaceExtensionNode surface_ext_win32;
     surface_ext_win32.name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
     surface_ext_win32.create_window = AppCreateWin32Window;
     surface_ext_win32.create_surface = AppCreateWin32Surface;
     surface_ext_win32.destroy_window = AppDestroyWin32Window;
 
-    ++inst.surface_ext_infos_count;
-    assert(inst.surface_ext_infos_count <= inst.surface_ext_infos_reserve);
-    inst.surface_ext_infos[inst.surface_ext_infos_count - 1] = surface_ext_win32;
+    surface_ext_win32.next = inst.surface_ext_infos_root;
+    inst.surface_ext_infos_root = &surface_ext_win32;
 #endif
 //--XCB--
 #ifdef VK_USE_PLATFORM_XCB_KHR
-    struct SurfaceExtensionInfo surface_ext_xcb;
+    struct SurfaceExtensionNode surface_ext_xcb;
     surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
     surface_ext_xcb.create_window = AppCreateXcbWindow;
     surface_ext_xcb.create_surface = AppCreateXcbSurface;
     surface_ext_xcb.destroy_window = AppDestroyXcbWindow;
     if (has_display) {
-        ++inst.surface_ext_infos_count;
-        assert(inst.surface_ext_infos_count <= inst.surface_ext_infos_reserve);
-        inst.surface_ext_infos[inst.surface_ext_infos_count - 1] = surface_ext_xcb;
+        surface_ext_xcb.next = inst.surface_ext_infos_root;
+        inst.surface_ext_infos_root = &surface_ext_xcb;
     }
 #endif
 //--XLIB--
 #ifdef VK_USE_PLATFORM_XLIB_KHR
-    struct SurfaceExtensionInfo surface_ext_xlib;
+    struct SurfaceExtensionNode surface_ext_xlib;
     surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
     surface_ext_xlib.create_window = AppCreateXlibWindow;
     surface_ext_xlib.create_surface = AppCreateXlibSurface;
     surface_ext_xlib.destroy_window = AppDestroyXlibWindow;
     if (has_display) {
-        ++inst.surface_ext_infos_count;
-        assert(inst.surface_ext_infos_count <= inst.surface_ext_infos_reserve);
-        inst.surface_ext_infos[inst.surface_ext_infos_count - 1] = surface_ext_xlib;
+        surface_ext_xlib.next = inst.surface_ext_infos_root;
+        inst.surface_ext_infos_root = &surface_ext_xlib;
     }
 #endif
 //--MACOS--
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-    struct SurfaceExtensionInfo surface_ext_macos;
+    struct SurfaceExtensionNode surface_ext_macos;
     surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
     surface_ext_macos.create_window = AppCreateMacOSWindow;
     surface_ext_macos.create_surface = AppCreateMacOSSurface;
     surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
 
-    ++inst.surface_ext_infos_count;
-    assert(inst.surface_ext_infos_count <= inst.surface_ext_infos_reserve);
-    inst.surface_ext_infos[inst.surface_ext_infos_count - 1] = surface_ext_macos;
+    surface_ext_macos.next = inst.surface_ext_infos_root;
+    inst.surface_ext_infos_root = &surface_ext_macos;
 #endif
 //--WAYLAND--
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
-    struct SurfaceExtensionInfo surface_ext_wayland;
+    struct SurfaceExtensionNode surface_ext_wayland;
     surface_ext_wayland.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
     surface_ext_wayland.create_window = AppCreateWaylandWindow;
     surface_ext_wayland.create_surface = AppCreateWaylandSurface;
     surface_ext_wayland.destroy_window = AppDestroyWaylandWindow;
     if (has_wayland_display) {
-        ++inst.surface_ext_infos_count;
-        assert(inst.surface_ext_infos_count <= inst.surface_ext_infos_reserve);
-        inst.surface_ext_infos[inst.surface_ext_infos_count - 1] = surface_ext_wayland;
+        surface_ext_wayland.next = inst.surface_ext_infos_root;
+        inst.surface_ext_infos_root = &surface_ext_wayland;
     }
 #endif
     // TODO: Android
 
-    for (int i = 0; i < inst.surface_ext_infos_count; ++i) {
-        inst.surface_ext_infos[i].create_window(&inst);
-        inst.surface_ext_infos[i].surface = inst.surface_ext_infos[i].create_surface(&inst);
-        AppDumpSurfaceExtension(&inst, gpus, gpu_count, &inst.surface_ext_infos[i], &format_count, &present_mode_count, out);
+    for (struct SurfaceExtensionNode *sen = inst.surface_ext_infos_root; sen != NULL; sen = sen->next) {
+        sen->create_window(&inst);
+        sen->surface = sen->create_surface(&inst);
+        AppDumpSurfaceExtension(&inst, gpus, gpu_count, sen, &format_count, &present_mode_count, out);
     }
 
-    if (inst.surface_ext_infos_count == 0) {
+    if (!inst.surface_ext_infos_root) {
         if (html_output) {
             fprintf(out, "\t\t\t\t<details><summary>None found</summary></details>\n");
         } else if (human_readable_output) {
@@ -5389,9 +5379,9 @@ int main(int argc, char **argv) {
     free(gpus);
     free(objs);
 
-    for (int i = 0; i < inst.surface_ext_infos_count; ++i) {
-        AppDestroySurface(&inst, inst.surface_ext_infos[i].surface);
-        inst.surface_ext_infos[i].destroy_window(&inst);
+    for (struct SurfaceExtensionNode *sen = inst.surface_ext_infos_root; sen != NULL; sen = sen->next) {
+        AppDestroySurface(&inst, sen->surface);
+        sen->destroy_window(&inst);
     }
 
     AppDestroyInstance(&inst);
