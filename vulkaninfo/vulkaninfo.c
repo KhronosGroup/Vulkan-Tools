@@ -1206,7 +1206,7 @@ static void AppCreateXcbWindow(struct AppInstance *inst) {
 
 static VkSurfaceKHR AppCreateXcbSurface(struct AppInstance *inst) {
     if (!inst->xcb_connection) {
-        return VK_NULL_HANDLE;
+        ERR_EXIT(VK_ERROR_INITIALIZATION_FAILED);
     }
 
     VkXcbSurfaceCreateInfoKHR xcb_createInfo;
