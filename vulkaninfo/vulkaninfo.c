@@ -4866,8 +4866,13 @@ static void AppGroupDump(const VkPhysicalDeviceGroupProperties *group, const uin
                                               .physicalDeviceCount = group->physicalDeviceCount,
                                               .pPhysicalDevices = group->physicalDevices};
 
-    VkDeviceQueueCreateInfo q_ci = {
-        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, .pNext = NULL, .queueFamilyIndex = 0, .queueCount = 1};
+    float queue_priority = 1.0f;
+
+    VkDeviceQueueCreateInfo q_ci = {.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                                    .pNext = NULL,
+                                    .queueFamilyIndex = 0,
+                                    .queueCount = 1,
+                                    .pQueuePriorities = &queue_priority};
 
     VkDeviceCreateInfo device_ci = {.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
                                     .pNext = &dg_ci,
