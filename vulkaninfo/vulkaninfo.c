@@ -4470,9 +4470,15 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         props = *props_const;
     }
 
+    bool is_present_platform_agnostic = true;
+    VkBool32 platforms_support_present = VK_FALSE;
     for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
         VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(gpu->obj, id, sen->surface, &sen->supports_present);
         if (err) ERR_EXIT(err);
+
+        const bool first = (sen == gpu->inst->surface_ext_infos_root);
+        if (!first && platforms_support_present != sen->supports_present) is_present_platform_agnostic = false;
+        platforms_support_present = sen->supports_present;
     }
 
     if (html_output) {
@@ -4513,9 +4519,16 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
                 "class='val'>%d</div>, <div class='val'>%d</div>)</summary></details>\n",
                 props.minImageTransferGranularity.width, props.minImageTransferGranularity.height,
                 props.minImageTransferGranularity.depth);
-        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
-            fprintf(out, "\t\t\t\t\t\t<details><summary>present support(%s) = <div class='val'>%s</div></summary></details>\n",
-                    sen->name, sen->supports_present ? "true" : "false");
+        if (is_present_platform_agnostic) {
+            fprintf(out, "\t\t\t\t\t\t<details><summary>present support = <div class='val'>%s</div></summary></details>\n",
+                    platforms_support_present ? "true" : "false");
+        } else {
+            fprintf(out, "\t\t\t\t\t\t<details open><summary>present support</summary>\n");
+            for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+                fprintf(out, "\t\t\t\t\t\t\t<details><summary>%s = <div class='val'>%s</div></summary></details>\n", sen->name,
+                        sen->supports_present ? "true" : "false");
+            }
+            fprintf(out, "\t\t\t\t\t\t</details>\n");
         }
         fprintf(out, "\t\t\t\t\t</details>\n");
     } else if (human_readable_output) {
@@ -4524,8 +4537,13 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\ttimestampValidBits = %u\n", props.timestampValidBits);
         printf("\tminImageTransferGranularity = (%d, %d, %d)\n", props.minImageTransferGranularity.width,
                props.minImageTransferGranularity.height, props.minImageTransferGranularity.depth);
-        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
-            printf("\tpresent support(%s) = %s\n", sen->name, sen->supports_present ? "true" : "false");
+        if (is_present_platform_agnostic) {
+            printf("\tpresent support    = %s\n", platforms_support_present ? "true" : "false");
+        } else {
+            printf("\tpresent support:\n");
+            for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+                printf("\t\t%s = %s\n", sen->name, sen->supports_present ? "true" : "false");
+            }
         }
     }
     if (json_output) {
@@ -4538,9 +4556,11 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\t\t\t\"queueCount\": %u,\n", props.queueCount);
         printf("\t\t\t\"queueFlags\": %u,\n", props.queueFlags);
         printf("\t\t\t\"timestampValidBits\": %u,\n", props.timestampValidBits);
+        printf("\t\t\t\"present_support\": [\n");
         for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
-            printf("\t\t\t\"present_support(%s)\": %s\n", sen->name, sen->supports_present ? "\"true\"" : "\"false\"");
+            printf("\t\t\t\t\"%s\": \"%s\"%s\n", sen->name, sen->supports_present ? "true" : "false", sen->next ? "," : "");
         }
+        printf("\t\t\t]\n");
         printf("\t\t}");
     }
 
