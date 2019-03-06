@@ -112,6 +112,8 @@ struct LayerExtensionList {
     VkExtensionProperties *extension_properties;
 };
 
+struct AppInstance;
+
 struct SurfaceExtensionNode {
     struct SurfaceExtensionNode *next;
 
