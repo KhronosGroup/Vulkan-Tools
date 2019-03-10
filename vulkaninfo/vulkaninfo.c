@@ -183,6 +183,15 @@ struct AppInstance {
 #endif
 };
 
+struct MemResSupport {
+    struct MemImageSupport {
+        bool regular_supported, sparse_supported, transient_supported;
+        VkFormat format;
+        uint32_t regular_memtypes, sparse_memtypes, transient_memtypes;
+    } image[2][1 + 7];
+    // TODO: buffers
+};
+
 struct AppGpu {
     uint32_t id;
     VkPhysicalDevice obj;
@@ -200,12 +209,17 @@ struct AppGpu {
     VkPhysicalDeviceMemoryProperties memory_props;
     VkPhysicalDeviceMemoryProperties2KHR memory_props2;
 
+    struct MemResSupport mem_type_res_support;
+
     VkPhysicalDeviceFeatures features;
     VkPhysicalDeviceFeatures2KHR features2;
     VkPhysicalDevice limits;
 
     uint32_t device_extension_count;
     VkExtensionProperties *device_extensions;
+
+    VkDevice dev;
+    VkPhysicalDeviceFeatures enabled_features;
 };
 
 // return most severe flag only
@@ -291,6 +305,20 @@ static const char *VkPhysicalDeviceTypeString(VkPhysicalDeviceType type) {
 #undef STR
         default:
             return "UNKNOWN_DEVICE";
+    }
+}
+
+static const char *VkTilingString(const VkImageTiling tiling) {
+    switch (tiling) {
+#define STR(r)                \
+    case VK_IMAGE_TILING_##r: \
+        return #r
+        STR(OPTIMAL);
+        STR(LINEAR);
+        STR(DRM_FORMAT_MODIFIER_EXT);
+#undef STR
+        default:
+            return "UNKNOWN_TILING";
     }
 }
 
@@ -1065,9 +1093,127 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
     }
 
     AppGetPhysicalDeviceLayerExtensions(gpu, NULL, &gpu->device_extension_count, &gpu->device_extensions);
+
+    const float queue_priority = 1.0f;
+    const VkDeviceQueueCreateInfo q_ci = {.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                                          .queueFamilyIndex = 0,  // just pick the first one and hope for the best
+                                          .queueCount = 1,
+                                          .pQueuePriorities = &queue_priority};
+    VkPhysicalDeviceFeatures features = {0};
+    // if (gpu->features.sparseBinding ) features.sparseBinding = VK_TRUE;
+    gpu->enabled_features = features;
+    const VkDeviceCreateInfo device_ci = {.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+                                          .queueCreateInfoCount = 1,
+                                          .pQueueCreateInfos = &q_ci,
+                                          // TODO: relevant extensions
+                                          .pEnabledFeatures = &gpu->enabled_features};
+
+    VkResult err = vkCreateDevice(gpu->obj, &device_ci, NULL, &gpu->dev);
+    if (err) ERR_EXIT(err);
+
+    const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
+    const VkImageTiling formats[] = {
+        color_format,      VK_FORMAT_D16_UNORM,         VK_FORMAT_X8_D24_UNORM_PACK32, VK_FORMAT_D32_SFLOAT,
+        VK_FORMAT_S8_UINT, VK_FORMAT_D16_UNORM_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,   VK_FORMAT_D32_SFLOAT_S8_UINT};
+    assert(ARRAY_SIZE(gpu->mem_type_res_support.image[0]) == ARRAY_SIZE(formats));
+    const VkImageUsageFlags usages[] = {0, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT};
+    const VkImageCreateFlags flagss[] = {0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT};
+
+    for (int fmt_i = 0; fmt_i < ARRAY_SIZE(formats); ++fmt_i) {
+        for (VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL; tiling <= VK_IMAGE_TILING_LINEAR; ++tiling) {
+            gpu->mem_type_res_support.image[tiling][fmt_i].format = formats[fmt_i];
+            gpu->mem_type_res_support.image[tiling][fmt_i].regular_supported = true;
+            gpu->mem_type_res_support.image[tiling][fmt_i].sparse_supported = true;
+            gpu->mem_type_res_support.image[tiling][fmt_i].transient_supported = true;
+
+            VkFormatProperties fmt_props;
+            vkGetPhysicalDeviceFormatProperties(gpu->obj, formats[fmt_i], &fmt_props);
+            if ((tiling == VK_IMAGE_TILING_OPTIMAL && fmt_props.optimalTilingFeatures == 0) ||
+                (tiling == VK_IMAGE_TILING_LINEAR && fmt_props.linearTilingFeatures == 0)) {
+                gpu->mem_type_res_support.image[tiling][fmt_i].regular_supported = false;
+                gpu->mem_type_res_support.image[tiling][fmt_i].sparse_supported = false;
+                gpu->mem_type_res_support.image[tiling][fmt_i].transient_supported = false;
+                continue;
+            }
+
+            for (int u_i = 0; u_i < ARRAY_SIZE(usages); ++u_i) {
+                for (int flg_i = 0; flg_i < ARRAY_SIZE(flagss); ++flg_i) {
+                    VkImageCreateInfo image_ci = {
+                        .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+                        .flags = flagss[flg_i],
+                        .imageType = VK_IMAGE_TYPE_2D,
+                        .format = formats[fmt_i],
+                        .extent = {8, 8, 1},
+                        .mipLevels = 1,
+                        .arrayLayers = 1,
+                        .samples = VK_SAMPLE_COUNT_1_BIT,
+                        .tiling = tiling,
+                        .usage = usages[u_i],
+                    };
+
+                    if ((image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT) &&
+                        (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
+                        continue;
+                    }
+
+                    if (image_ci.usage == 0 || (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
+                        if (image_ci.format = color_format)
+                            image_ci.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                        else
+                            image_ci.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                    }
+
+                    if (!gpu->enabled_features.sparseBinding && (image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT)) {
+                        gpu->mem_type_res_support.image[tiling][fmt_i].sparse_supported = false;
+                        continue;
+                    }
+
+                    VkImageFormatProperties img_props;
+                    err = vkGetPhysicalDeviceImageFormatProperties(gpu->obj, image_ci.format, image_ci.imageType, image_ci.tiling,
+                                                                   image_ci.usage, image_ci.flags, &img_props);
+
+                    uint32_t *memtypes;
+                    bool *support;
+
+                    if (image_ci.flags == 0 && !(image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
+                        memtypes = &gpu->mem_type_res_support.image[tiling][fmt_i].regular_memtypes;
+                        support = &gpu->mem_type_res_support.image[tiling][fmt_i].regular_supported;
+                    } else if ((image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT) &&
+                               !(image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
+                        memtypes = &gpu->mem_type_res_support.image[tiling][fmt_i].sparse_memtypes;
+                        support = &gpu->mem_type_res_support.image[tiling][fmt_i].sparse_supported;
+                    } else if (image_ci.flags == 0 && (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
+                        memtypes = &gpu->mem_type_res_support.image[tiling][fmt_i].transient_memtypes;
+                        support = &gpu->mem_type_res_support.image[tiling][fmt_i].transient_supported;
+                    } else {
+                        assert(false);
+                    }
+
+                    if (err == VK_ERROR_FORMAT_NOT_SUPPORTED) {
+                        *support = false;
+                    } else {
+                        if (err) ERR_EXIT(err);
+
+                        VkImage dummy_img;
+                        err = vkCreateImage(gpu->dev, &image_ci, NULL, &dummy_img);
+                        if (err) ERR_EXIT(err);
+
+                        VkMemoryRequirements mem_req;
+                        vkGetImageMemoryRequirements(gpu->dev, dummy_img, &mem_req);
+                        *memtypes = mem_req.memoryTypeBits;
+
+                        vkDestroyImage(gpu->dev, dummy_img, NULL);
+                    }
+                }
+            }
+        }
+    }
+    // TODO buffer - memory type compatibility
 }
 
 static void AppGpuDestroy(struct AppGpu *gpu) {
+    vkDestroyDevice(gpu->dev, NULL);
+
     free(gpu->device_extensions);
 
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
@@ -4739,7 +4885,6 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                         "\t\t\t\t\t\t\t\t\t<details><summary><div "
                         "class='type'>VK_MEMORY_PROPERTY_PROTECTED_BIT</div></summary></details>\n");
             if (props.memoryTypes[i].propertyFlags > 0) fprintf(out, "\t\t\t\t\t\t\t\t</details>\n");
-            fprintf(out, "\t\t\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
             if (flags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT\n");
             if (flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_HOST_VISIBLE_BIT\n");
@@ -4748,7 +4893,114 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
             if (flags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT\n");
             if (flags & VK_MEMORY_PROPERTY_PROTECTED_BIT) printf("\t\t\tVK_MEMORY_PROPERTY_PROTECTED_BIT\n");
         }
+
+        if (human_readable_output) {
+            printf("\t\tusable for:\n");
+            const uint32_t memtype_bit = 1 << i;
+
+            for (VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL; tiling < ARRAY_SIZE(gpu->mem_type_res_support.image); ++tiling) {
+                printf("\t\t\t%s: ", VkTilingString(tiling));
+
+                bool first = true;
+                for (int fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
+                    const struct MemImageSupport *image_support = &gpu->mem_type_res_support.image[tiling][fmt_i];
+                    const bool regular_compatible =
+                        image_support->regular_supported && (image_support->regular_memtypes & memtype_bit);
+                    const bool sparse_compatible =
+                        image_support->sparse_supported && (image_support->sparse_memtypes & memtype_bit);
+                    const bool transient_compatible =
+                        image_support->transient_supported && (image_support->transient_memtypes & memtype_bit);
+
+                    if (regular_compatible || sparse_compatible || transient_compatible) {
+                        if (!first) printf(", ");
+                        first = false;
+
+                        if (fmt_i == 0) {
+                            printf("color images");
+                        } else {
+                            printf("%s", VkFormatString(gpu->mem_type_res_support.image[tiling][fmt_i].format));
+                        }
+
+                        if (regular_compatible && !sparse_compatible && !transient_compatible && image_support->sparse_supported &&
+                            image_support->transient_supported) {
+                            printf("(non-sparse, non-transient)");
+                        } else if (regular_compatible && !sparse_compatible && image_support->sparse_supported) {
+                            if (image_support->sparse_supported) printf("(non-sparse)");
+                        } else if (regular_compatible && !transient_compatible && image_support->transient_supported) {
+                            if (image_support->transient_supported) printf("(non-transient)");
+                        } else if (!regular_compatible && sparse_compatible && !transient_compatible &&
+                                   image_support->sparse_supported) {
+                            if (image_support->sparse_supported) printf("(sparse only)");
+                        } else if (!regular_compatible && !sparse_compatible && transient_compatible &&
+                                   image_support->transient_supported) {
+                            if (image_support->transient_supported) printf("(transient only)");
+                        } else if (!regular_compatible && sparse_compatible && transient_compatible &&
+                                   image_support->sparse_supported && image_support->transient_supported) {
+                            printf("(sparse and transient only)");
+                        }
+                    }
+                }
+
+                if (first) printf("None");
+
+                printf("\n");
+            }
+        } else if (html_output) {
+            fprintf(out, "\t\t\t\t\t\t\t\t<details><summary>usable for</summary>\n");
+            const uint32_t memtype_bit = 1 << i;
+
+            for (VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL; tiling < ARRAY_SIZE(gpu->mem_type_res_support.image); ++tiling) {
+                fprintf(out, "\t\t\t\t\t\t\t\t\t<details><summary>%s</summary>\n", VkTilingString(tiling));
+
+                bool first = true;
+                for (int fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
+                    const struct MemImageSupport *image_support = &gpu->mem_type_res_support.image[tiling][fmt_i];
+                    const bool regular_compatible =
+                        image_support->regular_supported && (image_support->regular_memtypes & memtype_bit);
+                    const bool sparse_compatible =
+                        image_support->sparse_supported && (image_support->sparse_memtypes & memtype_bit);
+                    const bool transient_compatible =
+                        image_support->transient_supported && (image_support->transient_memtypes & memtype_bit);
+
+                    if (regular_compatible || sparse_compatible || transient_compatible) {
+                        first = false;
+
+                        if (fmt_i == 0) {
+                            fprintf(out, "\t\t\t\t\t\t\t\t\t\t<details><summary>color images</summary>\n");
+                        } else {
+                            fprintf(out, "\t\t\t\t\t\t\t\t\t\t<details><summary>%s</summary>\n",
+                                    VkFormatString(gpu->mem_type_res_support.image[tiling][fmt_i].format));
+                        }
+
+                        fprintf(out,
+                                "\t\t\t\t\t\t\t\t\t\t\t<details><summary><div class=\"type\">regular image</div> = <div "
+                                "class=\"val\">%s</div></summary></details>\n",
+                                regular_compatible ? "supported" : "not supported");
+                        fprintf(
+                            out,
+                            "\t\t\t\t\t\t\t\t\t\t\t<details><summary><div class=\"type\">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</div> "
+                            "= <div class=\"val\">%s</div></summary></details>\n",
+                            sparse_compatible ? "supported" : "not supported");
+                        fprintf(out,
+                                "\t\t\t\t\t\t\t\t\t\t\t<details><summary><div "
+                                "class=\"type\">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</div> = <div "
+                                "class=\"val\">%s</div></summary></details>\n",
+                                transient_compatible ? "supported" : "not supported");
+
+                        fprintf(out, "\t\t\t\t\t\t\t\t\t\t</details>\n");
+                    }
+                }
+
+                if (first) fprintf(out, "<details><summary><div class=\"type\">None</summary></details>");
+
+                fprintf(out, "\t\t\t\t\t\t\t\t\t</details>\n");
+            }
+
+            fprintf(out, "\t\t\t\t\t\t\t\t</details>\n");
+            fprintf(out, "\t\t\t\t\t\t\t</details>\n");
+        }
     }
+
     if (html_output) {
         if (props.memoryTypeCount > 0) {
             fprintf(out, "\t\t\t\t\t\t");
