@@ -4560,7 +4560,7 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\t\t\t\"timestampValidBits\": %u,\n", props.timestampValidBits);
         printf("\t\t\t\"present_support\": [\n");
         for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
-            printf("\t\t\t\t\"%s\": %s%s\n", sen->name, sen->supports_present ? "1" : "0", sen->next ? "," : "");
+            printf("\t\t\t\t{\"%s\": %s}%s\n", sen->name, sen->supports_present ? "1" : "0", sen->next ? "," : "");
         }
         printf("\t\t\t]\n");
         printf("\t\t}");
