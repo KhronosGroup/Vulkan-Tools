@@ -4557,17 +4557,20 @@ static void AppGpuDumpQueueProps(const struct AppGpu *gpu, uint32_t id, FILE *ou
         printf("\t\t\t},\n");
         printf("\t\t\t\"queueCount\": %u,\n", props.queueCount);
         printf("\t\t\t\"queueFlags\": %u,\n", props.queueFlags);
-        printf("\t\t\t\"timestampValidBits\": %u,\n", props.timestampValidBits);
-        printf("\t\t\t\"present_support\": [\n");
-        for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
-            printf("\t\t\t\t{\"%s\": %s}%s\n", sen->name, sen->supports_present ? "1" : "0", sen->next ? "," : "");
-        }
-        printf("\t\t\t]\n");
+        printf("\t\t\t\"timestampValidBits\": %u\n", props.timestampValidBits);
         printf("\t\t}");
     }
 
     fflush(out);
     fflush(stdout);
+}
+
+static void AppGpuJsonDumpQueueSurfaceSupport(const struct AppGpu *gpu, uint32_t id, FILE *out) {
+    printf("\t\t[\n");
+    for (struct SurfaceExtensionNode *sen = gpu->inst->surface_ext_infos_root; sen != NULL; sen = sen->next) {
+        printf("\t\t\t\t{\"%s\": %s}%s\n", sen->name, sen->supports_present ? "1" : "0", sen->next ? "," : "");
+    }
+    printf("\t\t]");
 }
 
 // This prints a number of bytes in a human-readable format according to prefixes of the International System of Quantities (ISQ),
@@ -4808,6 +4811,26 @@ static void AppGpuDump(const struct AppGpu *gpu, FILE *out) {
         }
     }
     if (json_output) {
+        if (gpu->queue_count > 0) {
+            printf("\n\t");
+        }
+        printf("]");
+    }
+
+    if (json_output) {
+        printf(",\n");
+        printf("\t\"ArrayOfQueueSurfaceSupport\": [");
+
+        for (uint32_t i = 0; i < gpu->queue_count; ++i) {
+            if (json_output) {
+                if (i > 0) {
+                    printf(",");
+                }
+                printf("\n");
+            }
+            AppGpuJsonDumpQueueSurfaceSupport(gpu, i, out);
+        }
+
         if (gpu->queue_count > 0) {
             printf("\n\t");
         }
