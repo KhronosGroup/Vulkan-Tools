@@ -72,7 +72,9 @@ that to be accepted into the repository, the pull request must [pass all tests](
 >        vkcube --validate
 * In the `vulkaninfo` directory, run:
 >        vulkaninfo
-
+* If you are adding or changing JSON output, please read
+  [Validating vulkaninfo JSON output](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/vulkaninfo/json_validation_process.md).
+  **Note:** When adding new output to vulkaninfo, do NOT add JSON output unless the formmatting is defined by a schema.
 * Run tests that explicitly exercise your changes.
 * Feel free to subject your code changes to other tests as well!
 
