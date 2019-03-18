@@ -1112,14 +1112,14 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
     if (err) ERR_EXIT(err);
 
     const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
-    const VkImageTiling formats[] = {
+    const VkFormat formats[] = {
         color_format,      VK_FORMAT_D16_UNORM,         VK_FORMAT_X8_D24_UNORM_PACK32, VK_FORMAT_D32_SFLOAT,
         VK_FORMAT_S8_UINT, VK_FORMAT_D16_UNORM_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,   VK_FORMAT_D32_SFLOAT_S8_UINT};
     assert(ARRAY_SIZE(gpu->mem_type_res_support.image[0]) == ARRAY_SIZE(formats));
     const VkImageUsageFlags usages[] = {0, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT};
     const VkImageCreateFlags flagss[] = {0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT};
 
-    for (int fmt_i = 0; fmt_i < ARRAY_SIZE(formats); ++fmt_i) {
+    for (size_t fmt_i = 0; fmt_i < ARRAY_SIZE(formats); ++fmt_i) {
         for (VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL; tiling <= VK_IMAGE_TILING_LINEAR; ++tiling) {
             gpu->mem_type_res_support.image[tiling][fmt_i].format = formats[fmt_i];
             gpu->mem_type_res_support.image[tiling][fmt_i].regular_supported = true;
@@ -1136,8 +1136,8 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
                 continue;
             }
 
-            for (int u_i = 0; u_i < ARRAY_SIZE(usages); ++u_i) {
-                for (int flg_i = 0; flg_i < ARRAY_SIZE(flagss); ++flg_i) {
+            for (size_t u_i = 0; u_i < ARRAY_SIZE(usages); ++u_i) {
+                for (size_t flg_i = 0; flg_i < ARRAY_SIZE(flagss); ++flg_i) {
                     VkImageCreateInfo image_ci = {
                         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
                         .flags = flagss[flg_i],
@@ -1157,7 +1157,7 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
                     }
 
                     if (image_ci.usage == 0 || (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                        if (image_ci.format = color_format)
+                        if (image_ci.format == color_format)
                             image_ci.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
                         else
                             image_ci.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
@@ -4902,7 +4902,7 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                 printf("\t\t\t%s: ", VkTilingString(tiling));
 
                 bool first = true;
-                for (int fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
+                for (size_t fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
                     const struct MemImageSupport *image_support = &gpu->mem_type_res_support.image[tiling][fmt_i];
                     const bool regular_compatible =
                         image_support->regular_supported && (image_support->regular_memtypes & memtype_bit);
@@ -4953,7 +4953,7 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                 fprintf(out, "\t\t\t\t\t\t\t\t\t<details><summary>%s</summary>\n", VkTilingString(tiling));
 
                 bool first = true;
-                for (int fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
+                for (size_t fmt_i = 0; fmt_i < ARRAY_SIZE(gpu->mem_type_res_support.image[tiling]); ++fmt_i) {
                     const struct MemImageSupport *image_support = &gpu->mem_type_res_support.image[tiling][fmt_i];
                     const bool regular_compatible =
                         image_support->regular_supported && (image_support->regular_memtypes & memtype_bit);
