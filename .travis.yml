@@ -69,6 +69,7 @@ before_install:
 
 script:
   - set -e
+  - cmake --version
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
       # Build Vulkan-Headers

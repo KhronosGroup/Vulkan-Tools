@@ -197,7 +197,7 @@ generate the native platform files.
     - [2017](https://www.visualstudio.com/vs/downloads/)
   - The Community Edition of each of the above versions is sufficient, as
     well as any more capable edition.
-- [CMake](http://www.cmake.org/download/) (Version 2.8.11 or better)
+- [CMake](http://www.cmake.org/download/) (CI uses CMake 3.12.2)
   - Use the installer option to add CMake to the system PATH
 - Git Client Support
   - [Git for Windows](http://git-scm.com/download/win) is a popular solution
@@ -348,6 +348,8 @@ repository to other Linux distributions.
 
     sudo apt-get install git cmake build-essential libx11-xcb-dev \
         libxkbcommon-dev libwayland-dev libxrandr-dev
+
+*Note: CI uses CMake 3.12.4*
 
 ### Linux Build
 
@@ -700,6 +702,8 @@ Setup Homebrew and components
 - Add packages with the following (may need refinement)
 
       brew install cmake python python3 git
+
+*Note:* CI uses CMake 3.11.3
 
 ### Clone the Repository
 
