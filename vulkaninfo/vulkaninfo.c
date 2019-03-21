@@ -1579,7 +1579,8 @@ static int AppDumpSurfacePresentModes(struct AppInstance *inst, struct AppGpu *g
     if (err) ERR_EXIT(err);
 
     if (html_output) {
-        fprintf(out, "\t\t\t\t\t<details><summary>Present Modes: count = <span class='val'>%d</span></summary>", present_mode_count);
+        fprintf(out, "\t\t\t\t\t<details><summary>Present Modes: count = <span class='val'>%d</span></summary>",
+                present_mode_count);
         if (present_mode_count > 0) {
             fprintf(out, "\n");
         } else {
@@ -1772,12 +1773,14 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                         "class='type'>VK_IMAGE_USAGE_TRANSFER_DST_BIT</span></summary></details>\n");
             }
             if (surface_capabilities.supportedUsageFlags & VK_IMAGE_USAGE_SAMPLED_BIT) {
-                fprintf(out,
-                        "\t\t\t\t\t\t\t<details><summary><span class='type'>VK_IMAGE_USAGE_SAMPLED_BIT</span></summary></details>\n");
+                fprintf(
+                    out,
+                    "\t\t\t\t\t\t\t<details><summary><span class='type'>VK_IMAGE_USAGE_SAMPLED_BIT</span></summary></details>\n");
             }
             if (surface_capabilities.supportedUsageFlags & VK_IMAGE_USAGE_STORAGE_BIT) {
-                fprintf(out,
-                        "\t\t\t\t\t\t\t<details><summary><span class='type'>VK_IMAGE_USAGE_STORAGE_BIT</span></summary></details>\n");
+                fprintf(
+                    out,
+                    "\t\t\t\t\t\t\t<details><summary><span class='type'>VK_IMAGE_USAGE_STORAGE_BIT</span></summary></details>\n");
             }
             if (surface_capabilities.supportedUsageFlags & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) {
                 fprintf(out,
@@ -2123,71 +2126,72 @@ static void AppDevDumpFormatProps(const struct AppGpu *gpu, VkFormat fmt, bool *
             if (features[i].flags == 0) {
                 fprintf(out, "\t\t\t\t\t\t\t\t<details><summary>None</summary></details>\n");
             } else {
-                fprintf(out, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-                        ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                     "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_"
-                                                                                     "BIT</span></summary></details>\n"
-                                                                                   : ""),  // 0x0001
-                        ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                     "class='type'>VK_FORMAT_FEATURE_STORAGE_IMAGE_"
-                                                                                     "BIT</span></summary></details>\n"
-                                                                                   : ""),  // 0x0002
-                        ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT</span></summary></details>\n"
-                             : ""),  // 0x0004
-                        ((features[i].flags & VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT</span></summary></details>\n"
-                             : ""),  // 0x0008
-                        ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT</span></summary></details>\n"
-                             : ""),  // 0x0010
-                        ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT</span></summary></details>\n"
-                             : ""),  // 0x0020
-                        ((features[i].flags & VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                     "class='type'>VK_FORMAT_FEATURE_VERTEX_BUFFER_"
-                                                                                     "BIT</span></summary></details>\n"
-                                                                                   : ""),  // 0x0040
-                        ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                        "class='type'>VK_FORMAT_FEATURE_COLOR_"
-                                                                                        "ATTACHMENT_BIT</span></summary></details>\n"
-                                                                                      : ""),  // 0x0080
-                        ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT</span></summary></details>\n"
-                             : ""),  // 0x0100
-                        ((features[i].flags & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span></summary></details>\n"
-                             : ""),  // 0x0200
-                        ((features[i].flags & VK_FORMAT_FEATURE_BLIT_SRC_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                "class='type'>VK_FORMAT_FEATURE_BLIT_SRC_BIT</"
-                                                                                "span></summary></details>\n"
-                                                                              : ""),  // 0x0400
-                        ((features[i].flags & VK_FORMAT_FEATURE_BLIT_DST_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                "class='type'>VK_FORMAT_FEATURE_BLIT_DST_BIT</"
-                                                                                "span></summary></details>\n"
-                                                                              : ""),  // 0x0800
-                        ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT</span></summary></details>\n"
-                             : ""),  // 0x1000
-                        ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG)
-                             ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                               "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG</span></summary></details>\n"
-                             : ""),  // 0x2000
-                        ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_SRC_BIT_KHR) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                        "class='type'>VK_FORMAT_FEATURE_TRANSFER_"
-                                                                                        "SRC_BIT_KHR</span></summary></details>\n"
-                                                                                      : ""),  // 0x4000
-                        ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_DST_BIT_KHR) ? "\t\t\t\t\t\t\t\t<details><summary><span "
-                                                                                        "class='type'>VK_FORMAT_FEATURE_TRANSFER_"
-                                                                                        "DST_BIT_KHR</span></summary></details>\n"
-                                                                                      : ""));  // 0x8000
+                fprintf(
+                    out, "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                 "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_"
+                                                                                 "BIT</span></summary></details>\n"
+                                                                               : ""),  // 0x0001
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                 "class='type'>VK_FORMAT_FEATURE_STORAGE_IMAGE_"
+                                                                                 "BIT</span></summary></details>\n"
+                                                                               : ""),  // 0x0002
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT</span></summary></details>\n"
+                         : ""),  // 0x0004
+                    ((features[i].flags & VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT</span></summary></details>\n"
+                         : ""),  // 0x0008
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT</span></summary></details>\n"
+                         : ""),  // 0x0010
+                    ((features[i].flags & VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT</span></summary></details>\n"
+                         : ""),  // 0x0020
+                    ((features[i].flags & VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                 "class='type'>VK_FORMAT_FEATURE_VERTEX_BUFFER_"
+                                                                                 "BIT</span></summary></details>\n"
+                                                                               : ""),  // 0x0040
+                    ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                    "class='type'>VK_FORMAT_FEATURE_COLOR_"
+                                                                                    "ATTACHMENT_BIT</span></summary></details>\n"
+                                                                                  : ""),  // 0x0080
+                    ((features[i].flags & VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT</span></summary></details>\n"
+                         : ""),  // 0x0100
+                    ((features[i].flags & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT</span></summary></details>\n"
+                         : ""),  // 0x0200
+                    ((features[i].flags & VK_FORMAT_FEATURE_BLIT_SRC_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                            "class='type'>VK_FORMAT_FEATURE_BLIT_SRC_BIT</"
+                                                                            "span></summary></details>\n"
+                                                                          : ""),  // 0x0400
+                    ((features[i].flags & VK_FORMAT_FEATURE_BLIT_DST_BIT) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                            "class='type'>VK_FORMAT_FEATURE_BLIT_DST_BIT</"
+                                                                            "span></summary></details>\n"
+                                                                          : ""),  // 0x0800
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT</span></summary></details>\n"
+                         : ""),  // 0x1000
+                    ((features[i].flags & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG)
+                         ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                           "class='type'>VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG</span></summary></details>\n"
+                         : ""),  // 0x2000
+                    ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_SRC_BIT_KHR) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                    "class='type'>VK_FORMAT_FEATURE_TRANSFER_"
+                                                                                    "SRC_BIT_KHR</span></summary></details>\n"
+                                                                                  : ""),  // 0x4000
+                    ((features[i].flags & VK_FORMAT_FEATURE_TRANSFER_DST_BIT_KHR) ? "\t\t\t\t\t\t\t\t<details><summary><span "
+                                                                                    "class='type'>VK_FORMAT_FEATURE_TRANSFER_"
+                                                                                    "DST_BIT_KHR</span></summary></details>\n"
+                                                                                  : ""));  // 0x8000
             }
             fprintf(out, "\t\t\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
@@ -4094,14 +4098,14 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                 VkPhysicalDeviceMultiviewPropertiesKHR *multiview_props = (VkPhysicalDeviceMultiviewPropertiesKHR *)structure;
                 if (html_output) {
                     fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceMultiviewProperties</summary>\n");
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxMultiviewViewCount     = <span class='val'>%u</span></summary></details>\n",
-                        multiview_props->maxMultiviewViewCount);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxMultiviewInstanceIndex = <span class='val'>%u</span></summary></details>\n",
-                        multiview_props->maxMultiviewInstanceIndex);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxMultiviewViewCount     = <span "
+                            "class='val'>%u</span></summary></details>\n",
+                            multiview_props->maxMultiviewViewCount);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxMultiviewInstanceIndex = <span "
+                            "class='val'>%u</span></summary></details>\n",
+                            multiview_props->maxMultiviewInstanceIndex);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceMultiviewProperties:\n");
@@ -4158,7 +4162,8 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             (uint32_t)id_props->driverUUID[11], (uint32_t)id_props->driverUUID[12],
                             (uint32_t)id_props->driverUUID[13], (uint32_t)id_props->driverUUID[14],
                             (uint32_t)id_props->driverUUID[15]);
-                    fprintf(out, "\t\t\t\t\t\t<details><summary>deviceLUIDValid = <span class='val'>%s</span></summary></details>\n",
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>deviceLUIDValid = <span class='val'>%s</span></summary></details>\n",
                             id_props->deviceLUIDValid ? "true" : "false");
                     if (id_props->deviceLUIDValid) {
                         fprintf(out,
@@ -4478,7 +4483,8 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFragmentDensityMapProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>minFragmentDensityTexelSize</summary>\n");
                     fprintf(out,
-                            "\t\t\t\t\t\t\t<details><summary>width = <span class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            "\t\t\t\t\t\t\t<details><summary>width = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
                             fragment_density_map_properties->minFragmentDensityTexelSize.width);
                     fprintf(out,
                             "\t\t\t\t\t\t\t<details><summary>height = <span class='val'>%" PRIuLEAST32
@@ -4486,7 +4492,8 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             fragment_density_map_properties->minFragmentDensityTexelSize.height);
                     fprintf(out, "\t\t\t\t\t\t<details><summary>maxFragmentDensityTexelSize</summary>\n");
                     fprintf(out,
-                            "\t\t\t\t\t\t\t<details><summary>width = <span class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            "\t\t\t\t\t\t\t<details><summary>width = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
                             fragment_density_map_properties->maxFragmentDensityTexelSize.width);
                     fprintf(out,
                             "\t\t\t\t\t\t\t<details><summary>height = <span class='val'>%" PRIuLEAST32
@@ -4748,7 +4755,8 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
 
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceMemoryProperties</summary>\n");
-        fprintf(out, "\t\t\t\t\t\t<details><summary>memoryHeapCount = <span class='val'>%u</span></summary>", props.memoryHeapCount);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>memoryHeapCount = <span class='val'>%u</span></summary>",
+                props.memoryHeapCount);
         if (props.memoryHeapCount > 0) {
             fprintf(out, "\n");
         }
@@ -4783,8 +4791,9 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
         if (html_output) {
             fprintf(out, "\t\t\t\t\t\t\t\t<details open><summary>flags</summary>\n");
             fprintf(out, "\t\t\t\t\t\t\t\t\t<details><summary>");
-            fprintf(out, (heap_flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) ? "<span class='type'>VK_MEMORY_HEAP_DEVICE_LOCAL_BIT</span>"
-                                                                        : "None");
+            fprintf(out, (heap_flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+                             ? "<span class='type'>VK_MEMORY_HEAP_DEVICE_LOCAL_BIT</span>"
+                             : "None");
             fprintf(out, "</summary></details>\n");
             fprintf(out, "\t\t\t\t\t\t\t\t</details>\n");
             fprintf(out, "\t\t\t\t\t\t\t</details>\n");
@@ -4817,7 +4826,8 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
     }
 
     if (html_output) {
-        fprintf(out, "\t\t\t\t\t\t<details><summary>memoryTypeCount = <span class='val'>%u</span></summary>", props.memoryTypeCount);
+        fprintf(out, "\t\t\t\t\t\t<details><summary>memoryTypeCount = <span class='val'>%u</span></summary>",
+                props.memoryTypeCount);
         if (props.memoryTypeCount > 0) {
             fprintf(out, "\n");
         }
@@ -4976,11 +4986,11 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                                 "\t\t\t\t\t\t\t\t\t\t\t<details><summary><span class=\"type\">regular image</span> = <span "
                                 "class=\"val\">%s</span></summary></details>\n",
                                 regular_compatible ? "supported" : "not supported");
-                        fprintf(
-                            out,
-                            "\t\t\t\t\t\t\t\t\t\t\t<details><summary><span class=\"type\">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> "
-                            "= <span class=\"val\">%s</span></summary></details>\n",
-                            sparse_compatible ? "supported" : "not supported");
+                        fprintf(out,
+                                "\t\t\t\t\t\t\t\t\t\t\t<details><summary><span "
+                                "class=\"type\">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> "
+                                "= <span class=\"val\">%s</span></summary></details>\n",
+                                sparse_compatible ? "supported" : "not supported");
                         fprintf(out,
                                 "\t\t\t\t\t\t\t\t\t\t\t<details><summary><span "
                                 "class=\"type\">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span> = <span "
