@@ -25,6 +25,7 @@ branches:
 before_build:
   - "SET PATH=C:\\Python35;C:\\Python35\\Scripts;%PATH%"
   - echo Starting build for %APPVEYOR_REPO_NAME% in %APPVEYOR_BUILD_FOLDER%
+  - cmake --version
   # Build Vulkan-Headers
   - echo Building Vulkan-Headers for %PLATFORM% %CONFIGURATION%
   - cd %APPVEYOR_BUILD_FOLDER%
