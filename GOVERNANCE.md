@@ -1,10 +1,9 @@
-## Vulkan Loader and Validation Layers Repository Management
+## Khronos Group Vulkan-Tools Repository Management
 
 # **Open Source Project – Objectives**
 
-* Alignment with the Vulkan Specification
-  - The goal is for tool and utility behavior to assist in enforcing the vulkan specification on applications. Questions on specification
-interpretations may require consulting with the Khronos Vulkan Workgroup for resolution
+* Assist Vulkan Users
+  - The goal is for tool and utility behavior to assist in the development of vulkan applications.
     - [Core Specification](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html)
     - [Header Files](https://www.khronos.org/registry/vulkan/#headers)
     - [SDK Resources](https://vulkan.lunarg.com)
@@ -14,7 +13,7 @@ interpretations may require consulting with the Khronos Vulkan Workgroup for res
 * Cross Platform Compatibility
   - Google and LunarG collaboration:
     - Google: Monitor for Android
-    - LunarG: Monitor for desktop (Windows and Linux)
+    - LunarG: Monitor for desktop (Windows, Linux, and MacOS)
     - Continuous Integration: HW test farms operated by Google and LunarG monitor various hardware/software platforms
 * Repo Quality
   - Repo remains in healthy state with all tests passing and good-quality, consistent codebase
@@ -36,8 +35,7 @@ on pull-requests
   - Is a point-of-contact for project-related questions
 
 The technical project leads for this repository are:
-* **Mark Lobodzinski** [mark@lunarg.com](mailto:mark@lunarg.com)
-* **Tobin Ehlis** [tobine@google.com](mailto:tobine@google.com)
+* **Jeremy Kniager** [jeremyk@lunarg.com](mailto:jeremyk@lunarg.com)
 
 # **Acceptance Criteria and Process**
   - All source code to include Khronos copyright and license (Apache 2.0).
