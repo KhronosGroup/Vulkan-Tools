@@ -1082,7 +1082,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3136,6 +3138,22 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                            fragment_density_map_features->fragmentDensityMapDynamic);
                     printf("\tfragmentDensityMapNonSubsampledImages = %" PRIuLEAST32 "\n",
                            fragment_density_map_features->fragmentDensityMapNonSubsampledImages);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceMemoryPriorityFeaturesEXT *memory_priority_features =
+                    (VkPhysicalDeviceMemoryPriorityFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceMemoryPriorityFeatures</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>memoryPriority = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            memory_priority_features->memoryPriority);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceMemoryPriorityFeatures:\n");
+                    printf("======================================\n");
+                    printf("\tmemoryPriority = %" PRIuLEAST32 "\n", memory_priority_features->memoryPriority);
                 }
             }
             place = structure->pNext;
