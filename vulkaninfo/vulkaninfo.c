@@ -1055,8 +1055,14 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
 
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                               gpu->inst->inst_extensions_count)) {
+        struct pNextChainBuildingBlockInfo mem_prop_chain_info[] = {
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT)}};
+
+        uint32_t mem_prop_chain_info_len = ARRAY_SIZE(mem_prop_chain_info);
+
         gpu->memory_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
-        gpu->memory_props2.pNext = NULL;
+        buildpNextChain((struct VkStructureHeader *)&gpu->memory_props2, mem_prop_chain_info, mem_prop_chain_info_len);
 
         inst->vkGetPhysicalDeviceMemoryProperties2KHR(gpu->obj, &gpu->memory_props2);
 
@@ -4534,6 +4540,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                            fragment_density_map_properties->fragmentDensityInvocations);
                 }
             }
+
             place = structure->pNext;
         }
     }
@@ -4761,14 +4768,31 @@ static char *HumanReadable(const size_t sz) {
 
 static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
     VkPhysicalDeviceMemoryProperties props;
+    struct VkStructureHeader *structure = NULL;
+
+    VkDeviceSize *heapBudget = NULL;
+    VkDeviceSize *heapUsage = NULL;
 
     if (CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                               gpu->inst->inst_extensions_count)) {
         const VkPhysicalDeviceMemoryProperties *props2_const = &gpu->memory_props2.memoryProperties;
         props = *props2_const;
+        structure = (struct VkStructureHeader *)gpu->memory_props2.pNext;
     } else {
         const VkPhysicalDeviceMemoryProperties *props_const = &gpu->memory_props;
         props = *props_const;
+    }
+
+    while (structure) {
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT &&
+            CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME, gpu->device_extensions,
+                                                 gpu->device_extension_count)) {
+            VkPhysicalDeviceMemoryBudgetPropertiesEXT *mem_budget_props = (VkPhysicalDeviceMemoryBudgetPropertiesEXT *)structure;
+            heapBudget = mem_budget_props->heapBudget;
+            heapUsage = mem_budget_props->heapUsage;
+        }
+
+        structure = (struct VkStructureHeader *)structure->pNext;
     }
 
     if (html_output) {
@@ -4798,10 +4822,23 @@ static void AppGpuDumpMemoryProps(const struct AppGpu *gpu, FILE *out) {
                     "\t\t\t\t\t\t\t\t<details><summary>size = <span class='val'>" PRINTF_SIZE_T_SPECIFIER
                     "</span> (<span class='val'>0x%" PRIxLEAST64 "</span>) (<span class='val'>%s</span>)</summary></details>\n",
                     (size_t)memSize, memSize, mem_size_human_readable);
+            if (heapBudget != NULL) {
+                fprintf(out,
+                        "\t\t\t\t\t\t\t\t<details><summary>budget = <span class='val'>%" PRIuLEAST64
+                        "</span></summary></details>\n",
+                        heapBudget[i]);
+                fprintf(out,
+                        "\t\t\t\t\t\t\t\t<details><summary>usage = <span class='val'>%" PRIuLEAST64 "</span></summary></details>\n",
+                        heapUsage[i]);
+            }
         } else if (human_readable_output) {
             printf("\tmemoryHeaps[%u] :\n", i);
             printf("\t\tsize          = " PRINTF_SIZE_T_SPECIFIER " (0x%" PRIxLEAST64 ") (%s)\n", (size_t)memSize, memSize,
                    mem_size_human_readable);
+            if (heapBudget != NULL) {
+                fprintf(out, "\t\tbudget        = %" PRIuLEAST64 "\n", heapBudget[i]);
+                fprintf(out, "\t\tusage         = %" PRIuLEAST64 "\n", heapUsage[i]);
+            }
         }
         free(mem_size_human_readable);
 
