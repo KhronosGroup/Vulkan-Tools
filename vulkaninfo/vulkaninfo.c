@@ -1090,7 +1090,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_ADDRESS_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceBufferAddressFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3160,6 +3162,32 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceMemoryPriorityFeatures:\n");
                     printf("======================================\n");
                     printf("\tmemoryPriority = %" PRIuLEAST32 "\n", memory_priority_features->memoryPriority);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_ADDRESS_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceBufferAddressFeaturesEXT *buffer_address_features =
+                    (VkPhysicalDeviceBufferAddressFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceBufferAddressFeatures</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>bufferDeviceAddress = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            buffer_address_features->bufferDeviceAddress);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>bufferDeviceAddressCaptureReplay = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            buffer_address_features->bufferDeviceAddressCaptureReplay);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>bufferDeviceAddressMultiDevice = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            buffer_address_features->bufferDeviceAddressMultiDevice);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceBufferAddressFeatures:\n");
+                    printf("======================================\n");
+                    printf("\tbufferDeviceAddress = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddress);
+                    printf("\tbufferDeviceAddressCaptureReplay = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddressCaptureReplay);
+                    printf("\tbufferDeviceAddressMultiDevice = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddressMultiDevice);
                 }
             }
             place = structure->pNext;
