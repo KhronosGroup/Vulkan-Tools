@@ -3188,8 +3188,10 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceBufferAddressFeatures:\n");
                     printf("======================================\n");
                     printf("\tbufferDeviceAddress = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddress);
-                    printf("\tbufferDeviceAddressCaptureReplay = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddressCaptureReplay);
-                    printf("\tbufferDeviceAddressMultiDevice = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddressMultiDevice);
+                    printf("\tbufferDeviceAddressCaptureReplay = %" PRIuLEAST32 "\n",
+                           buffer_address_features->bufferDeviceAddressCaptureReplay);
+                    printf("\tbufferDeviceAddressMultiDevice = %" PRIuLEAST32 "\n",
+                           buffer_address_features->bufferDeviceAddressMultiDevice);
                 }
             }
             place = structure->pNext;
@@ -4576,36 +4578,55 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     (VkPhysicalDeviceDepthStencilResolvePropertiesKHR *)structure;
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDepthStencilResolveProperties</summary>\n");
-                    fprintf(out,
-                            "\t\t\t\t\t\t<details><summary>supportedDepthResolveModes</summary></details>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>supportedDepthResolveModes</summary></details>\n");
                     if (depth_stencil_resolve_properties->supportedDepthResolveModes == 0) {
-                        printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
+                        printf(
+                            "\t\t\t\t\t\t<details><summary><span "
+                            "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
                     }
-                    fprintf(out,
-                            "\t\t\t\t\t\t<details><summary>supportedStencilResolveModes</summary></details>\n");
+                    fprintf(out, "\t\t\t\t\t\t<details><summary>supportedStencilResolveModes</summary></details>\n");
                     if (depth_stencil_resolve_properties->supportedStencilResolveModes == 0) {
-                        printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
+                        printf(
+                            "\t\t\t\t\t\t<details><summary><span "
+                            "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf("\t\t\t\t\t\t<details><summary><span class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
+                            printf(
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
                     }
                     fprintf(out,
-                            "\t\t\t\t\t\t<details><summary>independentResolveNone = <span class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            "\t\t\t\t\t\t<details><summary>independentResolveNone = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
                             depth_stencil_resolve_properties->independentResolveNone);
                     fprintf(out,
                             "\t\t\t\t\t\t<details><summary>independentResolve = <span class='val'>%" PRIuLEAST32
@@ -4640,7 +4661,8 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
                             printf("\t\t\tVK_RESOLVE_MODE_MAX_BIT_KHR\n");
                     }
-                    printf("\t\tindependentResolveNone = %" PRIuLEAST32 "\n", depth_stencil_resolve_properties->independentResolveNone);
+                    printf("\t\tindependentResolveNone = %" PRIuLEAST32 "\n",
+                           depth_stencil_resolve_properties->independentResolveNone);
                     printf("\t\tindependentResolve     = %" PRIuLEAST32 "\n", depth_stencil_resolve_properties->independentResolve);
                 }
             }
