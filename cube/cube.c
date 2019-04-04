@@ -1381,6 +1381,10 @@ static void demo_prepare_buffers(struct demo *demo) {
         demo->next_present_id = 1;
     }
 
+    if (NULL != swapchainImages) {
+        free(swapchainImages);
+    }
+
     if (NULL != presentModes) {
         free(presentModes);
     }
@@ -3473,6 +3477,7 @@ static void demo_init_vk_swapchain(struct demo *demo) {
         demo->format = surfFormats[0].format;
     }
     demo->color_space = surfFormats[0].colorSpace;
+    free(surfFormats);
 
     demo->quit = false;
     demo->curFrame = 0;
