@@ -1084,6 +1084,9 @@ static void demo_draw(struct demo *demo) {
         .pImageIndices = &demo->current_buffer,
     };
 
+    VkRectLayerKHR rect;
+    VkPresentRegionKHR region;
+    VkPresentRegionsKHR regions;
     if (demo->VK_KHR_incremental_present_enabled) {
         // If using VK_KHR_incremental_present, we provide a hint of the region
         // that contains changed content relative to the previously-presented
@@ -1093,23 +1096,20 @@ static void demo_draw(struct demo *demo) {
         // ensure that the entire image has the correctly-drawn content.
         uint32_t eighthOfWidth = demo->width / 8;
         uint32_t eighthOfHeight = demo->height / 8;
-        VkRectLayerKHR rect = {
-            .offset.x = eighthOfWidth,
-            .offset.y = eighthOfHeight,
-            .extent.width = eighthOfWidth * 6,
-            .extent.height = eighthOfHeight * 6,
-            .layer = 0,
-        };
-        VkPresentRegionKHR region = {
-            .rectangleCount = 1,
-            .pRectangles = &rect,
-        };
-        VkPresentRegionsKHR regions = {
-            .sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR,
-            .pNext = present.pNext,
-            .swapchainCount = present.swapchainCount,
-            .pRegions = &region,
-        };
+
+        rect.offset.x = eighthOfWidth;
+        rect.offset.y = eighthOfHeight;
+        rect.extent.width = eighthOfWidth * 6;
+        rect.extent.height = eighthOfHeight * 6;
+        rect.layer = 0;
+
+        region.rectangleCount = 1;
+        region.pRectangles = &rect;
+
+        regions.sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
+        regions.pNext = present.pNext;
+        regions.swapchainCount = present.swapchainCount;
+        regions.pRegions = &region;
         present.pNext = &regions;
     }
 
