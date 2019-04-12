@@ -4716,7 +4716,7 @@ static void AppDumpExtensions(const char *indent, const char *layer_name, const 
         printf("\tcount = %d\n", extension_count);
     }
 
-    const bool is_device_type = strcmp(layer_name, "Device") == 0;
+    const bool is_device_type = layer_name && (strcmp(layer_name, "Device") == 0);
     if (is_device_type && json_output) {
         printf(",\n");
         printf("\t\"ArrayOfVkExtensionProperties\": [");
