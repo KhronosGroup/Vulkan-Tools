@@ -1585,7 +1585,7 @@ static int AppDumpSurfacePresentModes(struct AppInstance *inst, struct AppGpu *g
     err = inst->vkGetPhysicalDeviceSurfacePresentModesKHR(gpu->obj, surface, &present_mode_count, NULL);
     if (err) ERR_EXIT(err);
 
-    VkPresentModeKHR *surf_present_modes = (VkPresentModeKHR *)malloc(present_mode_count * sizeof(VkPresentInfoKHR));
+    VkPresentModeKHR *surf_present_modes = (VkPresentModeKHR *)malloc(present_mode_count * sizeof(VkPresentModeKHR));
     if (!surf_present_modes) ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
     err = inst->vkGetPhysicalDeviceSurfacePresentModesKHR(gpu->obj, surface, &present_mode_count, surf_present_modes);
     if (err) ERR_EXIT(err);
