@@ -4580,49 +4580,49 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDepthStencilResolveProperties</summary>\n");
                     fprintf(out, "\t\t\t\t\t\t<details><summary>supportedDepthResolveModes</summary></details>\n");
                     if (depth_stencil_resolve_properties->supportedDepthResolveModes == 0) {
-                        printf(
-                            "\t\t\t\t\t\t<details><summary><span "
-                            "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
+                        fprintf(out,
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
                     }
                     fprintf(out, "\t\t\t\t\t\t<details><summary>supportedStencilResolveModes</summary></details>\n");
                     if (depth_stencil_resolve_properties->supportedStencilResolveModes == 0) {
-                        printf(
-                            "\t\t\t\t\t\t<details><summary><span "
-                            "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
+                        fprintf(out,
+                                "\t\t\t\t\t\t<details><summary><span "
+                                "class='val'>VK_RESOLVE_MODE_NONE_KHR</span></summary></details>\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_AVERAGE_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_MIN_BIT_KHR</span></summary></details>\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf(
-                                "\t\t\t\t\t\t<details><summary><span "
-                                "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
+                            fprintf(out,
+                                    "\t\t\t\t\t\t<details><summary><span "
+                                    "class='val'>VK_RESOLVE_MODE_MAX_BIT_KHR</span></summary></details>\n");
                     }
                     fprintf(out,
                             "\t\t\t\t\t\t<details><summary>independentResolveNone = <span class='val'>%" PRIuLEAST32
