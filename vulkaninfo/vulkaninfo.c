@@ -5500,6 +5500,10 @@ int main(int argc, char **argv) {
 
     if (html_output) {
         out = fopen("vulkaninfo.html", "w");
+        if (!out) {
+            printf("Unable to open vulkaninfo.html for writing\n");
+            return 1;
+        }
         PrintHtmlHeader(out);
         fprintf(out, "\t\t\t<details><summary>");
     } else if (human_readable_output) {
