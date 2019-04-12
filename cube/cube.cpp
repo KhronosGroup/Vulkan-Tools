@@ -538,6 +538,7 @@ Demo::Demo()
       width{0},
       height{0},
       swapchainImageCount{0},
+      presentMode{vk::PresentModeKHR::eFifo},
       frame_index{0},
       spin_angle{0.0f},
       spin_increment{0.0f},
