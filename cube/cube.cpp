@@ -1010,7 +1010,6 @@ void Demo::init_connection() {
 void Demo::init_vk() {
     uint32_t instance_extension_count = 0;
     uint32_t instance_layer_count = 0;
-    uint32_t validation_layer_count = 0;
     char const *const instance_validation_layers[] = {"VK_LAYER_KHRONOS_validation"};
     enabled_extension_count = 0;
     enabled_layer_count = 0;
@@ -1031,7 +1030,6 @@ void Demo::init_vk() {
             if (validation_found) {
                 enabled_layer_count = ARRAY_SIZE(instance_validation_layers);
                 enabled_layers[0] = "VK_LAYER_KHRONOS_validation";
-                validation_layer_count = 1;
             }
         }
 
