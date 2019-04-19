@@ -5697,60 +5697,70 @@ int main(int argc, char **argv) {
 
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
-    struct SurfaceExtensionNode surface_ext_win32;
-    surface_ext_win32.name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
-    surface_ext_win32.create_window = AppCreateWin32Window;
-    surface_ext_win32.create_surface = AppCreateWin32Surface;
-    surface_ext_win32.destroy_window = AppDestroyWin32Window;
+    if (CheckExtensionEnabled(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        struct SurfaceExtensionNode surface_ext_win32;
+        surface_ext_win32.name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+        surface_ext_win32.create_window = AppCreateWin32Window;
+        surface_ext_win32.create_surface = AppCreateWin32Surface;
+        surface_ext_win32.destroy_window = AppDestroyWin32Window;
 
-    surface_ext_win32.next = inst.surface_ext_infos_root;
-    inst.surface_ext_infos_root = &surface_ext_win32;
+        surface_ext_win32.next = inst.surface_ext_infos_root;
+        inst.surface_ext_infos_root = &surface_ext_win32;
+    }
 #endif
 //--XCB--
 #ifdef VK_USE_PLATFORM_XCB_KHR
-    struct SurfaceExtensionNode surface_ext_xcb;
-    surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
-    surface_ext_xcb.create_window = AppCreateXcbWindow;
-    surface_ext_xcb.create_surface = AppCreateXcbSurface;
-    surface_ext_xcb.destroy_window = AppDestroyXcbWindow;
-    if (has_display) {
-        surface_ext_xcb.next = inst.surface_ext_infos_root;
-        inst.surface_ext_infos_root = &surface_ext_xcb;
+    if (CheckExtensionEnabled(VK_KHR_XCB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        struct SurfaceExtensionNode surface_ext_xcb;
+        surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
+        surface_ext_xcb.create_window = AppCreateXcbWindow;
+        surface_ext_xcb.create_surface = AppCreateXcbSurface;
+        surface_ext_xcb.destroy_window = AppDestroyXcbWindow;
+        if (has_display) {
+            surface_ext_xcb.next = inst.surface_ext_infos_root;
+            inst.surface_ext_infos_root = &surface_ext_xcb;
+        }
     }
 #endif
 //--XLIB--
 #ifdef VK_USE_PLATFORM_XLIB_KHR
-    struct SurfaceExtensionNode surface_ext_xlib;
-    surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
-    surface_ext_xlib.create_window = AppCreateXlibWindow;
-    surface_ext_xlib.create_surface = AppCreateXlibSurface;
-    surface_ext_xlib.destroy_window = AppDestroyXlibWindow;
-    if (has_display) {
-        surface_ext_xlib.next = inst.surface_ext_infos_root;
-        inst.surface_ext_infos_root = &surface_ext_xlib;
+    if (CheckExtensionEnabled(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        struct SurfaceExtensionNode surface_ext_xlib;
+        surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
+        surface_ext_xlib.create_window = AppCreateXlibWindow;
+        surface_ext_xlib.create_surface = AppCreateXlibSurface;
+        surface_ext_xlib.destroy_window = AppDestroyXlibWindow;
+        if (has_display) {
+            surface_ext_xlib.next = inst.surface_ext_infos_root;
+            inst.surface_ext_infos_root = &surface_ext_xlib;
+        }
     }
 #endif
 //--MACOS--
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-    struct SurfaceExtensionNode surface_ext_macos;
-    surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
-    surface_ext_macos.create_window = AppCreateMacOSWindow;
-    surface_ext_macos.create_surface = AppCreateMacOSSurface;
-    surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
+    if (CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        struct SurfaceExtensionNode surface_ext_macos;
+        surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
+        surface_ext_macos.create_window = AppCreateMacOSWindow;
+        surface_ext_macos.create_surface = AppCreateMacOSSurface;
+        surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
 
-    surface_ext_macos.next = inst.surface_ext_infos_root;
-    inst.surface_ext_infos_root = &surface_ext_macos;
+        surface_ext_macos.next = inst.surface_ext_infos_root;
+        inst.surface_ext_infos_root = &surface_ext_macos;
+    }
 #endif
 //--WAYLAND--
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
-    struct SurfaceExtensionNode surface_ext_wayland;
-    surface_ext_wayland.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
-    surface_ext_wayland.create_window = AppCreateWaylandWindow;
-    surface_ext_wayland.create_surface = AppCreateWaylandSurface;
-    surface_ext_wayland.destroy_window = AppDestroyWaylandWindow;
-    if (has_wayland_display) {
-        surface_ext_wayland.next = inst.surface_ext_infos_root;
-        inst.surface_ext_infos_root = &surface_ext_wayland;
+    if (CheckExtensionEnabled(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
+        struct SurfaceExtensionNode surface_ext_wayland;
+        surface_ext_wayland.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
+        surface_ext_wayland.create_window = AppCreateWaylandWindow;
+        surface_ext_wayland.create_surface = AppCreateWaylandSurface;
+        surface_ext_wayland.destroy_window = AppDestroyWaylandWindow;
+        if (has_wayland_display) {
+            surface_ext_wayland.next = inst.surface_ext_infos_root;
+            inst.surface_ext_infos_root = &surface_ext_wayland;
+        }
     }
 #endif
     // TODO: Android
