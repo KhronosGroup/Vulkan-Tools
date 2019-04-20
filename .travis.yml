@@ -10,6 +10,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - env: CHECK_COMMIT_FORMAT=ON
+    - env: VULKAN_BUILD_TARGET=GN
   include:
     # Android build.
     - os: linux
@@ -27,6 +28,9 @@ matrix:
     - os: linux
       compiler: clang
       env: VULKAN_BUILD_TARGET=LINUX
+    # Linux GN debug build
+    - os: linux
+      env: VULKAN_BUILD_TARGET=GN
     # Check for proper clang formatting in the pull request.
     - env: CHECK_FORMAT=ON
     # Check for proper commit message formatting for commits in PR
@@ -42,10 +46,10 @@ cache: ccache
 before_install:
   - set -e
   - |
-    if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
+    if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]] || [[ "$VULKAN_BUILD_TARGET" == "GN" ]]; then
       # Install the appropriate Linux packages.
       sudo apt-get -qq update
-      sudo apt-get -y install libxkbcommon-dev libwayland-dev libmirclient-dev libxrandr-dev libx11-xcb-dev
+      sudo apt-get -y install libxkbcommon-dev libwayland-dev libmirclient-dev libxrandr-dev libx11-xcb-dev python-pathlib
     fi
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "ANDROID" ]]; then
@@ -98,6 +102,14 @@ script:
       pushd ${TRAVIS_BUILD_DIR}/cube/android
       USE_CCACHE=1 NDK_CCACHE=ccache ndk-build APP_ABI=$ANDROID_ABI -j $core_count
       popd
+    fi
+  - |
+    if [[ "$VULKAN_BUILD_TARGET" == "GN" ]]; then
+      git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git depot_tools
+      export PATH=$PATH:$PWD/depot_tools
+      ./build-gn/update_deps.sh
+      gn gen out/Debug
+      ninja -C out/Debug
     fi
   - |
     if [[ "$CHECK_FORMAT" == "ON" ]]; then
