@@ -26,30 +26,13 @@ before_build:
   - "SET PATH=C:\\Python35;C:\\Python35\\Scripts;%PATH%"
   - echo Starting build for %APPVEYOR_REPO_NAME% in %APPVEYOR_BUILD_FOLDER%
   - cmake --version
-  # Build Vulkan-Headers
-  - echo Building Vulkan-Headers for %PLATFORM% %CONFIGURATION%
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - git clone https://github.com/KhronosGroup/Vulkan-Headers.git
-  - cd Vulkan-Headers
-  - mkdir build
-  - cd build
-  - cmake -A %PLATFORM% -DCMAKE_INSTALL_PREFIX=install ..
-  - cmake --build . --config %CONFIGURATION% --target install -- /maxcpucount
-  # Build Vulkan-Loader
-  - echo Building Vulkan-Loader for %PLATFORM% %CONFIGURATION%
-  - cd %APPVEYOR_BUILD_FOLDER%
-  - git clone https://github.com/KhronosGroup/Vulkan-Loader.git
-  - cd Vulkan-Loader
-  - mkdir build
-  - cd build
-  - cmake -A %PLATFORM% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers/build/install -DCMAKE_INSTALL_PREFIX=install ..
-  - cmake --build . --config %CONFIGURATION% --target install -- /maxcpucount
   # Generate build files using CMake for the build step.
   - echo Generating Vulkan-Tools CMake files for %PLATFORM% %CONFIGURATION%
   - cd %APPVEYOR_BUILD_FOLDER%
   - mkdir build
   - cd build
-  - cmake -A %PLATFORM% -DVULKAN_HEADERS_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Headers/build/install -DVULKAN_LOADER_INSTALL_DIR=%APPVEYOR_BUILD_FOLDER%/Vulkan-Loader/build/install ..
+  - python %APPVEYOR_BUILD_FOLDER%/scripts/update_deps.py --arch=%PLATFORM% --config=%CONFIGURATION% --dir=%APPVEYOR_BUILD_FOLDER%/external
+  - cmake -A %PLATFORM% -C %APPVEYOR_BUILD_FOLDER%/external/helper.cmake ..
   - echo Building platform=%PLATFORM% configuration=%CONFIGURATION%
 
 platform:

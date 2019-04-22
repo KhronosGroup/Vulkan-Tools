@@ -72,35 +72,12 @@ script:
   - cmake --version
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Build Vulkan-Headers
-      cd ${TRAVIS_BUILD_DIR}
-      git clone https://github.com/KhronosGroup/Vulkan-Headers.git
-      cd Vulkan-Headers
-      mkdir build
-      cd build
-      cmake -DCMAKE_INSTALL_PREFIX=install ..
-      make -j $core_count install
-      cd ${TRAVIS_BUILD_DIR}
-    fi
-  - |
-    if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Build Vulkan-Loader for Vulkan-Tools
-      cd ${TRAVIS_BUILD_DIR}
-      git clone https://github.com/KhronosGroup/Vulkan-Loader.git
-      cd Vulkan-Loader
-      mkdir build
-      cd build
-      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers/build/install -DCMAKE_INSTALL_PREFIX=install ..
-      make -j $core_count install
-      cd ${TRAVIS_BUILD_DIR}
-    fi
-  - |
-    if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
       # Build Vulkan-Tools
       cd ${TRAVIS_BUILD_DIR}
       mkdir build
       cd build
-      cmake -DCMAKE_BUILD_TYPE=Debug -DVULKAN_HEADERS_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Headers/build/install -DVULKAN_LOADER_INSTALL_DIR=${TRAVIS_BUILD_DIR}/Vulkan-Loader/build/install ..
+      python ${TRAVIS_BUILD_DIR}/scripts/update_deps.py --config=Debug --dir=${TRAVIS_BUILD_DIR}/external
+      cmake -C${TRAVIS_BUILD_DIR}/external/helper.cmake -DCMAKE_BUILD_TYPE=Debug ..
       make -j $core_count
       cd ${TRAVIS_BUILD_DIR}
     fi
