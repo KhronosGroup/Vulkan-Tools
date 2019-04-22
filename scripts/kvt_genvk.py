@@ -302,6 +302,8 @@ if __name__ == '__main__':
     # Generator Modifications
     from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
     from vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
+    # Temporary workaround for vkconventions python2 compatibility
+    import abc; abc.ABC = abc.ABCMeta('ABC', (object,), {})
     from vkconventions import VulkanConventions
 
     # This splits arguments which are space-separated lists
