@@ -1094,7 +1094,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_ADDRESS_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceBufferAddressFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceBufferAddressFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3160,6 +3162,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>memoryPriority = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             memory_priority_features->memoryPriority);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceMemoryPriorityFeatures:\n");
                     printf("======================================\n");
@@ -3184,14 +3187,32 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>bufferDeviceAddressMultiDevice = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             buffer_address_features->bufferDeviceAddressMultiDevice);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceBufferAddressFeatures:\n");
                     printf("======================================\n");
                     printf("\tbufferDeviceAddress = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddress);
                     printf("\tbufferDeviceAddressCaptureReplay = %" PRIuLEAST32 "\n",
-                           buffer_address_features->bufferDeviceAddressCaptureReplay);
+                            buffer_address_features->bufferDeviceAddressCaptureReplay);
                     printf("\tbufferDeviceAddressMultiDevice = %" PRIuLEAST32 "\n",
-                           buffer_address_features->bufferDeviceAddressMultiDevice);
+                            buffer_address_features->bufferDeviceAddressMultiDevice);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceYcbcrImageArraysFeaturesEXT *ycbcr_image_arrays_features =
+                    (VkPhysicalDeviceYcbcrImageArraysFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceYcbcrImageArraysFeatures</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>ycbcrImageArrays = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            ycbcr_image_arrays_features->ycbcrImageArrays);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceYcbcrImageArraysFeatures:\n");
+                    printf("=========================================\n");
+                    printf("\tycbcrImageArrays = %" PRIuLEAST32 "\n", ycbcr_image_arrays_features->ycbcrImageArrays);
                 }
             }
             place = structure->pNext;
