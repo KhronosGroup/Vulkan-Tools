@@ -1969,14 +1969,16 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
         // Get additional surface capability information from vkGetPhysicalDeviceSurfaceCapabilities2KHR
         if (CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                                   gpu->inst->inst_extensions_count)) {
-            VkSurfaceCapabilities2KHR surface_capabilities2 = {VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR};
-            VkSharedPresentSurfaceCapabilitiesKHR shared_surface_capabilities = {
-                VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR};
+            VkSurfaceCapabilities2KHR surface_capabilities2;
 
-            if (CheckExtensionEnabled(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, gpu->inst->inst_extensions,
-                                      gpu->inst->inst_extensions_count)) {
-                surface_capabilities2.pNext = &shared_surface_capabilities;
-            }
+            struct pNextChainBuildingBlockInfo sur_cap2_chain_info[] = {
+                {.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
+                 .mem_size = sizeof(VkSharedPresentSurfaceCapabilitiesKHR)}};
+
+            uint32_t sur_cap2_chain_info_len = ARRAY_SIZE(sur_cap2_chain_info);
+
+            surface_capabilities2.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+            buildpNextChain((struct VkStructureHeader *)&surface_capabilities2, sur_cap2_chain_info, sur_cap2_chain_info_len);
 
             VkPhysicalDeviceSurfaceInfo2KHR surface_info;
             surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
@@ -1989,7 +1991,8 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
             void *place = surface_capabilities2.pNext;
             while (place) {
                 struct VkStructureHeader *work = (struct VkStructureHeader *)place;
-                if (work->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR) {
+                if (work->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR && CheckExtensionEnabled(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, gpu->inst->inst_extensions,
+                                          gpu->inst->inst_extensions_count)) {
                     VkSharedPresentSurfaceCapabilitiesKHR *shared_surface_capabilities =
                         (VkSharedPresentSurfaceCapabilitiesKHR *)place;
                     if (html_output) {
@@ -2074,6 +2077,21 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                         if (shared_surface_capabilities->sharedPresentSupportedUsageFlags & VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT) {
                             printf("\t\tVK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT\n");
                         }
+                    }
+                } else if (work->sType == VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR && CheckExtensionEnabled(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME, gpu->inst->inst_extensions,
+                                          gpu->inst->inst_extensions_count)) {
+                    VkSurfaceProtectedCapabilitiesKHR *protected_surface_capabilities =
+                        (VkSurfaceProtectedCapabilitiesKHR *)place;
+                    if (html_output) {
+                        fprintf(out, "\t\t\t\t\t\t<details><summary>VkSurfaceProtectedCapabilities</summary>\n");
+                        fprintf(out,
+                                "\t\t\t\t\t\t\t<details><summary>supportsProtected = <span class='val'>%" PRIuLEAST32
+                                "</span></summary></details>\n",
+                                protected_surface_capabilities->supportsProtected);
+                        fprintf(out, "\t\t\t\t\t\t</details>\n");
+                    } else if (human_readable_output) {
+                        printf("VkSurfaceProtectedCapabilities\n");
+                        printf("\tsupportsProtected = %" PRIuLEAST32 "\n", protected_surface_capabilities->supportsProtected);
                     }
                 }
                 place = work->pNext;
