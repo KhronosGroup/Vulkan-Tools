@@ -1096,7 +1096,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_ADDRESS_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceBufferAddressFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceHostQueryResetFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3213,6 +3215,23 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceYcbcrImageArraysFeatures:\n");
                     printf("=========================================\n");
                     printf("\tycbcrImageArrays = %" PRIuLEAST32 "\n", ycbcr_image_arrays_features->ycbcrImageArrays);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceHostQueryResetFeaturesEXT *host_query_reset_features =
+                    (VkPhysicalDeviceHostQueryResetFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceHostQueryResetFeatures</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>hostQueryReset = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            host_query_reset_features->hostQueryReset);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceHostQueryResetFeatures:\n");
+                    printf("=======================================\n");
+                    printf("\thostQueryReset = %" PRIuLEAST32 "\n", host_query_reset_features->hostQueryReset);
                 }
             }
             place = structure->pNext;
