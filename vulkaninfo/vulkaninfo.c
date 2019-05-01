@@ -581,7 +581,7 @@ static const char *VkPresentModeString(VkPresentModeKHR mode) {
 
 static bool CheckExtensionEnabled(const char *extension_to_check, const char **extension_list, uint32_t extension_count) {
     for (uint32_t i = 0; i < extension_count; ++i) {
-        if (!strcmp(extension_to_check, extension_list[i])) {
+        if (!strncmp(extension_to_check, extension_list[i], VK_MAX_EXTENSION_NAME_SIZE)) {
             return true;
         }
     }
@@ -591,7 +591,7 @@ static bool CheckExtensionEnabled(const char *extension_to_check, const char **e
 static bool CheckPhysicalDeviceExtensionIncluded(const char *extension_to_check, VkExtensionProperties *extension_list,
                                                  uint32_t extension_count) {
     for (uint32_t i = 0; i < extension_count; ++i) {
-        if (!strcmp(extension_to_check, extension_list[i].extensionName)) {
+        if (!strncmp(extension_to_check, extension_list[i].extensionName, VK_MAX_EXTENSION_NAME_SIZE)) {
             return true;
         }
     }
@@ -5697,8 +5697,8 @@ int main(int argc, char **argv) {
 
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
+    struct SurfaceExtensionNode surface_ext_win32;
     if (CheckExtensionEnabled(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        struct SurfaceExtensionNode surface_ext_win32;
         surface_ext_win32.name = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
         surface_ext_win32.create_window = AppCreateWin32Window;
         surface_ext_win32.create_surface = AppCreateWin32Surface;
@@ -5710,8 +5710,8 @@ int main(int argc, char **argv) {
 #endif
 //--XCB--
 #ifdef VK_USE_PLATFORM_XCB_KHR
+    struct SurfaceExtensionNode surface_ext_xcb;
     if (CheckExtensionEnabled(VK_KHR_XCB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        struct SurfaceExtensionNode surface_ext_xcb;
         surface_ext_xcb.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
         surface_ext_xcb.create_window = AppCreateXcbWindow;
         surface_ext_xcb.create_surface = AppCreateXcbSurface;
@@ -5724,8 +5724,8 @@ int main(int argc, char **argv) {
 #endif
 //--XLIB--
 #ifdef VK_USE_PLATFORM_XLIB_KHR
+    struct SurfaceExtensionNode surface_ext_xlib;
     if (CheckExtensionEnabled(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        struct SurfaceExtensionNode surface_ext_xlib;
         surface_ext_xlib.name = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
         surface_ext_xlib.create_window = AppCreateXlibWindow;
         surface_ext_xlib.create_surface = AppCreateXlibSurface;
@@ -5738,8 +5738,8 @@ int main(int argc, char **argv) {
 #endif
 //--MACOS--
 #ifdef VK_USE_PLATFORM_MACOS_MVK
+    struct SurfaceExtensionNode surface_ext_macos;
     if (CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        struct SurfaceExtensionNode surface_ext_macos;
         surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
         surface_ext_macos.create_window = AppCreateMacOSWindow;
         surface_ext_macos.create_surface = AppCreateMacOSSurface;
@@ -5751,8 +5751,8 @@ int main(int argc, char **argv) {
 #endif
 //--WAYLAND--
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
+    struct SurfaceExtensionNode surface_ext_wayland;
     if (CheckExtensionEnabled(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, inst.inst_extensions, inst.inst_extensions_count)) {
-        struct SurfaceExtensionNode surface_ext_wayland;
         surface_ext_wayland.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
         surface_ext_wayland.create_window = AppCreateWaylandWindow;
         surface_ext_wayland.create_surface = AppCreateWaylandSurface;
