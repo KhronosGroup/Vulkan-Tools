@@ -1991,7 +1991,8 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
             void *place = surface_capabilities2.pNext;
             while (place) {
                 struct VkStructureHeader *work = (struct VkStructureHeader *)place;
-                if (work->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR && CheckExtensionEnabled(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, gpu->inst->inst_extensions,
+                if (work->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR &&
+                    CheckExtensionEnabled(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME, gpu->inst->inst_extensions,
                                           gpu->inst->inst_extensions_count)) {
                     VkSharedPresentSurfaceCapabilitiesKHR *shared_surface_capabilities =
                         (VkSharedPresentSurfaceCapabilitiesKHR *)place;
@@ -2078,10 +2079,10 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                             printf("\t\tVK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT\n");
                         }
                     }
-                } else if (work->sType == VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR && CheckExtensionEnabled(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME, gpu->inst->inst_extensions,
-                                          gpu->inst->inst_extensions_count)) {
-                    VkSurfaceProtectedCapabilitiesKHR *protected_surface_capabilities =
-                        (VkSurfaceProtectedCapabilitiesKHR *)place;
+                } else if (work->sType == VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR &&
+                           CheckExtensionEnabled(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME, gpu->inst->inst_extensions,
+                                                 gpu->inst->inst_extensions_count)) {
+                    VkSurfaceProtectedCapabilitiesKHR *protected_surface_capabilities = (VkSurfaceProtectedCapabilitiesKHR *)place;
                     if (html_output) {
                         fprintf(out, "\t\t\t\t\t\t<details><summary>VkSurfaceProtectedCapabilities</summary>\n");
                         fprintf(out,
@@ -3213,9 +3214,9 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("======================================\n");
                     printf("\tbufferDeviceAddress = %" PRIuLEAST32 "\n", buffer_address_features->bufferDeviceAddress);
                     printf("\tbufferDeviceAddressCaptureReplay = %" PRIuLEAST32 "\n",
-                            buffer_address_features->bufferDeviceAddressCaptureReplay);
+                           buffer_address_features->bufferDeviceAddressCaptureReplay);
                     printf("\tbufferDeviceAddressMultiDevice = %" PRIuLEAST32 "\n",
-                            buffer_address_features->bufferDeviceAddressMultiDevice);
+                           buffer_address_features->bufferDeviceAddressMultiDevice);
                 }
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT &&
                        CheckPhysicalDeviceExtensionIncluded(VK_EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME, gpu->device_extensions,
