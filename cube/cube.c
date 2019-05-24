@@ -23,6 +23,7 @@
  * Author: Gwan-gyeong Mun <elongbug@gmail.com>
  * Author: Tony Barbour <tony@LunarG.com>
  * Author: Bill Hollings <bill.hollings@brenwill.com>
+ * Author: Mike Weiblen <mikew@lunarg.com>
  */
 
 #define _GNU_SOURCE
@@ -62,6 +63,12 @@
 #define DEMO_TEXTURE_COUNT 1
 #define APP_SHORT_NAME "vkcube"
 #define APP_LONG_NAME "Vulkan Cube"
+
+#define ENABLE_PORTABILITY_SUBSET 1
+#if ENABLE_PORTABILITY_SUBSET
+//#pragma message("Building cube.c with VK_EXTX_portability_subset v0.2")
+#include "vk_extx_portability_subset.h"
+#endif
 
 // Allow a maximum of two outstanding presentation operations.
 #define FRAME_LAG 2
@@ -269,6 +276,88 @@ static const float g_uv_buffer_data[] = {
     1.0f, 0.0f,
 };
 // clang-format on
+
+#if ENABLE_PORTABILITY_SUBSET
+
+static void testVkPhysicalDevicePortabilitySubsetFeaturesEXTX(VkInstance inst, VkPhysicalDevice physDev) {
+    PFN_vkGetPhysicalDeviceFeatures2KHR pfn_vkGetPhysicalDeviceFeatures2KHR =
+        (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(inst, "vkGetPhysicalDeviceFeatures2KHR");
+
+    VkPhysicalDevicePortabilitySubsetFeaturesEXTX pdFeatsPort = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_EXTX,
+        .pNext = VK_NULL_HANDLE,
+        .triangleFans = true,
+        .separateStencilMaskRef = true,
+        .events = true,
+        .standardImageViews = true,
+        .samplerMipLodBias = true};
+
+    VkPhysicalDeviceFeatures2 pdFeats = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2, .pNext = &pdFeatsPort};
+
+    DbgMsg(">>> cube: PRE  VkPhysicalDevicePortabilitySubsetFeaturesEXTX @ %p\n", pfn_vkGetPhysicalDeviceFeatures2KHR);
+    pfn_vkGetPhysicalDeviceFeatures2KHR(physDev, &pdFeats);
+    DbgMsg(">>> cube: POST VkPhysicalDevicePortabilitySubsetFeaturesEXTX\n");
+
+    // Your app does something meaningful with the results in pdFeatsPort here.
+}
+
+static void testVkPhysicalDevicePortabilitySubsetPropertiesEXTX(VkInstance inst, VkPhysicalDevice physDev) {
+    PFN_vkGetPhysicalDeviceProperties2KHR pfn_vkGetPhysicalDeviceProperties2KHR =
+        (PFN_vkGetPhysicalDeviceProperties2KHR)vkGetInstanceProcAddr(inst, "vkGetPhysicalDeviceProperties2KHR");
+
+    VkPhysicalDevicePortabilitySubsetPropertiesEXTX pdPropsPort = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_EXTX,
+        .pNext = VK_NULL_HANDLE,
+        .minVertexInputBindingStrideAlignment = 0};
+
+    VkPhysicalDeviceProperties2 pdProps = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, .pNext = &pdPropsPort};
+
+    DbgMsg(">>> cube: PRE  VkPhysicalDevicePortabilitySubsetPropertiesEXTX @ %p\n", pfn_vkGetPhysicalDeviceProperties2KHR);
+    pfn_vkGetPhysicalDeviceProperties2KHR(physDev, &pdProps);
+    DbgMsg(">>> cube: POST VkPhysicalDevicePortabilitySubsetPropertiesEXTX\n");
+
+    // Your app does something meaningful with the results in pdPropsPort here.
+}
+
+static VkResult testVkPhysicalDeviceImageViewSupportEXTX(VkInstance inst, VkPhysicalDevice physDev) {
+    PFN_vkGetPhysicalDeviceImageFormatProperties2KHR pfn_vkGetPhysicalDeviceImageFormatProperties2KHR =
+        (PFN_vkGetPhysicalDeviceImageFormatProperties2KHR)vkGetInstanceProcAddr(inst,
+                                                                                "vkGetPhysicalDeviceImageFormatProperties2KHR");
+
+    VkImageFormatProperties2 imgFmtProps = {.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2, .pNext = VK_NULL_HANDLE};
+
+    VkPhysicalDeviceImageViewSupportEXTX imgViewPort = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_SUPPORT_EXTX,
+                                                        .pNext = VK_NULL_HANDLE,
+                                                        .flags = 0,
+                                                        .viewType = VK_IMAGE_VIEW_TYPE_2D,
+                                                        .format = VK_FORMAT_R8G8B8A8_UNORM,
+                                                        .components =
+                                                            {
+                                                                .r = VK_COMPONENT_SWIZZLE_R,
+                                                                .g = VK_COMPONENT_SWIZZLE_A,
+                                                                .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                                .a = VK_COMPONENT_SWIZZLE_IDENTITY,
+                                                            },
+                                                        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT};
+
+    VkPhysicalDeviceImageFormatInfo2KHR imgFmtInfo = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
+                                                      .pNext = &imgViewPort,
+                                                      .format = VK_FORMAT_R8G8B8A8_UNORM,
+                                                      .type = VK_IMAGE_TYPE_2D,
+                                                      .tiling = VK_IMAGE_TILING_OPTIMAL,
+                                                      .usage = VK_IMAGE_USAGE_SAMPLED_BIT,
+                                                      .flags = 0};
+
+    DbgMsg(">>> cube: PRE  VkPhysicalDeviceImageViewSupportEXTX @ %p\n", pfn_vkGetPhysicalDeviceImageFormatProperties2KHR);
+    VkResult result = pfn_vkGetPhysicalDeviceImageFormatProperties2KHR(physDev, &imgFmtInfo, &imgFmtProps);
+    DbgMsg(">>> cube: POST VkPhysicalDeviceImageViewSupportEXTX result=%d\n", result);
+
+    // Your app does something meaningful with result here.
+
+    return result;
+}
+
+#endif  // ENABLE_PORTABILITY_SUBSET
 
 void dumpMatrix(const char *note, mat4x4 MVP) {
     int i;
@@ -2954,6 +3043,10 @@ static void demo_init_vk(struct demo *demo) {
     demo->is_minimized = false;
     demo->cmd_pool = VK_NULL_HANDLE;
 
+#if ENABLE_PORTABILITY_SUBSET
+    DbgMsg("\n>>> cube: built with VK_EXTX_portability_subset v0.2\n\n");
+#endif
+
     // Look for validation layers
     VkBool32 validation_found = 0;
     if (demo->validate) {
@@ -2985,6 +3078,10 @@ static void demo_init_vk(struct demo *demo) {
     /* Look for instance extensions */
     VkBool32 surfaceExtFound = 0;
     VkBool32 platformSurfaceExtFound = 0;
+#if ENABLE_PORTABILITY_SUBSET
+    VkBool32 portabilitySubsetExtFound = VK_FALSE;
+    VkBool32 physicalDeviceProperties2ExtFound = VK_FALSE;
+#endif
     memset(demo->extension_names, 0, sizeof(demo->extension_names));
 
     err = vkEnumerateInstanceExtensionProperties(NULL, &instance_extension_count, NULL);
@@ -3045,11 +3142,30 @@ static void demo_init_vk(struct demo *demo) {
                     demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
                 }
             }
+#if ENABLE_PORTABILITY_SUBSET
+            // If "VK_EXTX_portability_subset" exists, it _must_ be enabled and queried.
+            if (!strcmp(VK_EXTX_PORTABILITY_SUBSET_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                portabilitySubsetExtFound = VK_TRUE;
+                demo->extension_names[demo->enabled_extension_count++] = VK_EXTX_PORTABILITY_SUBSET_EXTENSION_NAME;
+                DbgMsg(">>> cube: enabling extension \"" VK_EXTX_PORTABILITY_SUBSET_EXTENSION_NAME "\"\n");
+            }
+            // "VK_EXTX_portability_subset" requires "VK_KHR_get_physical_device_properties2"
+            if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                physicalDeviceProperties2ExtFound = VK_TRUE;
+                demo->extension_names[demo->enabled_extension_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
+                DbgMsg(">>> cube: enabling extension \"" VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME "\"\n");
+            }
+#endif
             assert(demo->enabled_extension_count < 64);
         }
 
         free(instance_extensions);
     }
+
+#if ENABLE_PORTABILITY_SUBSET
+    DbgMsg(">>> cube: portabilitySubsetExtFound = %s\n", portabilitySubsetExtFound?"TRUE":"FALSE");
+    DbgMsg(">>> cube: physicalDeviceProperties2ExtFound = %s\n", physicalDeviceProperties2ExtFound?"TRUE":"FALSE");
+#endif
 
     if (!surfaceExtFound) {
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
@@ -3188,6 +3304,12 @@ static void demo_init_vk(struct demo *demo) {
             "Please look at the Getting Started guide for additional information.\n",
             "vkEnumeratePhysicalDevices Failure");
     }
+
+#if ENABLE_PORTABILITY_SUBSET
+    testVkPhysicalDevicePortabilitySubsetFeaturesEXTX(demo->inst, demo->gpu);
+    testVkPhysicalDevicePortabilitySubsetPropertiesEXTX(demo->inst, demo->gpu);
+    testVkPhysicalDeviceImageViewSupportEXTX(demo->inst, demo->gpu);
+#endif
 
     /* Look for device extensions */
     uint32_t device_extension_count = 0;
