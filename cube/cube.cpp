@@ -196,6 +196,12 @@ static const float g_uv_buffer_data[] = {
     1.0f, 0.0f,
 };
 // clang-format on
+typedef struct {
+    vk::Image image;
+    vk::MemoryAllocateInfo mem_alloc;
+    vk::DeviceMemory mem;
+    vk::ImageView view;
+} depthImage;
 
 typedef struct {
     vk::Image image;
@@ -206,6 +212,7 @@ typedef struct {
     vk::DeviceMemory uniform_memory;
     vk::Framebuffer framebuffer;
     vk::DescriptorSet descriptor_set;
+    depthImage depth;
 } SwapchainImageResources;
 
 struct Demo {
@@ -225,7 +232,7 @@ struct Demo {
     void prepare();
     void prepare_buffers();
     void prepare_cube_data_buffers();
-    void prepare_depth();
+    void prepare_depth_images();
     void prepare_descriptor_layout();
     void prepare_descriptor_pool();
     void prepare_descriptor_set();
@@ -323,6 +330,7 @@ struct Demo {
     uint32_t width;
     uint32_t height;
     vk::Format format;
+    vk::Format depth_format;
     vk::ColorSpaceKHR color_space;
 
     uint32_t swapchainImageCount;
@@ -334,14 +342,6 @@ struct Demo {
 
     vk::CommandPool cmd_pool;
     vk::CommandPool present_cmd_pool;
-
-    struct {
-        vk::Format format;
-        vk::Image image;
-        vk::MemoryAllocateInfo mem_alloc;
-        vk::DeviceMemory mem;
-        vk::ImageView view;
-    } depth;
 
     static int32_t const texture_count = 1;
     texture_object textures[texture_count];
@@ -635,11 +635,10 @@ void Demo::cleanup() {
     }
     device.destroySwapchainKHR(swapchain, nullptr);
 
-    device.destroyImageView(depth.view, nullptr);
-    device.destroyImage(depth.image, nullptr);
-    device.freeMemory(depth.mem, nullptr);
-
     for (uint32_t i = 0; i < swapchainImageCount; i++) {
+        device.destroyImageView(swapchain_image_resources[i].depth.view, nullptr);
+        device.destroyImage(swapchain_image_resources[i].depth.image, nullptr);
+        device.freeMemory(swapchain_image_resources[i].depth.mem, nullptr);
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
         device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
@@ -1427,7 +1426,7 @@ void Demo::prepare() {
     VERIFY(result == vk::Result::eSuccess);
 
     prepare_buffers();
-    prepare_depth();
+    prepare_depth_images();
     prepare_textures();
     prepare_cube_data_buffers();
 
@@ -1706,12 +1705,11 @@ void Demo::prepare_cube_data_buffers() {
     }
 }
 
-void Demo::prepare_depth() {
-    depth.format = vk::Format::eD16Unorm;
-
+void Demo::prepare_depth_images() {
+    depth_format = vk::Format::eD16Unorm;
     auto const image = vk::ImageCreateInfo()
                            .setImageType(vk::ImageType::e2D)
-                           .setFormat(depth.format)
+                           .setFormat(depth_format)
                            .setExtent({(uint32_t)width, (uint32_t)height, 1})
                            .setMipLevels(1)
                            .setArrayLayers(1)
@@ -1723,32 +1721,35 @@ void Demo::prepare_depth() {
                            .setPQueueFamilyIndices(nullptr)
                            .setInitialLayout(vk::ImageLayout::eUndefined);
 
-    auto result = device.createImage(&image, nullptr, &depth.image);
-    VERIFY(result == vk::Result::eSuccess);
+    for (uint32_t i = 0; i < swapchainImageCount; i++) {
+        auto result = device.createImage(&image, nullptr, &swapchain_image_resources[i].depth.image);
+        VERIFY(result == vk::Result::eSuccess);
 
-    vk::MemoryRequirements mem_reqs;
-    device.getImageMemoryRequirements(depth.image, &mem_reqs);
+        vk::MemoryRequirements mem_reqs;
+        device.getImageMemoryRequirements(swapchain_image_resources[i].depth.image, &mem_reqs);
 
-    depth.mem_alloc.setAllocationSize(mem_reqs.size);
-    depth.mem_alloc.setMemoryTypeIndex(0);
+        swapchain_image_resources[i].depth.mem_alloc.setAllocationSize(mem_reqs.size);
+        swapchain_image_resources[i].depth.mem_alloc.setMemoryTypeIndex(0);
 
-    auto const pass = memory_type_from_properties(mem_reqs.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal,
-                                                  &depth.mem_alloc.memoryTypeIndex);
-    VERIFY(pass);
+        auto const pass = memory_type_from_properties(mem_reqs.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal,
+                                                      &swapchain_image_resources[i].depth.mem_alloc.memoryTypeIndex);
+        VERIFY(pass);
 
-    result = device.allocateMemory(&depth.mem_alloc, nullptr, &depth.mem);
-    VERIFY(result == vk::Result::eSuccess);
+        result =
+            device.allocateMemory(&swapchain_image_resources[i].depth.mem_alloc, nullptr, &swapchain_image_resources[i].depth.mem);
+        VERIFY(result == vk::Result::eSuccess);
 
-    result = device.bindImageMemory(depth.image, depth.mem, 0);
-    VERIFY(result == vk::Result::eSuccess);
+        result = device.bindImageMemory(swapchain_image_resources[i].depth.image, swapchain_image_resources[i].depth.mem, 0);
+        VERIFY(result == vk::Result::eSuccess);
 
-    auto const view = vk::ImageViewCreateInfo()
-                          .setImage(depth.image)
-                          .setViewType(vk::ImageViewType::e2D)
-                          .setFormat(depth.format)
-                          .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1));
-    result = device.createImageView(&view, nullptr, &depth.view);
-    VERIFY(result == vk::Result::eSuccess);
+        auto const view = vk::ImageViewCreateInfo()
+                              .setImage(swapchain_image_resources[i].depth.image)
+                              .setViewType(vk::ImageViewType::e2D)
+                              .setFormat(depth_format)
+                              .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1));
+        result = device.createImageView(&view, nullptr, &swapchain_image_resources[i].depth.view);
+        VERIFY(result == vk::Result::eSuccess);
+    }
 }
 
 void Demo::prepare_descriptor_layout() {
@@ -1827,7 +1828,6 @@ void Demo::prepare_descriptor_set() {
 
 void Demo::prepare_framebuffers() {
     vk::ImageView attachments[2];
-    attachments[1] = depth.view;
 
     auto const fb_info = vk::FramebufferCreateInfo()
                              .setRenderPass(render_pass)
@@ -1839,6 +1839,7 @@ void Demo::prepare_framebuffers() {
 
     for (uint32_t i = 0; i < swapchainImageCount; i++) {
         attachments[0] = swapchain_image_resources[i].view;
+        attachments[1] = swapchain_image_resources[i].depth.view;
         auto const result = device.createFramebuffer(&fb_info, nullptr, &swapchain_image_resources[i].framebuffer);
         VERIFY(result == vk::Result::eSuccess);
     }
@@ -1944,7 +1945,7 @@ void Demo::prepare_render_pass() {
                                                           .setInitialLayout(vk::ImageLayout::eUndefined)
                                                           .setFinalLayout(vk::ImageLayout::ePresentSrcKHR),
                                                       vk::AttachmentDescription()
-                                                          .setFormat(depth.format)
+                                                          .setFormat(depth_format)
                                                           .setSamples(vk::SampleCountFlagBits::e1)
                                                           .setLoadOp(vk::AttachmentLoadOp::eClear)
                                                           .setStoreOp(vk::AttachmentStoreOp::eDontCare)
@@ -2232,11 +2233,10 @@ void Demo::resize() {
         device.destroySampler(textures[i].sampler, nullptr);
     }
 
-    device.destroyImageView(depth.view, nullptr);
-    device.destroyImage(depth.image, nullptr);
-    device.freeMemory(depth.mem, nullptr);
-
     for (i = 0; i < swapchainImageCount; i++) {
+        device.destroyImageView(swapchain_image_resources[i].depth.view, nullptr);
+        device.destroyImage(swapchain_image_resources[i].depth.image, nullptr);
+        device.freeMemory(swapchain_image_resources[i].depth.mem, nullptr);
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
         device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
@@ -3008,7 +3008,6 @@ int main(int argc, char **argv) {
 
 // Global function invoked from NS or UI views and controllers to create demo
 static void demo_main(struct Demo &demo, void *view, int argc, const char *argv[]) {
-
     demo.init(argc, (char **)argv);
     demo.window = view;
     demo.init_vk_swapchain();

@@ -290,6 +290,13 @@ void dumpVec4(const char *note, vec4 vector) {
 
 typedef struct {
     VkImage image;
+    VkMemoryAllocateInfo mem_alloc;
+    VkDeviceMemory mem;
+    VkImageView view;
+} depthImage;
+
+typedef struct {
+    VkImage image;
     VkCommandBuffer cmd;
     VkCommandBuffer graphics_to_present_cmd;
     VkImageView view;
@@ -297,6 +304,7 @@ typedef struct {
     VkDeviceMemory uniform_memory;
     VkFramebuffer framebuffer;
     VkDescriptorSet descriptor_set;
+    depthImage depth;
 } SwapchainImageResources;
 
 struct demo {
@@ -370,6 +378,7 @@ struct demo {
 
     int width, height;
     VkFormat format;
+    VkFormat depth_format;
     VkColorSpaceKHR color_space;
 
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR fpGetPhysicalDeviceSurfaceSupportKHR;
@@ -392,15 +401,6 @@ struct demo {
 
     VkCommandPool cmd_pool;
     VkCommandPool present_cmd_pool;
-
-    struct {
-        VkFormat format;
-
-        VkImage image;
-        VkMemoryAllocateInfo mem_alloc;
-        VkDeviceMemory mem;
-        VkImageView view;
-    } depth;
 
     struct texture_object textures[DEMO_TEXTURE_COUNT];
     struct texture_object staging_texture;
@@ -1390,13 +1390,13 @@ static void demo_prepare_buffers(struct demo *demo) {
     }
 }
 
-static void demo_prepare_depth(struct demo *demo) {
-    const VkFormat depth_format = VK_FORMAT_D16_UNORM;
+static void demo_prepare_depth_images(struct demo *demo) {
+    demo->depth_format = VK_FORMAT_D16_UNORM;
     const VkImageCreateInfo image = {
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
         .pNext = NULL,
         .imageType = VK_IMAGE_TYPE_2D,
-        .format = depth_format,
+        .format = demo->depth_format,
         .extent = {demo->width, demo->height, 1},
         .mipLevels = 1,
         .arrayLayers = 1,
@@ -1410,7 +1410,7 @@ static void demo_prepare_depth(struct demo *demo) {
         .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
         .pNext = NULL,
         .image = VK_NULL_HANDLE,
-        .format = depth_format,
+        .format = demo->depth_format,
         .subresourceRange =
             {.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT, .baseMipLevel = 0, .levelCount = 1, .baseArrayLayer = 0, .layerCount = 1},
         .flags = 0,
@@ -1421,36 +1421,38 @@ static void demo_prepare_depth(struct demo *demo) {
     VkResult U_ASSERT_ONLY err;
     bool U_ASSERT_ONLY pass;
 
-    demo->depth.format = depth_format;
+    for (uint32_t i = 0; i < demo->swapchainImageCount; i++) {
+        /* create image */
+        err = vkCreateImage(demo->device, &image, NULL, &demo->swapchain_image_resources[i].depth.image);
+        assert(!err);
 
-    /* create image */
-    err = vkCreateImage(demo->device, &image, NULL, &demo->depth.image);
-    assert(!err);
+        vkGetImageMemoryRequirements(demo->device, demo->swapchain_image_resources[i].depth.image, &mem_reqs);
+        assert(!err);
 
-    vkGetImageMemoryRequirements(demo->device, demo->depth.image, &mem_reqs);
-    assert(!err);
+        demo->swapchain_image_resources[i].depth.mem_alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        demo->swapchain_image_resources[i].depth.mem_alloc.pNext = NULL;
+        demo->swapchain_image_resources[i].depth.mem_alloc.allocationSize = mem_reqs.size;
+        demo->swapchain_image_resources[i].depth.mem_alloc.memoryTypeIndex = 0;
 
-    demo->depth.mem_alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    demo->depth.mem_alloc.pNext = NULL;
-    demo->depth.mem_alloc.allocationSize = mem_reqs.size;
-    demo->depth.mem_alloc.memoryTypeIndex = 0;
+        pass = memory_type_from_properties(demo, mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                           &demo->swapchain_image_resources[i].depth.mem_alloc.memoryTypeIndex);
+        assert(pass);
 
-    pass = memory_type_from_properties(demo, mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                       &demo->depth.mem_alloc.memoryTypeIndex);
-    assert(pass);
+        /* allocate memory */
+        err = vkAllocateMemory(demo->device, &demo->swapchain_image_resources[i].depth.mem_alloc, NULL,
+                               &demo->swapchain_image_resources[i].depth.mem);
+        assert(!err);
 
-    /* allocate memory */
-    err = vkAllocateMemory(demo->device, &demo->depth.mem_alloc, NULL, &demo->depth.mem);
-    assert(!err);
+        /* bind memory */
+        err = vkBindImageMemory(demo->device, demo->swapchain_image_resources[i].depth.image,
+                                demo->swapchain_image_resources[i].depth.mem, 0);
+        assert(!err);
 
-    /* bind memory */
-    err = vkBindImageMemory(demo->device, demo->depth.image, demo->depth.mem, 0);
-    assert(!err);
-
-    /* create image view */
-    view.image = demo->depth.image;
-    err = vkCreateImageView(demo->device, &view, NULL, &demo->depth.view);
-    assert(!err);
+        /* create image view */
+        view.image = demo->swapchain_image_resources[i].depth.image;
+        err = vkCreateImageView(demo->device, &view, NULL, &demo->swapchain_image_resources[i].depth.view);
+        assert(!err);
+    }
 }
 
 /* Convert ppm image data from header file into RGBA texture image */
@@ -1861,7 +1863,7 @@ static void demo_prepare_render_pass(struct demo *demo) {
             },
         [1] =
             {
-                .format = demo->depth.format,
+                .format = demo->depth_format,
                 .flags = 0,
                 .samples = VK_SAMPLE_COUNT_1_BIT,
                 .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -2130,7 +2132,6 @@ static void demo_prepare_descriptor_set(struct demo *demo) {
 
 static void demo_prepare_framebuffers(struct demo *demo) {
     VkImageView attachments[2];
-    attachments[1] = demo->depth.view;
 
     const VkFramebufferCreateInfo fb_info = {
         .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -2147,6 +2148,7 @@ static void demo_prepare_framebuffers(struct demo *demo) {
 
     for (i = 0; i < demo->swapchainImageCount; i++) {
         attachments[0] = demo->swapchain_image_resources[i].view;
+        attachments[1] = demo->swapchain_image_resources[i].depth.view;
         err = vkCreateFramebuffer(demo->device, &fb_info, NULL, &demo->swapchain_image_resources[i].framebuffer);
         assert(!err);
     }
@@ -2190,7 +2192,7 @@ static void demo_prepare(struct demo *demo) {
         return;
     }
 
-    demo_prepare_depth(demo);
+    demo_prepare_depth_images(demo);
     demo_prepare_textures(demo);
     demo_prepare_cube_data_buffers(demo);
 
@@ -2288,15 +2290,14 @@ static void demo_cleanup(struct demo *demo) {
         }
         demo->fpDestroySwapchainKHR(demo->device, demo->swapchain, NULL);
 
-        vkDestroyImageView(demo->device, demo->depth.view, NULL);
-        vkDestroyImage(demo->device, demo->depth.image, NULL);
-        vkFreeMemory(demo->device, demo->depth.mem, NULL);
-
         for (i = 0; i < demo->swapchainImageCount; i++) {
             vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].view, NULL);
             vkFreeCommandBuffers(demo->device, demo->cmd_pool, 1, &demo->swapchain_image_resources[i].cmd);
             vkDestroyBuffer(demo->device, demo->swapchain_image_resources[i].uniform_buffer, NULL);
             vkFreeMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, NULL);
+            vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].depth.view, NULL);
+            vkDestroyImage(demo->device, demo->swapchain_image_resources[i].depth.image, NULL);
+            vkFreeMemory(demo->device, demo->swapchain_image_resources[i].depth.mem, NULL);
         }
         free(demo->swapchain_image_resources);
         free(demo->queue_props);
@@ -2370,15 +2371,14 @@ static void demo_resize(struct demo *demo) {
         vkDestroySampler(demo->device, demo->textures[i].sampler, NULL);
     }
 
-    vkDestroyImageView(demo->device, demo->depth.view, NULL);
-    vkDestroyImage(demo->device, demo->depth.image, NULL);
-    vkFreeMemory(demo->device, demo->depth.mem, NULL);
-
     for (i = 0; i < demo->swapchainImageCount; i++) {
         vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].view, NULL);
         vkFreeCommandBuffers(demo->device, demo->cmd_pool, 1, &demo->swapchain_image_resources[i].cmd);
         vkDestroyBuffer(demo->device, demo->swapchain_image_resources[i].uniform_buffer, NULL);
         vkFreeMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, NULL);
+        vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].depth.view, NULL);
+        vkDestroyImage(demo->device, demo->swapchain_image_resources[i].depth.image, NULL);
+        vkFreeMemory(demo->device, demo->swapchain_image_resources[i].depth.mem, NULL);
     }
     vkDestroyCommandPool(demo->device, demo->cmd_pool, NULL);
     demo->cmd_pool = VK_NULL_HANDLE;
@@ -3838,7 +3838,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 #elif defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK)
 static void demo_main(struct demo *demo, void *view, int argc, const char *argv[]) {
-
     demo_init(demo, argc, (char **)argv);
     demo->window = view;
     demo_init_vk_swapchain(demo);
