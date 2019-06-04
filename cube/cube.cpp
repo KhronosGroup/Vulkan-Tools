@@ -30,6 +30,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <csignal>
+#include <iostream>
+#include <sstream>
 #include <memory>
 
 #define VULKAN_HPP_NO_SMART_HANDLE
@@ -930,18 +932,22 @@ void Demo::init(int argc, char **argv) {
             continue;
         }
 
-        fprintf(stderr,
-                "Usage:\n  %s [--use_staging] [--validate] [--break] [--c <framecount>] \n"
-                "       [--suppress_popups] [--present_mode {0,1,2,3}]\n"
-                "\n"
-                "Options for --present_mode:\n"
-                "  %d: VK_PRESENT_MODE_IMMEDIATE_KHR\n"
-                "  %d: VK_PRESENT_MODE_MAILBOX_KHR\n"
-                "  %d: VK_PRESENT_MODE_FIFO_KHR (default)\n"
-                "  %d: VK_PRESENT_MODE_FIFO_RELAXED_KHR\n",
-                APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR,
-                VK_PRESENT_MODE_FIFO_RELAXED_KHR);
-        fflush(stderr);
+        std::stringstream usage;
+        usage << "Usage:\n  " << APP_SHORT_NAME << "\t[--use_staging] [--validate]\n"
+              << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
+              << "\t[--present_mode <present mode enum>]\n"
+              << "\t<present_mode_enum>\n"
+              << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
+              << "\t\tVK_PRESENT_MODE_MAILBOX_KHR = " << VK_PRESENT_MODE_MAILBOX_KHR << "\n"
+              << "\t\tVK_PRESENT_MODE_FIFO_KHR = " << VK_PRESENT_MODE_FIFO_KHR << "\n"
+              << "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = " << VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+
+#if defined(_WIN32)
+        if (!suppress_popups) MessageBox(NULL, usage.str().c_str(), "Usage Error", MB_OK);
+#else
+        std::cerr << usage.str();
+        std::cerr.flush();
+#endif
         exit(1);
     }
 
@@ -3008,7 +3014,6 @@ int main(int argc, char **argv) {
 
 // Global function invoked from NS or UI views and controllers to create demo
 static void demo_main(struct Demo &demo, void *view, int argc, const char *argv[]) {
-
     demo.init(argc, (char **)argv);
     demo.window = view;
     demo.init_vk_swapchain();

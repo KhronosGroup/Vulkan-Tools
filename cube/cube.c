@@ -3711,17 +3711,31 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
 #if defined(ANDROID)
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
 #else
-        fprintf(stderr,
-                "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled] [--break]\n"
-                "\t[--c <framecount>] [--suppress_popups] [--incremental_present] [--display_timing]\n"
-                "\t[--present_mode <present mode enum>]\n"
-                "\t <present_mode_enum>\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
-                "\t\t\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
-                "\t\t\t\tVK_PRESENT_MODE_FIFO_KHR = %d\n"
-                "\t\t\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = %d\n",
-                APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR,
-                VK_PRESENT_MODE_FIFO_RELAXED_KHR);
+        char *message =
+            "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled]\n"
+            "\t[--break] [--c <framecount>] [--suppress_popups]\n"
+            "\t[--incremental_present] [--display_timing]\n"
+            "\t[--present_mode <present mode enum>]\n"
+            "\t<present_mode_enum>\n"
+            "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
+            "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
+            "\t\tVK_PRESENT_MODE_FIFO_KHR = %d\n"
+            "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = %d\n";
+        int length = snprintf(NULL, 0, message, APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR,
+                              VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
+        char *usage = (char *)malloc(length + 1);
+        if (!usage) {
+            exit(1);
+        }
+        snprintf(usage, length + 1, message, APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR,
+                 VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
+#if defined(_WIN32)
+        if (!demo->suppress_popups) MessageBox(NULL, usage, "Usage Error", MB_OK);
+#else
+        fprintf(stderr, usage);
         fflush(stderr);
+#endif
+        free(usage);
         exit(1);
 #endif
     }
