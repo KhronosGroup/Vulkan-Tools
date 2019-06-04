@@ -1828,14 +1828,14 @@ static void demo_prepare_descriptor_layout(struct demo *demo) {
     err = vkCreateDescriptorSetLayout(demo->device, &descriptor_layout, NULL, &demo->desc_layout);
     assert(!err);
 
-    const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+    const VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
         .pNext = NULL,
         .setLayoutCount = 1,
         .pSetLayouts = &demo->desc_layout,
     };
 
-    err = vkCreatePipelineLayout(demo->device, &pPipelineLayoutCreateInfo, NULL, &demo->pipeline_layout);
+    err = vkCreatePipelineLayout(demo->device, &pipelineLayoutCreateInfo, NULL, &demo->pipeline_layout);
     assert(!err);
 }
 

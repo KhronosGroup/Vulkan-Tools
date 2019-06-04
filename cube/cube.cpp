@@ -1771,9 +1771,9 @@ void Demo::prepare_descriptor_layout() {
     auto result = device.createDescriptorSetLayout(&descriptor_layout, nullptr, &desc_layout);
     VERIFY(result == vk::Result::eSuccess);
 
-    auto const pPipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo().setSetLayoutCount(1).setPSetLayouts(&desc_layout);
+    auto const pipelineLayoutCreateInfo = vk::PipelineLayoutCreateInfo().setSetLayoutCount(1).setPSetLayouts(&desc_layout);
 
-    result = device.createPipelineLayout(&pPipelineLayoutCreateInfo, nullptr, &pipeline_layout);
+    result = device.createPipelineLayout(&pipelineLayoutCreateInfo, nullptr, &pipeline_layout);
     VERIFY(result == vk::Result::eSuccess);
 }
 
