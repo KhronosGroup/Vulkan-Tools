@@ -4,6 +4,15 @@
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/default.mk
 
+# Sets the hardening level (supress format string error). Works for 18.04 ubuntu.
+#export DEB_BUILD_MAINT_OPTIONS=hardening=-format
+
+# Suppresses warnings as errors. This works for all ubuntu releases.
+#export DEB_CFLAGS_MAINT_STRIP="-Wformat -Werror=format-security"
+#export DEB_CXXLAGS_MAINT_STRIP="-Wformat -Werror=format-security"
+#export DEB_OBJCFLAGS_MAINT_STRIP="-Wformat -Werror=format-security"
+#export DEB_OBJCXXFLAGS_MAINT_STRIP="-Wformat -Werror=format-security"
+
 %:
 	dh $@ --parallel --builddirectory=build/
 
