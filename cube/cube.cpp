@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2016 The Khronos Group Inc.
- * Copyright (c) 2015-2016 Valve Corporation
- * Copyright (c) 2015-2016 LunarG, Inc.
+ * Copyright (c) 2015-2019 The Khronos Group Inc.
+ * Copyright (c) 2015-2019 Valve Corporation
+ * Copyright (c) 2015-2019 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1975,13 +1975,33 @@ void Demo::prepare_render_pass() {
                              .setPreserveAttachmentCount(0)
                              .setPPreserveAttachments(nullptr);
 
+    vk::PipelineStageFlags stages = vk::PipelineStageFlagBits::eEarlyFragmentTests | vk::PipelineStageFlagBits::eLateFragmentTests;
+    vk::SubpassDependency const dependencies[2] = {
+        vk::SubpassDependency()  // Depth buffer is shared between swapchain images
+            .setSrcSubpass(VK_SUBPASS_EXTERNAL)
+            .setDstSubpass(0)
+            .setSrcStageMask(stages)
+            .setDstStageMask(stages)
+            .setSrcAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+            .setDstAccessMask(vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite)
+            .setDependencyFlags(vk::DependencyFlags()),
+        vk::SubpassDependency()  // Image layout transition
+            .setSrcSubpass(VK_SUBPASS_EXTERNAL)
+            .setDstSubpass(0)
+            .setSrcStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
+            .setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput)
+            .setSrcAccessMask(vk::AccessFlagBits())
+            .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eColorAttachmentRead)
+            .setDependencyFlags(vk::DependencyFlags()),
+    };
+
     auto const rp_info = vk::RenderPassCreateInfo()
                              .setAttachmentCount(2)
                              .setPAttachments(attachments)
                              .setSubpassCount(1)
                              .setPSubpasses(&subpass)
-                             .setDependencyCount(0)
-                             .setPDependencies(nullptr);
+                             .setDependencyCount(2)
+                             .setPDependencies(dependencies);
 
     auto result = device.createRenderPass(&rp_info, nullptr, &render_pass);
     VERIFY(result == vk::Result::eSuccess);
