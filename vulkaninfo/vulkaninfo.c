@@ -4565,6 +4565,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                         "\t\t\t\t\t\t<details><summary>transformFeedbackDraw                      = <span class='val'>%" PRIuLEAST32
                         "</span></summary></details>\n",
                         transform_feedback_properties->transformFeedbackDraw);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceTransformFeedbackProperties\n");
                     printf("===========================================\n");
@@ -4618,6 +4619,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>fragmentDensityInvocations = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             fragment_density_map_properties->fragmentDensityInvocations);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceFragmentDensityMapProperties\n");
                     printf("============================================\n");
@@ -4691,6 +4693,7 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>independentResolve = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             depth_stencil_resolve_properties->independentResolve);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceDepthStencilResolveProperties\n");
                     printf("============================================\n");
