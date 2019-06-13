@@ -3732,7 +3732,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
 #if defined(_WIN32)
         if (!demo->suppress_popups) MessageBox(NULL, usage, "Usage Error", MB_OK);
 #else
-        fprintf(stderr, usage);
+        fprintf(stderr, "%s", usage);
         fflush(stderr);
 #endif
         free(usage);
