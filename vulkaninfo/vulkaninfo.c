@@ -58,7 +58,6 @@
 
 #ifdef _WIN32
 
-#define snprintf _snprintf
 #define strdup _strdup
 
 // Returns nonzero if the console is used only for this process. Will return
@@ -4950,7 +4949,11 @@ static char *HumanReadable(const size_t sz) {
     if (which >= 0) {
         unit[0] = prefixes[which];
     }
+#ifdef _WIN32
+    _snprintf_s(buf, kBufferSize * sizeof(char), kBufferSize, "%.2f %sB", result, unit);
+#else
     snprintf(buf, kBufferSize, "%.2f %sB", result, unit);
+#endif
     return strndup(buf, kBufferSize);
 }
 
@@ -5561,7 +5564,11 @@ int main(int argc, char **argv) {
     AppCreateInstance(&inst);
 
     if (html_output) {
+#ifdef _WIN32
+        if (fopen_s(&out, "vulkaninfo.html", "w") != 0) out = NULL;
+#else
         out = fopen("vulkaninfo.html", "w");
+#endif
         if (!out) {
             printf("Unable to open vulkaninfo.html for writing\n");
             return 1;
@@ -5648,8 +5655,13 @@ int main(int argc, char **argv) {
         VkLayerProperties const *layer_prop = &inst.global_layers[i].layer_properties;
 
         ExtractVersion(layer_prop->specVersion, &layer_major, &layer_minor, &layer_patch);
+#ifdef _WIN32
+        _snprintf_s(spec_version, sizeof(spec_version), 64, "%d.%d.%d", layer_major, layer_minor, layer_patch);
+        _snprintf_s(layer_version, sizeof(layer_version), 64, "%d", layer_prop->implementationVersion);
+#else
         snprintf(spec_version, sizeof(spec_version), "%d.%d.%d", layer_major, layer_minor, layer_patch);
         snprintf(layer_version, sizeof(layer_version), "%d", layer_prop->implementationVersion);
+#endif
 
         if (html_output) {
             fprintf(out, "\t\t\t\t<details><summary>");
