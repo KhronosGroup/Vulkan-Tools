@@ -3510,7 +3510,7 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
                 "class='val'>%u</span></summary></details>\n",
                 limits->maxFragmentCombinedOutputResources);
         fprintf(out,
-                "\t\t\t\t\t\t<details><summary>maxComputeSharedMemorySize              = <span class='val'>0x%" PRIxLEAST32
+                "\t\t\t\t\t\t<details><summary>maxComputeSharedMemorySize              = <span class='val'>%" PRIuLEAST32
                 "</span></summary></details>\n",
                 limits->maxComputeSharedMemorySize);
         fprintf(out,
@@ -3819,7 +3819,7 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
         printf("\t\tmaxFragmentOutputAttachments            = %u\n", limits->maxFragmentOutputAttachments);
         printf("\t\tmaxFragmentDualSrcAttachments           = %u\n", limits->maxFragmentDualSrcAttachments);
         printf("\t\tmaxFragmentCombinedOutputResources      = %u\n", limits->maxFragmentCombinedOutputResources);
-        printf("\t\tmaxComputeSharedMemorySize              = 0x%" PRIxLEAST32 "\n", limits->maxComputeSharedMemorySize);
+        printf("\t\tmaxComputeSharedMemorySize              = %" PRIuLEAST32 "\n", limits->maxComputeSharedMemorySize);
         printf("\t\tmaxComputeWorkGroupCount[0]             = %u\n", limits->maxComputeWorkGroupCount[0]);
         printf("\t\tmaxComputeWorkGroupCount[1]             = %u\n", limits->maxComputeWorkGroupCount[1]);
         printf("\t\tmaxComputeWorkGroupCount[2]             = %u\n", limits->maxComputeWorkGroupCount[2]);
