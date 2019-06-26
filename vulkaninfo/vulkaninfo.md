@@ -42,6 +42,11 @@ vulkaninfo --json
  Use the `--json` option to produce [DevSim-schema](https://schema.khronos.org/vulkan/devsim_1_0_0.json)-compatible JSON output for your device. Additionally, JSON output can be specified with the `-j` option and for multi-GPU systems, a single GPU can be targeted using the `--json=`*`GPU-number`* option where the *`GPU-number`* indicates the GPU of interest (e.g., `--json=0`). To determine the GPU number corresponding to a particular GPU, execute `vulkaninfo` with the `--html` option (or none at all) first; doing so will summarize all GPUs in the system.
  The generated configuration information can be used as input for the [`VK_LAYER_LUNARG_device_simulation`](./device_simulation_layer.html) layer.
 
+```
+vulkaninfo --list-formats
+```
+
+By default, Vulkan Info will not print format properties for your GPU. The `--list-formats` option will turn this feature on.
 
  Use the `--help` or `-h` option to produce a list of all available Vulkan Info options.
 ```
@@ -60,6 +65,7 @@ OPTIONS:
                       specifying the gpu-number associated with the gpu of
                       interest. This number can be determined by running
                       vulkaninfo without any options specified.
+--list-formats        Print format properties.
 ```
 
 ### Windows

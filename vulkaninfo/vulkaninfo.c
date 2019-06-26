@@ -94,6 +94,7 @@ static bool html_output = false;
 static bool human_readable_output = true;
 static bool json_output = false;
 static uint32_t selected_gpu = 0;
+static bool list_formats = false;
 
 struct VkStructureHeader {
     VkStructureType sType;
@@ -2522,6 +2523,7 @@ void FormatPropsShortenedDump(const struct AppGpu *gpu) {
 }
 
 static void AppDevDump(const struct AppGpu *gpu, FILE *out) {
+    if (!list_formats && !json_output) return;
     if (html_output) {
         fprintf(out, "\t\t\t\t\t<details><summary>Format Properties</summary>\n");
     } else if (human_readable_output) {
@@ -5534,7 +5536,8 @@ void print_usage(char *argv0) {
     printf("--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n");
     printf("                      specifying the gpu-number associated with the gpu of \n");
     printf("                      interest. This number can be determined by running\n");
-    printf("                      vulkaninfo without any options specified.\n\n");
+    printf("                      vulkaninfo without any options specified.\n");
+    printf("--list-formats        Print format properties.\n\n");
 }
 
 int main(int argc, char **argv) {
@@ -5553,6 +5556,9 @@ int main(int argc, char **argv) {
             if (strcmp(argv[i], "--html") == 0) {
                 human_readable_output = false;
                 html_output = true;
+                continue;
+            } else if (strcmp(argv[i], "--list-formats") == 0) {
+                list_formats = true;
                 continue;
             } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
                 print_usage(argv[0]);
