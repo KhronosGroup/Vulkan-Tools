@@ -917,6 +917,9 @@ static void AppCreateInstance(struct AppInstance *inst) {
     VkResult err = vkCreateInstance(&inst_info, NULL, &inst->instance);
     if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
         fprintf(stderr, "Cannot create Vulkan instance.\n");
+        fprintf(stderr,
+                "This problem is often caused by a faulty installation of the Vulkan driver or attempting to use a GPU that does "
+                "not support Vulkan.\n");
         ERR_EXIT(err);
     } else if (err) {
         ERR_EXIT(err);
