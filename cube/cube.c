@@ -90,9 +90,9 @@ bool in_callback = false;
 void DbgMsg(char *fmt, ...) {
     va_list va;
     va_start(va, fmt);
-    printf(fmt, va);
-    fflush(stdout);
+    vprintf(fmt, va);
     va_end(va);
+    fflush(stdout);
 }
 
 #elif defined __ANDROID__
@@ -125,9 +125,9 @@ void DbgMsg(const char *fmt, ...) {
 void DbgMsg(char *fmt, ...) {
     va_list va;
     va_start(va, fmt);
-    printf(fmt, va);
-    fflush(stdout);
+    vprintf(fmt, va);
     va_end(va);
+    fflush(stdout);
 }
 #endif
 
