@@ -3149,6 +3149,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateViSurfaceNN(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
     const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin)
@@ -3999,6 +4000,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(
 
 
 
+
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(
     VkDevice                                    device,
     const VkBufferDeviceAddressInfoEXT*         pInfo)
@@ -4082,6 +4084,15 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateHeadlessSurfaceEXT(
 }
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -4090,6 +4101,7 @@ static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 

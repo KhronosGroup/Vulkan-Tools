@@ -115,6 +115,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_draw_parameters", 1},
     {"VK_EXT_shader_subgroup_ballot", 1},
     {"VK_EXT_shader_subgroup_vote", 1},
+    {"VK_EXT_texture_compression_astc_hdr", 1},
     {"VK_EXT_astc_decode_mode", 1},
     {"VK_KHR_maintenance1", 2},
     {"VK_KHR_external_memory", 1},
@@ -195,7 +196,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_GGP_frame_token", 1},
     {"VK_EXT_pipeline_creation_feedback", 1},
     {"VK_KHR_driver_properties", 1},
-    {"VK_KHR_shader_float_controls", 1},
+    {"VK_KHR_shader_float_controls", 4},
     {"VK_NV_shader_subgroup_partitioned", 1},
     {"VK_KHR_depth_stencil_resolve", 1},
     {"VK_KHR_swapchain_mutable_format", 1},
@@ -214,6 +215,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_scalar_block_layout", 1},
     {"VK_GOOGLE_hlsl_functionality1", 1},
     {"VK_GOOGLE_decorate_string", 1},
+    {"VK_EXT_subgroup_size_control", 1},
     {"VK_EXT_memory_budget", 1},
     {"VK_EXT_memory_priority", 1},
     {"VK_NV_dedicated_allocation_image_aliasing", 1},
@@ -225,7 +227,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_ycbcr_image_arrays", 1},
     {"VK_KHR_uniform_buffer_standard_layout", 1},
     {"VK_EXT_full_screen_exclusive", 3},
+    {"VK_EXT_line_rasterization", 1},
     {"VK_EXT_host_query_reset", 1},
+    {"VK_EXT_index_type_uint8", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
 };
@@ -1893,6 +1897,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateViSurfaceNN(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdBeginConditionalRenderingEXT(
     VkCommandBuffer                             commandBuffer,
     const VkConditionalRenderingBeginInfoEXT*   pConditionalRenderingBegin);
@@ -2438,6 +2443,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(
 
 
 
+
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(
     VkDevice                                    device,
     const VkBufferDeviceAddressInfoEXT*         pInfo);
@@ -2488,11 +2494,18 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateHeadlessSurfaceEXT(
     VkSurfaceKHR*                               pSurface);
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
+
+
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount);
+
 
 
 
@@ -2920,6 +2933,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDeviceGroupSurfacePresentModes2EXT", (void*)GetDeviceGroupSurfacePresentModes2EXT},
 #endif
     {"vkCreateHeadlessSurfaceEXT", (void*)CreateHeadlessSurfaceEXT},
+    {"vkCmdSetLineStippleEXT", (void*)CmdSetLineStippleEXT},
     {"vkResetQueryPoolEXT", (void*)ResetQueryPoolEXT},
 };
 

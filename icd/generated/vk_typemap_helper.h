@@ -1354,13 +1354,13 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR
     typedef VkPhysicalDevicePushDescriptorPropertiesKHR Type;
 };
 
-// Map type VkPhysicalDeviceFloat16Int8FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR
-template <> struct LvlTypeMap<VkPhysicalDeviceFloat16Int8FeaturesKHR> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR;
+// Map type VkPhysicalDeviceShaderFloat16Int8FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderFloat16Int8FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR> {
-    typedef VkPhysicalDeviceFloat16Int8FeaturesKHR Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR> {
+    typedef VkPhysicalDeviceShaderFloat16Int8FeaturesKHR Type;
 };
 
 // Map type VkPresentRegionsKHR to id VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR
@@ -1901,6 +1901,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN> {
 };
 
 #endif // VK_USE_PLATFORM_VI_NN
+// Map type VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT> {
+    typedef VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT Type;
+};
+
 // Map type VkImageViewASTCDecodeModeEXT to id VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT
 template <> struct LvlTypeMap<VkImageViewASTCDecodeModeEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT;
@@ -2909,13 +2918,13 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CHECKPOINT_DATA_NV> {
     typedef VkCheckpointDataNV Type;
 };
 
-// Map type VkPhysicalDeviceShaderIntegerFunctions2INTEL to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS2_FEATURES_INTEL
-template <> struct LvlTypeMap<VkPhysicalDeviceShaderIntegerFunctions2INTEL> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS2_FEATURES_INTEL;
+// Map type VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS2_FEATURES_INTEL> {
-    typedef VkPhysicalDeviceShaderIntegerFunctions2INTEL Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL> {
+    typedef VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL Type;
 };
 
 // Map type VkInitializePerformanceApiInfoINTEL to id VK_STRUCTURE_TYPE_INITIALIZE_PERFORMANCE_API_INFO_INTEL
@@ -3055,6 +3064,24 @@ template <> struct LvlTypeMap<VkPhysicalDeviceScalarBlockLayoutFeaturesEXT> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT> {
     typedef VkPhysicalDeviceScalarBlockLayoutFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceSubgroupSizeControlPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceSubgroupSizeControlPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceSubgroupSizeControlPropertiesEXT Type;
+};
+
+// Map type VkPipelineShaderStageRequiredSubgroupSizeCreateInfoEXT to id VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkPipelineShaderStageRequiredSubgroupSizeCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO_EXT> {
+    typedef VkPipelineShaderStageRequiredSubgroupSizeCreateInfoEXT Type;
 };
 
 // Map type VkPhysicalDeviceMemoryBudgetPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT
@@ -3252,6 +3279,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EX
     typedef VkHeadlessSurfaceCreateInfoEXT Type;
 };
 
+// Map type VkPhysicalDeviceLineRasterizationFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceLineRasterizationFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT> {
+    typedef VkPhysicalDeviceLineRasterizationFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceLineRasterizationPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceLineRasterizationPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceLineRasterizationPropertiesEXT Type;
+};
+
+// Map type VkPipelineRasterizationLineStateCreateInfoEXT to id VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkPipelineRasterizationLineStateCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT> {
+    typedef VkPipelineRasterizationLineStateCreateInfoEXT Type;
+};
+
 // Map type VkPhysicalDeviceHostQueryResetFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceHostQueryResetFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
@@ -3259,6 +3313,15 @@ template <> struct LvlTypeMap<VkPhysicalDeviceHostQueryResetFeaturesEXT> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT> {
     typedef VkPhysicalDeviceHostQueryResetFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceIndexTypeUint8FeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceIndexTypeUint8FeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT> {
+    typedef VkPhysicalDeviceIndexTypeUint8FeaturesEXT Type;
 };
 
 // Map type VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT
