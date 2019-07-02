@@ -977,6 +977,8 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
              .mem_size = sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceFragmentDensityMapPropertiesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceDescriptorIndexingPropertiesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceDepthStencilResolvePropertiesKHR)}};
 
@@ -1097,6 +1099,8 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
              .mem_size = sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_ADDRESS_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceBufferAddressFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceDescriptorIndexingFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT,
@@ -3254,6 +3258,137 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("=======================================\n");
                     printf("\thostQueryReset = %" PRIuLEAST32 "\n", host_query_reset_features->hostQueryReset);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceDescriptorIndexingFeaturesEXT *indexing_features =
+                    (VkPhysicalDeviceDescriptorIndexingFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceDescriptorIndexingFeatures</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderInputAttachmentArrayDynamicIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderInputAttachmentArrayDynamicIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderUniformTexelBufferArrayDynamicIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderUniformTexelBufferArrayDynamicIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderStorageTexelBufferArrayDynamicIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderStorageTexelBufferArrayDynamicIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderUniformBufferArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderUniformBufferArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderSampledImageArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderSampledImageArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderStorageBufferArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderStorageBufferArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderStorageImageArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderStorageImageArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderInputAttachmentArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderInputAttachmentArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderUniformTexelBufferArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderUniformTexelBufferArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderStorageTexelBufferArrayNonUniformIndexing    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->shaderStorageTexelBufferArrayNonUniformIndexing);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingUniformBufferUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingUniformBufferUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingSampledImageUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingSampledImageUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingStorageImageUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingStorageImageUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingStorageBufferUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingStorageBufferUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingUniformTexelBufferUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingUniformTexelBufferUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingStorageTexelBufferUpdateAfterBind    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingStorageTexelBufferUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingUpdateUnusedWhilePending    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingUpdateUnusedWhilePending);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingPartiallyBound    = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            indexing_features->descriptorBindingPartiallyBound);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>descriptorBindingVariableDescriptorCount    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_features->descriptorBindingVariableDescriptorCount);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>runtimeDescriptorArray    = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            indexing_features->runtimeDescriptorArray);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceDescriptorIndexingFeatures:\n");
+                    printf("=======================================\n");
+                    printf("\tshaderInputAttachmentArrayDynamicIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderInputAttachmentArrayDynamicIndexing);
+                    printf("\tshaderUniformTexelBufferArrayDynamicIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderUniformTexelBufferArrayDynamicIndexing);
+                    printf("\tshaderStorageTexelBufferArrayDynamicIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderStorageTexelBufferArrayDynamicIndexing);
+                    printf("\tshaderUniformBufferArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderUniformBufferArrayNonUniformIndexing);
+                    printf("\tshaderSampledImageArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderSampledImageArrayNonUniformIndexing);
+                    printf("\tshaderStorageBufferArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderStorageBufferArrayNonUniformIndexing);
+                    printf("\tshaderStorageImageArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderStorageImageArrayNonUniformIndexing);
+                    printf("\tshaderInputAttachmentArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderInputAttachmentArrayNonUniformIndexing);
+                    printf("\tshaderUniformTexelBufferArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderUniformTexelBufferArrayNonUniformIndexing);
+                    printf("\tshaderStorageTexelBufferArrayNonUniformIndexing = %" PRIuLEAST32 "\n",
+                           indexing_features->shaderStorageTexelBufferArrayNonUniformIndexing);
+                    printf("\tdescriptorBindingUniformBufferUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingUniformBufferUpdateAfterBind);
+                    printf("\tdescriptorBindingSampledImageUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingSampledImageUpdateAfterBind);
+                    printf("\tdescriptorBindingStorageImageUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingStorageImageUpdateAfterBind);
+                    printf("\tdescriptorBindingStorageBufferUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingStorageBufferUpdateAfterBind);
+                    printf("\tdescriptorBindingUniformTexelBufferUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingUniformTexelBufferUpdateAfterBind);
+                    printf("\tdescriptorBindingStorageTexelBufferUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingStorageTexelBufferUpdateAfterBind);
+                    printf("\tdescriptorBindingUpdateUnusedWhilePending = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingUpdateUnusedWhilePending);
+                    printf("\tdescriptorBindingPartiallyBound = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingPartiallyBound);
+                    printf("\tdescriptorBindingVariableDescriptorCount = %" PRIuLEAST32 "\n",
+                           indexing_features->descriptorBindingVariableDescriptorCount);
+                    printf("\truntimeDescriptorArray = %" PRIuLEAST32 "\n", indexing_features->runtimeDescriptorArray);
+                }
             }
             place = structure->pNext;
         }
@@ -4729,8 +4864,158 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                            depth_stencil_resolve_properties->independentResolveNone);
                     printf("\t\tindependentResolve     = %" PRIuLEAST32 "\n", depth_stencil_resolve_properties->independentResolve);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceDescriptorIndexingPropertiesEXT *indexing_properties =
+                    (VkPhysicalDeviceDescriptorIndexingPropertiesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDescriptorIndexingProperties</summary>\n");
+                    fprintf(
+                        out,
+                        "\t\t\t\t\t\t\t<details><summary>maxUpdateAfterBindDescriptorsInAllPools = <span class='val'>%" PRIuLEAST32
+                        "</span></summary></details>\n",
+                        indexing_properties->maxUpdateAfterBindDescriptorsInAllPools);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>shaderUniformBufferArrayNonUniformIndexingNative = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->shaderUniformBufferArrayNonUniformIndexingNative);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>shaderSampledImageArrayNonUniformIndexingNative = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->shaderSampledImageArrayNonUniformIndexingNative);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>shaderStorageBufferArrayNonUniformIndexingNative = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->shaderStorageBufferArrayNonUniformIndexingNative);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>shaderStorageImageArrayNonUniformIndexingNative = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->shaderStorageImageArrayNonUniformIndexingNative);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>shaderInputAttachmentArrayNonUniformIndexingNative = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->shaderInputAttachmentArrayNonUniformIndexingNative);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>robustBufferAccessUpdateAfterBind = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            indexing_properties->robustBufferAccessUpdateAfterBind);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>quadDivergentImplicitLod = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            indexing_properties->quadDivergentImplicitLod);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindSamplers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindSamplers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindUniformBuffers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindUniformBuffers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindStorageBuffers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindStorageBuffers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindSampledImages = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindSampledImages);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindStorageImages = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindStorageImages);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageDescriptorUpdateAfterBindInputAttachments = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxPerStageDescriptorUpdateAfterBindInputAttachments);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxPerStageUpdateAfterBindResources = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            indexing_properties->maxPerStageUpdateAfterBindResources);
+                    fprintf(
+                        out,
+                        "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindSamplers = <span class='val'>%" PRIuLEAST32
+                        "</span></summary></details>\n",
+                        indexing_properties->maxDescriptorSetUpdateAfterBindSamplers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindUniformBuffers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindUniformBuffers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindUniformBuffersDynamic = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindUniformBuffersDynamic);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindStorageBuffers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindStorageBuffers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindStorageBuffersDynamic = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindStorageBuffersDynamic);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindSampledImages = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindSampledImages);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindStorageImages = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindStorageImages);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindInputAttachments = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindInputAttachments);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceDescriptorIndexingProperties\n");
+                    printf("============================================\n");
+                    printf("\tmaxUpdateAfterBindDescriptorsInAllPools = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxUpdateAfterBindDescriptorsInAllPools);
+                    printf("\tshaderUniformBufferArrayNonUniformIndexingNative = %" PRIuLEAST32 "\n",
+                           indexing_properties->shaderUniformBufferArrayNonUniformIndexingNative);
+                    printf("\tshaderSampledImageArrayNonUniformIndexingNative = %" PRIuLEAST32 "\n",
+                           indexing_properties->shaderSampledImageArrayNonUniformIndexingNative);
+                    printf("\tshaderStorageBufferArrayNonUniformIndexingNative = %" PRIuLEAST32 "\n",
+                           indexing_properties->shaderStorageBufferArrayNonUniformIndexingNative);
+                    printf("\tshaderStorageImageArrayNonUniformIndexingNative = %" PRIuLEAST32 "\n",
+                           indexing_properties->shaderStorageImageArrayNonUniformIndexingNative);
+                    printf("\tshaderInputAttachmentArrayNonUniformIndexingNative = %" PRIuLEAST32 "\n",
+                           indexing_properties->shaderInputAttachmentArrayNonUniformIndexingNative);
+                    printf("\trobustBufferAccessUpdateAfterBind = %" PRIuLEAST32 "\n",
+                           indexing_properties->robustBufferAccessUpdateAfterBind);
+                    printf("\tquadDivergentImplicitLod = %" PRIuLEAST32 "\n", indexing_properties->quadDivergentImplicitLod);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindSamplers = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindSamplers);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindUniformBuffers = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindUniformBuffers);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindStorageBuffers = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindStorageBuffers);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindSampledImages = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindSampledImages);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindStorageImages = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindStorageImages);
+                    printf("\tmaxPerStageDescriptorUpdateAfterBindInputAttachments = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageDescriptorUpdateAfterBindInputAttachments);
+                    printf("\tmaxPerStageUpdateAfterBindResources = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxPerStageUpdateAfterBindResources);
+                    printf("\tmaxDescriptorSetUpdateAfterBindSamplers = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindSamplers);
+                    printf("\tmaxDescriptorSetUpdateAfterBindUniformBuffers = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindUniformBuffers);
+                    printf("\tmaxDescriptorSetUpdateAfterBindUniformBuffersDynamic = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindUniformBuffersDynamic);
+                    printf("\tmaxDescriptorSetUpdateAfterBindStorageBuffer = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindStorageBuffers);
+                    printf("\tmaxDescriptorSetUpdateAfterBindStorageBuffersDynamic = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindStorageBuffersDynamic);
+                    printf("\tmaxDescriptorSetUpdateAfterBindSampledImages = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindSampledImages);
+                    printf("\tmaxDescriptorSetUpdateAfterBindStorageImages = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindStorageImages);
+                    printf("\tmaxDescriptorSetUpdateAfterBindInputAttachments = %" PRIuLEAST32 "\n",
+                           indexing_properties->maxDescriptorSetUpdateAfterBindInputAttachments);
+                }
             }
-
             place = structure->pNext;
         }
     }
