@@ -52,7 +52,7 @@
         argv[i] = s.UTF8String;
     }
 
-    demo_main(&demo, self.view, args.count, argv);
+    demo_main(&demo, self.view.layer, args.count, argv);
 
     // Monitor the rendering loop for a quit condition
     _timer = [NSTimer scheduledTimerWithTimeInterval: 0.2
