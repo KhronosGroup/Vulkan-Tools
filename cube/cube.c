@@ -328,8 +328,8 @@ struct demo {
     struct wl_keyboard *keyboard;
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
     struct ANativeWindow *window;
-#elif (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
-    void *window;
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+    void *caMetalLayer;
 #endif
     VkSurfaceKHR surface;
     bool prepared;
@@ -2764,7 +2764,7 @@ static void demo_run(struct demo *demo) {
     demo_draw(demo);
     demo->curFrame++;
 }
-#elif defined(VK_USE_PLATFORM_MACOS_MVK)
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_run(struct demo *demo) {
     demo_draw(demo);
     demo->curFrame++;
@@ -3029,15 +3029,10 @@ static void demo_init_vk(struct demo *demo) {
                 platformSurfaceExtFound = 1;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_IOS_MVK)
-            if (!strcmp(VK_MVK_IOS_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+            if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 platformSurfaceExtFound = 1;
-                demo->extension_names[demo->enabled_extension_count++] = VK_MVK_IOS_SURFACE_EXTENSION_NAME;
-            }
-#elif defined(VK_USE_PLATFORM_MACOS_MVK)
-            if (!strcmp(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
-                demo->extension_names[demo->enabled_extension_count++] = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
+                demo->extension_names[demo->enabled_extension_count++] = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
             }
 #endif
             if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instance_extensions[i].extensionName)) {
@@ -3065,14 +3060,8 @@ static void demo_init_vk(struct demo *demo) {
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
                  "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_IOS_MVK)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_MVK_IOS_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_MACOS_MVK)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_MVK_MACOS_SURFACE_EXTENSION_NAME
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
                  " extension.\n\n"
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
@@ -3402,22 +3391,14 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     err = vkCreateXcbSurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     err = demo_create_display_surface(demo);
-#elif defined(VK_USE_PLATFORM_IOS_MVK)
-    VkIOSSurfaceCreateInfoMVK surface;
-    surface.sType = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK;
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+    VkMetalSurfaceCreateInfoEXT surface;
+    surface.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
     surface.pNext = NULL;
     surface.flags = 0;
-    surface.pView = demo->window;
+    surface.pLayer = demo->caMetalLayer;
 
-    err = vkCreateIOSSurfaceMVK(demo->inst, &surface, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_MACOS_MVK)
-    VkMacOSSurfaceCreateInfoMVK surface;
-    surface.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
-    surface.pNext = NULL;
-    surface.flags = 0;
-    surface.pView = demo->window;
-
-    err = vkCreateMacOSSurfaceMVK(demo->inst, &surface, NULL, &demo->surface);
+    err = vkCreateMetalSurfaceEXT(demo->inst, &surface, NULL, &demo->surface);
 #endif
     assert(!err);
 
@@ -3876,11 +3857,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     return (int)msg.wParam;
 }
 
-#elif defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK)
-static void demo_main(struct demo *demo, void *view, int argc, const char *argv[]) {
-
+#elif defined(VK_USE_PLATFORM_METAL_EXT)
+static void demo_main(struct demo *demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo_init(demo, argc, (char **)argv);
-    demo->window = view;
+    demo->caMetalLayer = caMetalLayer;
     demo_init_vk_swapchain(demo);
     demo_prepare(demo);
     demo->spin_angle = 0.4f;
