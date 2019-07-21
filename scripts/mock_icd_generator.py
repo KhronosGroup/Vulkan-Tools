@@ -795,6 +795,13 @@ CUSTOM_C_INTERCEPTS = {
         VkPhysicalDevicePushDescriptorPropertiesKHR* write_props = (VkPhysicalDevicePushDescriptorPropertiesKHR*)push_descriptor_props;
         write_props->maxPushDescriptors = 256;
     }
+
+    const auto *depth_stencil_resolve_props = lvl_find_in_chain<VkPhysicalDeviceDepthStencilResolvePropertiesKHR>(pProperties->pNext);
+    if (depth_stencil_resolve_props) {
+        VkPhysicalDeviceDepthStencilResolvePropertiesKHR* write_props = (VkPhysicalDeviceDepthStencilResolvePropertiesKHR*)depth_stencil_resolve_props;
+        write_props->supportedDepthResolveModes = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR;
+        write_props->supportedStencilResolveModes = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR;
+    }
 ''',
 'vkGetPhysicalDeviceExternalSemaphoreProperties':'''
     // Hard code support for all handle types and features
