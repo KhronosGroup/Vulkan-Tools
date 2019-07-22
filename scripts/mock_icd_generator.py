@@ -1024,7 +1024,7 @@ class MockICDOutputGenerator(OutputGenerator):
     def paramIsPointer(self, param):
         ispointer = False
         for elem in param:
-            if ((elem.tag is not 'type') and (elem.tail is not None)) and '*' in elem.tail:
+            if ((elem.tag != 'type') and (elem.tail is not None)) and '*' in elem.tail:
                 ispointer = True
         return ispointer
 
@@ -1052,7 +1052,7 @@ class MockICDOutputGenerator(OutputGenerator):
         self.header = False
         if (genOpts.protectFile and self.genOpts.filename and 'h' == self.genOpts.filename[-1]):
             self.header = True
-            headerSym = '__' + re.sub('\.h', '_h_', os.path.basename(self.genOpts.filename))
+            headerSym = '__' + re.sub(r'\.h', '_h_', os.path.basename(self.genOpts.filename))
             write('#ifndef', headerSym, file=self.outFile)
             write('#define', headerSym, '1', file=self.outFile)
             self.newline()
