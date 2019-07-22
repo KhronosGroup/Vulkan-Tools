@@ -26,7 +26,6 @@ def startTimer(timeit):
 
 def endTimer(timeit, msg):
     global startTime
-    endTime = time.clock()
     if timeit:
         endTime = time.process_time()
         write(msg, endTime - startTime, file=sys.stderr)
@@ -34,7 +33,7 @@ def endTimer(timeit, msg):
 
 # Turn a list of strings into a regexp string matching exactly those strings
 def makeREstring(list, default = None):
-    if len(list) > 0 or default == None:
+    if len(list) > 0 or default is None:
         return '^(' + '|'.join(list) + ')$'
     else:
         return default
@@ -112,7 +111,7 @@ def makeGenOpts(args):
     # Defaults for generating re-inclusion protection wrappers (or not)
     protectFeature = protect
 
-    # An API style convention object
+    # An API style conventions object
     conventions = VulkanConventions()
 
     # Helper file generator options for typemap_helper.h
@@ -290,6 +289,10 @@ if __name__ == '__main__':
                         help='Find additional scripts in this directory')
 
     args = parser.parse_args()
+
+    # default scripts path to be same as registry
+    if not args.scripts:
+        args.scripts = os.path.dirname(args.registry)
 
     scripts_directory_path = os.path.dirname(os.path.abspath(__file__))
     registry_headers_path = os.path.join(scripts_directory_path, args.scripts)
