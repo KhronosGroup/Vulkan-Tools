@@ -137,6 +137,16 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     endif()
 endif()
 
+# Optional codegen target
+if(PYTHONINTERP_FOUND)
+    add_custom_target(VulkanTools_generated_source
+                      COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
+                              ${VulkanRegistry_DIR} --incremental
+                      )
+else()
+    message("WARNING: VulkanTools_generated_source target requires python 3")
+endif()
+
 if(APPLE)
     include(mac_common.cmake)
 endif()
