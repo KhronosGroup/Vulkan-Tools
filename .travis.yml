@@ -86,11 +86,15 @@ script:
   - set -e
   - |
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
-      # Build Vulkan-Tools
+      # Build Vulkan-Tools dependencies
       cd ${TRAVIS_BUILD_DIR}
+      python ${TRAVIS_BUILD_DIR}/scripts/update_deps.py --config=Debug --dir=${TRAVIS_BUILD_DIR}/external
+      # Verify consistency between source file generators and output
+      echo Verifying consistency between source file generators and output
+      python3 ${TRAVIS_BUILD_DIR}/scripts/generate_source.py --verify ${TRAVIS_BUILD_DIR}/external/Vulkan-Headers/registry
+      # Build Vulkan-Tools
       mkdir build
       cd build
-      python ${TRAVIS_BUILD_DIR}/scripts/update_deps.py --config=Debug --dir=${TRAVIS_BUILD_DIR}/external
       cmake -C${TRAVIS_BUILD_DIR}/external/helper.cmake -DCMAKE_BUILD_TYPE=Debug ..
       make -j $core_count
       cd ${TRAVIS_BUILD_DIR}
