@@ -15,20 +15,6 @@
 # limitations under the License.
 # ~~~
 
-set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
-
-# Define macro used for building vk.xml generated files
-macro(run_vk_xml_generate dependency output)
-    add_custom_command(OUTPUT ${output}
-                       COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/kvt_genvk.py -registry ${VulkanRegistry_DIR}/vk.xml -scripts
-                               ${VulkanRegistry_DIR} ${output}
-                       DEPENDS ${VulkanRegistry_DIR}/vk.xml
-                               ${VulkanRegistry_DIR}/generator.py
-                               ${SCRIPTS_DIR}/${dependency}
-                               ${SCRIPTS_DIR}/kvt_genvk.py
-                               ${VulkanRegistry_DIR}/reg.py)
-endmacro()
-
 if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
 elseif(ANDROID)
@@ -105,12 +91,6 @@ else()
     endif()
 endif()
 
-# Custom target for generated vulkan helper file dependencies
-set(icd_generate_helper_files_DEPENDS)
-add_custom_target(icd_generate_helper_files DEPENDS vk_typemap_helper.h)
-set_target_properties(icd_generate_helper_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
-run_vk_xml_generate(vulkan_tools_helper_file_generator.py vk_typemap_helper.h)
-
 # For ICD with a direct dependency on a project with the same name, use it.
 if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
     foreach(config_file ${ICD_JSON_FILES})
@@ -128,8 +108,6 @@ if(WIN32)
                           VERBATIM)
         set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
         add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
-        add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
-        # target_link_Libraries(VkICD_${target} VkICD_utils)
         if(INSTALL_ICD)
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
@@ -137,8 +115,6 @@ if(WIN32)
 elseif(APPLE)
     macro(add_vk_icd target)
         add_library(VkICD_${target} SHARED ${ARGN})
-        # target_link_Libraries(VkICD_${target} VkICD_utils)
-        add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
         set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl")
         if(INSTALL_ICD)
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -147,8 +123,6 @@ elseif(APPLE)
 else()
     macro(add_vk_icd target)
         add_library(VkICD_${target} SHARED ${ARGN})
-        # target_link_Libraries(VkICD_${target} VkICD_utils)
-        add_dependencies(VkICD_${target} icd_generate_helper_files generate_icd_files)
         set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl,-export-dynamic,-Bsymbolic,--exclude-libs,ALL")
         if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -178,10 +152,7 @@ else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-arith -Wno-unused-function -Wno-sign-compare")
 endif()
 
-run_vk_xml_generate(mock_icd_generator.py mock_icd.h)
-run_vk_xml_generate(mock_icd_generator.py mock_icd.cpp)
-
-add_vk_icd(mock_icd mock_icd.cpp mock_icd.h)
+add_vk_icd(mock_icd generated/mock_icd.cpp generated/mock_icd.h)
 
 # JSON file(s) install targets. For Linux, need to remove the "./" from the library path before installing to system directories.
 if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux

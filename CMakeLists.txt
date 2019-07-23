@@ -27,7 +27,7 @@ project(Vulkan-Tools)
 
 # find_package(), include() and global project settings --------------------------------------------------------------------------
 
-find_package(PythonInterp 3 REQUIRED)
+find_package(PythonInterp 3 QUIET)
 
 # User-interface declarations ----------------------------------------------------------------------------------------------------
 # This section contains variables that affect development GUIs (e.g. CMake GUI and IDEs), such as option(), folders, and variables
