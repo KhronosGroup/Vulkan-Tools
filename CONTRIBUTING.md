@@ -66,8 +66,17 @@ That said, please ensure that the repository compiles and passes tests without e
 that to be accepted into the repository, the pull request must [pass all tests](#testing your changes) on all supported platforms
 -- the automatic Github Travis and AppVeyor continuous integration features will assist in enforcing this requirement.
 
+#### Generated Source Code
+
+The `icd/generated` directory contains source code that is created by several
+generator scripts in the `scripts` directory. All changes to these scripts _must_ be submitted with the
+corresponding generated output to keep the repository self-consistent. This requirement is enforced by both
+Travis CI and AppVeyor test configurations. Regenerate source files after modifying any of the generator
+scripts and before building and testing your changes. More details can be found in
+[BUILD.md](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/BUILD.md#generated-source-code).
+
 #### **Testing Your Changes**
-* Run the repository components with the Vulkan Validation Layers before and after each if your commits to check for any regressions.
+* Run the repository components with the Vulkan Validation Layers before and after each of your commits to check for any regressions.
 
   (These instructions are for Linux)
 * In the `cube` directory, run:
