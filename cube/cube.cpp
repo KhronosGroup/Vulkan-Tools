@@ -899,6 +899,12 @@ void Demo::init(int argc, char **argv) {
     presentMode = vk::PresentModeKHR::eFifo;
     frameCount = UINT32_MAX;
     use_xlib = false;
+    
+#if defined(VK_USE_PLATFORM_MACOS_MVK)
+    // MoltenVK may not allow host coherent mapping to linear tiled images
+    // Force the use of a staging buffer to be safe
+    use_staging_buffer = true;
+#endif
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
