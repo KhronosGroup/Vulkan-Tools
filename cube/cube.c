@@ -3688,6 +3688,12 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     memset(demo, 0, sizeof(*demo));
     demo->presentMode = VK_PRESENT_MODE_FIFO_KHR;
     demo->frameCount = INT32_MAX;
+    
+#if defined(VK_USE_PLATFORM_MACOS_MVK)
+    // MoltenVK may not allow host coherent mapping to linear tiled images
+    // Force the use of a staging buffer to be safe
+    demo->use_staging_buffer = true;
+#endif
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
