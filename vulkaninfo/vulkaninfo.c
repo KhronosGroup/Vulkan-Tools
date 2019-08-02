@@ -1104,7 +1104,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceHostQueryResetFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceHostQueryResetFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3388,6 +3390,24 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\tdescriptorBindingVariableDescriptorCount = %" PRIuLEAST32 "\n",
                            indexing_features->descriptorBindingVariableDescriptorCount);
                     printf("\truntimeDescriptorArray = %" PRIuLEAST32 "\n", indexing_features->runtimeDescriptorArray);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME,
+                                                            gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR *standard_features =
+                    (VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR *)structure;
+                if (html_output) {
+                    fprintf(out,
+                            "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>uniformBufferStandardLayout = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            standard_features->uniformBufferStandardLayout);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR:\n");
+                    printf("=======================================================\n");
+                    printf("\tuniformBufferStandardLayout = %" PRIuLEAST32 "\n", standard_features->uniformBufferStandardLayout);
                 }
             }
             place = structure->pNext;
@@ -5704,8 +5724,8 @@ static void AppGroupDump(const VkPhysicalDeviceGroupProperties *group, const uin
         VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
                                                                   .pNext = NULL};
 
-        // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later output
-        // to user.
+        // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
+        // output to user.
         PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR =
             (PFN_vkGetDeviceGroupPresentCapabilitiesKHR)vkGetInstanceProcAddr(inst->instance,
                                                                               "vkGetDeviceGroupPresentCapabilitiesKHR");
@@ -5755,9 +5775,9 @@ static void AppGroupDump(const VkPhysicalDeviceGroupProperties *group, const uin
             if (group_capabilities.modes & VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR)
                 fprintf(out, "\t\t\t\t\t\t<details><summary>VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR</summary></details>\n");
             if (group_capabilities.modes & VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR)
-                fprintf(
-                    out,
-                    "\t\t\t\t\t\t<details><summary>VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR</summary></details>\n");
+                fprintf(out,
+                        "\t\t\t\t\t\t<details><summary>VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR</summary></"
+                        "details>\n");
             fprintf(out, "\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
             printf("\t\tPresent modes:\n");
