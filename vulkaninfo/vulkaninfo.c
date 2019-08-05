@@ -4637,6 +4637,8 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>pciFunction = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             pci_bus_properties->pciFunction);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDevicePCIBusInfoProperties\n");
                     printf("====================================\n");
