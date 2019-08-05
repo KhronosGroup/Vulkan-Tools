@@ -1106,7 +1106,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceHostQueryResetFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3408,6 +3410,35 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR:\n");
                     printf("=======================================================\n");
                     printf("\tuniformBufferStandardLayout = %" PRIuLEAST32 "\n", standard_features->uniformBufferStandardLayout);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT *fragment_shader_features =
+                    (VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>fragmentShaderPixelInterlock    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            fragment_shader_features->fragmentShaderPixelInterlock);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>fragmentShaderSampleInterlock    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            fragment_shader_features->fragmentShaderSampleInterlock);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>fragmentShaderShadingRateInterlock    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            fragment_shader_features->fragmentShaderShadingRateInterlock);
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT:\n");
+                    printf("===================================================\n");
+                    printf("\tfragmentShaderPixelInterlock = %" PRIuLEAST32 "\n",
+                           fragment_shader_features->fragmentShaderPixelInterlock);
+                    printf("\tfragmentShaderSampleInterlock = %" PRIuLEAST32 "\n",
+                           fragment_shader_features->fragmentShaderSampleInterlock);
+                    printf("\tfragmentShaderShadingRateInterlock = %" PRIuLEAST32 "\n",
+                           fragment_shader_features->fragmentShaderShadingRateInterlock);
                 }
             }
             place = structure->pNext;
