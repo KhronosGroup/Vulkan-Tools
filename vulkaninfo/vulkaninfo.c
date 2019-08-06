@@ -4270,6 +4270,20 @@ static void AppDumpLimits(const VkPhysicalDeviceLimits *limits, FILE *out) {
     }
 }
 
+static const char *VkShaderFloatControlsIndependenceString(VkShaderFloatControlsIndependenceKHR indep) {
+    switch (indep) {
+#define STR(r) \
+    case r:    \
+        return #r
+    STR(VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY_KHR);
+    STR(VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL_KHR);
+    STR(VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE_KHR);
+#undef STR
+    default:
+        return "UNKNOWN_SHADER_FLOAT_CONTROLS_INDEPENDENCE";
+    }
+}
+
 static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
     VkPhysicalDeviceProperties props;
 
@@ -4622,13 +4636,13 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceFloatControlsProperties</summary>\n");
                     fprintf(out,
-                            "\t\t\t\t\t\t<details><summary>separateDenormSettings       = <span class='val'>%" PRIuLEAST32
+                            "\t\t\t\t\t\t<details><summary>denormBehaviorIndependence   = <span class='val'>%s"
                             "</span></summary></details>\n",
-                            float_control_props->separateDenormSettings);
+                            VkShaderFloatControlsIndependenceString(float_control_props->denormBehaviorIndependence));
                     fprintf(out,
-                            "\t\t\t\t\t\t<details><summary>separateRoundingModeSettings = <span class='val'>%" PRIuLEAST32
+                            "\t\t\t\t\t\t<details><summary>roundingModeIndependence     = <span class='val'>%s"
                             "</span></summary></details>\n",
-                            float_control_props->separateRoundingModeSettings);
+                            VkShaderFloatControlsIndependenceString(float_control_props->roundingModeIndependence));
                     fprintf(out,
                             "\t\t\t\t\t\t<details><summary>shaderSignedZeroInfNanPreserveFloat16 = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
@@ -4693,9 +4707,10 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceFloatControlsProperties:\n");
                     printf("========================================\n");
-                    printf("\tseparateDenormSettings       = %" PRIuLEAST32 "\n", float_control_props->separateDenormSettings);
-                    printf("\tseparateRoundingModeSettings = %" PRIuLEAST32 "\n",
-                           float_control_props->separateRoundingModeSettings);
+                    printf("\tdenormBehaviorIndependence   = %s\n",
+                           VkShaderFloatControlsIndependenceString(float_control_props->denormBehaviorIndependence));
+                    printf("\troundingModeIndependence     = %s\n",
+                           VkShaderFloatControlsIndependenceString(float_control_props->roundingModeIndependence));
                     printf("\tshaderSignedZeroInfNanPreserveFloat16 = %" PRIuLEAST32 "\n",
                            float_control_props->shaderSignedZeroInfNanPreserveFloat16);
                     printf("\tshaderSignedZeroInfNanPreserveFloat32 = %" PRIuLEAST32 "\n",
