@@ -1114,7 +1114,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceImagelessFramebufferFeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3480,6 +3482,24 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT:\n");
                     printf("================================================\n");
                     printf("\ttexelBufferAlignment = %" PRIuLEAST32 "\n", texel_buffer_alignment->texelBufferAlignment);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME,
+                                                            gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT *shader_helper =
+                    (VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out,
+                            "\t\t\t\t\t<details><summary>VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>shaderDemoteToHelperInvocation    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            shader_helper->shaderDemoteToHelperInvocation);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT:\n");
+                    printf("===================================================\n");
+                    printf("\tshaderDemoteToHelperInvocation = %" PRIuLEAST32 "\n", shader_helper->shaderDemoteToHelperInvocation);
                 }
             }
             place = structure->pNext;
