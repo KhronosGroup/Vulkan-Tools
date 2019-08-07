@@ -980,7 +980,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceDescriptorIndexingPropertiesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceDepthStencilResolvePropertiesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceDepthStencilResolvePropertiesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -1110,7 +1112,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR,
-             .mem_size = sizeof(VkPhysicalDeviceImagelessFramebufferFeaturesKHR)}};
+             .mem_size = sizeof(VkPhysicalDeviceImagelessFramebufferFeaturesKHR)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3460,6 +3464,23 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("================================================\n");
                     printf("\timagelessFramebuffer = %" PRIuLEAST32 "\n", imageless_framebuffer->imagelessFramebuffer);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT *texel_buffer_alignment =
+                    (VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>texelBufferAlignment = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            texel_buffer_alignment->texelBufferAlignment);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT:\n");
+                    printf("=======================================================\n");
+                    printf("\ttexelBufferAlignment = %" PRIuLEAST32 "\n", texel_buffer_alignment->texelBufferAlignment);
+                }
             }
             place = structure->pNext;
         }
@@ -4496,10 +4517,10 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                                 (uint32_t)id_props->deviceLUID[2], (uint32_t)id_props->deviceLUID[3],
                                 (uint32_t)id_props->deviceLUID[4], (uint32_t)id_props->deviceLUID[5],
                                 (uint32_t)id_props->deviceLUID[6], (uint32_t)id_props->deviceLUID[7]);
-                        fprintf(
-                            out,
-                            "\t\t\t\t\t\t<details><summary>deviceNodeMask  = <span class='val'>0x%08x</span></summary></details>\n",
-                            id_props->deviceNodeMask);
+                        fprintf(out,
+                                "\t\t\t\t\t\t<details><summary>deviceNodeMask  = <span "
+                                "class='val'>0x%08x</span></summary></details>\n",
+                                id_props->deviceNodeMask);
                     }
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
@@ -4725,56 +4746,46 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     (VkPhysicalDeviceTransformFeedbackPropertiesEXT *)structure;
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceTransformFeedbackProperties</summary>\n");
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreams                = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackStreams);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBuffers                = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackBuffers);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferSize             = <span class='val'>%" PRIuLEAST64
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackBufferSize);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreamDataSize         = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackStreamDataSize);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataSize         = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackBufferDataSize);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataStride       = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->maxTransformFeedbackBufferDataStride);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>transformFeedbackQueries                   = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->transformFeedbackQueries);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>transformFeedbackStreamsLinesTriangles     = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->transformFeedbackStreamsLinesTriangles);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>transformFeedbackRasterizationStreamSelect = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->transformFeedbackRasterizationStreamSelect);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t<details><summary>transformFeedbackDraw                      = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        transform_feedback_properties->transformFeedbackDraw);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreams                = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackStreams);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBuffers                = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackBuffers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferSize             = <span "
+                            "class='val'>%" PRIuLEAST64 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackBufferSize);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackStreamDataSize         = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackStreamDataSize);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataSize         = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackBufferDataSize);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>maxTransformFeedbackBufferDataStride       = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->maxTransformFeedbackBufferDataStride);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>transformFeedbackQueries                   = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->transformFeedbackQueries);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>transformFeedbackStreamsLinesTriangles     = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->transformFeedbackStreamsLinesTriangles);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>transformFeedbackRasterizationStreamSelect = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->transformFeedbackRasterizationStreamSelect);
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>transformFeedbackDraw                      = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            transform_feedback_properties->transformFeedbackDraw);
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceTransformFeedbackProperties\n");
@@ -4944,11 +4955,10 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     (VkPhysicalDeviceDescriptorIndexingPropertiesEXT *)structure;
                 if (html_output) {
                     fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceDescriptorIndexingProperties</summary>\n");
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t\t<details><summary>maxUpdateAfterBindDescriptorsInAllPools = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        indexing_properties->maxUpdateAfterBindDescriptorsInAllPools);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxUpdateAfterBindDescriptorsInAllPools = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxUpdateAfterBindDescriptorsInAllPools);
                     fprintf(out,
                             "\t\t\t\t\t\t\t<details><summary>shaderUniformBufferArrayNonUniformIndexingNative = <span "
                             "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
@@ -5005,11 +5015,10 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t\t<details><summary>maxPerStageUpdateAfterBindResources = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
                             indexing_properties->maxPerStageUpdateAfterBindResources);
-                    fprintf(
-                        out,
-                        "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindSamplers = <span class='val'>%" PRIuLEAST32
-                        "</span></summary></details>\n",
-                        indexing_properties->maxDescriptorSetUpdateAfterBindSamplers);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindSamplers = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            indexing_properties->maxDescriptorSetUpdateAfterBindSamplers);
                     fprintf(out,
                             "\t\t\t\t\t\t\t<details><summary>maxDescriptorSetUpdateAfterBindUniformBuffers = <span "
                             "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
@@ -5087,6 +5096,42 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                            indexing_properties->maxDescriptorSetUpdateAfterBindStorageImages);
                     printf("\tmaxDescriptorSetUpdateAfterBindInputAttachments = %" PRIuLEAST32 "\n",
                            indexing_properties->maxDescriptorSetUpdateAfterBindInputAttachments);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT *texel_buffer_alignment =
+                    (VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>storageTexelBufferOffsetAlignmentBytes = <span "
+                            "class='val'>%" PRIuLEAST64 "</span></summary></details>\n",
+                            texel_buffer_alignment->storageTexelBufferOffsetAlignmentBytes);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>storageTexelBufferOffsetSingleTexelAlignment = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            texel_buffer_alignment->storageTexelBufferOffsetSingleTexelAlignment);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>uniformTexelBufferOffsetAlignmentBytes = <span "
+                            "class='val'>%" PRIuLEAST64 "</span></summary></details>\n",
+                            texel_buffer_alignment->uniformTexelBufferOffsetAlignmentBytes);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>uniformTexelBufferOffsetSingleTexelAlignment = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            texel_buffer_alignment->uniformTexelBufferOffsetSingleTexelAlignment);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT\n");
+                    printf("=================================================\n");
+                    printf("\t\tstorageTexelBufferOffsetAlignmentBytes = %" PRIuLEAST64 "\n",
+                           texel_buffer_alignment->storageTexelBufferOffsetAlignmentBytes);
+                    printf("\t\tstorageTexelBufferOffsetSingleTexelAlignment = %" PRIuLEAST32 "\n",
+                           texel_buffer_alignment->storageTexelBufferOffsetSingleTexelAlignment);
+                    printf("\t\tuniformTexelBufferOffsetAlignmentBytes = %" PRIuLEAST64 "\n",
+                           texel_buffer_alignment->uniformTexelBufferOffsetAlignmentBytes);
+                    printf("\t\tuniformTexelBufferOffsetSingleTexelAlignment = %" PRIuLEAST32 "\n",
+                           texel_buffer_alignment->uniformTexelBufferOffsetSingleTexelAlignment);
                 }
             }
             place = structure->pNext;
