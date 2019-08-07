@@ -1108,7 +1108,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR,
+             .mem_size = sizeof(VkPhysicalDeviceImagelessFramebufferFeaturesKHR)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3439,6 +3441,24 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                            fragment_shader_features->fragmentShaderSampleInterlock);
                     printf("\tfragmentShaderShadingRateInterlock = %" PRIuLEAST32 "\n",
                            fragment_shader_features->fragmentShaderShadingRateInterlock);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME,
+                                                            gpu->device_extensions, gpu->device_extension_count)) {
+                VkPhysicalDeviceImagelessFramebufferFeaturesKHR *imageless_framebuffer =
+                    (VkPhysicalDeviceImagelessFramebufferFeaturesKHR *)structure;
+                if (html_output) {
+                    fprintf(out,
+                            "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceImagelessFramebufferFeaturesKHR</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>imagelessFramebuffer = <span class='val'>%" PRIuLEAST32
+                            "</span></summary></details>\n",
+                            imageless_framebuffer->imagelessFramebuffer);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceImagelessFramebufferFeaturesKHR:\n");
+                    printf("================================================\n");
+                    printf("\timagelessFramebuffer = %" PRIuLEAST32 "\n", imageless_framebuffer->imagelessFramebuffer);
                 }
             }
             place = structure->pNext;
