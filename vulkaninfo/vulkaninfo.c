@@ -4918,35 +4918,35 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceDepthStencilResolveProperties\n");
                     printf("============================================\n");
-                    printf("\t\tsupportedDepthResolveModes:\n");
+                    printf("\tsupportedDepthResolveModes:\n");
                     if (depth_stencil_resolve_properties->supportedDepthResolveModes == 0) {
-                        printf("\t\t\tVK_RESOLVE_MODE_NONE_KHR\n");
+                        printf("\t\tVK_RESOLVE_MODE_NONE_KHR\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_AVERAGE_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_AVERAGE_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_MIN_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_MIN_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedDepthResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_MAX_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_MAX_BIT_KHR\n");
                     }
-                    printf("\t\tsupportedStencilResolveModes:\n");
+                    printf("\tsupportedStencilResolveModes:\n");
                     if (depth_stencil_resolve_properties->supportedStencilResolveModes == 0) {
-                        printf("\t\t\tVK_RESOLVE_MODE_NONE_KHR\n");
+                        printf("\t\tVK_RESOLVE_MODE_NONE_KHR\n");
                     } else {
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_AVERAGE_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_AVERAGE_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_AVERAGE_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MIN_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_MIN_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_MIN_BIT_KHR\n");
                         if (depth_stencil_resolve_properties->supportedStencilResolveModes & VK_RESOLVE_MODE_MAX_BIT_KHR)
-                            printf("\t\t\tVK_RESOLVE_MODE_MAX_BIT_KHR\n");
+                            printf("\t\tVK_RESOLVE_MODE_MAX_BIT_KHR\n");
                     }
-                    printf("\t\tindependentResolveNone = %" PRIuLEAST32 "\n",
+                    printf("\tindependentResolveNone = %" PRIuLEAST32 "\n",
                            depth_stencil_resolve_properties->independentResolveNone);
-                    printf("\t\tindependentResolve     = %" PRIuLEAST32 "\n", depth_stencil_resolve_properties->independentResolve);
+                    printf("\tindependentResolve     = %" PRIuLEAST32 "\n", depth_stencil_resolve_properties->independentResolve);
                 }
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT &&
                        CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME, gpu->device_extensions,
