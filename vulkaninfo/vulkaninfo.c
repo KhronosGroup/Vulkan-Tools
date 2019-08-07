@@ -3432,6 +3432,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                             "\t\t\t\t\t\t<details><summary>fragmentShaderShadingRateInterlock    = <span "
                             "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
                             fragment_shader_features->fragmentShaderShadingRateInterlock);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT:\n");
                     printf("===================================================\n");
@@ -3443,13 +3444,12 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                            fragment_shader_features->fragmentShaderShadingRateInterlock);
                 }
             } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR &&
-                       CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME,
-                                                            gpu->device_extensions, gpu->device_extension_count)) {
+                       CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
                 VkPhysicalDeviceImagelessFramebufferFeaturesKHR *imageless_framebuffer =
                     (VkPhysicalDeviceImagelessFramebufferFeaturesKHR *)structure;
                 if (html_output) {
-                    fprintf(out,
-                            "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceImagelessFramebufferFeaturesKHR</summary>\n");
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceImagelessFramebufferFeaturesKHR</summary>\n");
                     fprintf(out,
                             "\t\t\t\t\t\t<details><summary>imagelessFramebuffer = <span class='val'>%" PRIuLEAST32
                             "</span></summary></details>\n",
