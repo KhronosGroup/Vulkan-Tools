@@ -3478,7 +3478,7 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     fprintf(out, "\t\t\t\t\t</details>\n");
                 } else if (human_readable_output) {
                     printf("\nVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT:\n");
-                    printf("=======================================================\n");
+                    printf("================================================\n");
                     printf("\ttexelBufferAlignment = %" PRIuLEAST32 "\n", texel_buffer_alignment->texelBufferAlignment);
                 }
             }
