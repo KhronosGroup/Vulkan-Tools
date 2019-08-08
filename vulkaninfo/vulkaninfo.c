@@ -997,7 +997,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR,
              .mem_size = sizeof(VkPhysicalDeviceDepthStencilResolvePropertiesKHR)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceSubgroupSizeControlPropertiesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -5171,15 +5173,46 @@ static void AppGpuDumpProps(const struct AppGpu *gpu, FILE *out) {
                     printf("\t\tuniformTexelBufferOffsetSingleTexelAlignment = %" PRIuLEAST32 "\n",
                            texel_buffer_alignment->uniformTexelBufferOffsetSingleTexelAlignment);
                 }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceSubgroupSizeControlPropertiesEXT *subgroup_properties =
+                    (VkPhysicalDeviceSubgroupSizeControlPropertiesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\n\t\t\t\t\t<details><summary>VkPhysicalDeviceSubgroupSizeControlPropertiesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>minSubgroupSize = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            subgroup_properties->minSubgroupSize);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxSubgroupSize = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            subgroup_properties->maxSubgroupSize);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>maxComputeWorkgroupSubgroups = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            subgroup_properties->maxComputeWorkgroupSubgroups);
+                    fprintf(out,
+                            "\t\t\t\t\t\t\t<details><summary>requiredSubgroupSizeStages = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            subgroup_properties->requiredSubgroupSizeStages);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceSubgroupSizeControlPropertiesEXT\n");
+                    printf("=================================================\n");
+                    printf("\tminSubgroupSize = %" PRIuLEAST32 "\n", subgroup_properties->minSubgroupSize);
+                    printf("\tmaxSubgroupSize = %" PRIuLEAST32 "\n", subgroup_properties->maxSubgroupSize);
+                    printf("\tmaxComputeWorkgroupSubgroups = %" PRIuLEAST32 "\n",
+                           subgroup_properties->maxComputeWorkgroupSubgroups);
+                    printf("\trequiredSubgroupSizeStages = %" PRIuLEAST32 "\n", subgroup_properties->requiredSubgroupSizeStages);
+                }
             }
             place = structure->pNext;
         }
     }
-
     fflush(out);
     fflush(stdout);
 }
-
 // Compare function for sorting extensions by name
 static int CompareExtensionName(const void *a, const void *b) {
     const char *this = ((const VkExtensionProperties *)a)->extensionName;
@@ -5860,8 +5893,8 @@ static void AppGroupDump(const VkPhysicalDeviceGroupProperties *group, const uin
         VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
                                                                   .pNext = NULL};
 
-        // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
-        // output to user.
+        // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for
+        // later output to user.
         PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR =
             (PFN_vkGetDeviceGroupPresentCapabilitiesKHR)vkGetInstanceProcAddr(inst->instance,
                                                                               "vkGetDeviceGroupPresentCapabilitiesKHR");
