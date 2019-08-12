@@ -115,6 +115,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_draw_parameters", 1},
     {"VK_EXT_shader_subgroup_ballot", 1},
     {"VK_EXT_shader_subgroup_vote", 1},
+    {"VK_EXT_texture_compression_astc_hdr", 1},
     {"VK_EXT_astc_decode_mode", 1},
     {"VK_KHR_maintenance1", 2},
     {"VK_KHR_external_memory", 1},
@@ -188,6 +189,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_host", 1},
     {"VK_AMD_buffer_marker", 1},
     {"VK_KHR_shader_atomic_int64", 1},
+    {"VK_AMD_pipeline_compiler_control", 1},
     {"VK_EXT_calibrated_timestamps", 1},
     {"VK_AMD_shader_core_properties", 1},
     {"VK_AMD_memory_overallocation_behavior", 1},
@@ -195,7 +197,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_GGP_frame_token", 1},
     {"VK_EXT_pipeline_creation_feedback", 1},
     {"VK_KHR_driver_properties", 1},
-    {"VK_KHR_shader_float_controls", 1},
+    {"VK_KHR_shader_float_controls", 4},
     {"VK_NV_shader_subgroup_partitioned", 1},
     {"VK_KHR_depth_stencil_resolve", 1},
     {"VK_KHR_swapchain_mutable_format", 1},
@@ -214,6 +216,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_scalar_block_layout", 1},
     {"VK_GOOGLE_hlsl_functionality1", 1},
     {"VK_GOOGLE_decorate_string", 1},
+    {"VK_EXT_subgroup_size_control", 2},
+    {"VK_AMD_shader_core_properties2", 1},
     {"VK_EXT_memory_budget", 1},
     {"VK_EXT_memory_priority", 1},
     {"VK_NV_dedicated_allocation_image_aliasing", 1},
@@ -225,7 +229,10 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_ycbcr_image_arrays", 1},
     {"VK_KHR_uniform_buffer_standard_layout", 1},
     {"VK_EXT_full_screen_exclusive", 3},
+    {"VK_EXT_line_rasterization", 1},
     {"VK_EXT_host_query_reset", 1},
+    {"VK_EXT_index_type_uint8", 1},
+    {"VK_KHR_pipeline_executable_properties", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
 };
@@ -1712,6 +1719,25 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutablePropertiesKHR(
+    VkDevice                                    device,
+    const VkPipelineInfoKHR*                    pPipelineInfo,
+    uint32_t*                                   pExecutableCount,
+    VkPipelineExecutablePropertiesKHR*          pProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableStatisticsKHR(
+    VkDevice                                    device,
+    const VkPipelineExecutableInfoKHR*          pExecutableInfo,
+    uint32_t*                                   pStatisticCount,
+    VkPipelineExecutableStatisticKHR*           pStatistics);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentationsKHR(
+    VkDevice                                    device,
+    const VkPipelineExecutableInfoKHR*          pExecutableInfo,
+    uint32_t*                                   pInternalRepresentationCount,
+    VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
     VkInstance                                  instance,
     const VkDebugReportCallbackCreateInfoEXT*   pCreateInfo,
@@ -1888,6 +1914,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateViSurfaceNN(
     const VkAllocationCallbacks*                pAllocator,
     VkSurfaceKHR*                               pSurface);
 #endif /* VK_USE_PLATFORM_VI_NN */
+
 
 
 
@@ -2304,6 +2331,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarkerAMD(
     uint32_t                                    marker);
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsEXT(
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pTimeDomainCount,
@@ -2438,6 +2466,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(
 
 
 
+
+
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(
     VkDevice                                    device,
     const VkBufferDeviceAddressInfoEXT*         pInfo);
@@ -2488,11 +2518,18 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateHeadlessSurfaceEXT(
     VkSurfaceKHR*                               pSurface);
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern);
+
+
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount);
+
 
 
 
@@ -2777,6 +2814,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDescriptorSetLayoutSupportKHR", (void*)GetDescriptorSetLayoutSupportKHR},
     {"vkCmdDrawIndirectCountKHR", (void*)CmdDrawIndirectCountKHR},
     {"vkCmdDrawIndexedIndirectCountKHR", (void*)CmdDrawIndexedIndirectCountKHR},
+    {"vkGetPipelineExecutablePropertiesKHR", (void*)GetPipelineExecutablePropertiesKHR},
+    {"vkGetPipelineExecutableStatisticsKHR", (void*)GetPipelineExecutableStatisticsKHR},
+    {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
@@ -2920,6 +2960,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDeviceGroupSurfacePresentModes2EXT", (void*)GetDeviceGroupSurfacePresentModes2EXT},
 #endif
     {"vkCreateHeadlessSurfaceEXT", (void*)CreateHeadlessSurfaceEXT},
+    {"vkCmdSetLineStippleEXT", (void*)CmdSetLineStippleEXT},
     {"vkResetQueryPoolEXT", (void*)ResetQueryPoolEXT},
 };
 
