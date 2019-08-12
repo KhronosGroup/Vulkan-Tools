@@ -2011,7 +2011,15 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
 
             struct pNextChainBuildingBlockInfo sur_cap2_chain_info[] = {
                 {.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
-                 .mem_size = sizeof(VkSharedPresentSurfaceCapabilitiesKHR)}};
+                 .mem_size = sizeof(VkSharedPresentSurfaceCapabilitiesKHR)},
+                {.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR,
+                 .mem_size = sizeof(VkSurfaceProtectedCapabilitiesKHR)}
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+                ,
+                {.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT,
+                 .mem_size = sizeof(VkSurfaceCapabilitiesFullScreenExclusiveEXT)}
+#endif
+            };
 
             uint32_t sur_cap2_chain_info_len = ARRAY_SIZE(sur_cap2_chain_info);
 
@@ -2133,6 +2141,25 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                         printf("\tsupportsProtected = %" PRIuLEAST32 "\n", protected_surface_capabilities->supportsProtected);
                     }
                 }
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+                else if (work->sType == VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT &&
+                         CheckPhysicalDeviceExtensionIncluded(VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME, gpu->device_extensions,
+                                                              gpu->device_extension_count)) {
+                    VkSurfaceCapabilitiesFullScreenExclusiveEXT *full_screen_exclusive =
+                        (VkSurfaceCapabilitiesFullScreenExclusiveEXT *)place;
+                    if (html_output) {
+                        fprintf(out, "\t\t\t\t\t\t<details><summary>VkSurfaceCapabilitiesFullScreenExclusiveEXT</summary>\n");
+                        fprintf(out,
+                                "\t\t\t\t\t\t\t<details><summary>fullScreenExclusive = <span class='val'>%" PRIuLEAST32
+                                "</span></summary></details>\n",
+                                full_screen_exclusive->fullScreenExclusiveSupported);
+                        fprintf(out, "\t\t\t\t\t\t</details>\n");
+                    } else if (human_readable_output) {
+                        printf("VkSurfaceCapabilitiesFullScreenExclusiveEXT\n");
+                        printf("\tfullScreenExclusive = %" PRIuLEAST32 "\n", full_screen_exclusive->fullScreenExclusiveSupported);
+                    }
+                }
+#endif
                 place = work->pNext;
             }
             freepNextChain(surface_capabilities2.pNext);
