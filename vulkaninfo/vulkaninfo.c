@@ -1266,6 +1266,7 @@ static void AppGpuDestroy(struct AppGpu *gpu) {
         free(gpu->queue_props2);
 
         freepNextChain(gpu->props2.pNext);
+        freepNextChain(gpu->memory_props2.pNext);
     }
 }
 
@@ -2115,6 +2116,7 @@ static void AppDumpSurfaceCapabilities(struct AppInstance *inst, struct AppGpu *
                 }
                 place = work->pNext;
             }
+            freepNextChain(surface_capabilities2.pNext);
         }
         if (html_output) {
             fprintf(out, "\t\t\t\t\t</details>\n");
