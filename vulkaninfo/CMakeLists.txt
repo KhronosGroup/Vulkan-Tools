@@ -1,6 +1,6 @@
 # ~~~
-# Copyright (c) 2018 Valve Corporation
-# Copyright (c) 2018 LunarG, Inc.
+# Copyright (c) 2018-2019 Valve Corporation
+# Copyright (c) 2018-2019 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,35 @@
 
 # CMakeLists.txt file for building Vulkaninfo
 
+find_package(PythonInterp 3 QUIET)
+set (PYTHON_CMD ${PYTHON_EXECUTABLE})
+
+set(VKINFO_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(KVULKANTOOLS_SCRIPTS_DIR ${CMAKE_SOURCE_DIR}/scripts)
+
+if(PYTHONINTERP_FOUND)
+    add_custom_target(generate_vulkaninfo_hpp
+        COMMAND ${PYTHON_CMD} ${KVULKANTOOLS_SCRIPTS_DIR}/kvt_genvk.py -registry ${VulkanRegistry_DIR}/vk.xml -scripts ${VulkanRegistry_DIR} vulkaninfo.hpp
+        DEPENDS ${VulkanRegistry_DIR}/vk.xml ${VulkanRegistry_DIR}/generator.py ${KVULKANTOOLS_SCRIPTS_DIR}/vulkaninfo_generator.py ${KVULKANTOOLS_SCRIPTS_DIR}/kvt_genvk.py ${VulkanRegistry_DIR}/reg.py
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/vulkaninfo/generated
+        )
+    else()
+        message("WARNING: generate_vulkaninfo_hpp target requires python 3")
+endif()
+
 if(WIN32)
-    add_executable(vulkaninfo vulkaninfo.c vulkaninfo.rc)
+    add_executable(vulkaninfo vulkaninfo.cpp vulkaninfo.rc)
 elseif(APPLE)
     add_executable(vulkaninfo
-                   vulkaninfo.c
-                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+                   vulkaninfo.cpp
+                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.mm
                    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
 else()
-    add_executable(vulkaninfo vulkaninfo.c)
+    add_executable(vulkaninfo vulkaninfo.cpp)
 endif()
+
+target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo)
+target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo/generated)
 
 if(UNIX AND NOT APPLE) # i.e. Linux
     include(FindPkgConfig)
@@ -109,3 +128,4 @@ if(APPLE)
 else()
     install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
+

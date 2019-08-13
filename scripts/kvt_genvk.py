@@ -14,15 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse, cProfile, pdb, string, sys, time, os
+import argparse
+import cProfile
+import pdb
+import string
+import sys
+import time
+import os
 
 # Simple timer functions
 startTime = None
+
 
 def startTimer(timeit):
     global startTime
     if timeit:
         startTime = time.process_time()
+
 
 def endTimer(timeit, msg):
     global startTime
@@ -32,7 +40,9 @@ def endTimer(timeit, msg):
         startTime = None
 
 # Turn a list of strings into a regexp string matching exactly those strings
-def makeREstring(list, default = None):
+
+
+def makeREstring(list, default=None):
     if len(list) > 0 or default is None:
         return '^(' + '|'.join(list) + ')$'
     else:
@@ -43,6 +53,8 @@ def makeREstring(list, default = None):
 # parameters:
 #
 # args is an parsed argument object; see below for the fields that are used.
+
+
 def makeGenOpts(args):
     global genOpts
     genOpts = {}
@@ -70,14 +82,14 @@ def makeGenOpts(args):
 
     # Descriptive names for various regexp patterns used to select
     # versions and extensions
-    allFeatures     = allExtensions = '.*'
-    noFeatures      = noExtensions = None
+    allFeatures = allExtensions = '.*'
+    noFeatures = noExtensions = None
 
     # Turn lists of names/patterns into matching regular expressions
-    addExtensionsPat     = makeREstring(extensions, None)
-    removeExtensionsPat  = makeREstring(removeExtensions, None)
-    emitExtensionsPat    = makeREstring(emitExtensions, allExtensions)
-    featuresPat          = makeREstring(features, allFeatures)
+    addExtensionsPat = makeREstring(extensions, None)
+    removeExtensionsPat = makeREstring(removeExtensions, None)
+    emitExtensionsPat = makeREstring(emitExtensions, allExtensions)
+    featuresPat = makeREstring(features, allFeatures)
 
     # Copyright text prefixing all headers (list of strings).
     prefixStrings = [
@@ -116,78 +128,103 @@ def makeGenOpts(args):
 
     # Helper file generator options for typemap_helper.h
     genOpts['vk_typemap_helper.h'] = [
-          HelperFileOutputGenerator,
-          HelperFileOutputGeneratorOptions(
-            conventions       = conventions,
-            filename          = 'vk_typemap_helper.h',
-            directory         = directory,
-            apiname           = 'vulkan',
-            profile           = None,
-            versions          = featuresPat,
-            emitversions      = featuresPat,
-            defaultExtensions = 'vulkan',
-            addExtensions     = addExtensionsPat,
-            removeExtensions  = removeExtensionsPat,
-            emitExtensions    = emitExtensionsPat,
-            prefixText        = prefixStrings + vkPrefixStrings,
-            protectFeature    = False,
-            apicall           = 'VKAPI_ATTR ',
-            apientry          = 'VKAPI_CALL ',
-            apientryp         = 'VKAPI_PTR *',
-            alignFuncParam    = 48,
-            expandEnumerants  = False,
-            helper_file_type  = 'typemap_helper_header')
-        ]
+        HelperFileOutputGenerator,
+        HelperFileOutputGeneratorOptions(
+            conventions=conventions,
+            filename='vk_typemap_helper.h',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False,
+            helper_file_type='typemap_helper_header')
+    ]
 
     # Options for mock ICD header
     genOpts['mock_icd.h'] = [
-          MockICDOutputGenerator,
-          MockICDGeneratorOptions(
-            conventions       = conventions,
-            filename          = 'mock_icd.h',
-            directory         = directory,
-            apiname           = 'vulkan',
-            profile           = None,
-            versions          = featuresPat,
-            emitversions      = featuresPat,
-            defaultExtensions = 'vulkan',
-            addExtensions     = addExtensionsPat,
-            removeExtensions  = removeExtensionsPat,
-            emitExtensions    = emitExtensionsPat,
-            prefixText        = prefixStrings + vkPrefixStrings,
-            protectFeature    = False,
-            apicall           = 'VKAPI_ATTR ',
-            apientry          = 'VKAPI_CALL ',
-            apientryp         = 'VKAPI_PTR *',
-            alignFuncParam    = 48,
-            expandEnumerants  = False,
-            helper_file_type  = 'mock_icd_header')
-        ]
+        MockICDOutputGenerator,
+        MockICDGeneratorOptions(
+            conventions=conventions,
+            filename='mock_icd.h',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False,
+            helper_file_type='mock_icd_header')
+    ]
 
     # Options for mock ICD cpp
     genOpts['mock_icd.cpp'] = [
-          MockICDOutputGenerator,
-          MockICDGeneratorOptions(
-            conventions       = conventions,
-            filename          = 'mock_icd.cpp',
-            directory         = directory,
-            apiname           = 'vulkan',
-            profile           = None,
-            versions          = featuresPat,
-            emitversions      = featuresPat,
-            defaultExtensions = 'vulkan',
-            addExtensions     = addExtensionsPat,
-            removeExtensions  = removeExtensionsPat,
-            emitExtensions    = emitExtensionsPat,
-            prefixText        = prefixStrings + vkPrefixStrings,
-            protectFeature    = False,
-            apicall           = 'VKAPI_ATTR ',
-            apientry          = 'VKAPI_CALL ',
-            apientryp         = 'VKAPI_PTR *',
-            alignFuncParam    = 48,
-            expandEnumerants  = False,
-            helper_file_type  = 'mock_icd_source')
-        ]
+        MockICDOutputGenerator,
+        MockICDGeneratorOptions(
+            conventions=conventions,
+            filename='mock_icd.cpp',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False,
+            helper_file_type='mock_icd_source')
+    ]
+
+    # Options for vulkaninfo.hpp
+    genOpts['vulkaninfo.hpp'] = [
+        VulkanInfoGenerator,
+        VulkanInfoGeneratorOptions(
+            conventions=conventions,
+            filename='vulkaninfo.hpp',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False)
+    ]
+
 
 # Generate a target based on the options in the matching genOpts{} object.
 # This is encapsulated in a function so it can be profiled and/or timed.
@@ -210,12 +247,18 @@ def genTarget(args):
 
         if not args.quiet:
             write('* Building', options.filename, file=sys.stderr)
-            write('* options.versions          =', options.versions, file=sys.stderr)
-            write('* options.emitversions      =', options.emitversions, file=sys.stderr)
-            write('* options.defaultExtensions =', options.defaultExtensions, file=sys.stderr)
-            write('* options.addExtensions     =', options.addExtensions, file=sys.stderr)
-            write('* options.removeExtensions  =', options.removeExtensions, file=sys.stderr)
-            write('* options.emitExtensions    =', options.emitExtensions, file=sys.stderr)
+            write('* options.versions          =',
+                  options.versions, file=sys.stderr)
+            write('* options.emitversions      =',
+                  options.emitversions, file=sys.stderr)
+            write('* options.defaultExtensions =',
+                  options.defaultExtensions, file=sys.stderr)
+            write('* options.addExtensions     =',
+                  options.addExtensions, file=sys.stderr)
+            write('* options.removeExtensions  =',
+                  options.removeExtensions, file=sys.stderr)
+            write('* options.emitExtensions    =',
+                  options.emitExtensions, file=sys.stderr)
 
         startTimer(args.time)
         gen = createGenerator(errFile=errWarn,
@@ -230,6 +273,7 @@ def genTarget(args):
     else:
         write('No generator options for unknown target:',
               args.target, file=sys.stderr)
+
 
 # -feature name
 # -extension name
@@ -305,8 +349,10 @@ if __name__ == '__main__':
     # Generator Modifications
     from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
     from vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
+    from vulkaninfo_generator import VulkanInfoGenerator, VulkanInfoGeneratorOptions
     # Temporary workaround for vkconventions python2 compatibility
-    import abc; abc.ABC = abc.ABCMeta('ABC', (object,), {})
+    import abc
+    abc.ABC = abc.ABCMeta('ABC', (object,), {})
     from vkconventions import VulkanConventions
 
     # This splits arguments which are space-separated lists
@@ -332,7 +378,7 @@ if __name__ == '__main__':
 
     if (args.dump):
         write('* Dumping registry to regdump.txt', file=sys.stderr)
-        reg.dumpReg(filehandle = open('regdump.txt', 'w', encoding='utf-8'))
+        reg.dumpReg(filehandle=open('regdump.txt', 'w', encoding='utf-8'))
 
     # create error/warning & diagnostic files
     if (args.errfile):
@@ -348,7 +394,8 @@ if __name__ == '__main__':
     if (args.debug):
         pdb.run('genTarget(args)')
     elif (args.profile):
-        import cProfile, pstats
+        import cProfile
+        import pstats
         cProfile.run('genTarget(args)', 'profile.txt')
         p = pstats.Stats('profile.txt')
         p.strip_dirs().sort_stats('time').print_stats(50)
