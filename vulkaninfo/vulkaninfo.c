@@ -1133,7 +1133,9 @@ static void AppGpuInit(struct AppGpu *gpu, struct AppInstance *inst, uint32_t id
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
              .mem_size = sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)},
             {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT,
-             .mem_size = sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)}};
+             .mem_size = sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)},
+            {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
+             .mem_size = sizeof(VkPhysicalDeviceIndexTypeUint8FeaturesEXT)}};
 
         uint32_t chain_info_len = ARRAY_SIZE(chain_info);
 
@@ -3519,6 +3521,23 @@ static void AppGpuDumpFeatures(const struct AppGpu *gpu, FILE *out) {
                     printf("\nVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT:\n");
                     printf("===================================================\n");
                     printf("\tshaderDemoteToHelperInvocation = %" PRIuLEAST32 "\n", shader_helper->shaderDemoteToHelperInvocation);
+                }
+            } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT &&
+                       CheckPhysicalDeviceExtensionIncluded(VK_EXT_INDEX_TYPE_UINT8_EXTENSION_NAME, gpu->device_extensions,
+                                                            gpu->device_extension_count)) {
+                VkPhysicalDeviceIndexTypeUint8FeaturesEXT *index_type_uint8_features =
+                    (VkPhysicalDeviceIndexTypeUint8FeaturesEXT *)structure;
+                if (html_output) {
+                    fprintf(out, "\t\t\t\t\t<details><summary>VkPhysicalDeviceIndexTypeUint8FeaturesEXT</summary>\n");
+                    fprintf(out,
+                            "\t\t\t\t\t\t<details><summary>indexTypeUint8    = <span "
+                            "class='val'>%" PRIuLEAST32 "</span></summary></details>\n",
+                            index_type_uint8_features->indexTypeUint8);
+                    fprintf(out, "\t\t\t\t\t</details>\n");
+                } else if (human_readable_output) {
+                    printf("\nVkPhysicalDeviceIndexTypeUint8FeaturesEXT:\n");
+                    printf("===================================================\n");
+                    printf("\tindexTypeUint8 = %" PRIuLEAST32 "\n", index_type_uint8_features->indexTypeUint8);
                 }
             }
             place = structure->pNext;
