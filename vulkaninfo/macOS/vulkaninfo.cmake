@@ -1,6 +1,6 @@
 # ~~~
-# Copyright (c) 2018 Valve Corporation
-# Copyright (c) 2018 LunarG, Inc.
+# Copyright (c) 2018-2019 Valve Corporation
+# Copyright (c) 2018-2019 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@
 # executable is a script that launches Terminal to see the output.
 add_executable(vulkaninfo-bundle
                MACOSX_BUNDLE
-               vulkaninfo.c
+               vulkaninfo.cpp
                ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.sh
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Resources/VulkanIcon.icns
-               ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.m
+               ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.mm
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
 set_target_properties(vulkaninfo-bundle
                       PROPERTIES OUTPUT_NAME
@@ -35,8 +35,9 @@ set_target_properties(vulkaninfo-bundle
                                  ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Info.plist)
 # We do this so vulkaninfo is linked to an individual library and NOT a framework.
 target_link_libraries(vulkaninfo-bundle ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
-target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
+target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${CMAKE_BINARY_DIR}/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
 add_dependencies(vulkaninfo-bundle MoltenVK_icd-staging-json)
+
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.sh PROPERTIES MACOSX_PACKAGE_LOCATION "MacOS")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/Resources/VulkanIcon.icns
                             PROPERTIES
