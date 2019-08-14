@@ -2,7 +2,7 @@ Source: vulkan-tools
 Priority: optional
 Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
 Build-Depends: debhelper (>= 9),
- cmake,
+ cmake (>= 3.10.2),
  glslang-tools,
  libvulkan-dev (>= __VKAPIVERSION__),
  libwayland-dev,
