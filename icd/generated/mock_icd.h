@@ -79,7 +79,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_FUCHSIA_imagepipe_surface", 1},
     {"VK_EXT_metal_surface", 1},
     {"VK_KHR_surface_protected_capabilities", 1},
-    {"VK_EXT_validation_features", 1},
+    {"VK_EXT_validation_features", 2},
     {"VK_EXT_headless_surface", 0},
 };
 // Map of device extension name to version
