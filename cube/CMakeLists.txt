@@ -103,6 +103,8 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR)
     elseif(CUBE_WSI_SELECTION STREQUAL "DISPLAY")
         add_definitions(-DVK_USE_PLATFORM_DISPLAY_KHR)
+    elseif(CUBE_WSI_SELECTION STREQUAL "HEADLESS")
+        add_definitions(-DVK_USE_PLATFORM_HEADLESS_EXT)
     else()
         message(FATAL_ERROR "Unrecognized value for CUBE_WSI_SELECTION: ${CUBE_WSI_SELECTION}")
     endif()

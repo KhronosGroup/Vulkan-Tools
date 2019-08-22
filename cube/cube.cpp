@@ -267,6 +267,8 @@ struct Demo {
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     vk::Result create_display_surface();
     void run_display();
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+    void run_headless();
 #endif
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
@@ -1101,7 +1103,11 @@ void Demo::init_vk() {
                 platformSurfaceExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
             }
-
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+            if (!strcmp(VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                platformSurfaceExtFound = 1;
+                extension_names[enabled_extension_count++] = VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME;
+            }
 #endif
             assert(enabled_extension_count < 64);
         }
@@ -1159,6 +1165,12 @@ void Demo::init_vk() {
                  "Vulkan installable client driver (ICD) installed?\nPlease "
                  "look at the Getting Started guide for additional "
                  "information.\n",
+                 "vkCreateInstance Failure");
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME
+                 " extension.\n\n"
+                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                 "Please look at the Getting Started guide for additional information.\n",
                  "vkCreateInstance Failure");
 #endif
     }
@@ -1309,6 +1321,16 @@ void Demo::init_vk_swapchain() {
     {
         auto result = create_display_surface();
         VERIFY(result == vk::Result::eSuccess);
+    }
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+    {
+        auto const createInfo = vk::HeadlessSurfaceCreateInfoEXT();
+
+        auto const createHeadlessSurface = (PFN_vkCreateHeadlessSurfaceEXT)inst.getProcAddr("vkCreateHeadlessSurfaceEXT");
+
+        auto result = createHeadlessSurface(inst, reinterpret_cast<const VkHeadlessSurfaceCreateInfoEXT *>(&createInfo), nullptr,
+                                            reinterpret_cast<VkSurfaceKHR *>(&surface));
+        VERIFY(result == VK_SUCCESS);
     }
 #endif
     // Iterate over each queue to learn whether it supports presenting:
@@ -2851,6 +2873,17 @@ void Demo::run_display() {
         }
     }
 }
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+void Demo::run_headless() {
+    while (!quit) {
+        draw();
+        curFrame++;
+
+        if (frameCount != UINT32_MAX && curFrame == frameCount) {
+            quit = true;
+        }
+    }
+}
 #endif
 
 #if _WIN32
@@ -3023,6 +3056,8 @@ int main(int argc, char **argv) {
     demo.run();
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     demo.run_display();
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+    demo.run_headless();
 #endif
 
     demo.cleanup();

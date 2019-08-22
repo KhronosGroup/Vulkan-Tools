@@ -2921,6 +2921,17 @@ static void demo_run_display(struct demo *demo) {
         }
     }
 }
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+static void demo_run_headless(struct demo *demo) {
+    while (!demo->quit) {
+        demo_draw(demo);
+        demo->curFrame++;
+
+        if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
+            demo->quit = true;
+        }
+    }
+}
 #endif
 
 /*
@@ -3039,6 +3050,11 @@ static void demo_init_vk(struct demo *demo) {
                 platformSurfaceExtFound = 1;
                 demo->extension_names[demo->enabled_extension_count++] = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
             }
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+            if (!strcmp(VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                platformSurfaceExtFound = 1;
+                demo->extension_names[demo->enabled_extension_count++] = VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME;
+            }
 #endif
             if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 if (demo->validate) {
@@ -3103,6 +3119,12 @@ static void demo_init_vk(struct demo *demo) {
                  "vkCreateInstance Failure");
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+                 " extension.\n\n"
+                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                 "Please look at the Getting Started guide for additional information.\n",
+                 "vkCreateInstance Failure");
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_HEADLESS_SURFACE_EXTENSION_NAME
                  " extension.\n\n"
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
@@ -3418,6 +3440,15 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     surface.pView = demo->window;
 
     err = vkCreateMacOSSurfaceMVK(demo->inst, &surface, NULL, &demo->surface);
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+    VkHeadlessSurfaceCreateInfoEXT createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
+    createInfo.pNext = NULL;
+    createInfo.flags = 0;
+    /* Currently loader does not export vkCreateHeadlessSurfaceEXT */
+    PFN_vkCreateHeadlessSurfaceEXT createHeadlessSurface =
+        (PFN_vkCreateHeadlessSurfaceEXT)vkGetInstanceProcAddr(demo->inst, "vkCreateHeadlessSurfaceEXT");
+    err = createHeadlessSurface(demo->inst, &createInfo, NULL, &demo->surface);
 #endif
     assert(!err);
 
@@ -4003,6 +4034,8 @@ int main(int argc, char **argv) {
     demo_run(&demo);
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     demo_run_display(&demo);
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
+    demo_run_headless(&demo);
 #endif
 
     demo_cleanup(&demo);
