@@ -17,7 +17,7 @@
       "sub_dir" : "Vulkan-Headers",
       "build_dir" : "Vulkan-Headers/build",
       "install_dir" : "Vulkan-Headers/build/install",
-      "commit" : "9eab96f40634c81ed53d54d2c9df126a445dfd56"
+      "commit" : "v1.1.121"
     },
     {
       "name" : "MoltenVK",
@@ -41,7 +41,7 @@
       "sub_dir" : "Vulkan-Loader",
       "build_dir" : "Vulkan-Loader/build",
       "install_dir" : "Vulkan-Loader/build/install",
-      "commit" : "v1.1.120",
+      "commit" : "v1.1.121",
       "deps" : [
         {
           "var_name" : "VULKAN_HEADERS_INSTALL_DIR",
