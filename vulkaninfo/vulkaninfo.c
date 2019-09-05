@@ -321,6 +321,33 @@ static const char *VkTilingString(const VkImageTiling tiling) {
     }
 }
 
+static const char *VkColorSpaceString(VkColorSpaceKHR cs) {
+    switch (cs) {
+#define STR(r)               \
+    case VK_COLOR_SPACE_##r: \
+        return #r
+        STR(SRGB_NONLINEAR_KHR);
+        STR(DISPLAY_P3_NONLINEAR_EXT);
+        STR(EXTENDED_SRGB_LINEAR_EXT);
+        STR(DISPLAY_P3_LINEAR_EXT);
+        STR(DCI_P3_NONLINEAR_EXT);
+        STR(BT709_LINEAR_EXT);
+        STR(BT709_NONLINEAR_EXT);
+        STR(BT2020_LINEAR_EXT);
+        STR(HDR10_ST2084_EXT);
+        STR(DOLBYVISION_EXT);
+        STR(HDR10_HLG_EXT);
+        STR(ADOBERGB_LINEAR_EXT);
+        STR(ADOBERGB_NONLINEAR_EXT);
+        STR(PASS_THROUGH_EXT);
+        STR(EXTENDED_SRGB_NONLINEAR_EXT);
+        STR(DISPLAY_NATIVE_AMD);
+#undef STR
+        default:
+            return "UNKNOWN_COLOR_SPACE";
+    }
+}
+
 static const char *VkFormatString(VkFormat fmt) {
     switch (fmt) {
 #define STR(r)          \
@@ -1587,20 +1614,29 @@ static int AppDumpSurfaceFormats(struct AppInstance *inst, struct AppGpu *gpu, V
     }
     for (uint32_t i = 0; i < format_count; ++i) {
         if (html_output) {
+            fprintf(out, "\t\t\t\t\t\t<details><summary>SurfaceFormat[%d]:</summary>\n", i);
             if (CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                                       gpu->inst->inst_extensions_count)) {
-                fprintf(out, "\t\t\t\t\t\t<details><summary><span class='type'>%s</span></summary></details>\n",
+                fprintf(out, "\t\t\t\t\t\t\t<details><summary>format = <span class='type'>%s</span></summary></details>\n",
                         VkFormatString(surf_formats2[i].surfaceFormat.format));
+                fprintf(out, "\t\t\t\t\t\t\t<details><summary>colorSpace = <span class='type'>%s</span></summary></details>\n",
+                        VkColorSpaceString(surf_formats2[i].surfaceFormat.colorSpace));
             } else {
-                fprintf(out, "\t\t\t\t\t\t<details><summary><span class='type'>%s</span></summary></details>\n",
+                fprintf(out, "\t\t\t\t\t\t\t<details><summary>format = <span class='type'>%s</span></summary></details>\n",
                         VkFormatString(surf_formats[i].format));
+                fprintf(out, "\t\t\t\t\t\t\t<details><summary>colorSpace = <span class='type'>%s</span></summary></details>\n",
+                        VkColorSpaceString(surf_formats[i].colorSpace));
             }
+            fprintf(out, "\t\t\t\t\t\t</details>\n");
         } else if (human_readable_output) {
+            printf("\tSurfaceFormats[%d]\n", i);
             if (CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, gpu->inst->inst_extensions,
                                       gpu->inst->inst_extensions_count)) {
-                printf("\t%s\n", VkFormatString(surf_formats2[i].surfaceFormat.format));
+                printf("\t\tformat = %s\n", VkFormatString(surf_formats2[i].surfaceFormat.format));
+                printf("\t\tcolorSpace = %s\n", VkColorSpaceString(surf_formats2[i].surfaceFormat.colorSpace));
             } else {
-                printf("\t%s\n", VkFormatString(surf_formats[i].format));
+                printf("\t\tformat = %s\n", VkFormatString(surf_formats[i].format));
+                printf("\t\tcolorSpace = %s\n", VkColorSpaceString(surf_formats[i].colorSpace));
             }
         }
     }
