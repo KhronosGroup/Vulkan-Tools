@@ -588,8 +588,9 @@ bool CanPresentEarlier(uint64_t earliest, uint64_t actual, uint64_t margin, uint
     return false;
 }
 
-// Forward declaration:
+// Forward declarations:
 static void demo_resize(struct demo *demo);
+static void demo_create_surface(struct demo *demo);
 
 static bool memory_type_from_properties(struct demo *demo, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
     // Search memtypes to find first index with those properties
@@ -1017,6 +1018,10 @@ static void demo_draw(struct demo *demo) {
             // demo->swapchain is not as optimal as it could be, but the platform's
             // presentation engine will still present the image correctly.
             break;
+        } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
+            vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
+            demo_create_surface(demo);
+            demo_resize(demo);
         } else {
             assert(!err);
         }
@@ -1159,6 +1164,10 @@ static void demo_draw(struct demo *demo) {
     } else if (err == VK_SUBOPTIMAL_KHR) {
         // demo->swapchain is not as optimal as it could be, but the platform's
         // presentation engine will still present the image correctly.
+    } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
+        vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
+        demo_create_surface(demo);
+        demo_resize(demo);
     } else {
         assert(!err);
     }
@@ -3352,7 +3361,7 @@ static void demo_create_device(struct demo *demo) {
     assert(!err);
 }
 
-static void demo_init_vk_swapchain(struct demo *demo) {
+static void demo_create_surface(struct demo *demo) {
     VkResult U_ASSERT_ONLY err;
 
 // Create a WSI surface for the window:
@@ -3420,6 +3429,12 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     err = vkCreateMacOSSurfaceMVK(demo->inst, &surface, NULL, &demo->surface);
 #endif
     assert(!err);
+}
+
+static void demo_init_vk_swapchain(struct demo *demo) {
+    VkResult U_ASSERT_ONLY err;
+
+    demo_create_surface(demo);
 
     // Iterate over each queue to learn whether it supports presenting:
     VkBool32 *supportsPresent = (VkBool32 *)malloc(demo->queue_family_count * sizeof(VkBool32));

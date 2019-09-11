@@ -242,6 +242,7 @@ struct Demo {
     void prepare_textures();
 
     void resize();
+    void create_surface();
     void set_image_layout(vk::Image, vk::ImageAspectFlags, vk::ImageLayout, vk::ImageLayout, vk::AccessFlags,
                           vk::PipelineStageFlags, vk::PipelineStageFlags);
     void update_data_buffer();
@@ -731,6 +732,10 @@ void Demo::draw() {
             // swapchain is not as optimal as it could be, but the platform's
             // presentation engine will still present the image correctly.
             break;
+        } else if (result == vk::Result::eErrorSurfaceLostKHR) {
+            inst.destroySurfaceKHR(surface, nullptr);
+            create_surface();
+            resize();
         } else {
             VERIFY(result == vk::Result::eSuccess);
         }
@@ -793,6 +798,10 @@ void Demo::draw() {
     } else if (result == vk::Result::eSuboptimalKHR) {
         // swapchain is not as optimal as it could be, but the platform's
         // presentation engine will still present the image correctly.
+    } else if (result == vk::Result::eErrorSurfaceLostKHR) {
+        inst.destroySurfaceKHR(surface, nullptr);
+        create_surface();
+        resize();
     } else {
         VERIFY(result == vk::Result::eSuccess);
     }
@@ -899,7 +908,7 @@ void Demo::init(int argc, char **argv) {
     presentMode = vk::PresentModeKHR::eFifo;
     frameCount = UINT32_MAX;
     use_xlib = false;
-    
+
 #if defined(VK_USE_PLATFORM_MACOS_MVK)
     // MoltenVK may not allow host coherent mapping to linear tiled images
     // Force the use of a staging buffer to be safe
@@ -1267,7 +1276,7 @@ void Demo::init_vk() {
     gpu.getFeatures(&physDevFeatures);
 }
 
-void Demo::init_vk_swapchain() {
+void Demo::create_surface() {
 // Create a WSI surface for the window:
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     {
@@ -1317,6 +1326,10 @@ void Demo::init_vk_swapchain() {
         VERIFY(result == vk::Result::eSuccess);
     }
 #endif
+}
+
+void Demo::init_vk_swapchain() {
+    create_surface();
     // Iterate over each queue to learn whether it supports presenting:
     std::unique_ptr<vk::Bool32[]> supportsPresent(new vk::Bool32[queue_family_count]);
     for (uint32_t i = 0; i < queue_family_count; i++) {
