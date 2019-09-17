@@ -2890,6 +2890,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountKHR(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutablePropertiesKHR(
     VkDevice                                    device,
     const VkPipelineInfoKHR*                    pPipelineInfo,
@@ -4135,6 +4136,7 @@ static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 

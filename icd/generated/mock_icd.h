@@ -61,7 +61,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_GGP_stream_descriptor_surface", 1},
     {"VK_NV_external_memory_capabilities", 1},
     {"VK_KHR_get_physical_device_properties2", 2},
-    {"VK_EXT_validation_flags", 1},
+    {"VK_EXT_validation_flags", 2},
     {"VK_NN_vi_surface", 1},
     {"VK_KHR_device_group_creation", 1},
     {"VK_KHR_external_memory_capabilities", 1},
@@ -80,7 +80,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_EXT_metal_surface", 1},
     {"VK_KHR_surface_protected_capabilities", 1},
     {"VK_EXT_validation_features", 2},
-    {"VK_EXT_headless_surface", 0},
+    {"VK_EXT_headless_surface", 1},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -185,6 +185,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_draw_indirect_count", 1},
     {"VK_EXT_filter_cubic", 2},
     {"VK_EXT_global_priority", 2},
+    {"VK_KHR_shader_subgroup_extended_types", 1},
     {"VK_KHR_8bit_storage", 1},
     {"VK_EXT_external_memory_host", 1},
     {"VK_AMD_buffer_marker", 1},
@@ -236,6 +237,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_pipeline_executable_properties", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
+    {"VK_GOOGLE_user_type", 1},
 };
 
 
@@ -1720,6 +1722,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountKHR(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutablePropertiesKHR(
     VkDevice                                    device,
     const VkPipelineInfoKHR*                    pPipelineInfo,
@@ -2531,6 +2534,7 @@ static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkQueryPool                                 queryPool,
     uint32_t                                    firstQuery,
     uint32_t                                    queryCount);
+
 
 
 
