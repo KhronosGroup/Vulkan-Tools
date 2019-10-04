@@ -599,9 +599,9 @@ def PrintChainIterator(listName, structures, checkExtLoc):
                 "("+s.name+"*)structure;\n"
             out += "            Dump" + s.name + \
                 "(p, \"" + s.name + "\", *props);\n"
+            out += "            p.AddNewline();\n"
             out += "        }\n"
         out += AddGuardFooter(s)
-    out += "        p.AddNewline();\n"
     out += "        place = structure->pNext;\n"
     out += "    }\n"
     out += "}\n"
