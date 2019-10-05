@@ -3636,12 +3636,16 @@ static const struct wl_seat_listener seat_listener = {
     seat_handle_capabilities,
 };
 
-static void registry_handle_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface,
-                                   uint32_t version UNUSED) {
+static void registry_handle_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface, uint32_t version) {
     struct demo *demo = data;
     // pickup wayland objects when they appear
     if (strcmp(interface, "wl_compositor") == 0) {
-        demo->compositor = wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+        uint32_t minVersion = version < 4 ? version : 4;
+        demo->compositor = wl_registry_bind(registry, id, &wl_compositor_interface, minVersion);
+        if (demo->VK_KHR_incremental_present_enabled && minVersion < 4) {
+            fprintf(stderr, "Wayland compositor doesn't support VK_KHR_incremental_present, disabling.\n");
+            demo->VK_KHR_incremental_present_enabled = false;
+        }
     } else if (strcmp(interface, "wl_shell") == 0) {
         demo->shell = wl_registry_bind(registry, id, &wl_shell_interface, 1);
     } else if (strcmp(interface, "wl_seat") == 0) {
