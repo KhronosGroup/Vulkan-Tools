@@ -750,5 +750,11 @@ int main(int argc, char **argv) {
     }
 #endif
 
+#ifdef _WIN32
+    if (ConsoleIsExclusive()) {
+        Sleep(INFINITE);
+    }
+#endif
+
     return 0;
 }
