@@ -53,7 +53,7 @@ void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionP
     p.ArrayEnd();
 }
 
-void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, std::vector<AppGpu *> gpus) {
+void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::vector<std::unique_ptr<AppGpu>> &gpus) {
     std::sort(layers.begin(), layers.end(), [](LayerExtensionList &left, LayerExtensionList &right) -> int {
         const char *a = left.layer_properties.layerName;
         const char *b = right.layer_properties.layerName;
@@ -146,7 +146,7 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
     chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext);
 }
 
-void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface) {
+void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface, std::vector<std::string> surface_types) {
     std::string header;
     if (p.Type() == OutputType::text)
         header = std::string("GPU id : ") + std::to_string(gpu.id) + " (" + gpu.props.deviceName + ")";
@@ -154,7 +154,15 @@ void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface
         header = std::string("GPU id : <span class='val'>") + std::to_string(gpu.id) + "</span> (" + gpu.props.deviceName + ")";
     p.ObjectStart(header);
 
-    p.SetAsType().PrintKeyValue("Surface type", surface.surface_extension.name);
+    if (surface_types.size() == 0) {
+        p.SetAsType().PrintKeyValue("Surface type", surface.surface_extension.name);
+    } else {
+        p.ArrayStart("Surface types", surface_types.size());
+        for (auto &name : surface_types) {
+            p.PrintElement(name);
+        }
+        p.ArrayEnd();
+    }
 
     DumpSurfaceFormats(p, inst, surface);
 
@@ -166,13 +174,42 @@ void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface
     p.AddNewline();
 }
 
-void DumpPresentableSurfaces(Printer &p, AppInstance &inst, std::vector<AppGpu *> &gpus, std::vector<AppSurface *> &surfaces) {
+struct SurfaceTypeGroup {
+    AppSurface *surface;
+    std::vector<std::string> surface_types;
+    AppGpu *gpu;
+};
+
+bool operator==(AppSurface const &a, AppSurface const &b) {
+    return a.surf_present_modes == b.surf_present_modes && a.surf_formats == b.surf_formats && a.surf_formats2 == b.surf_formats2 &&
+           a.surface_capabilities == b.surface_capabilities && a.surface_capabilities2_khr == b.surface_capabilities2_khr &&
+           a.surface_capabilities2_ext == b.surface_capabilities2_ext;
+}
+
+void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<std::unique_ptr<AppGpu>> &gpus,
+                             const std::vector<std::unique_ptr<AppSurface>> &surfaces) {
     p.SetHeader().ObjectStart("Presentable Surfaces");
     p.IndentDecrease();
+    std::vector<SurfaceTypeGroup> surface_list;
+
     for (auto &surface : surfaces) {
         for (auto &gpu : gpus) {
-            DumpSurface(p, inst, *gpu, *surface);
+            auto exists = surface_list.end();
+            for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
+                // use custom comparator to check if the surface has the same values
+                if (it->gpu == gpu.get() && *it->surface == *surface.get()) {
+                    exists = it;
+                }
+            }
+            if (exists != surface_list.end()) {
+                exists->surface_types.push_back(surface.get()->surface_extension.name);
+            } else {
+                surface_list.push_back({surface.get(), {surface.get()->surface_extension.name}, gpu.get()});
+            }
         }
+    }
+    for (auto &group : surface_list) {
+        DumpSurface(p, inst, *group.gpu, *group.surface, group.surface_types);
     }
     p.IndentIncrease();
     p.ObjectEnd();
@@ -671,34 +708,31 @@ int main(int argc, char **argv) {
 
     auto pNext_chains = get_chain_infos();
 
-    auto gpu_holder = FindGpus(instance, pNext_chains);
+    auto phys_devices = instance.FindPhysicalDevices();
 
-    std::vector<AppGpu *> gpus;
-    for (auto &gpu : gpu_holder) {
-        gpus.push_back(gpu.get());
-    }
-
-    if (selected_gpu >= gpus.size()) {
-        selected_gpu = 0;
-    }
-
-    std::vector<std::unique_ptr<AppSurface>> surfaces_holder;
+    std::vector<std::unique_ptr<AppSurface>> surfaces;
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
     for (auto &surface_extension : instance.surface_extensions) {
         surface_extension.create_window(instance);
         surface_extension.surface = surface_extension.create_surface(instance);
-        for (auto &gpu : gpus) {
-            surfaces_holder.push_back(
-                std::unique_ptr<AppSurface>(new AppSurface(instance, gpu, surface_extension, pNext_chains.surface_capabilities2)));
+        for (auto &phys_device : phys_devices) {
+            surfaces.push_back(std::unique_ptr<AppSurface>(
+                new AppSurface(instance, phys_device, surface_extension, pNext_chains.surface_capabilities2)));
         }
     }
-
-    std::vector<AppSurface *> surfaces;
-    for (auto &surface : surfaces_holder) {
-        surfaces.push_back(surface.get());
-    }
 #endif
+
+    std::vector<std::unique_ptr<AppGpu>> gpus;
+
+    uint32_t gpu_counter = 0;
+    for (auto &phys_device : phys_devices) {
+        gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, pNext_chains)));
+    }
+
+    if (selected_gpu >= gpus.size()) {
+        selected_gpu = 0;
+    }
 
     std::vector<std::unique_ptr<Printer>> printers;
 
@@ -738,7 +772,7 @@ int main(int argc, char **argv) {
         for (auto &gpu : gpus) {
             if ((p->Type() == OutputType::json && gpu->id == selected_gpu) || p->Type() == OutputType::text ||
                 p->Type() == OutputType::html) {
-                DumpGpu(*p.get(), *gpu, show_formats, pNext_chains);
+                DumpGpu(*p.get(), *gpu.get(), show_formats, pNext_chains);
             }
         }
         if (p->Type() != OutputType::json) {
