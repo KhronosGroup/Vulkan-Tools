@@ -146,6 +146,33 @@ struct pNextChainBuildingBlockInfo {
     uint32_t mem_size;
 };
 
+void buildpNextChain(VkStructureHeader *first, const std::vector<pNextChainBuildingBlockInfo> &chain_info) {
+    VkStructureHeader *place = first;
+
+    for (uint32_t i = 0; i < chain_info.size(); i++) {
+        place->pNext = static_cast<VkStructureHeader *>(malloc(chain_info[i].mem_size));
+        if (!place->pNext) {
+            ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+        }
+        std::memset(place->pNext, 0, chain_info[i].mem_size);
+        place = place->pNext;
+        place->sType = chain_info[i].sType;
+    }
+
+    place->pNext = nullptr;
+}
+
+void freepNextChain(VkStructureHeader *first) {
+    VkStructureHeader *place = first;
+    VkStructureHeader *next = nullptr;
+
+    while (place) {
+        next = place->pNext;
+        free(place);
+        place = next;
+    }
+}
+
 struct LayerExtensionList {
     VkLayerProperties layer_properties;
     std::vector<VkExtensionProperties> extension_properties;
@@ -352,6 +379,26 @@ struct AppInstance {
         } while (err == VK_INCOMPLETE);
         if (err) ERR_EXIT(err);
         return ext_props;
+    }
+
+    std::vector<VkPhysicalDevice> FindPhysicalDevices() {
+        std::vector<VkPhysicalDevice> phys_devices;
+
+        VkResult err;
+        uint32_t gpu_count = 0;
+
+        /* repeat get until VK_INCOMPLETE goes away */
+        do {
+            err = vkEnumeratePhysicalDevices(instance, &gpu_count, nullptr);
+            if (err) ERR_EXIT(err);
+
+            phys_devices.resize(gpu_count);
+            err = vkEnumeratePhysicalDevices(instance, &gpu_count, phys_devices.data());
+            if (err) ERR_EXIT(err);
+            phys_devices.resize(gpu_count);
+        } while (err == VK_INCOMPLETE);
+
+        return phys_devices;
     }
 };
 
@@ -725,6 +772,94 @@ void SetupWindowExtensions(AppInstance &inst) {
 #endif
 }
 
+// ---------- Surfaces -------------- //
+
+class AppSurface {
+   public:
+    AppInstance &inst;
+    SurfaceExtension surface_extension;
+
+    std::vector<VkPresentModeKHR> surf_present_modes;
+
+    std::vector<VkSurfaceFormatKHR> surf_formats;
+    std::vector<VkSurfaceFormat2KHR> surf_formats2;
+
+    VkSurfaceCapabilitiesKHR surface_capabilities;
+    VkSurfaceCapabilities2KHR surface_capabilities2_khr;
+    VkSurfaceCapabilities2EXT surface_capabilities2_ext;
+
+    AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension,
+               std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
+        : inst(inst), surface_extension(surface_extension) {
+        uint32_t present_mode_count = 0;
+        VkResult err =
+            inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count, nullptr);
+        if (err) ERR_EXIT(err);
+
+        surf_present_modes.resize(present_mode_count);
+        err = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count,
+                                                             surf_present_modes.data());
+        if (err) ERR_EXIT(err);
+
+        const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
+                                                               surface_extension.surface};
+
+        uint32_t format_count = 0;
+        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
+            VkResult err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(phys_device, &surface_info2, &format_count, nullptr);
+            if (err) ERR_EXIT(err);
+            surf_formats2.resize(format_count);
+            for (uint32_t i = 0; i < format_count; ++i) {
+                surf_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+                surf_formats2[i].pNext = nullptr;
+            }
+            err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(phys_device, &surface_info2, &format_count, surf_formats2.data());
+            if (err) ERR_EXIT(err);
+        } else {
+            VkResult err =
+                inst.vkGetPhysicalDeviceSurfaceFormatsKHR(phys_device, surface_extension.surface, &format_count, nullptr);
+            if (err) ERR_EXIT(err);
+            surf_formats.resize(format_count);
+            err = inst.vkGetPhysicalDeviceSurfaceFormatsKHR(phys_device, surface_extension.surface, &format_count,
+                                                            surf_formats.data());
+            if (err) ERR_EXIT(err);
+        }
+
+        if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_EXTENSION_NAME)) {
+            VkResult err =
+                inst.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phys_device, surface_extension.surface, &surface_capabilities);
+            if (err) ERR_EXIT(err);
+        }
+
+        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
+            surface_capabilities2_khr.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+            buildpNextChain((VkStructureHeader *)&surface_capabilities2_khr, sur_extension_pNextChain);
+
+            VkPhysicalDeviceSurfaceInfo2KHR surface_info;
+            surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+            surface_info.pNext = nullptr;
+            surface_info.surface = surface_extension.surface;
+
+            VkResult err = inst.vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
+            if (err) ERR_EXIT(err);
+        }
+
+        if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
+            surface_capabilities2_ext.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
+            surface_capabilities2_ext.pNext = nullptr;
+            VkResult err =
+                inst.vkGetPhysicalDeviceSurfaceCapabilities2EXT(phys_device, surface_extension.surface, &surface_capabilities2_ext);
+            if (err) ERR_EXIT(err);
+        }
+    }
+
+    ~AppSurface() {
+        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
+            freepNextChain(static_cast<VkStructureHeader *>(surface_capabilities2_khr.pNext));
+        }
+    }
+};
+
 // -------------------- Device Groups ------------------------//
 
 std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
@@ -797,33 +932,6 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
 }
 
 // -------------------- Device Setup ------------------- //
-
-void buildpNextChain(VkStructureHeader *first, const std::vector<pNextChainBuildingBlockInfo> &chain_info) {
-    VkStructureHeader *place = first;
-
-    for (uint32_t i = 0; i < chain_info.size(); i++) {
-        place->pNext = static_cast<VkStructureHeader *>(malloc(chain_info[i].mem_size));
-        if (!place->pNext) {
-            ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
-        }
-        std::memset(place->pNext, 0, chain_info[i].mem_size);
-        place = place->pNext;
-        place->sType = chain_info[i].sType;
-    }
-
-    place->pNext = nullptr;
-}
-
-void freepNextChain(VkStructureHeader *first) {
-    VkStructureHeader *place = first;
-    VkStructureHeader *next = nullptr;
-
-    while (place) {
-        next = place->pNext;
-        free(place);
-        place = next;
-    }
-}
 
 struct MemImageSupport {
     bool regular_supported, sparse_supported, transient_supported;
@@ -1164,26 +1272,6 @@ struct AppGpu {
         }
     }
 };
-
-std::vector<std::unique_ptr<AppGpu>> FindGpus(AppInstance &instance, pNextChainInfos chainInfos) {
-    uint32_t gpu_count;
-    VkResult err = vkEnumeratePhysicalDevices(instance.instance, &gpu_count, nullptr);
-    if (err) ERR_EXIT(err);
-
-    std::vector<VkPhysicalDevice> phys_devices(gpu_count);
-
-    err = vkEnumeratePhysicalDevices(instance.instance, &gpu_count, phys_devices.data());
-    if (err) ERR_EXIT(err);
-
-    std::vector<std::unique_ptr<AppGpu>> gpus;
-
-    uint32_t i = 0;
-    for (auto &phys_device : phys_devices) {
-        gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, i++, phys_device, chainInfos)));
-    }
-    return gpus;
-}
-
 struct AppQueueFamilyProperties {
     VkQueueFamilyProperties props;
     uint32_t queue_index;
@@ -1208,96 +1296,6 @@ struct AppQueueFamilyProperties {
 
                 platforms_support_present = surface_ext.supports_present;
             }
-        }
-    }
-};
-
-// ---------- Surfaces -------------- //
-
-class AppSurface {
-   public:
-    AppInstance &inst;
-    SurfaceExtension surface_extension;
-
-    uint32_t present_mode_count = 0;
-    std::vector<VkPresentModeKHR> surf_present_modes;
-
-    uint32_t format_count = 0;
-    std::vector<VkSurfaceFormatKHR> surf_formats;
-    std::vector<VkSurfaceFormat2KHR> surf_formats2;
-
-    VkSurfaceCapabilitiesKHR surface_capabilities;
-    VkSurfaceCapabilities2KHR surface_capabilities2_khr;
-    VkSurfaceCapabilities2EXT surface_capabilities2_ext;
-
-    AppSurface(AppInstance &inst, AppGpu *gpu, SurfaceExtension surface_extension,
-               std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
-        : inst(inst), surface_extension(surface_extension) {
-        uint32_t present_mode_count = 0;
-        VkResult err = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(gpu->phys_device, surface_extension.surface,
-                                                                      &present_mode_count, nullptr);
-        if (err) ERR_EXIT(err);
-
-        surf_present_modes.resize(present_mode_count);
-        err = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(gpu->phys_device, surface_extension.surface, &present_mode_count,
-                                                             surf_present_modes.data());
-        if (err) ERR_EXIT(err);
-
-        const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
-                                                               surface_extension.surface};
-
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            VkResult err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->phys_device, &surface_info2, &format_count, nullptr);
-            if (err) ERR_EXIT(err);
-            surf_formats2.resize(format_count);
-            for (uint32_t i = 0; i < format_count; ++i) {
-                surf_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-                surf_formats2[i].pNext = nullptr;
-            }
-            err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(gpu->phys_device, &surface_info2, &format_count, surf_formats2.data());
-            if (err) ERR_EXIT(err);
-        } else {
-            VkResult err =
-                inst.vkGetPhysicalDeviceSurfaceFormatsKHR(gpu->phys_device, surface_extension.surface, &format_count, nullptr);
-            if (err) ERR_EXIT(err);
-            surf_formats.resize(format_count);
-            err = inst.vkGetPhysicalDeviceSurfaceFormatsKHR(gpu->phys_device, surface_extension.surface, &format_count,
-                                                            surf_formats.data());
-            if (err) ERR_EXIT(err);
-        }
-
-        if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_EXTENSION_NAME)) {
-            VkResult err =
-                inst.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(gpu->phys_device, surface_extension.surface, &surface_capabilities);
-            if (err) ERR_EXIT(err);
-        }
-
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            surface_capabilities2_khr.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&surface_capabilities2_khr, sur_extension_pNextChain);
-
-            VkPhysicalDeviceSurfaceInfo2KHR surface_info;
-            surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
-            surface_info.pNext = nullptr;
-            surface_info.surface = surface_extension.surface;
-
-            VkResult err =
-                inst.vkGetPhysicalDeviceSurfaceCapabilities2KHR(gpu->phys_device, &surface_info, &surface_capabilities2_khr);
-            if (err) ERR_EXIT(err);
-        }
-
-        if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
-            surface_capabilities2_ext.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
-            surface_capabilities2_ext.pNext = nullptr;
-            VkResult err = inst.vkGetPhysicalDeviceSurfaceCapabilities2EXT(gpu->phys_device, surface_extension.surface,
-                                                                           &surface_capabilities2_ext);
-            if (err) ERR_EXIT(err);
-        }
-    }
-
-    ~AppSurface() {
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            freepNextChain(static_cast<VkStructureHeader *>(surface_capabilities2_khr.pNext));
         }
     }
 };

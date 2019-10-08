@@ -2120,4 +2120,49 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place) {
         place = structure->pNext;
     }
 }
+bool operator==(const VkExtent2D & a, const VkExtent2D b);
+bool operator==(const VkSurfaceCapabilities2EXT & a, const VkSurfaceCapabilities2EXT b);
+bool operator==(const VkSurfaceCapabilities2KHR & a, const VkSurfaceCapabilities2KHR b);
+bool operator==(const VkSurfaceCapabilitiesKHR & a, const VkSurfaceCapabilitiesKHR b);
+bool operator==(const VkSurfaceFormat2KHR & a, const VkSurfaceFormat2KHR b);
+bool operator==(const VkSurfaceFormatKHR & a, const VkSurfaceFormatKHR b);
+bool operator==(const VkExtent2D & a, const VkExtent2D b) {
+    return a.width == b.width
+        && a.height == b.height;
+}
+bool operator==(const VkSurfaceCapabilities2EXT & a, const VkSurfaceCapabilities2EXT b) {
+    return a.minImageCount == b.minImageCount
+        && a.maxImageCount == b.maxImageCount
+        && a.currentExtent == b.currentExtent
+        && a.minImageExtent == b.minImageExtent
+        && a.maxImageExtent == b.maxImageExtent
+        && a.maxImageArrayLayers == b.maxImageArrayLayers
+        && a.supportedTransforms == b.supportedTransforms
+        && a.currentTransform == b.currentTransform
+        && a.supportedCompositeAlpha == b.supportedCompositeAlpha
+        && a.supportedUsageFlags == b.supportedUsageFlags
+        && a.supportedSurfaceCounters == b.supportedSurfaceCounters;
+}
+bool operator==(const VkSurfaceCapabilities2KHR & a, const VkSurfaceCapabilities2KHR b) {
+    return a.surfaceCapabilities == b.surfaceCapabilities;
+}
+bool operator==(const VkSurfaceCapabilitiesKHR & a, const VkSurfaceCapabilitiesKHR b) {
+    return a.minImageCount == b.minImageCount
+        && a.maxImageCount == b.maxImageCount
+        && a.currentExtent == b.currentExtent
+        && a.minImageExtent == b.minImageExtent
+        && a.maxImageExtent == b.maxImageExtent
+        && a.maxImageArrayLayers == b.maxImageArrayLayers
+        && a.supportedTransforms == b.supportedTransforms
+        && a.currentTransform == b.currentTransform
+        && a.supportedCompositeAlpha == b.supportedCompositeAlpha
+        && a.supportedUsageFlags == b.supportedUsageFlags;
+}
+bool operator==(const VkSurfaceFormat2KHR & a, const VkSurfaceFormat2KHR b) {
+    return a.surfaceFormat == b.surfaceFormat;
+}
+bool operator==(const VkSurfaceFormatKHR & a, const VkSurfaceFormatKHR b) {
+    return a.format == b.format
+        && a.colorSpace == b.colorSpace;
+}
 
