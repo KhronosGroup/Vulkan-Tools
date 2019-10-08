@@ -35,6 +35,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <utility>
 
 #include <assert.h>
 #include <stdint.h>
@@ -754,7 +755,9 @@ std::vector<VkPhysicalDeviceProperties> GetGroupProps(VkPhysicalDeviceGroupPrope
     return props;
 }
 
-VkDeviceGroupPresentCapabilitiesKHR GetGroupCapabilities(AppInstance &inst, VkPhysicalDeviceGroupProperties group) {
+// The bool of the pair returns true if the extension VK_KHR_device_group is present
+std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
+                                                                          VkPhysicalDeviceGroupProperties group) {
     // Build create info for logical device made from all physical devices in this group.
     std::vector<std::string> extensions_list = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DEVICE_GROUP_EXTENSION_NAME};
     VkDeviceGroupDeviceCreateInfoKHR dg_ci = {VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR, nullptr,
@@ -773,6 +776,12 @@ VkDeviceGroupPresentCapabilitiesKHR GetGroupCapabilities(AppInstance &inst, VkPh
     VkResult err = vkCreateDevice(group.physicalDevices[0], &device_ci, nullptr, &logical_device);
     if (err != VK_SUCCESS && err != VK_ERROR_EXTENSION_NOT_PRESENT) ERR_EXIT(err);
 
+    if (err == VK_ERROR_EXTENSION_NOT_PRESENT) {
+        VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR, nullptr};
+        vkDestroyDevice(logical_device, nullptr);
+        return std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR>(false, group_capabilities);
+    }
+
     VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR, nullptr};
 
     // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
@@ -784,7 +793,7 @@ VkDeviceGroupPresentCapabilitiesKHR GetGroupCapabilities(AppInstance &inst, VkPh
 
     vkDestroyDevice(logical_device, nullptr);
 
-    return group_capabilities;
+    return std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR>(true, group_capabilities);
 }
 
 // -------------------- Device Setup ------------------- //
