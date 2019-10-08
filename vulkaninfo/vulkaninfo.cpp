@@ -204,38 +204,41 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.AddNewline();
 
             p.ObjectStart("Device Group Present Capabilities (Group " + std::to_string(group_id) + ")");
-
             auto group_capabilities = GetGroupCapabilities(inst, group);
-            for (uint32_t i = 0; i < group.physicalDeviceCount; i++) {
-                std::string device_out;
-                if (p.Type() == OutputType::text) {
-                    device_out = std::string(group_props[i].deviceName) + " (ID: " + std::to_string(i) + ")";
-                } else if (p.Type() == OutputType::html) {
-                    device_out =
-                        std::string(group_props[i].deviceName) + " (ID: <span class='val'>" + std::to_string(i) + "</span>)";
-                }
-                p.PrintElement(device_out);
-                p.ObjectStart("Can present images from the following devices");
-                for (uint32_t j = 0; j < group.physicalDeviceCount; j++) {
-                    uint32_t mask = 1 << j;
-                    if (group_capabilities.presentMask[i] & mask) {
-                        if (p.Type() == OutputType::text)
-                            p.PrintElement(std::string(group_props[j].deviceName) + " (ID: " + std::to_string(j) + ")");
-                        if (p.Type() == OutputType::html)
-                            p.PrintElement(std::string(group_props[j].deviceName) + " (ID: <span class='val'>" + std::to_string(j) +
-                                           "</span>)");
+            if (group_capabilities.first == false) {
+                p.PrintElement("Group does not support VK_KHR_device_group, skipping printing capabilities");
+            } else {
+                for (uint32_t i = 0; i < group.physicalDeviceCount; i++) {
+                    std::string device_out;
+                    if (p.Type() == OutputType::text) {
+                        device_out = std::string(group_props[i].deviceName) + " (ID: " + std::to_string(i) + ")";
+                    } else if (p.Type() == OutputType::html) {
+                        device_out =
+                            std::string(group_props[i].deviceName) + " (ID: <span class='val'>" + std::to_string(i) + "</span>)";
                     }
+                    p.PrintElement(device_out);
+                    p.ObjectStart("Can present images from the following devices");
+                    for (uint32_t j = 0; j < group.physicalDeviceCount; j++) {
+                        uint32_t mask = 1 << j;
+                        if (group_capabilities.second.presentMask[i] & mask) {
+                            if (p.Type() == OutputType::text)
+                                p.PrintElement(std::string(group_props[j].deviceName) + " (ID: " + std::to_string(j) + ")");
+                            if (p.Type() == OutputType::html)
+                                p.PrintElement(std::string(group_props[j].deviceName) + " (ID: <span class='val'>" +
+                                               std::to_string(j) + "</span>)");
+                        }
+                    }
+                    p.ObjectEnd();
                 }
-                p.ObjectEnd();
+                DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities.second.modes);
             }
-            DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities.modes);
             p.ObjectEnd();
             p.AddNewline();
             group_id++;
         }
-        p.ObjectEnd();
-        p.AddNewline();
     }
+    p.ObjectEnd();
+    p.AddNewline();
 }
 
 void GpuDumpProps(Printer &p, AppGpu &gpu) {
