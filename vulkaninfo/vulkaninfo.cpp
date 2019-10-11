@@ -619,8 +619,8 @@ void print_usage(const char *argv0) {
     std::cout << "--html                Produce an html version of vulkaninfo output, saved as\n";
     std::cout << "                      \"vulkaninfo.html\" in the directory in which the command is\n";
     std::cout << "                      run.\n";
-    std::cout << "-j, --json            Produce a json version of vulkaninfo output to standard\n";
-    std::cout << "                      output.\n";
+    std::cout << "-j, --json            Produce a json version of vulkaninfo to standard output of the\n";
+    std::cout << "                      first gpu in the system conforming to the DevSim schema.\n";
     std::cout << "--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n";
     std::cout << "                      specifying the gpu-number associated with the gpu of \n";
     std::cout << "                      interest. This number can be determined by running\n";
