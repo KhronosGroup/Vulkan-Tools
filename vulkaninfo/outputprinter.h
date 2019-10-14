@@ -196,15 +196,16 @@ class Printer {
                 out << "\t\t</div>\n";
                 out << "\t</body>\n";
                 out << "</html>\n";
+                indents -= 3;
                 break;
             case (OutputType::json):
                 out << "\n}\n";
                 indents--;
                 is_first_item.pop();
-                assert(indents == 0);
-                assert(is_first_item.empty());
+                assert(is_first_item.empty() && "mismatched number of ObjectStart/ObjectEnd or ArrayStart/ArrayEnd's");
                 break;
         }
+        assert(indents == 0 && "indents must be zero at program end");
     };
 
     OutputType Type() { return output_type; }
@@ -238,6 +239,7 @@ class Printer {
     }
 
     Printer &SetElementIndex(int index) {
+        assert(index >= 0 && "cannot set element index to a negative value");
         element_index = index;
         return *this;
     }
@@ -248,7 +250,6 @@ class Printer {
                 out << std::string(indents, '\t') << object_name;
                 if (element_index != -1) {
                     out << "[" << element_index << "]";
-                    element_index = -1;
                 }
                 out << ":\n";
                 int headersize = object_name.size() + 1;
@@ -304,6 +305,7 @@ class Printer {
     }
     void ObjectEnd() {
         indents--;
+        assert(indents >= 0 && "indents cannot go below zero");
         switch (output_type) {
             case (OutputType::text):
 
@@ -353,6 +355,7 @@ class Printer {
     }
     void ArrayEnd() {
         indents--;
+        assert(indents >= 0 && "indents cannot go below zero");
         switch (output_type) {
             case (OutputType::text):
 
@@ -521,6 +524,7 @@ class Printer {
         switch (output_type) {
             case (OutputType::text):
                 indents--;
+                assert(indents >= 0 && "indents cannot go below zero");
                 break;
             default:
                 break;
@@ -546,13 +550,15 @@ class Printer {
     bool set_object_name_as_type = false;
 
     // objects which are in an array
-    int element_index = -1;
+    int element_index = -1;  // negative one is the sentinel value
 
     // json
     std::stack<bool> is_first_item;
 
     // utility
     void PrintHeaderUnderlines(int length) {
+        assert(indents >= 0 && "indents must not be negative");
+        assert(length >= 0 && "length must not be negative");
         if (set_next_header) {
             out << std::string(indents, '\t') << std::string(length, '=') << "\n";
             set_next_header = false;

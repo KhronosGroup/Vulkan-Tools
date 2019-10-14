@@ -174,8 +174,8 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, std::vector<AppGpu *
             DumpSurface(p, inst, *gpu, *surface);
         }
     }
-    p.ObjectEnd();
     p.IndentIncrease();
+    p.ObjectEnd();
     p.AddNewline();
 }
 
@@ -190,11 +190,11 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.ArrayStart("physicalDeviceCount", group.physicalDeviceCount);
             int id = 0;
             for (auto &prop : group_props) {
-                std::string device_out;
+                std::string device_out = prop.deviceName;
                 if (p.Type() == OutputType::text) {
-                    device_out = std::string(prop.deviceName) + " (ID: " + std::to_string(id++) + ")";
+                    device_out += " (ID: " + std::to_string(id++) + ")";
                 } else if (p.Type() == OutputType::html) {
-                    device_out = std::string(prop.deviceName) + " (ID: <span class='val'>" + std::to_string(id++) + "</span>)";
+                    device_out += " (ID: <span class='val'>" + std::to_string(id++) + "</span>)";
                 }
                 p.PrintElement(device_out);
             }
@@ -236,9 +236,9 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.AddNewline();
             group_id++;
         }
+        p.ObjectEnd();
+        p.AddNewline();
     }
-    p.ObjectEnd();
-    p.AddNewline();
 }
 
 void GpuDumpProps(Printer &p, AppGpu &gpu) {
@@ -328,7 +328,7 @@ void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQ
 // (kibi-, mebi-, gibi- etc.).
 #define kBufferSize 32
 
-static char *NumToNiceStr(const size_t sz) {
+std::string NumToNiceStr(const size_t sz) {
     const char prefixes[] = "KMGTPEZY";
     char buf[kBufferSize];
     int which = -1;
@@ -347,7 +347,7 @@ static char *NumToNiceStr(const size_t sz) {
 #else
     snprintf(buf, kBufferSize, "%.2f %sB", result, unit);
 #endif
-    return strndup(buf, kBufferSize);
+    return std::string(buf);
 }
 
 void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
@@ -356,7 +356,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
     p.ArrayStart("memoryHeaps", gpu.memory_props.memoryHeapCount);
     for (uint32_t i = 0; i < gpu.memory_props.memoryHeapCount; ++i) {
         const VkDeviceSize memSize = gpu.memory_props.memoryHeaps[i].size;
-        std::string mem_size_human_readable = std::string(NumToNiceStr(static_cast<size_t>(memSize)));
+        std::string mem_size_human_readable = NumToNiceStr(static_cast<size_t>(memSize));
 
         std::string mem_size_str = std::to_string(memSize) + " (" + to_hex_str(memSize) + ") (" + mem_size_human_readable + ")";
 
@@ -460,13 +460,28 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
     }
 }
 
-void GpuDumpFormatProperty(Printer &p, VkFormatProperties prop) {
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "linearTiling", prop.linearTilingFeatures);
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "optimalTiling", prop.optimalTilingFeatures);
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "bufferFeatures", prop.bufferFeatures);
+void GpuDumpFormatProperty(Printer &p, VkFormat fmt, VkFormatProperties prop) {
+    if (p.Type() == OutputType::text) {
+        p.ObjectStart("Properies");
+    } else if (p.Type() == OutputType::html) {
+        p.SetTitleAsType().ObjectStart(VkFormatString(fmt));
+    } else if (p.Type() == OutputType::json) {
+        p.ObjectStart("");
+    }
+    if (p.Type() == OutputType::html || p.Type() == OutputType::text) {
+        p.SetOpenDetails();
+        DumpVkFormatFeatureFlags(p, "linearTiling", prop.linearTilingFeatures);
+        p.SetOpenDetails();
+        DumpVkFormatFeatureFlags(p, "optimalTiling", prop.optimalTilingFeatures);
+        p.SetOpenDetails();
+        DumpVkFormatFeatureFlags(p, "bufferFeatures", prop.bufferFeatures);
+    } else if (p.Type() == OutputType::json) {
+        p.PrintKeyValue("formatID", fmt);
+        p.PrintKeyValue("linearTilingFeatures", prop.linearTilingFeatures);
+        p.PrintKeyValue("optimalTilingFeatures", prop.optimalTilingFeatures);
+        p.PrintKeyValue("bufferFeatures", prop.bufferFeatures);
+    }
+    p.ObjectEnd();
 }
 
 void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
@@ -500,9 +515,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
             }
             p.ObjectEnd();
 
-            p.ObjectStart("Properies");
-            GpuDumpFormatProperty(p, props);
-            p.ObjectEnd();
+            GpuDumpFormatProperty(p, VK_FORMAT_UNDEFINED, props);
 
             p.IndentIncrease();
             p.ObjectEnd();
@@ -524,19 +537,12 @@ void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
                     VkFormatProperties props;
                     vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
-                    if (p.Type() == OutputType::html) {
-                        p.SetTitleAsType().ObjectStart(VkFormatString(fmt));
-                        GpuDumpFormatProperty(p, props);
-                        p.ObjectEnd();
-                    } else if (p.Type() == OutputType::json &&
-                               (props.linearTilingFeatures || props.optimalTilingFeatures || props.bufferFeatures)) {
-                        p.SetTitleAsType().ObjectStart("");
-                        p.PrintKeyValue("formatID", fmt);
-                        p.PrintKeyValue("linearTilingFeatures", props.linearTilingFeatures);
-                        p.PrintKeyValue("optimalTilingFeatures", props.optimalTilingFeatures);
-                        p.PrintKeyValue("bufferFeatures", props.bufferFeatures);
-                        p.ObjectEnd();
-                    }
+                    // if json, don't print format properties that are unsupported
+                    if (p.Type() == OutputType::json &&
+                        (props.linearTilingFeatures || props.optimalTilingFeatures || props.bufferFeatures) == 0)
+                        continue;
+
+                    GpuDumpFormatProperty(p, fmt, props);
                 }
             }
         }
@@ -545,8 +551,8 @@ void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
     if (p.Type() == OutputType::json) {
         p.ArrayEnd();
     } else {
-        p.ObjectEnd();
         p.IndentIncrease();
+        p.ObjectEnd();
     }
 
     p.AddNewline();
@@ -578,8 +584,8 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats, pNextChainInfos &chainI
     }
 
     if (p.Type() != OutputType::json) {
-        p.ObjectEnd();
         p.IndentIncrease();
+        p.ObjectEnd();
     }
     p.AddNewline();
 }
@@ -736,8 +742,8 @@ int main(int argc, char **argv) {
             }
         }
         if (p->Type() != OutputType::json) {
-            p->ObjectEnd();
             p->IndentIncrease();
+            p->ObjectEnd();
         }
     }
 
