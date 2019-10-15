@@ -844,9 +844,11 @@ void DumpVkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT(Printer &p, std::strin
 void DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(Printer &p, std::string name, VkPhysicalDeviceSamplerYcbcrConversionFeatures &obj);
 void DumpVkPhysicalDeviceScalarBlockLayoutFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceScalarBlockLayoutFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderAtomicInt64FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicInt64FeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderClockFeaturesKHR &obj);
 void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderDrawParametersFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderDrawParametersFeatures &obj);
 void DumpVkPhysicalDeviceShaderFloat16Int8FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderFloat16Int8FeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR &obj);
 void DumpVkPhysicalDeviceSparseProperties(Printer &p, std::string name, VkPhysicalDeviceSparseProperties &obj);
 void DumpVkPhysicalDeviceSubgroupProperties(Printer &p, std::string name, VkPhysicalDeviceSubgroupProperties &obj);
 void DumpVkPhysicalDeviceSubgroupSizeControlFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlFeaturesEXT &obj);
@@ -854,6 +856,8 @@ void DumpVkPhysicalDeviceSubgroupSizeControlPropertiesEXT(Printer &p, std::strin
 void DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT &obj);
 void DumpVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT &obj);
 void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT &obj);
+void DumpVkPhysicalDeviceTimelineSemaphoreFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreFeaturesKHR &obj);
+void DumpVkPhysicalDeviceTimelineSemaphorePropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphorePropertiesKHR &obj);
 void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj);
 void DumpVkPhysicalDeviceTransformFeedbackPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackPropertiesEXT &obj);
 void DumpVkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR &obj);
@@ -1472,6 +1476,12 @@ void DumpVkPhysicalDeviceShaderAtomicInt64FeaturesKHR(Printer &p, std::string na
     p.PrintKeyBool("shaderSharedInt64Atomics", obj.shaderSharedInt64Atomics, 24);
     p.ObjectEnd();
 }
+void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderClockFeaturesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("shaderSubgroupClock", obj.shaderSubgroupClock, 19);
+    p.PrintKeyBool("shaderDeviceClock", obj.shaderDeviceClock, 19);
+    p.ObjectEnd();
+}
 void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT &obj) {
     p.ObjectStart(name);
     p.PrintKeyBool("shaderDemoteToHelperInvocation", obj.shaderDemoteToHelperInvocation, 30);
@@ -1486,6 +1496,11 @@ void DumpVkPhysicalDeviceShaderFloat16Int8FeaturesKHR(Printer &p, std::string na
     p.ObjectStart(name);
     p.PrintKeyBool("shaderFloat16", obj.shaderFloat16, 13);
     p.PrintKeyBool("shaderInt8", obj.shaderInt8, 13);
+    p.ObjectEnd();
+}
+void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("shaderSubgroupExtendedTypes", obj.shaderSubgroupExtendedTypes, 27);
     p.ObjectEnd();
 }
 void DumpVkPhysicalDeviceSparseProperties(Printer &p, std::string name, VkPhysicalDeviceSparseProperties &obj) {
@@ -1538,6 +1553,16 @@ void DumpVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT(Printer &p, std::stri
 void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT &obj) {
     p.ObjectStart(name);
     p.PrintKeyBool("textureCompressionASTC_HDR", obj.textureCompressionASTC_HDR, 26);
+    p.ObjectEnd();
+}
+void DumpVkPhysicalDeviceTimelineSemaphoreFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreFeaturesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("timelineSemaphore", obj.timelineSemaphore, 17);
+    p.ObjectEnd();
+}
+void DumpVkPhysicalDeviceTimelineSemaphorePropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphorePropertiesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 35);
     p.ObjectEnd();
 }
 void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj) {
@@ -1657,6 +1682,7 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES, sizeof(VkPhysicalDeviceSubgroupProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT, sizeof(VkPhysicalDeviceSubgroupSizeControlPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT, sizeof(VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR, sizeof(VkPhysicalDeviceTimelineSemaphorePropertiesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT, sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT, sizeof(VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT)},
     };
@@ -1686,12 +1712,15 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES, sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT, sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderClockFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT, sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES, sizeof(VkPhysicalDeviceShaderDrawParametersFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderFloat16Int8FeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT, sizeof(VkPhysicalDeviceSubgroupSizeControlFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT, sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT, sizeof(VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR, sizeof(VkPhysicalDeviceTimelineSemaphoreFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT, sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR, sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES, sizeof(VkPhysicalDeviceVariablePointersFeatures)},
@@ -1845,6 +1874,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppGpu &gpu, void * place) {
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME)) {
             VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT* props = (VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT*)structure;
             DumpVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT(p, "VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) {
+            VkPhysicalDeviceTimelineSemaphorePropertiesKHR* props = (VkPhysicalDeviceTimelineSemaphorePropertiesKHR*)structure;
+            DumpVkPhysicalDeviceTimelineSemaphorePropertiesKHR(p, "VkPhysicalDeviceTimelineSemaphorePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT &&
@@ -2007,6 +2042,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             DumpVkPhysicalDeviceShaderAtomicInt64FeaturesKHR(p, "VkPhysicalDeviceShaderAtomicInt64FeaturesKHR", *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_CLOCK_EXTENSION_NAME)) {
+            VkPhysicalDeviceShaderClockFeaturesKHR* props = (VkPhysicalDeviceShaderClockFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceShaderClockFeaturesKHR(p, "VkPhysicalDeviceShaderClockFeaturesKHR", *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT &&
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME)) {
             VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT* props = (VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT*)structure;
@@ -2022,6 +2063,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME)) {
             VkPhysicalDeviceShaderFloat16Int8FeaturesKHR* props = (VkPhysicalDeviceShaderFloat16Int8FeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderFloat16Int8FeaturesKHR(p, "VkPhysicalDeviceShaderFloat16Int8FeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME)) {
+            VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR* props = (VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR(p, "VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT &&
@@ -2040,6 +2087,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME)) {
             VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT* props = (VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT*)structure;
             DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(p, "VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) {
+            VkPhysicalDeviceTimelineSemaphoreFeaturesKHR* props = (VkPhysicalDeviceTimelineSemaphoreFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceTimelineSemaphoreFeaturesKHR(p, "VkPhysicalDeviceTimelineSemaphoreFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT &&

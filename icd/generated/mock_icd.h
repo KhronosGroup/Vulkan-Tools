@@ -190,6 +190,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_host", 1},
     {"VK_AMD_buffer_marker", 1},
     {"VK_KHR_shader_atomic_int64", 1},
+    {"VK_KHR_shader_clock", 1},
     {"VK_AMD_pipeline_compiler_control", 1},
     {"VK_EXT_calibrated_timestamps", 1},
     {"VK_AMD_shader_core_properties", 2},
@@ -208,6 +209,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_shader_image_footprint", 2},
     {"VK_NV_scissor_exclusive", 1},
     {"VK_NV_device_diagnostic_checkpoints", 2},
+    {"VK_KHR_timeline_semaphore", 2},
     {"VK_INTEL_shader_integer_functions2", 1},
     {"VK_INTEL_performance_query", 1},
     {"VK_KHR_vulkan_memory_model", 3},
@@ -1721,6 +1723,22 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreCounterValueKHR(
+    VkDevice                                    device,
+    VkSemaphore                                 semaphore,
+    uint64_t*                                   pValue);
+
+static VKAPI_ATTR VkResult VKAPI_CALL WaitSemaphoresKHR(
+    VkDevice                                    device,
+    const VkSemaphoreWaitInfoKHR*               pWaitInfo,
+    uint64_t                                    timeout);
+
+static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
+    VkDevice                                    device,
+    const VkSemaphoreSignalInfoKHR*             pSignalInfo);
+
+
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutablePropertiesKHR(
@@ -2820,6 +2838,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDescriptorSetLayoutSupportKHR", (void*)GetDescriptorSetLayoutSupportKHR},
     {"vkCmdDrawIndirectCountKHR", (void*)CmdDrawIndirectCountKHR},
     {"vkCmdDrawIndexedIndirectCountKHR", (void*)CmdDrawIndexedIndirectCountKHR},
+    {"vkGetSemaphoreCounterValueKHR", (void*)GetSemaphoreCounterValueKHR},
+    {"vkWaitSemaphoresKHR", (void*)WaitSemaphoresKHR},
+    {"vkSignalSemaphoreKHR", (void*)SignalSemaphoreKHR},
     {"vkGetPipelineExecutablePropertiesKHR", (void*)GetPipelineExecutablePropertiesKHR},
     {"vkGetPipelineExecutableStatisticsKHR", (void*)GetPipelineExecutableStatisticsKHR},
     {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
