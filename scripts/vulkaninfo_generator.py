@@ -25,6 +25,7 @@ import string
 import xml.etree.ElementTree as etree
 import generator as gen
 import operator
+import json
 from collections import namedtuple
 from collections import OrderedDict
 from generator import *
@@ -57,10 +58,10 @@ license_header = '''
  */
 '''
 
-custom_formaters = '''
-std::ostream &operator<<(std::ostream &o, VkConformanceVersion &c) {
-    return o << std::to_string(c.major) << "." << std::to_string(c.minor) << "." << std::to_string(c.subminor) << "."
-             << std::to_string(c.patch);
+custom_formaters = r'''
+void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c, int width = 0) {
+    p.PrintKeyString("conformanceVersion", std::to_string(c.major)+ "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "."
+             + std::to_string(c.patch), width);
 }
 
 template <typename T>
@@ -74,17 +75,20 @@ template <typename T>
 std::string to_hex_str(Printer &p, T i) {
     if (p.Type() == OutputType::json)
         return std::to_string(i);
+    else if (p.Type() == OutputType::vkconfig_output)
+        return std::string("\"") + to_hex_str(i) + std::string("\"");
     else
         return to_hex_str(i);
 }
 '''
+
 
 # used in the .cpp code
 structures_to_gen = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
                      'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolPropertiesEXT']
 enums_to_gen = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling']
-flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR',
+flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT',
                 'VkDeviceGroupPresentModeFlagsKHR', 'VkFormatFeatureFlags', 'VkMemoryPropertyFlags', 'VkMemoryHeapFlags']
 flags_strings_to_gen = ['VkQueueFlags']
 
@@ -92,10 +96,12 @@ struct_short_versions_to_gen = ['VkExtent3D']
 
 struct_comparisons_to_gen = ['VkSurfaceFormatKHR', 'VkSurfaceFormat2KHR', 'VkSurfaceCapabilitiesKHR',
                              'VkSurfaceCapabilities2KHR', 'VkSurfaceCapabilities2EXT']
+# don't generate these structures
+struct_blacklist = ['VkConformanceVersion']
 
 # iostream or custom outputter handles these types
 predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
-                    'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'VkConformanceVersion']
+                    'float', 'uint64_t', 'size_t', 'VkDeviceSize']
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
 EXTENSION_CATEGORIES = {'phys_device_props2': {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'},
@@ -257,14 +263,13 @@ class VulkanInfoGenerator(OutputGenerator):
         for flag in self.flags:
             if flag.name in types_to_gen:
                 for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
-                    out += PrintFlags(flag, bitmask, self)
                     out += PrintBitMask(bitmask, flag.name, self)
 
             if flag.name in flags_strings_to_gen:
                 for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
                     out += PrintBitMaskToString(bitmask, flag.name, self)
 
-        for s in (x for x in self.all_structures if x.name in types_to_gen):
+        for s in (x for x in self.all_structures if x.name in types_to_gen and x.name not in struct_blacklist):
             out += PrintStructure(s, types_to_gen, names_of_structures_to_gen)
 
         out += "pNextChainInfos get_chain_infos() {\n"
@@ -401,59 +406,70 @@ def PrintEnum(enum, gen):
         enum.name + " value, int width = 0) {\n"
     out += "    if (p.Type() == OutputType::json) {\n"
     out += "        p.PrintKeyValue(name, value, width);\n"
-    out += "        return;\n"
     out += "    } else {\n"
-    out += "        p.PrintKeyValue(name, " + \
+    out += "        p.PrintKeyString(name, " + \
         enum.name + "String(value), width);\n    }\n"
     out += "}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
 
-def PrintFlags(flag, bitmask, gen):
+def PrintGetFlagStrings(name, bitmask):
     out = ''
-    out += AddGuardHeader(GetExtension(flag.name, gen))
+    out += "std::vector<const char *>" + name + \
+        "GetStrings(" + name + " value) {\n"
 
-    out += "void Dump" + flag.name + \
-        "(Printer &p, std::string name, " + \
-        flag.enum + " value, int width = 0) {\n"
-    out += "    if (value == 0) p.PrintElement(\"None\");\n"
+    out += "    std::vector<const char *> strings;\n"
+    out += "    if (value == 0) strings.push_back(\"None\");\n"
     for v in bitmask.options:
-        out += "    if (" + str(v.value) + \
-            " & value) p.SetAsType().PrintElement(\"" + \
+        val = v.value if isinstance(v.value, str) else str(hex(v.value))
+        out += "    if (" + val + " & value) strings.push_back(\"" + \
             str(v.name[3:]) + "\");\n"
-    out += "}\n"
+    out += "    return strings;\n}\n"
+    return out
 
-    out += AddGuardFooter(GetExtension(flag.name, gen))
+
+def PrintFlags(bitmask, name):
+    out = "void Dump" + name + \
+        "(Printer &p, std::string name, " + name + " value, int width = 0) {\n"
+    out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
+    out += "    auto strings = " + bitmask.name + \
+        "GetStrings(static_cast<" + bitmask.name + ">(value));\n"
+    out += "    if (static_cast<" + bitmask.name + ">(value) == 0) {\n"
+    out += "        ArrayWrapper arr(p, name, 0);\n"
+    out += "        p.SetAsType().PrintString(\"None\");\n"
+    out += "        return;\n"
+    out += "    }\n"
+    out += "    ArrayWrapper arr(p, name, strings.size());\n"
+    out += "    for(auto& str : strings){\n"
+    out += "        p.SetAsType().PrintString(str);\n"
+    out += "    }\n"
+    out += "}\n"
+    return out
+
+
+def PrintFlagBits(bitmask):
+    out = "void Dump" + bitmask.name + \
+        "(Printer &p, std::string name, " + \
+        bitmask.name + " value, int width = 0) {\n"
+    out += "    auto strings = " + bitmask.name + "GetStrings(value);\n"
+    out += "    p.PrintKeyString(name, strings.at(0), width);\n"
+    out += "}\n"
     return out
 
 
 def PrintBitMask(bitmask, name, gen):
-    out = ''
+    out = PrintGetFlagStrings(bitmask.name, bitmask)
     out += AddGuardHeader(GetExtension(bitmask.name, gen))
-    out += "void Dump" + name + \
-        "(Printer &p, std::string name, " + name + " value, int width = 0) {\n"
-    out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
-    out += "    p.ObjectStart(name);\n"
-    out += "    Dump" + name + \
-        "(p, name, static_cast<" + bitmask.name + ">(value), width);\n"
-    out += "    p.ObjectEnd();\n"
-    out += "}\n"
-    out += "void Dump" + bitmask.name + \
-        "(Printer &p, std::string name, " + \
-        bitmask.name + " value, int width = 0) {\n"
-    out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
-    out += "    p.ObjectStart(name);\n"
-    out += "    Dump" + name + "(p, name, value, width);\n"
-    out += "    p.ObjectEnd();\n"
-    out += "}\n"
+    out += PrintFlags(bitmask, name)
+    out += PrintFlagBits(bitmask)
     out += AddGuardFooter(GetExtension(bitmask.name, gen))
+    out += "\n"
     return out
 
 
 def PrintBitMaskToString(bitmask, name, gen):
-    out = ''
-    out += AddGuardHeader(GetExtension(bitmask.name, gen))
+    out = AddGuardHeader(GetExtension(bitmask.name, gen))
     out += "std::string " + name + \
         "String(" + name + " value, int width = 0) {\n"
     out += "    std::string out;\n"
@@ -480,7 +496,7 @@ def PrintStructure(struct, types_to_gen, structure_names):
         if v.arrayLength is not None:
             if len(v.name) + len(v.arrayLength) + 2 > max_key_len:
                 max_key_len = len(v.name) + len(v.arrayLength) + 2
-        elif v.typeID in predefined_types:
+        elif v.typeID in predefined_types or v.typeID in struct_blacklist:
             if len(v.name) > max_key_len:
                 max_key_len = len(v.name)
 
@@ -497,7 +513,7 @@ def PrintStructure(struct, types_to_gen, structure_names):
         out += "    else\n"
         out += "        p.SetSubHeader().ObjectStart(name);\n"
     else:
-        out += "    p.ObjectStart(name);\n"
+        out += "    ObjectWrapper object{p, name};\n"
 
     for v in struct.members:
         # arrays
@@ -515,14 +531,14 @@ def PrintStructure(struct, types_to_gen, structure_names):
                 out += " p.PrintKeyString(\"" + v.name + "\", to_string_8(obj." + \
                     v.name + "), " + str(max_key_len) + ");\n"
             elif v.arrayLength.isdigit():
-                out += "    p.ArrayStart(\"" + v.name + \
+                out += "    {   ArrayWrapper arr(p,\"" + v.name + \
                     "\", "+v.arrayLength+");\n"
                 for i in range(0, int(v.arrayLength)):
-                    out += "    p.PrintElement(obj." + \
+                    out += "        p.PrintElement(obj." + \
                         v.name + "[" + str(i) + "]);\n"
-                out += "    p.ArrayEnd();\n"
+                out += "    }\n"
             else:  # dynamic array length based on other member
-                out += "    p.ArrayStart(\"" + v.name + \
+                out += "    ArrayWrapper arr(p,\"" + v.name + \
                     "\", obj."+v.arrayLength+");\n"
                 out += "    for (uint32_t i = 0; i < obj." + \
                     v.arrayLength+"; i++) {\n"
@@ -534,10 +550,13 @@ def PrintStructure(struct, types_to_gen, structure_names):
                     out += "        }\n"
                 else:
                     out += "        p.PrintElement(obj." + v.name + "[i]);\n"
-                out += "    }\n    p.ArrayEnd();\n"
+                out += "    }\n"
         elif v.typeID == "VkBool32":
             out += "    p.PrintKeyBool(\"" + v.name + "\", static_cast<bool>(obj." + \
                 v.name + "), " + str(max_key_len) + ");\n"
+        elif v.typeID == "VkConformanceVersion":
+            out += "    DumpVkConformanceVersion(p, \"conformanceVersion\", obj." + \
+                v.name + ", " + str(max_key_len) + ");\n"
         elif v.typeID == "VkDeviceSize":
             out += "    p.PrintKeyValue(\"" + v.name + "\", to_hex_str(p, obj." + \
                 v.name + "), " + str(max_key_len) + ");\n"
@@ -553,8 +572,8 @@ def PrintStructure(struct, types_to_gen, structure_names):
             else:
                 out += "    Dump" + v.typeID + \
                     "(p, \"" + v.name + "\", obj." + v.name + ");\n"
-
-    out += "    p.ObjectEnd();\n"
+    if struct.name in ["VkPhysicalDeviceLimits", "VkPhysicalDeviceSparseProperties"]:
+        out += "    p.ObjectEnd();\n"
     out += "}\n"
 
     out += AddGuardFooter(struct)
@@ -691,28 +710,12 @@ def PrintStructComparison(structure):
     return out
 
 
-def isPow2(num):
-    return num != 0 and ((num & (num - 1)) == 0)
-
-
-def StrToInt(s):
-    try:
-        return int(s)
-    except ValueError:
-        return int(s, 16)
-
-
 class VulkanEnum:
     class Option:
 
         def __init__(self, name, value, bitpos, comment):
             self.name = name
             self.comment = comment
-            self.multiValue = None
-
-            if value is not None:
-
-                self.multiValue = not isPow2(StrToInt(value))
 
             if value == 0 or value is None:
                 value = 1 << int(bitpos)
@@ -724,7 +727,6 @@ class VulkanEnum:
                 'optName': self.name,
                 'optValue': self.value,
                 'optComment': self.comment,
-                'optMultiValue': self.multiValue,
             }
 
     def __init__(self, rootNode):
