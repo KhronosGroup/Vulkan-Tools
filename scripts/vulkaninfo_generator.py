@@ -552,8 +552,8 @@ def PrintStructure(struct, structure_names, gen):
                     out += "        p.PrintElement(obj." + v.name + "[i]);\n"
                 out += "    }\n    p.ArrayEnd();\n"
         elif v.typeID == "VkBool32":
-            out += "    p.PrintKeyBool(\"" + v.name + "\", obj." + \
-                v.name + ", " + str(max_key_len) + ");\n"
+            out += "    p.PrintKeyBool(\"" + v.name + "\", static_cast<bool>(obj." + \
+                v.name + "), " + str(max_key_len) + ");\n"
         elif v.typeID == "VkDeviceSize":
             out += "    p.PrintKeyValue(\"" + v.name + "\", to_hex_str(p, obj." + \
                 v.name + "), " + str(max_key_len) + ");\n"
