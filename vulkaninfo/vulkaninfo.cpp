@@ -52,9 +52,9 @@ void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionP
 
     int max_length = 0;
     if (extensions.size() > 0) {
-        max_length = strlen(extensions.at(0).extensionName);
+        max_length = static_cast<int>(strlen(extensions.at(0).extensionName));
         for (auto &ext : extensions) {
-            int len = strlen(ext.extensionName);
+            int len = static_cast<int>(strlen(ext.extensionName));
             if (len > max_length) max_length = len;
         }
     }
@@ -132,7 +132,7 @@ void DumpSurfaceFormats(Printer &p, AppInstance &inst, AppSurface &surface) {
     p.ArrayEnd();
 }
 
-void DumpPresentModes(Printer &p, AppInstance &inst, AppSurface &surface) {
+void DumpPresentModes(Printer &p, AppSurface &surface) {
     p.ArrayStart("Present Modes", surface.surf_present_modes.size());
     for (auto &mode : surface.surf_present_modes) {
         p.SetAsType().PrintElement(VkPresentModeKHRString(mode));
@@ -179,7 +179,7 @@ void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface
 
     DumpSurfaceFormats(p, inst, surface);
 
-    DumpPresentModes(p, inst, surface);
+    DumpPresentModes(p, surface);
 
     DumpSurfaceCapabilities(p, inst, gpu, surface);
 
@@ -269,7 +269,7 @@ void DumpGroups(Printer &p, AppInstance &inst) {
                     p.PrintElement(device_out);
                     p.ObjectStart("Can present images from the following devices");
                     for (uint32_t j = 0; j < group.physicalDeviceCount; j++) {
-                        uint32_t mask = 1 << j;
+                        uint32_t mask = 1U << j;
                         if (group_capabilities.second.presentMask[i] & mask) {
                             if (p.Type() == OutputType::text)
                                 p.PrintElement(std::string(group_props[j].deviceName) + " (ID: " + std::to_string(j) + ")");
@@ -343,7 +343,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     p.AddNewline();
 }
 void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQueueFamilyProperties &queue) {
-    p.SetHeader().SetElementIndex(queue.queue_index).ObjectStart("VkQueueFamilyProperties");
+    p.SetHeader().SetElementIndex(static_cast<int>(queue.queue_index)).ObjectStart("VkQueueFamilyProperties");
     if (p.Type() == OutputType::json) {
         DumpVkExtent3D(p, "minImageTransferGranularity", queue.props.minImageTransferGranularity);
     } else {
@@ -410,7 +410,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
 
         std::string mem_size_str = std::to_string(memSize) + " (" + to_hex_str(memSize) + ") (" + mem_size_human_readable + ")";
 
-        p.SetElementIndex(i).ObjectStart("memoryHeaps");
+        p.SetElementIndex(static_cast<int>(i)).ObjectStart("memoryHeaps");
         if (p.Type() != OutputType::json) {
             p.PrintKeyValue("size", mem_size_str, 6);
             p.PrintKeyValue("budget", gpu.heapBudget[i], 6);
@@ -426,7 +426,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
 
     p.ArrayStart("memoryTypes", gpu.memory_props.memoryTypeCount);
     for (uint32_t i = 0; i < gpu.memory_props.memoryTypeCount; ++i) {
-        p.SetElementIndex(i).ObjectStart("memoryTypes");
+        p.SetElementIndex(static_cast<int>(i)).ObjectStart("memoryTypes");
         p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex, 13);
         if (p.Type() == OutputType::json) {
             p.PrintKeyValue("propertyFlags", gpu.memory_props.memoryTypes[i].propertyFlags, 13);
@@ -435,7 +435,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             DumpVkMemoryPropertyFlags(p, "propertyFlags = " + to_hex_str(flags), flags);
 
             p.ObjectStart("usable for");
-            const uint32_t memtype_bit = 1 << i;
+            const uint32_t memtype_bit = 1U << i;
 
             // only linear and optimal tiling considered
             for (uint32_t tiling = VK_IMAGE_TILING_OPTIMAL; tiling < gpu.mem_type_res_support.image.size(); ++tiling) {
@@ -534,7 +534,7 @@ void GpuDumpFormatProperty(Printer &p, VkFormat fmt, VkFormatProperties prop) {
     p.ObjectEnd();
 }
 
-void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
+void GpuDevDump(Printer &p, AppGpu &gpu) {
     if (p.Type() == OutputType::json) {
         p.ArrayStart("ArrayOfVkFormatProperties");
     } else {
@@ -581,7 +581,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
     } else {
         for (auto &format : gpu.supported_format_ranges) {
             if (gpu.FormatRangeSupported(format)) {
-                for (uint32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
+                for (int32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
                     VkFormat fmt = static_cast<VkFormat>(fmt_counter);
 
                     VkFormatProperties props;
@@ -608,7 +608,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu, pNextChainInfos &chainInfos) {
     p.AddNewline();
 }
 
-void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats, pNextChainInfos &chainInfos) {
+void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     if (p.Type() != OutputType::json) {
         p.ObjectStart("GPU" + std::to_string(gpu.id));
         p.IndentDecrease();
@@ -630,7 +630,7 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats, pNextChainInfos &chainI
     GpuDumpMemoryProps(p, gpu);
     GpuDumpFeatures(p, gpu);
     if (p.Type() != OutputType::text || show_formats) {
-        GpuDevDump(p, gpu, chainInfos);
+        GpuDevDump(p, gpu);
     }
 
     if (p.Type() != OutputType::json) {
@@ -697,12 +697,13 @@ int main(int argc, char **argv) {
 #endif
 
     uint32_t selected_gpu = 0;
+    bool show_formats = false;
 
     // Combinations of output: html only, html AND json, json only, human readable only
     for (int i = 1; i < argc; ++i) {
         if (strncmp("--json", argv[i], 6) == 0 || strcmp(argv[i], "-j") == 0) {
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
-                selected_gpu = strtol(argv[i] + 7, nullptr, 10);
+                selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 7, nullptr, 10));
             }
             human_readable_output = false;
             json_output = true;
@@ -789,7 +790,7 @@ int main(int argc, char **argv) {
         for (auto &gpu : gpus) {
             if ((p->Type() == OutputType::json && gpu->id == selected_gpu) || p->Type() == OutputType::text ||
                 p->Type() == OutputType::html) {
-                DumpGpu(*p.get(), *gpu.get(), show_formats, pNext_chains);
+                DumpGpu(*p.get(), *gpu.get(), show_formats);
             }
         }
         if (p->Type() != OutputType::json) {

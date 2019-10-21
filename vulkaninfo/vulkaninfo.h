@@ -73,7 +73,6 @@
 bool human_readable_output = true;
 bool html_output = false;
 bool json_output = false;
-bool show_formats = false;
 
 #ifdef _WIN32
 
@@ -247,7 +246,7 @@ void freepNextChain(VkStructureHeader *first) {
 }
 
 struct LayerExtensionList {
-    VkLayerProperties layer_properties;
+    VkLayerProperties layer_properties{};
     std::vector<VkExtensionProperties> extension_properties;
 };
 
@@ -255,10 +254,10 @@ struct AppInstance;
 
 struct SurfaceExtension {
     std::string name;
-    void (*create_window)(AppInstance &);
-    VkSurfaceKHR (*create_surface)(AppInstance &);
-    void (*destroy_window)(AppInstance &);
-    VkSurfaceKHR surface;
+    void (*create_window)(AppInstance &) = nullptr;
+    VkSurfaceKHR (*create_surface)(AppInstance &) = nullptr;
+    void (*destroy_window)(AppInstance &) = nullptr;
+    VkSurfaceKHR surface = VK_NULL_HANDLE;
     VkBool32 supports_present = 0;
 
     bool operator==(const SurfaceExtension &other) {
@@ -331,7 +330,7 @@ struct AppInstance {
 #endif
     AppInstance() {
         PFN_vkEnumerateInstanceVersion enumerate_instance_version =
-            (PFN_vkEnumerateInstanceVersion)vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion");
+            reinterpret_cast<PFN_vkEnumerateInstanceVersion>(vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"));
 
         if (!enumerate_instance_version) {
             instance_version = VK_API_VERSION_1_0;
@@ -373,6 +372,9 @@ struct AppInstance {
     }
 
     ~AppInstance() { vkDestroyInstance(instance, nullptr); }
+
+    AppInstance(const AppInstance &) = delete;
+    const AppInstance &operator=(const AppInstance &) = delete;
 
     bool CheckExtensionEnabled(std::string extension_to_check) {
         for (auto &extension : inst_extensions) {
@@ -420,7 +422,7 @@ struct AppInstance {
         }
     }
     void AppLoadInstanceCommands() {
-#define LOAD_INSTANCE_VK_CMD(cmd) cmd = (PFN_##cmd)vkGetInstanceProcAddr(instance, #cmd)
+#define LOAD_INSTANCE_VK_CMD(cmd) cmd = reinterpret_cast<PFN_##cmd>(vkGetInstanceProcAddr(instance, #cmd))
 
         LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceSupportKHR);
         LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
@@ -912,14 +914,14 @@ class AppSurface {
                std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
         : inst(inst), surface_extension(surface_extension) {
         uint32_t present_mode_count = 0;
-        VkResult err =
+        VkResult error =
             inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count, nullptr);
-        if (err) ERR_EXIT(err);
+        if (error) ERR_EXIT(error);
 
         surf_present_modes.resize(present_mode_count);
-        err = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count,
-                                                             surf_present_modes.data());
-        if (err) ERR_EXIT(err);
+        error = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count,
+                                                               surf_present_modes.data());
+        if (error) ERR_EXIT(error);
 
         const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
                                                                surface_extension.surface};
@@ -978,6 +980,9 @@ class AppSurface {
             freepNextChain(static_cast<VkStructureHeader *>(surface_capabilities2_khr.pNext));
         }
     }
+
+    AppSurface(const AppSurface &) = delete;
+    const AppSurface &operator=(const AppSurface &) = delete;
 };
 
 // -------------------- Device Groups ------------------------//
@@ -985,7 +990,8 @@ class AppSurface {
 std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
         PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR =
-            (PFN_vkEnumeratePhysicalDeviceGroupsKHR)vkGetInstanceProcAddr(inst.instance, "vkEnumeratePhysicalDeviceGroupsKHR");
+            reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroupsKHR>(
+                vkGetInstanceProcAddr(inst.instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
 
         std::vector<VkPhysicalDeviceGroupProperties> groups;
         uint32_t group_count;
@@ -1045,7 +1051,8 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
     // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
     // output to user.
     PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR =
-        (PFN_vkGetDeviceGroupPresentCapabilitiesKHR)vkGetInstanceProcAddr(inst.instance, "vkGetDeviceGroupPresentCapabilitiesKHR");
+        reinterpret_cast<PFN_vkGetDeviceGroupPresentCapabilitiesKHR>(
+            vkGetInstanceProcAddr(inst.instance, "vkGetDeviceGroupPresentCapabilitiesKHR"));
     err = vkGetDeviceGroupPresentCapabilitiesKHR(logical_device, &group_capabilities);
     if (err) ERR_EXIT(err);
 
@@ -1173,9 +1180,7 @@ struct AppGpu {
                                               0,  // just pick the first one and hope for the best
                                               1,
                                               &queue_priority};
-        VkPhysicalDeviceFeatures features = {0};
-        // if (features.sparseBinding ) features.sparseBinding = VK_TRUE;
-        enabled_features = features;
+        enabled_features = VkPhysicalDeviceFeatures{0};
         const VkDeviceCreateInfo device_ci = {
             VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, nullptr, 0, 1, &q_ci, 0, nullptr, 0, nullptr, &enabled_features};
 
@@ -1192,7 +1197,7 @@ struct AppGpu {
 
         for (size_t fmt_i = 0; fmt_i < formats.size(); ++fmt_i) {
             // only iterate over VK_IMAGE_TILING_OPTIMAL and VK_IMAGE_TILING_LINEAR (0 and 1)
-            for (int tiling = VK_IMAGE_TILING_OPTIMAL; tiling <= VK_IMAGE_TILING_LINEAR; ++tiling) {
+            for (size_t tiling = VK_IMAGE_TILING_OPTIMAL; tiling <= VK_IMAGE_TILING_LINEAR; ++tiling) {
                 mem_type_res_support.image[tiling][fmt_i].format = formats[fmt_i];
                 mem_type_res_support.image[tiling][fmt_i].regular_supported = true;
                 mem_type_res_support.image[tiling][fmt_i].sparse_supported = true;
@@ -1296,7 +1301,7 @@ struct AppGpu {
                     CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
                     VkPhysicalDeviceMemoryBudgetPropertiesEXT *mem_budget_props =
                         (VkPhysicalDeviceMemoryBudgetPropertiesEXT *)structure;
-                    for (int i = 0; i < VK_MAX_MEMORY_HEAPS; i++) {
+                    for (uint32_t i = 0; i < VK_MAX_MEMORY_HEAPS; i++) {
                         heapBudget[i] = mem_budget_props->heapBudget[i];
                         heapUsage[i] = mem_budget_props->heapUsage[i];
                     }
@@ -1340,6 +1345,9 @@ struct AppGpu {
             freepNextChain(static_cast<VkStructureHeader *>(memory_props2.pNext));
         }
     }
+
+    AppGpu(const AppGpu &) = delete;
+    const AppGpu &operator=(const AppGpu &) = delete;
 
     bool CheckPhysicalDeviceExtensionIncluded(std::string extension_to_check) {
         for (auto &extension : device_extensions) {
@@ -1449,7 +1457,7 @@ struct hash<PropFlags> {
 std::unordered_map<PropFlags, std::vector<VkFormat>> FormatPropMap(AppGpu &gpu) {
     std::unordered_map<PropFlags, std::vector<VkFormat>> map;
     for (auto fmtRange : gpu.supported_format_ranges) {
-        for (uint32_t fmt = fmtRange.first_format; fmt <= fmtRange.last_format; ++fmt) {
+        for (int32_t fmt = fmtRange.first_format; fmt <= fmtRange.last_format; ++fmt) {
             VkFormatProperties props;
             vkGetPhysicalDeviceFormatProperties(gpu.phys_device, static_cast<VkFormat>(fmt), &props);
 
