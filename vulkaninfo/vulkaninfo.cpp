@@ -28,6 +28,19 @@
 
 #include "vulkaninfo.hpp"
 
+#ifdef _WIN32
+// Initialize User32 pointers
+PFN_AdjustWindowRect User32Handles::pfnAdjustWindowRect = nullptr;
+PFN_CreateWindowExA User32Handles::pfnCreateWindowExA = nullptr;
+PFN_DefWindowProcA User32Handles::pfnDefWindowProcA = nullptr;
+PFN_DestroyWindow User32Handles::pfnDestroyWindow = nullptr;
+PFN_LoadIconA User32Handles::pfnLoadIconA = nullptr;
+PFN_RegisterClassExA User32Handles::pfnRegisterClassExA = nullptr;
+
+HMODULE User32Handles::user32DllHandle = nullptr;
+
+#endif
+
 // =========== Dump Functions ========= //
 
 void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionProperties> extensions) {
@@ -676,6 +689,11 @@ void print_usage(const char *argv0) {
 int main(int argc, char **argv) {
 #ifdef _WIN32
     if (ConsoleIsExclusive()) ConsoleEnlarge();
+    if (!LoadUser32Dll()) {
+        fprintf(stderr, "Failed to load user32.dll library!\n");
+        WAIT_FOR_CONSOLE_DESTROY;
+        exit(1);
+    }
 #endif
 
     uint32_t selected_gpu = 0;
@@ -790,6 +808,9 @@ int main(int argc, char **argv) {
 #endif
 
     WAIT_FOR_CONSOLE_DESTROY;
+#ifdef _WIN32
+    FreeUser32Dll();
+#endif
 
     return 0;
 }
