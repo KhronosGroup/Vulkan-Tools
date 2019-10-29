@@ -82,6 +82,10 @@ if (!is_android) {
       sources += [ "icd/linux/VkICD_mock_icd.json" ]
       args += [ "$raw_vulkan_icd_dir/linux" ]
     }
+    if (is_mac) {
+      sources += [ "icd/macos/VkICD_mock_icd.json" ]
+      args += [ "$raw_vulkan_icd_dir/macos" ]
+    }
 
     # The layer JSON files are part of the necessary data deps.
     outputs = [
