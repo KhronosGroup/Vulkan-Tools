@@ -60,6 +60,7 @@ OPTIONS:
                       specifying the gpu-number associated with the gpu of
                       interest. This number can be determined by running
                       vulkaninfo without any options specified.
+--show-formats        Display the format properties of each physical device.
 ```
 
 ### Windows
