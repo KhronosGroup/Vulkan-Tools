@@ -667,7 +667,8 @@ void print_usage(const char *argv0) {
     std::cout << "--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n";
     std::cout << "                      specifying the gpu-number associated with the gpu of \n";
     std::cout << "                      interest. This number can be determined by running\n";
-    std::cout << "                      vulkaninfo without any options specified.\n\n";
+    std::cout << "                      vulkaninfo without any options specified.\n";
+    std::cout << "--show-formats        Display the format properties of each physical device.\n\n";
 }
 
 int main(int argc, char **argv) {
