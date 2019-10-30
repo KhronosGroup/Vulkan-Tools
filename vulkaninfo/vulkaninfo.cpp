@@ -499,7 +499,7 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
 
 void GpuDumpFormatProperty(Printer &p, VkFormat fmt, VkFormatProperties prop) {
     if (p.Type() == OutputType::text) {
-        p.ObjectStart("Properies");
+        p.ObjectStart("Properties");
     } else if (p.Type() == OutputType::html) {
         p.SetTitleAsType().ObjectStart(VkFormatString(fmt));
     } else if (p.Type() == OutputType::json) {
