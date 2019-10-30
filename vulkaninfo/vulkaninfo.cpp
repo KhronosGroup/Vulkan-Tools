@@ -676,11 +676,7 @@ int main(int argc, char **argv) {
     if (ConsoleIsExclusive()) ConsoleEnlarge();
 #endif
 
-    bool human_readable_output = true;
-    bool html_output = false;
-    bool json_output = false;
     uint32_t selected_gpu = 0;
-    bool show_formats = false;
 
     // Combinations of output: html only, html AND json, json only, human readable only
     for (int i = 1; i < argc; ++i) {
@@ -791,11 +787,7 @@ int main(int argc, char **argv) {
     }
 #endif
 
-#ifdef _WIN32
-    if (ConsoleIsExclusive()) {
-        Sleep(INFINITE);
-    }
-#endif
+    WAIT_FOR_CONSOLE_DESTROY;
 
     return 0;
 }

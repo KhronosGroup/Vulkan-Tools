@@ -69,6 +69,12 @@
 
 #define ERR(err) std::cerr << __FILE__ << ":" << __LINE__ << ": failed with " << VkResultString(err) << "\n";
 
+// global configuration
+bool human_readable_output = true;
+bool html_output = false;
+bool json_output = false;
+bool show_formats = false;
+
 #ifdef _WIN32
 
 #define strdup _strdup
@@ -81,9 +87,9 @@ static int ConsoleIsExclusive(void) {
     return num_pids <= 1;
 }
 
-#define WAIT_FOR_CONSOLE_DESTROY                   \
-    do {                                           \
-        if (ConsoleIsExclusive()) Sleep(INFINITE); \
+#define WAIT_FOR_CONSOLE_DESTROY                                            \
+    do {                                                                    \
+        if (ConsoleIsExclusive() && human_readable_output) Sleep(INFINITE); \
     } while (0)
 #else
 #define WAIT_FOR_CONSOLE_DESTROY
@@ -867,14 +873,17 @@ std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
         PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR =
             (PFN_vkEnumeratePhysicalDeviceGroupsKHR)vkGetInstanceProcAddr(inst.instance, "vkEnumeratePhysicalDeviceGroupsKHR");
 
+        std::vector<VkPhysicalDeviceGroupProperties> groups;
         uint32_t group_count;
-        VkResult err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, NULL);
-        if (err) ERR_EXIT(err);
+        VkResult err;
+        do {
+            err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, NULL);
+            if (err != VK_SUCCESS && err != VK_INCOMPLETE) ERR_EXIT(err);
+            groups.resize(group_count);
 
-        std::vector<VkPhysicalDeviceGroupProperties> groups(group_count);
-        err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, groups.data());
-        if (err) ERR_EXIT(err);
-
+            err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, groups.data());
+            if (err != VK_SUCCESS && err != VK_INCOMPLETE) ERR_EXIT(err);
+        } while (err == VK_INCOMPLETE);
         return groups;
     }
     return {};
