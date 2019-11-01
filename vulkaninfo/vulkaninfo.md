@@ -61,6 +61,9 @@ OPTIONS:
                       interest. This number can be determined by running
                       vulkaninfo without any options specified.
 --show-formats        Display the format properties of each physical device.
+                      Note: This option does not affect html or json output;
+                      they will always print format properties.
+
 ```
 
 ### Windows

@@ -668,7 +668,9 @@ void print_usage(const char *argv0) {
     std::cout << "                      specifying the gpu-number associated with the gpu of \n";
     std::cout << "                      interest. This number can be determined by running\n";
     std::cout << "                      vulkaninfo without any options specified.\n";
-    std::cout << "--show-formats        Display the format properties of each physical device.\n\n";
+    std::cout << "--show-formats        Display the format properties of each physical device.\n";
+    std::cout << "                      Note: This option does not affect html or json output;\n";
+    std::cout << "                      they will always print format properties.\n\n";
 }
 
 int main(int argc, char **argv) {
