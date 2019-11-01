@@ -51,12 +51,10 @@ USAGE: ./vulkaninfo [options]
 
 OPTIONS:
 -h, --help            Print this help.
---html                Produce an html version of vulkaninfo output, saved as
-                      "vulkaninfo.html" in the directory in which the command is
-                      run.
--j, --json            Produce a json version of vulkaninfo output to standard
-                      output.
---json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by
+--html                Produces an html version of vulkaninfo to standard output.
+-j, --json            Produces a json version of vulkaninfo to standard output of
+                      the first gpu in the system conforming to the DevSim schema.
+--json=<gpu-number>   For a multi-gpu system, a single gpu can be targeted by
                       specifying the gpu-number associated with the gpu of
                       interest. This number can be determined by running
                       vulkaninfo without any options specified.

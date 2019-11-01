@@ -659,13 +659,11 @@ void print_usage(const char *argv0) {
     std::cout << "USAGE: " << argv0 << " [options]\n\n";
     std::cout << "OPTIONS:\n";
     std::cout << "-h, --help            Print this help.\n";
-    std::cout << "--html                Produce an html version of vulkaninfo output, saved as\n";
-    std::cout << "                      \"vulkaninfo.html\" in the directory in which the command is\n";
-    std::cout << "                      run.\n";
-    std::cout << "-j, --json            Produce a json version of vulkaninfo to standard output of the\n";
-    std::cout << "                      first gpu in the system conforming to the DevSim schema.\n";
-    std::cout << "--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n";
-    std::cout << "                      specifying the gpu-number associated with the gpu of \n";
+    std::cout << "--html                Produces an html version of vulkaninfo to standard output.\n";
+    std::cout << "-j, --json            Produces a json version of vulkaninfo to standard output of\n";
+    std::cout << "                      the first gpu in the system conforming to the DevSim schema.\n";
+    std::cout << "--json=<gpu-number>   For a multi-gpu system, a single gpu can be targeted by\n";
+    std::cout << "                      specifying the gpu-number associated with the gpu of\n";
     std::cout << "                      interest. This number can be determined by running\n";
     std::cout << "                      vulkaninfo without any options specified.\n";
     std::cout << "--show-formats        Display the format properties of each physical device.\n";
@@ -679,6 +677,7 @@ int main(int argc, char **argv) {
 #endif
 
     uint32_t selected_gpu = 0;
+    OutputType output_format = OutputType::text;
 
     // Combinations of output: html only, html AND json, json only, human readable only
     for (int i = 1; i < argc; ++i) {
@@ -686,11 +685,9 @@ int main(int argc, char **argv) {
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
                 selected_gpu = strtol(argv[i] + 7, nullptr, 10);
             }
-            human_readable_output = false;
-            json_output = true;
+            output_format = OutputType::json;
         } else if (strcmp(argv[i], "--html") == 0) {
-            human_readable_output = false;
-            html_output = true;
+            output_format = OutputType::html;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
             show_formats = true;
         } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
@@ -735,20 +732,20 @@ int main(int argc, char **argv) {
 
     std::vector<std::unique_ptr<Printer>> printers;
 
-    std::streambuf *buf;
-    buf = std::cout.rdbuf();
-    std::ostream out(buf);
-    std::ofstream html_out;
+    std::streambuf *buf = std::cout.rdbuf();
+    std::ostream std_out(buf);
 
-    if (human_readable_output) {
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, out, selected_gpu, instance.vk_version)));
-    }
-    if (html_output) {
-        html_out = std::ofstream("vulkaninfo.html");
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::html, html_out, selected_gpu, instance.vk_version)));
-    }
-    if (json_output) {
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version)));
+    switch (output_format) {
+        default:
+        case OutputType::text:
+            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, std_out, selected_gpu, instance.vk_version)));
+            break;
+        case OutputType::html:
+            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::html, std_out, selected_gpu, instance.vk_version)));
+            break;
+        case OutputType::json:
+            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::json, std_out, selected_gpu, instance.vk_version)));
+            break;
     }
 
     for (auto &p : printers) {
