@@ -226,6 +226,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_memory_budget", 1},
     {"VK_EXT_memory_priority", 1},
     {"VK_NV_dedicated_allocation_image_aliasing", 1},
+    {"VK_KHR_separate_depth_stencil_layouts", 1},
     {"VK_EXT_buffer_device_address", 2},
     {"VK_EXT_separate_stencil_usage", 1},
     {"VK_NV_cooperative_matrix", 1},
@@ -1737,6 +1738,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL WaitSemaphoresKHR(
 static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
     VkDevice                                    device,
     const VkSemaphoreSignalInfoKHR*             pSignalInfo);
+
 
 
 

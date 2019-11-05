@@ -843,6 +843,7 @@ void DumpVkPhysicalDeviceSampleLocationsPropertiesEXT(Printer &p, std::string na
 void DumpVkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT &obj);
 void DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(Printer &p, std::string name, VkPhysicalDeviceSamplerYcbcrConversionFeatures &obj);
 void DumpVkPhysicalDeviceScalarBlockLayoutFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceScalarBlockLayoutFeaturesEXT &obj);
+void DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR &obj);
 void DumpVkPhysicalDeviceShaderAtomicInt64FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicInt64FeaturesKHR &obj);
 void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderClockFeaturesKHR &obj);
 void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT &obj);
@@ -1470,6 +1471,11 @@ void DumpVkPhysicalDeviceScalarBlockLayoutFeaturesEXT(Printer &p, std::string na
     p.PrintKeyBool("scalarBlockLayout", obj.scalarBlockLayout, 17);
     p.ObjectEnd();
 }
+void DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("separateDepthStencilLayouts", obj.separateDepthStencilLayouts, 27);
+    p.ObjectEnd();
+}
 void DumpVkPhysicalDeviceShaderAtomicInt64FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicInt64FeaturesKHR &obj) {
     p.ObjectStart(name);
     p.PrintKeyBool("shaderBufferInt64Atomics", obj.shaderBufferInt64Atomics, 24);
@@ -1711,6 +1717,7 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES, sizeof(VkPhysicalDeviceProtectedMemoryFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES, sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT, sizeof(VkPhysicalDeviceScalarBlockLayoutFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR, sizeof(VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderAtomicInt64FeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderClockFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT, sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)},
@@ -2034,6 +2041,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)) {
             VkPhysicalDeviceScalarBlockLayoutFeaturesEXT* props = (VkPhysicalDeviceScalarBlockLayoutFeaturesEXT*)structure;
             DumpVkPhysicalDeviceScalarBlockLayoutFeaturesEXT(p, "VkPhysicalDeviceScalarBlockLayoutFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME)) {
+            VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR* props = (VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR(p, "VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR &&
