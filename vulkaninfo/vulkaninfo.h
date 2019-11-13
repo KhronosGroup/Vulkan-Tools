@@ -503,7 +503,9 @@ static void AppCreateXcbWindow(AppInstance &inst) {
     if (conn_error) {
         fprintf(stderr, "XCB failed to connect to the X server due to error:%d.\n", conn_error);
         fflush(stderr);
+        xcb_disconnect(inst.xcb_connection);
         inst.xcb_connection = nullptr;
+        return;
     }
 
     setup = xcb_get_setup(inst.xcb_connection);
