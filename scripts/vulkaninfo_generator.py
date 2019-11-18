@@ -187,7 +187,6 @@ class VulkanInfoGenerator(OutputGenerator):
 
         self.extFuncs = OrderedDict()
         self.extTypes = OrderedDict()
-        self.extensions = set()
 
     def beginFile(self, genOpts):
         gen.OutputGenerator.beginFile(self, genOpts)
@@ -201,7 +200,6 @@ class VulkanInfoGenerator(OutputGenerator):
 
         for node in root.find('extensions').findall('extension'):
             ext = VulkanExtension(node)
-            self.extensions.add(ext)
             for item in ext.vktypes:
                 self.extTypes[item] = ext
             for item in ext.vkfuncs:
@@ -312,9 +310,9 @@ class VulkanInfoGenerator(OutputGenerator):
             return
 
         if groupinfo.elem.get('type') == 'bitmask':
-            self.bitmasks.add(VulkanBitmask(groupinfo.elem, self.extensions))
+            self.bitmasks.add(VulkanBitmask(groupinfo.elem))
         elif groupinfo.elem.get('type') == 'enum':
-            self.enums.add(VulkanEnum(groupinfo.elem, self.extensions))
+            self.enums.add(VulkanEnum(groupinfo.elem))
 
     def genType(self, typeinfo, name, alias):
         gen.OutputGenerator.genType(self, typeinfo, name, alias)
@@ -697,11 +695,11 @@ class VulkanEnum:
                 'optMultiValue': self.multiValue,
             }
 
-    def __init__(self, rootNode, extensions):
+    def __init__(self, rootNode):
         self.name = rootNode.get('name')
         self.type = rootNode.get('type')
         self.options = []
-        self.ext = None
+
         for child in rootNode:
             childName = child.get('name')
             childValue = child.get('value')
@@ -710,6 +708,9 @@ class VulkanEnum:
             childExtends = child.get('extends')
             childOffset = child.get('offset')
             childExtNum = child.get('extnumber')
+            support = child.get('supported')
+            if(support == "disabled"):
+                continue
 
             if childName is None:
                 continue
@@ -735,20 +736,12 @@ class VulkanEnum:
             self.options.append(VulkanEnum.Option(
                 childName, childValue, childBitpos, childComment))
 
-        for ext in extensions:
-            if self.name in ext.enumValues:
-                self.ext = ext
-                childName, childValue = ext.enumValues[self.name]
-                self.options.append(VulkanEnum.Option(
-                    childName, childValue, None, None))
-
 
 class VulkanBitmask:
 
-    def __init__(self, rootNode, extensions):
+    def __init__(self, rootNode):
         self.name = rootNode.get('name')
         self.type = rootNode.get('type')
-        self.ext = None
 
         # Read each value that the enum contains
         self.options = []
@@ -757,18 +750,14 @@ class VulkanBitmask:
             childValue = child.get('value')
             childBitpos = child.get('bitpos')
             childComment = child.get('comment')
+            support = child.get('supported')
             if childName is None or (childValue is None and childBitpos is None):
+                continue
+            if(support == "disabled"):
                 continue
 
             self.options.append(VulkanEnum.Option(
                 childName, childValue, childBitpos, childComment))
-
-        for ext in extensions:
-            if self.name in ext.enumValues:
-                self.ext = ext
-                childName, childValue = ext.enumValues[self.name]
-                self.options.append(VulkanEnum.Option(
-                    childName, childValue, None, None))
 
 
 class VulkanFlags:
