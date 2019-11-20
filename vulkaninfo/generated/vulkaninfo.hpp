@@ -550,10 +550,6 @@ void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlagB
     if (4194304 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_DISJOINT_BIT");
     if (8388608 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT");
     if (8192 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG");
-    if (134217728 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_RESERVED_27_BIT_KHR");
-    if (268435456 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_RESERVED_28_BIT_KHR");
-    if (33554432 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_RESERVED_25_BIT_KHR");
-    if (67108864 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_RESERVED_26_BIT_KHR");
     if (65536 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT");
     if (16777216 & value) p.SetAsType().PrintElement("FORMAT_FEATURE_FRAGMENT_DENSITY_MAP_BIT_EXT");
 }
@@ -579,12 +575,6 @@ void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlagBits va
     if (32 & value) p.SetAsType().PrintElement("IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT");
     if (64 & value) p.SetAsType().PrintElement("IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT");
     if (128 & value) p.SetAsType().PrintElement("IMAGE_USAGE_INPUT_ATTACHMENT_BIT");
-    if (8192 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_13_BIT_KHR");
-    if (16384 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_14_BIT_KHR");
-    if (32768 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_15_BIT_KHR");
-    if (1024 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_10_BIT_KHR");
-    if (2048 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_11_BIT_KHR");
-    if (4096 & value) p.SetAsType().PrintElement("IMAGE_USAGE_RESERVED_12_BIT_KHR");
     if (256 & value) p.SetAsType().PrintElement("IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV");
     if (512 & value) p.SetAsType().PrintElement("IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT");
 }
@@ -662,14 +652,6 @@ std::string VkQueueFlagsString(VkQueueFlags value, int width = 0) {
     if (16 & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
         out += "QUEUE_PROTECTED";
-    }
-    if (64 & value) {
-        if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_RESERVED_6_BIT_KHR";
-    }
-    if (32 & value) {
-        if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_RESERVED_5_BIT_KHR";
     }
     return out;
 }
@@ -834,6 +816,8 @@ void DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(Printer &p, std::string name,
 void DumpVkPhysicalDeviceMultiviewFeatures(Printer &p, std::string name, VkPhysicalDeviceMultiviewFeatures &obj);
 void DumpVkPhysicalDeviceMultiviewProperties(Printer &p, std::string name, VkPhysicalDeviceMultiviewProperties &obj);
 void DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(Printer &p, std::string name, VkPhysicalDevicePCIBusInfoPropertiesEXT &obj);
+void DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryFeaturesKHR &obj);
+void DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryPropertiesKHR &obj);
 void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &obj);
 void DumpVkPhysicalDevicePointClippingProperties(Printer &p, std::string name, VkPhysicalDevicePointClippingProperties &obj);
 void DumpVkPhysicalDeviceProtectedMemoryFeatures(Printer &p, std::string name, VkPhysicalDeviceProtectedMemoryFeatures &obj);
@@ -1418,6 +1402,17 @@ void DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(Printer &p, std::string name, V
     p.PrintKeyValue("pciFunction", obj.pciFunction, 11);
     p.ObjectEnd();
 }
+void DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryFeaturesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("performanceCounterQueryPools", obj.performanceCounterQueryPools, 36);
+    p.PrintKeyBool("performanceCounterMultipleQueryPools", obj.performanceCounterMultipleQueryPools, 36);
+    p.ObjectEnd();
+}
+void DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryPropertiesKHR &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyBool("allowCommandBufferQueryCopies", obj.allowCommandBufferQueryCopies, 29);
+    p.ObjectEnd();
+}
 void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &obj) {
     p.ObjectStart(name);
     p.PrintKeyBool("pipelineExecutableInfo", obj.pipelineExecutableInfo, 22);
@@ -1680,6 +1675,7 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES, sizeof(VkPhysicalDeviceMaintenance3Properties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES, sizeof(VkPhysicalDeviceMultiviewProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT, sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR, sizeof(VkPhysicalDevicePerformanceQueryPropertiesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES, sizeof(VkPhysicalDevicePointClippingProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES, sizeof(VkPhysicalDeviceProtectedMemoryProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR, sizeof(VkPhysicalDevicePushDescriptorPropertiesKHR)},
@@ -1713,6 +1709,7 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT, sizeof(VkPhysicalDeviceLineRasterizationFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT, sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES, sizeof(VkPhysicalDeviceMultiviewFeatures)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR, sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR, sizeof(VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES, sizeof(VkPhysicalDeviceProtectedMemoryFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES, sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures)},
@@ -1836,6 +1833,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppGpu &gpu, void * place) {
             gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PCI_BUS_INFO_EXTENSION_NAME)) {
             VkPhysicalDevicePCIBusInfoPropertiesEXT* props = (VkPhysicalDevicePCIBusInfoPropertiesEXT*)structure;
             DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(p, "VkPhysicalDevicePCIBusInfoPropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME)) {
+            VkPhysicalDevicePerformanceQueryPropertiesKHR* props = (VkPhysicalDevicePerformanceQueryPropertiesKHR*)structure;
+            DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(p, "VkPhysicalDevicePerformanceQueryPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES) {
@@ -2019,6 +2022,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES) {
             VkPhysicalDeviceMultiviewFeatures* props = (VkPhysicalDeviceMultiviewFeatures*)structure;
             DumpVkPhysicalDeviceMultiviewFeatures(p, "VkPhysicalDeviceMultiviewFeatures", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR &&
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME)) {
+            VkPhysicalDevicePerformanceQueryFeaturesKHR* props = (VkPhysicalDevicePerformanceQueryFeaturesKHR*)structure;
+            DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(p, "VkPhysicalDevicePerformanceQueryFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR &&

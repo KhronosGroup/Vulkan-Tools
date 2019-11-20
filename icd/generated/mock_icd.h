@@ -150,6 +150,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_external_fence", 1},
     {"VK_KHR_external_fence_win32", 1},
     {"VK_KHR_external_fence_fd", 1},
+    {"VK_KHR_performance_query", 1},
     {"VK_KHR_maintenance2", 1},
     {"VK_KHR_variable_pointers", 1},
     {"VK_EXT_external_memory_dma_buf", 1},
@@ -1612,6 +1613,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetFenceFdKHR(
     int*                                        pFd);
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t*                                   pCounterCount,
+    VkPerformanceCounterKHR*                    pCounters,
+    VkPerformanceCounterDescriptionKHR*         pCounterDescriptions);
+
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkQueryPoolPerformanceCreateInfoKHR*  pPerformanceQueryCreateInfo,
+    uint32_t*                                   pNumPasses);
+
+static VKAPI_ATTR VkResult VKAPI_CALL AcquireProfilingLockKHR(
+    VkDevice                                    device,
+    const VkAcquireProfilingLockInfoKHR*        pInfo);
+
+static VKAPI_ATTR void VKAPI_CALL ReleaseProfilingLockKHR(
+    VkDevice                                    device);
+
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceCapabilities2KHR(
     VkPhysicalDevice                            physicalDevice,
@@ -2826,6 +2847,10 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
     {"vkImportFenceFdKHR", (void*)ImportFenceFdKHR},
     {"vkGetFenceFdKHR", (void*)GetFenceFdKHR},
+    {"vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR", (void*)EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR},
+    {"vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR", (void*)GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR},
+    {"vkAcquireProfilingLockKHR", (void*)AcquireProfilingLockKHR},
+    {"vkReleaseProfilingLockKHR", (void*)ReleaseProfilingLockKHR},
     {"vkGetPhysicalDeviceSurfaceCapabilities2KHR", (void*)GetPhysicalDeviceSurfaceCapabilities2KHR},
     {"vkGetPhysicalDeviceSurfaceFormats2KHR", (void*)GetPhysicalDeviceSurfaceFormats2KHR},
     {"vkGetPhysicalDeviceDisplayProperties2KHR", (void*)GetPhysicalDeviceDisplayProperties2KHR},
