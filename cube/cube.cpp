@@ -827,9 +827,23 @@ void Demo::draw_build_cmd(vk::CommandBuffer commandBuffer) {
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
     commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline_layout, 0, 1,
                                      &swapchain_image_resources[current_buffer].descriptor_set, 0, nullptr);
-
-    auto const viewport =
-        vk::Viewport().setWidth((float)width).setHeight((float)height).setMinDepth((float)0.0f).setMaxDepth((float)1.0f);
+    float viewport_dimension;
+    float viewport_x = 0.0f;
+    float viewport_y = 0.0f;
+    if (width < height) {
+        viewport_dimension = (float)width;
+        viewport_y = (height - width) / 2.0f;
+    } else {
+        viewport_dimension = (float)height;
+        viewport_x = (width - height) / 2.0f;
+    }
+    auto const viewport = vk::Viewport()
+                              .setX(viewport_x)
+                              .setY(viewport_y)
+                              .setWidth((float)viewport_dimension)
+                              .setHeight((float)viewport_dimension)
+                              .setMinDepth((float)0.0f)
+                              .setMaxDepth((float)1.0f);
     commandBuffer.setViewport(0, 1, &viewport);
 
     vk::Rect2D const scissor(vk::Offset2D(0, 0), vk::Extent2D(width, height));
