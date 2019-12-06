@@ -58,13 +58,9 @@ license_header = '''
 '''
 
 custom_formaters = '''
-std::ostream &operator<<(std::ostream &o, VkConformanceVersionKHR &c) {
+std::ostream &operator<<(std::ostream &o, VkConformanceVersion &c) {
     return o << std::to_string(c.major) << "." << std::to_string(c.minor) << "." << std::to_string(c.subminor) << "."
              << std::to_string(c.patch);
-}
-
-std::string VkExtent3DString(VkExtent3D e) {
-    return std::string("(") + std::to_string(e.width) + ", " + std::to_string(e.height) + ", " + std::to_string(e.depth) + ")";
 }
 
 template <typename T>
@@ -92,19 +88,17 @@ flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR',
                 'VkDeviceGroupPresentModeFlagsKHR', 'VkFormatFeatureFlags', 'VkMemoryPropertyFlags', 'VkMemoryHeapFlags']
 flags_strings_to_gen = ['VkQueueFlags']
 
+struct_short_versions_to_gen = ['VkExtent3D']
+
 struct_comparisons_to_gen = ['VkSurfaceFormatKHR', 'VkSurfaceFormat2KHR', 'VkSurfaceCapabilitiesKHR',
                              'VkSurfaceCapabilities2KHR', 'VkSurfaceCapabilities2EXT']
 
 # iostream or custom outputter handles these types
 predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
-                    'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'VkConformanceVersionKHR']
-# need list of venders to blacklist vendor extensions
-vendor_abbreviations = ['_IMG', '_AMD', '_AMDX', '_ARM', '_FSL', '_BRCM', '_NXP', '_NV', '_NVX', '_VIV', '_VSI', '_KDAB',
-                        '_ANDROID', '_CHROMIUM', '_FUCHSIA', '_GGP', '_GOOGLE', '_QCOM', '_LUNARG', '_SAMSUNG', '_SEC', '_TIZEN',
-                        '_RENDERDOC', '_NN', '_MVK', '_KHX', '_MESA', '_INTEL']
+                    'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'VkConformanceVersion']
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
-EXTENSION_CATEGORIES = {'phys_device_props2': {'extends': 'VkPhysicalDeviceProperties2', 'type': 'device'},
+EXTENSION_CATEGORIES = {'phys_device_props2': {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'},
                         'phys_device_mem_props2': {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device'},
                         'phys_device_features2': {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device'},
                         'surface_capabilities2': {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both'},
@@ -172,40 +166,49 @@ class VulkanInfoGenerator(OutputGenerator):
 
         self.constants = OrderedDict()
 
+        self.types_to_gen = set()
+
         self.extension_sets = OrderedDict()
         for ext_cat in EXTENSION_CATEGORIES.keys():
             self.extension_sets[ext_cat] = set()
 
-        self.enums = set()
-        self.flags = set()
-        self.bitmasks = set()
-        self.structures = set()
-        self.structs_to_comp = set()
-        self.all_structures = set()
-
-        self.types_to_gen = set()
+        self.enums = []
+        self.flags = []
+        self.bitmasks = []
+        self.all_structures = []
+        self.aliases = OrderedDict()
 
         self.extFuncs = OrderedDict()
         self.extTypes = OrderedDict()
 
+        self.vendor_abbreviations = []
+        self.vulkan_versions = []
+
     def beginFile(self, genOpts):
         gen.OutputGenerator.beginFile(self, genOpts)
-
-        root = self.registry.reg
 
         for node in self.registry.reg.findall('enums'):
             if node.get('name') == 'API Constants':
                 for item in node.findall('enum'):
                     self.constants[item.get('name')] = item.get('value')
 
-        for node in root.find('extensions').findall('extension'):
+        for node in self.registry.reg.find('extensions').findall('extension'):
             ext = VulkanExtension(node)
             for item in ext.vktypes:
                 self.extTypes[item] = ext
             for item in ext.vkfuncs:
                 self.extFuncs[item] = ext
 
+        # need list of venders to blacklist vendor extensions
+        for tag in self.registry.reg.find('tags'):
+            if tag.get("name") not in ["KHR", "EXT"]:
+                self.vendor_abbreviations.append("_" + tag.get('name'))
+
+        for ver in self.registry.reg.findall('feature'):
+            self.vulkan_versions.append(VulkanVersion(ver))
+
     def endFile(self):
+        # gather the types that are needed to generate
         types_to_gen = set()
         for s in enums_to_gen:
             types_to_gen.add(s)
@@ -213,83 +216,72 @@ class VulkanInfoGenerator(OutputGenerator):
         for f in flags_to_gen:
             types_to_gen.add(f)
 
-        types_to_gen = types_to_gen.union(GatherTypesToGen(self.structures))
-        for key, value in EXTENSION_CATEGORIES.items():
+        types_to_gen = types_to_gen.union(
+            GatherTypesToGen(self.all_structures, structures_to_gen))
+        for key in EXTENSION_CATEGORIES.keys():
             types_to_gen = types_to_gen.union(
-                GatherTypesToGen(self.extension_sets[key]))
+                GatherTypesToGen(self.all_structures, self.extension_sets[key]))
+
+        names_of_structures_to_gen = set()
+        for s in self.all_structures:
+            if s.name in types_to_gen:
+                names_of_structures_to_gen.add(s.name)
 
         structs_to_comp = set()
         for s in struct_comparisons_to_gen:
             structs_to_comp.add(s)
         structs_to_comp = structs_to_comp.union(
-            GatherTypesToGen(self.structs_to_comp))
-
-        self.enums = sorted(self.enums, key=operator.attrgetter('name'))
-        self.flags = sorted(self.flags, key=operator.attrgetter('name'))
-        self.bitmasks = sorted(self.bitmasks, key=operator.attrgetter('name'))
-        self.structures = sorted(
-            self.structures, key=operator.attrgetter('name'))
-        self.all_structures = sorted(
-            self.all_structures, key=operator.attrgetter('name'))
+            GatherTypesToGen(self.all_structures, struct_comparisons_to_gen))
 
         for key, value in self.extension_sets.items():
-            self.extension_sets[key] = sorted(
-                value, key=operator.attrgetter('name'))
+            self.extension_sets[key] = sorted(value)
 
+        alias_versions = {}
+        for version in self.vulkan_versions:
+            for aliased_type, aliases in self.aliases.items():
+                for alias in aliases:
+                    if alias in version.names:
+                        alias_versions[alias] = version.minorVersion
+
+        # print the types gathered
         out = ''
         out += license_header + "\n"
         out += "#include \"vulkaninfo.h\"\n"
         out += "#include \"outputprinter.h\"\n"
         out += custom_formaters
 
-        for e in self.enums:
-            if e.name in types_to_gen:
-                out += PrintEnumToString(e, self)
-                out += PrintEnum(e, self)
+        for enum in (e for e in self.enums if e.name in types_to_gen):
+            out += PrintEnumToString(enum, self)
+            out += PrintEnum(enum, self)
 
-        for f in self.flags:
-            if f.name in types_to_gen:
-                for b in self.bitmasks:
-                    if b.name == f.enum:
-                        out += PrintFlags(f, b, self)
-                        out += PrintBitMask(b, f.name, self)
+        for flag in self.flags:
+            if flag.name in types_to_gen:
+                for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
+                    out += PrintFlags(flag, bitmask, self)
+                    out += PrintBitMask(bitmask, flag.name, self)
 
-            if f.name in flags_strings_to_gen:
-                for b in self.bitmasks:
-                    if b.name == f.enum:
-                        out += PrintBitMaskToString(b, f.name, self)
+            if flag.name in flags_strings_to_gen:
+                for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
+                    out += PrintBitMaskToString(bitmask, flag.name, self)
 
-        # find all structures needed to dump the requested structures
-        structure_names = set()
-        for s in self.all_structures:
-            if s.name in types_to_gen:
-                structure_names.add(s.name)
-
-        for s in self.all_structures:
-            if s.name in types_to_gen:
-                out += PrintForwardDeclaration(s, self)
-
-        for s in self.all_structures:
-            if s.name in types_to_gen:
-                out += PrintStructure(s, structure_names, self)
+        for s in (x for x in self.all_structures if x.name in types_to_gen):
+            out += PrintStructure(s, types_to_gen, names_of_structures_to_gen)
 
         out += "pNextChainInfos get_chain_infos() {\n"
         out += "    pNextChainInfos infos;\n"
-        for key, value in EXTENSION_CATEGORIES.items():
-            out += PrintChainBuilders(key, self.extension_sets[key])
+        for key in EXTENSION_CATEGORIES.keys():
+            out += PrintChainBuilders(key,
+                                      self.extension_sets[key], self.all_structures)
         out += "    return infos;\n}\n"
 
         for key, value in EXTENSION_CATEGORIES.items():
             out += PrintChainIterator(key,
-                                      self.extension_sets[key], value.get('type'))
+                                      self.extension_sets[key], self.all_structures, value.get('type'), self.extTypes, self.aliases, self.vulkan_versions)
 
-        for s in self.all_structures:
-            if s.name in structs_to_comp:
-                out += PrintStructComparisonForwardDef(s)
-
-        for s in self.all_structures:
-            if s.name in structs_to_comp:
-                out += PrintStructComparison(s)
+        for s in (x for x in self.all_structures if x.name in structs_to_comp):
+            out += PrintStructComparison(s)
+        for s in (x for x in self.all_structures if x.name in struct_short_versions_to_gen):
+            out += PrintStructShort(s)
 
         gen.write(out, file=self.outFile)
 
@@ -307,35 +299,35 @@ class VulkanInfoGenerator(OutputGenerator):
         gen.OutputGenerator.genGroup(self, groupinfo, groupName, alias)
 
         if alias is not None:
+            if alias in self.aliases.keys():
+                self.aliases[alias].append(groupName)
+            else:
+                self.aliases[alias] = [groupName, ]
             return
 
         if groupinfo.elem.get('type') == 'bitmask':
-            self.bitmasks.add(VulkanBitmask(groupinfo.elem))
+            self.bitmasks.append(VulkanBitmask(groupinfo.elem))
         elif groupinfo.elem.get('type') == 'enum':
-            self.enums.add(VulkanEnum(groupinfo.elem))
+            self.enums.append(VulkanEnum(groupinfo.elem))
 
     def genType(self, typeinfo, name, alias):
         gen.OutputGenerator.genType(self, typeinfo, name, alias)
 
         if alias is not None:
+            if alias in self.aliases.keys():
+                self.aliases[alias].append(name)
+            else:
+                self.aliases[alias] = [name, ]
             return
 
         if typeinfo.elem.get('category') == 'bitmask':
-            self.flags.add(VulkanFlags(typeinfo.elem))
-
-        if typeinfo.elem.get('category') == 'struct' and name in structures_to_gen:
-            self.structures.add(VulkanStructure(
-                name, typeinfo.elem, self.constants, self.extTypes))
-
-        if typeinfo.elem.get('category') == 'struct' and name in struct_comparisons_to_gen:
-            self.structs_to_comp.add(VulkanStructure(
-                name, typeinfo.elem, self.constants, self.extTypes))
+            self.flags.append(VulkanFlags(typeinfo.elem))
 
         if typeinfo.elem.get('category') == 'struct':
-            self.all_structures.add(VulkanStructure(
+            self.all_structures.append(VulkanStructure(
                 name, typeinfo.elem, self.constants, self.extTypes))
 
-        for vendor in vendor_abbreviations:
+        for vendor in self.vendor_abbreviations:
             for node in typeinfo.elem.findall('member'):
                 if(node.get('values') is not None):
                     if(node.get('values').find(vendor)) != -1:
@@ -343,16 +335,15 @@ class VulkanInfoGenerator(OutputGenerator):
 
         for key, value in EXTENSION_CATEGORIES.items():
             if typeinfo.elem.get('structextends') == value.get('extends'):
-                self.extension_sets[key].add(VulkanStructure(
-                    name, typeinfo.elem, self.constants, self.extTypes))
+                self.extension_sets[key].add(name)
 
 
-def GatherTypesToGen(structures):
+def GatherTypesToGen(structure_list, structures):
     types = set()
     added_stuff = True  # repeat until no new types are added
     while added_stuff == True:
         added_stuff = False
-        for s in structures:
+        for s in (x for x in structure_list if x.name in structures):
             size = len(types)
             types.add(s.name)
             if len(types) != size:
@@ -386,87 +377,88 @@ def AddGuardFooter(obj):
         return ""
 
 
-def PrintEnumToString(e, gen):
+def PrintEnumToString(enum, gen):
     out = ''
-    out += AddGuardHeader(GetExtension(e.name, gen))
+    out += AddGuardHeader(GetExtension(enum.name, gen))
 
-    out += "static const char *" + e.name + "String(" + e.name + " value) {\n"
+    out += "static const char *" + enum.name + \
+        "String(" + enum.name + " value) {\n"
     out += "    switch (value) {\n"
-    for v in e.options:
+    for v in enum.options:
         out += "        case (" + str(v.value) + \
             "): return \"" + v.name[3:] + "\";\n"
-    out += "        default: return \"UNKNOWN_" + e.name + "\";\n"
+    out += "        default: return \"UNKNOWN_" + enum.name + "\";\n"
     out += "    }\n}\n"
-    out += AddGuardFooter(GetExtension(e.name, gen))
+    out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
 
-def PrintEnum(e, gen):
+def PrintEnum(enum, gen):
     out = ''
-    out += AddGuardHeader(GetExtension(e.name, gen))
-    out += "void Dump" + e.name + \
+    out += AddGuardHeader(GetExtension(enum.name, gen))
+    out += "void Dump" + enum.name + \
         "(Printer &p, std::string name, " + \
-        e.name + " value, int width = 0) {\n"
+        enum.name + " value, int width = 0) {\n"
     out += "    if (p.Type() == OutputType::json) {\n"
     out += "        p.PrintKeyValue(name, value, width);\n"
     out += "        return;\n"
     out += "    } else {\n"
     out += "        p.PrintKeyValue(name, " + \
-        e.name + "String(value), width);\n    }\n"
+        enum.name + "String(value), width);\n    }\n"
     out += "}\n"
-    out += AddGuardFooter(GetExtension(e.name, gen))
+    out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
 
-def PrintFlags(f, b, gen):
+def PrintFlags(flag, bitmask, gen):
     out = ''
-    out += AddGuardHeader(GetExtension(f.name, gen))
+    out += AddGuardHeader(GetExtension(flag.name, gen))
 
-    out += "void Dump" + f.name + \
+    out += "void Dump" + flag.name + \
         "(Printer &p, std::string name, " + \
-        f.enum + " value, int width = 0) {\n"
+        flag.enum + " value, int width = 0) {\n"
     out += "    if (value == 0) p.PrintElement(\"None\");\n"
-    for v in b.options:
+    for v in bitmask.options:
         out += "    if (" + str(v.value) + \
             " & value) p.SetAsType().PrintElement(\"" + \
             str(v.name[3:]) + "\");\n"
     out += "}\n"
 
-    out += AddGuardFooter(GetExtension(f.name, gen))
+    out += AddGuardFooter(GetExtension(flag.name, gen))
     return out
 
 
-def PrintBitMask(b, name, gen):
+def PrintBitMask(bitmask, name, gen):
     out = ''
-    out += AddGuardHeader(GetExtension(b.name, gen))
+    out += AddGuardHeader(GetExtension(bitmask.name, gen))
     out += "void Dump" + name + \
         "(Printer &p, std::string name, " + name + " value, int width = 0) {\n"
     out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
     out += "    p.ObjectStart(name);\n"
     out += "    Dump" + name + \
-        "(p, name, static_cast<" + b.name + ">(value), width);\n"
+        "(p, name, static_cast<" + bitmask.name + ">(value), width);\n"
     out += "    p.ObjectEnd();\n"
     out += "}\n"
-    out += "void Dump" + b.name + \
+    out += "void Dump" + bitmask.name + \
         "(Printer &p, std::string name, " + \
-        b.name + " value, int width = 0) {\n"
+        bitmask.name + " value, int width = 0) {\n"
     out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
     out += "    p.ObjectStart(name);\n"
     out += "    Dump" + name + "(p, name, value, width);\n"
     out += "    p.ObjectEnd();\n"
     out += "}\n"
-    out += AddGuardFooter(GetExtension(b.name, gen))
+    out += AddGuardFooter(GetExtension(bitmask.name, gen))
     return out
 
 
-def PrintBitMaskToString(b, name, gen):
+def PrintBitMaskToString(bitmask, name, gen):
     out = ''
-    out += AddGuardHeader(GetExtension(b.name, gen))
+    out += AddGuardHeader(GetExtension(bitmask.name, gen))
     out += "std::string " + name + \
         "String(" + name + " value, int width = 0) {\n"
     out += "    std::string out;\n"
     out += "    bool is_first = true;\n"
-    for v in b.options:
+    for v in bitmask.options:
         out += "    if (" + str(v.value) + " & value) {\n"
         out += "        if (is_first) { is_first = false; } else { out += \" | \"; }\n"
         out += "        out += \"" + \
@@ -474,24 +466,16 @@ def PrintBitMaskToString(b, name, gen):
         out += "    }\n"
     out += "    return out;\n"
     out += "}\n"
-    out += AddGuardFooter(GetExtension(b.name, gen))
+    out += AddGuardFooter(GetExtension(bitmask.name, gen))
     return out
 
 
-def PrintForwardDeclaration(struct, gen):
+def PrintStructure(struct, types_to_gen, structure_names):
+    if len(struct.members) == 0:
+        return ""
     out = ''
     out += AddGuardHeader(struct)
-    out += "void Dump" + struct.name + \
-        "(Printer &p, std::string name, " + struct.name + " &obj);\n"
-    out += AddGuardFooter(struct)
-
-    return out
-
-
-def PrintStructure(struct, structure_names, gen):
-    out = ''
-    out += AddGuardHeader(struct)
-    max_key_len = len(struct.members[0].name)
+    max_key_len = 0
     for v in struct.members:
         if v.arrayLength is not None:
             if len(v.name) + len(v.arrayLength) + 2 > max_key_len:
@@ -542,7 +526,7 @@ def PrintStructure(struct, structure_names, gen):
                     "\", obj."+v.arrayLength+");\n"
                 out += "    for (uint32_t i = 0; i < obj." + \
                     v.arrayLength+"; i++) {\n"
-                if v.typeID in structure_names:
+                if v.typeID in types_to_gen:
                     out += "        if (obj." + v.name + " != nullptr) {\n"
                     out += "            p.SetElementIndex(i);\n"
                     out += "            Dump" + v.typeID + \
@@ -561,13 +545,14 @@ def PrintStructure(struct, structure_names, gen):
             out += "    p.PrintKeyValue(\"" + v.name + "\", obj." + \
                 v.name + ", " + str(max_key_len) + ");\n"
         elif v.name not in ['sType', 'pNext']:
-            if v.typeID in structure_names:
-                out += "    Dump" + v.typeID + \
-                    "(p, \"" + v.name + "\", obj." + v.name + ");\n"
-            else:
+            # if it is an enum/flag/bitmask, add the calculated width
+            if v.typeID not in structure_names:
                 out += "    Dump" + v.typeID + \
                     "(p, \"" + v.name + "\", obj." + \
                     v.name + ", " + str(max_key_len) + ");\n"
+            else:
+                out += "    Dump" + v.typeID + \
+                    "(p, \"" + v.name + "\", obj." + v.name + ");\n"
 
     out += "    p.ObjectEnd();\n"
     out += "}\n"
@@ -576,21 +561,44 @@ def PrintStructure(struct, structure_names, gen):
     return out
 
 
-def PrintChainBuilders(listName, structures):
+def PrintStructShort(struct):
+    out = ''
+    out += AddGuardHeader(struct)
+    out += "std::ostream &operator<<(std::ostream &o, " + \
+        struct.name + " &obj) {\n"
+    out += "    return o << \"(\" << "
+
+    first = True
+    for v in struct.members:
+        if first:
+            first = False
+            out += "obj." + v.name + " << "
+        else:
+            out += "\',\' << obj." + v.name + " << "
+    out += "\")\";\n"
+    out += "}\n"
+    out += AddGuardFooter(struct)
+    return out
+
+
+def PrintChainBuilders(listName, structures, all_structures):
+    sorted_structures = sorted(
+        all_structures, key=operator.attrgetter('name'))
+
     out = ''
     out += "    infos." + listName + " = {\n"
-    for s in structures:
-        out += AddGuardHeader(s)
-        if s.sTypeName is not None:
-            out += "        {" + s.sTypeName + ", sizeof(" + s.name + ")},\n"
-        out += AddGuardFooter(s)
+    for s in sorted_structures:
+        if s.name in structures:
+            out += AddGuardHeader(s)
+            if s.sTypeName is not None:
+                out += "        {" + s.sTypeName + \
+                    ", sizeof(" + s.name + ")},\n"
+            out += AddGuardFooter(s)
     out += "    };\n"
     return out
 
 
-def PrintChainIterator(listName, structures, checkExtLoc):
-    sorted_structures = sorted(structures, key=operator.attrgetter("name"))
-
+def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, versions):
     out = ''
     out += "void chain_iterator_" + listName + "(Printer &p, "
     if checkExtLoc == "device":
@@ -599,45 +607,69 @@ def PrintChainIterator(listName, structures, checkExtLoc):
         out += "AppInstance &inst"
     elif checkExtLoc == "both":
         out += "AppInstance &inst, AppGpu &gpu"
-    out += ", void * place) {\n"
+    out += ", void * place, VulkanVersion version) {\n"
 
     out += "    while (place) {\n"
     out += "        struct VkStructureHeader *structure = (struct VkStructureHeader *)place;\n"
     out += "        p.SetSubHeader();\n"
-    for s in sorted_structures:
-        out += AddGuardHeader(s)
-        if s.sTypeName is not None:
-            if s.extNameStr is not None:
-                out += "        if (structure->sType == " + \
-                    s.sTypeName + " &&\n"
-                if s.extType == "device":
-                    out += "            gpu.CheckPhysicalDeviceExtensionIncluded(" + \
-                        s.extNameStr + ")) {\n"
-                elif s.extType == "instance":
-                    out += "            inst.CheckExtensionEnabled(" + \
-                        s.extNameStr + ")) {\n"
+    for s in all_structures:
+        if s.sTypeName is None:
+            continue
 
-            else:
-                out += "        if (structure->sType == " + \
-                    s.sTypeName + ") {\n"
+        extNameStr = None
+        extType = None
+        for k, e in extTypes.items():
+            if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
+                if e.extNameStr is not None:
+                    extNameStr = e.extNameStr
+                if e.type is not None:
+                    extType = e.type
+                break
+        version = None
+        oldVersionName = None
+        for v in versions:
+            if s.name in v.names:
+                version = v.minorVersion
+        if s.name in aliases.keys():
+            for alias in aliases[s.name]:
+                oldVersionName = alias
 
+        if s.name in structures:
+            out += AddGuardHeader(s)
+            out += "        if (structure->sType == " + s.sTypeName
+            has_version = version is not None
+            has_extNameStr = extNameStr is not None or s.name in aliases.keys()
+
+            if has_version or has_extNameStr:
+                out += " && \n           ("
+                if has_extNameStr:
+                    if extType == "device":
+                        out += "gpu.CheckPhysicalDeviceExtensionIncluded(" + \
+                            extNameStr + ")"
+                    elif extType == "instance":
+                        out += "inst.CheckExtensionEnabled(" + extNameStr + ")"
+                    if has_version and extType is not None:
+                        out += " ||\n            "
+                if has_version:
+                    out += "version.minor >= " + str(version)
+                out += ")"
+            out += ") {\n"
             out += "            " + s.name + "* props = " + \
                 "("+s.name+"*)structure;\n"
-            out += "            Dump" + s.name + \
-                "(p, \"" + s.name + "\", *props);\n"
+
+            out += "            Dump" + s.name + "(p, "
+            if s.name in aliases.keys() and version is not None:
+                out += "version.minor >= " + version + " ?\"" + \
+                    s.name + "\":\"" + oldVersionName + "\""
+            else:
+                out += "\"" + s.name + "\""
+            out += ", *props);\n"
             out += "            p.AddNewline();\n"
             out += "        }\n"
-        out += AddGuardFooter(s)
+            out += AddGuardFooter(s)
     out += "        place = structure->pNext;\n"
     out += "    }\n"
     out += "}\n"
-    return out
-
-
-def PrintStructComparisonForwardDef(structure):
-    out = ''
-    out += "bool operator==(const " + structure.name + \
-        " & a, const " + structure.name + " b);\n"
     return out
 
 
@@ -834,8 +866,8 @@ class VulkanStructure:
         self.members = []
         self.guard = None
         self.sTypeName = None
-        self.extNameStr = None
-        self.extType = None
+        self.extendsStruct = rootNode.get('structextends')
+
         for node in rootNode.findall('member'):
             if(node.get('values') is not None):
                 self.sTypeName = node.get('values')
@@ -846,10 +878,6 @@ class VulkanStructure:
             if k == self.name:
                 if e.guard is not None:
                     self.guard = e.guard
-                if e.extNameStr is not None:
-                    self.extNameStr = e.extNameStr
-                if e.type is not None:
-                    self.extType = e.type
 
 
 class VulkanExtension:
@@ -865,6 +893,15 @@ class VulkanExtension:
         self.vkfuncs = []
         self.constants = {}
         self.enumValues = {}
+        self.version = 0
+        self.node = rootNode
+
+        promotedto = rootNode.get('promotedto')
+        if promotedto != None:
+            # get last char of VK_VERSION_1_1 or VK_VERSION_1_2
+            minorVersion = promotedto[-1:]
+            if minorVersion.isdigit():
+                self.version = minorVersion
 
         for req in rootNode.findall('require'):
             for ty in req.findall('type'):
@@ -895,3 +932,20 @@ class VulkanExtension:
                     self.enumValues[base] = (name, enumValue)
                 else:
                     self.constants[name] = value
+
+
+class VulkanVersion:
+    def __init__(self, rootNode):
+        self.name = rootNode.get('name')
+        version_str = rootNode.get('number').split('.')
+        self.majorVersion = version_str[0]
+        self.minorVersion = version_str[1]
+        self.names = set()
+
+        for req in rootNode.findall('require'):
+            for ty in req.findall('type'):
+                self.names.add(ty.get('name'))
+            for func in req.findall('command'):
+                self.names.add(func.get('name'))
+            for enum in req.findall('enum'):
+                self.names.add(enum.get('name'))
