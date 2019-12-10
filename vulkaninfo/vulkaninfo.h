@@ -61,7 +61,7 @@
 #include <X11/Xutil.h>
 #endif
 
-#if defined(VK_USE_PLATFORM_MACOS_MVK)
+#if defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT)
 #include "metal_view.h"
 #endif
 
@@ -317,7 +317,10 @@ struct AppInstance {
     Window xlib_window;
 #endif
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-    void *window;
+    void *macos_window;
+#endif
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    void *metal_window;
 #endif
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
     wl_display *wayland_display;
@@ -550,8 +553,9 @@ static void AppDestroyWin32Window(AppInstance &inst) { CALL_PFN(DestroyWindow)(i
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || defined(VK_USE_PLATFORM_ANDROID_KHR)
+#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
+    defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
     vkDestroySurfaceKHR(inst.instance, surface, nullptr);
 }
@@ -670,8 +674,8 @@ static void AppDestroyXlibWindow(AppInstance &inst) {
 //------------------------MACOS_MVK--------------------------
 #ifdef VK_USE_PLATFORM_MACOS_MVK
 static void AppCreateMacOSWindow(AppInstance &inst) {
-    inst.window = CreateMetalView(inst.width, inst.height);
-    if (inst.window == nullptr) {
+    inst.macos_window = CreateMetalView(inst.width, inst.height);
+    if (inst.macos_window == nullptr) {
         fprintf(stderr, "Could not create a native Metal view.\nExiting...\n");
         exit(1);
     }
@@ -682,7 +686,7 @@ static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
     createInfo.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
     createInfo.pNext = nullptr;
     createInfo.flags = 0;
-    createInfo.pView = inst.window;
+    createInfo.pView = inst.macos_window;
 
     VkSurfaceKHR surface;
     VkResult err = vkCreateMacOSSurfaceMVK(inst.instance, &createInfo, nullptr, &surface);
@@ -690,8 +694,35 @@ static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyMacOSWindow(AppInstance &inst) { DestroyMetalView(inst.window); }
+static void AppDestroyMacOSWindow(AppInstance &inst) { DestroyMetalView(inst.macos_window); }
 #endif  // VK_USE_PLATFORM_MACOS_MVK
+//-----------------------------------------------------------
+
+//------------------------METAL_EXT--------------------------
+#ifdef VK_USE_PLATFORM_METAL_EXT
+static void AppCreateMetalWindow(AppInstance &inst) {
+    inst.metal_window = CreateMetalView(inst.width, inst.height);
+    if (inst.metal_window == nullptr) {
+        fprintf(stderr, "Could not create a native Metal view.\nExiting...\n");
+        exit(1);
+    }
+}
+
+static VkSurfaceKHR AppCreateMetalSurface(AppInstance &inst) {
+    VkMetalSurfaceCreateInfoEXT createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+    createInfo.pLayer = static_cast<CAMetalLayer *>(GetCAMetalLayerFromMetalView(inst.metal_window));
+
+    VkSurfaceKHR surface;
+    VkResult err = vkCreateMetalSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
+    if (err) ERR_EXIT(err);
+    return surface;
+}
+
+static void AppDestroyMetalWindow(AppInstance &inst) { DestroyMetalView(inst.metal_window); }
+#endif  // VK_USE_PLATFORM_METAL_EXT
 //-----------------------------------------------------------
 
 //-------------------------WAYLAND---------------------------
@@ -820,6 +851,18 @@ void SetupWindowExtensions(AppInstance &inst) {
         surface_ext_macos.destroy_window = AppDestroyMacOSWindow;
 
         inst.AddSurfaceExtension(surface_ext_macos);
+    }
+#endif
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    SurfaceExtension surface_ext_metal;
+    if (inst.CheckExtensionEnabled(VK_EXT_METAL_SURFACE_EXTENSION_NAME)) {
+        surface_ext_metal.name = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
+        surface_ext_metal.create_window = AppCreateMetalWindow;
+        surface_ext_metal.create_surface = AppCreateMetalSurface;
+        surface_ext_metal.destroy_window = AppDestroyMetalWindow;
+
+        inst.AddSurfaceExtension(surface_ext_metal);
     }
 #endif
 //--WAYLAND--

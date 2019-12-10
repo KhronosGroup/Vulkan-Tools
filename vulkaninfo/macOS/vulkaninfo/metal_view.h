@@ -25,4 +25,6 @@ void* CreateMetalView(uint32_t width, uint32_t height);
 
 void DestroyMetalView(void* view);
 
+void* GetCAMetalLayerFromMetalView(void* view);
+
 #endif /* metal_view_h */
