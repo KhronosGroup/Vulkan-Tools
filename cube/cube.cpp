@@ -323,6 +323,7 @@ struct Demo {
     char const *extension_names[64];
     char const *enabled_layers[64];
 
+    bool format_set;
     uint32_t width;
     uint32_t height;
     vk::Format format;
@@ -954,11 +955,22 @@ void Demo::init(int argc, char **argv) {
             suppress_popups = true;
             continue;
         }
-
+        if (strcmp(argv[i], "--format") == 0 && i < argc - 1) {
+            format_set = true;
+            if (strcmp(argv[i + 1], "UNORM") == 0) {
+                format = vk::Format::eB8G8R8A8Unorm;
+            } else if (strcmp(argv[i + 1], "SRGB") == 0) {
+                format = vk::Format::eB8G8R8A8Srgb;
+            } else {
+                format = vk::Format::eB8G8R8A8Unorm;
+            }
+            i++;
+            continue;
+        }
         std::stringstream usage;
         usage << "Usage:\n  " << APP_SHORT_NAME << "\t[--use_staging] [--validate]\n"
               << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
-              << "\t[--present_mode <present mode enum>]\n"
+              << "\t[--present_mode <present mode enum>] [--format <UNORM | SRGB>]\n"
               << "\t<present_mode_enum>\n"
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
               << "\t\tVK_PRESENT_MODE_MAILBOX_KHR = " << VK_PRESENT_MODE_MAILBOX_KHR << "\n"
@@ -1318,6 +1330,7 @@ void Demo::create_surface() {
 }
 
 void Demo::init_vk_swapchain() {
+
     create_surface();
     // Iterate over each queue to learn whether it supports presenting:
     std::unique_ptr<vk::Bool32[]> supportsPresent(new vk::Bool32[queue_family_count]);
@@ -1386,8 +1399,25 @@ void Demo::init_vk_swapchain() {
     if (formatCount == 1 && surfFormats[0].format == vk::Format::eUndefined) {
         format = vk::Format::eB8G8R8A8Unorm;
     } else {
+        // Search the list of supported formats to confirm that the user set
+        // format is present. If it's not, set the format to UNORM.
         assert(formatCount >= 1);
-        format = surfFormats[0].format;
+
+        if (format_set) {
+            format = vk::Format::eB8G8R8A8Unorm;
+        } else {
+            bool supported = false;
+            for (uint32_t i = 0; i < formatCount; i++) {
+                if (format == surfFormats[i].format) {
+                    supported = true;
+                    break;
+                }
+            }
+
+            if (!supported) {
+                format = vk::Format::eB8G8R8A8Unorm;
+            }
+        }
     }
     color_space = surfFormats[0].colorSpace;
 

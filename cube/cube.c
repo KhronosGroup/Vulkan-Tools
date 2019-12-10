@@ -368,6 +368,7 @@ struct demo {
     char *extension_names[64];
     char *enabled_layers[64];
 
+    bool format_set;
     int width, height;
     VkFormat format;
     VkColorSpaceKHR color_space;
@@ -3502,8 +3503,25 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
         demo->format = VK_FORMAT_B8G8R8A8_UNORM;
     } else {
+        // Search the list of supported formats to confirm that the user set
+        // format is present. If it's not, set the format to UNORM.
         assert(formatCount >= 1);
-        demo->format = surfFormats[0].format;
+
+        if (!demo->format_set) {
+            demo->format = VK_FORMAT_B8G8R8A8_UNORM;
+        } else {
+            bool supported = false;
+            for (uint32_t i = 0; i < formatCount; i++) {
+                if (demo->format == surfFormats[i].format) {
+                    supported = true;
+                    break;
+                }
+            }
+
+            if (!supported) {
+                demo->format = VK_FORMAT_B8G8R8A8_UNORM;
+            }
+        }
     }
     demo->color_space = surfFormats[0].colorSpace;
     free(surfFormats);
@@ -3740,7 +3758,18 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             demo->VK_KHR_incremental_present_enabled = true;
             continue;
         }
-
+        if (strcmp(argv[i], "--format") == 0 && i < argc - 1) {
+            demo->format_set = 1;
+            if (strcmp(argv[i + 1], "UNORM") == 0) {
+                demo->format = VK_FORMAT_B8G8R8A8_UNORM;
+            } else if (strcmp(argv[i + 1], "SRGB") == 0) {
+                demo->format = VK_FORMAT_B8G8R8A8_SRGB;
+            } else {
+                demo->format = VK_FORMAT_B8G8R8A8_UNORM;
+            }
+            i++;
+            continue;
+        }
 #if defined(ANDROID)
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
 #else
@@ -3748,7 +3777,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled]\n"
             "\t[--break] [--c <framecount>] [--suppress_popups]\n"
             "\t[--incremental_present] [--display_timing]\n"
-            "\t[--present_mode <present mode enum>]\n"
+            "\t[--present_mode <present mode enum>] [--format <UNORM | SRGB>]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
