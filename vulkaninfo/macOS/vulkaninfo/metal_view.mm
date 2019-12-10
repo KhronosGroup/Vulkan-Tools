@@ -25,15 +25,22 @@
 @end
 
 @implementation NativeMetalView
-- (id)initWithFrame:(NSRect) frame {
-    if(self = [super initWithFrame: frame]){
+- (id)initWithFrame:(NSRect)frame {
+    if (self = [super initWithFrame:frame]) {
         self.wantsLayer = YES;
     }
     return self;
 }
 
++ (Class)layerClass {
+    return [CAMetalLayer class];
+}
+
 - (CALayer*)makeBackingLayer {
-    return [CAMetalLayer layer];
+    CALayer* layer = [self.class.layerClass layer];
+    CGSize viewScale = [self convertSizeToBacking:CGSizeMake(1.0, 1.0)];
+    layer.contentsScale = MIN(viewScale.width, viewScale.height);
+    return layer;
 }
 @end
 
@@ -41,6 +48,6 @@ void* CreateMetalView(uint32_t width, uint32_t height) {
     return [[NativeMetalView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
 }
 
-void DestroyMetalView(void* view) {
-    [(NativeMetalView*)view dealloc];
-}
+void DestroyMetalView(void* view) { [(NativeMetalView*)view dealloc]; }
+
+void* GetCAMetalLayerFromMetalView(void* view) { return ((NativeMetalView*)view).layer; }
