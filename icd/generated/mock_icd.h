@@ -229,6 +229,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_dedicated_allocation_image_aliasing", 1},
     {"VK_KHR_separate_depth_stencil_layouts", 1},
     {"VK_EXT_buffer_device_address", 2},
+    {"VK_EXT_tooling_info", 1},
     {"VK_EXT_separate_stencil_usage", 1},
     {"VK_NV_cooperative_matrix", 1},
     {"VK_NV_coverage_reduction_mode", 1},
@@ -236,6 +237,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_ycbcr_image_arrays", 1},
     {"VK_KHR_uniform_buffer_standard_layout", 1},
     {"VK_EXT_full_screen_exclusive", 4},
+    {"VK_KHR_buffer_device_address", 1},
     {"VK_EXT_line_rasterization", 1},
     {"VK_EXT_host_query_reset", 1},
     {"VK_EXT_index_type_uint8", 1},
@@ -1766,6 +1768,19 @@ static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
 
 
 
+static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressKHR(
+    VkDevice                                    device,
+    const VkBufferDeviceAddressInfoKHR*         pInfo);
+
+static VKAPI_ATTR uint64_t VKAPI_CALL GetBufferOpaqueCaptureAddressKHR(
+    VkDevice                                    device,
+    const VkBufferDeviceAddressInfoKHR*         pInfo);
+
+static VKAPI_ATTR uint64_t VKAPI_CALL GetDeviceMemoryOpaqueCaptureAddressKHR(
+    VkDevice                                    device,
+    const VkDeviceMemoryOpaqueCaptureAddressInfoKHR* pInfo);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutablePropertiesKHR(
     VkDevice                                    device,
     const VkPipelineInfoKHR*                    pPipelineInfo,
@@ -2518,7 +2533,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(
 
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(
     VkDevice                                    device,
-    const VkBufferDeviceAddressInfoEXT*         pInfo);
+    const VkBufferDeviceAddressInfoKHR*         pInfo);
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceToolPropertiesEXT(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pToolCount,
+    VkPhysicalDeviceToolPropertiesEXT*          pToolProperties);
 
 
 
@@ -2870,6 +2891,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetSemaphoreCounterValueKHR", (void*)GetSemaphoreCounterValueKHR},
     {"vkWaitSemaphoresKHR", (void*)WaitSemaphoresKHR},
     {"vkSignalSemaphoreKHR", (void*)SignalSemaphoreKHR},
+    {"vkGetBufferDeviceAddressKHR", (void*)GetBufferDeviceAddressKHR},
+    {"vkGetBufferOpaqueCaptureAddressKHR", (void*)GetBufferOpaqueCaptureAddressKHR},
+    {"vkGetDeviceMemoryOpaqueCaptureAddressKHR", (void*)GetDeviceMemoryOpaqueCaptureAddressKHR},
     {"vkGetPipelineExecutablePropertiesKHR", (void*)GetPipelineExecutablePropertiesKHR},
     {"vkGetPipelineExecutableStatisticsKHR", (void*)GetPipelineExecutableStatisticsKHR},
     {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
@@ -3001,6 +3025,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCreateMetalSurfaceEXT", (void*)CreateMetalSurfaceEXT},
 #endif
     {"vkGetBufferDeviceAddressEXT", (void*)GetBufferDeviceAddressEXT},
+    {"vkGetPhysicalDeviceToolPropertiesEXT", (void*)GetPhysicalDeviceToolPropertiesEXT},
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesNV", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesNV},
     {"vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV", (void*)GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV},
 #ifdef VK_USE_PLATFORM_WIN32_KHR
