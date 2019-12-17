@@ -231,8 +231,15 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
 
 void DumpGroups(Printer &p, AppInstance &inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
-        p.SetHeader().ObjectStart("Groups");
         auto groups = GetGroups(inst);
+        if (groups.size() == 0) {
+            p.SetHeader().ObjectStart("Groups");
+            p.PrintElement("No Device Groups Found");
+            p.ObjectEnd();
+            p.AddNewline();
+            return;
+        }
+        p.SetHeader().ObjectStart("Groups");
         int group_id = 0;
         for (auto &group : groups) {
             p.ObjectStart("Device Group Properties (Group " + std::to_string(group_id) + ")");
