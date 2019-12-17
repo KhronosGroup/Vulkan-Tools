@@ -998,11 +998,15 @@ std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
         VkResult err;
         do {
             err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, NULL);
-            if (err != VK_SUCCESS && err != VK_INCOMPLETE) ERR_EXIT(err);
+            if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
+                return {};
+            }
             groups.resize(group_count);
 
             err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, groups.data());
-            if (err != VK_SUCCESS && err != VK_INCOMPLETE) ERR_EXIT(err);
+            if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
+                return {};
+            }
         } while (err == VK_INCOMPLETE);
         return groups;
     }
