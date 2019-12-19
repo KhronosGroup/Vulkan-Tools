@@ -206,6 +206,7 @@ typedef struct {
     vk::ImageView view;
     vk::Buffer uniform_buffer;
     vk::DeviceMemory uniform_memory;
+    void *uniform_memory_ptr;
     vk::Framebuffer framebuffer;
     vk::DescriptorSet descriptor_set;
 } SwapchainImageResources;
@@ -646,6 +647,7 @@ void Demo::cleanup() {
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
         device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
+        device.unmapMemory(swapchain_image_resources[i].uniform_memory);
         device.freeMemory(swapchain_image_resources[i].uniform_memory, nullptr);
     }
 
@@ -1707,12 +1709,11 @@ void Demo::prepare_cube_data_buffers() {
         result = device.allocateMemory(&mem_alloc, nullptr, &swapchain_image_resources[i].uniform_memory);
         VERIFY(result == vk::Result::eSuccess);
 
-        auto pData = device.mapMemory(swapchain_image_resources[i].uniform_memory, 0, VK_WHOLE_SIZE, vk::MemoryMapFlags());
-        VERIFY(pData.result == vk::Result::eSuccess);
+        result = device.mapMemory(swapchain_image_resources[i].uniform_memory, 0, VK_WHOLE_SIZE, vk::MemoryMapFlags(),
+                                  &swapchain_image_resources[i].uniform_memory_ptr);
+        VERIFY(result == vk::Result::eSuccess);
 
-        memcpy(pData.value, &data, sizeof data);
-
-        device.unmapMemory(swapchain_image_resources[i].uniform_memory);
+        memcpy(swapchain_image_resources[i].uniform_memory_ptr, &data, sizeof data);
 
         result =
             device.bindBufferMemory(swapchain_image_resources[i].uniform_buffer, swapchain_image_resources[i].uniform_memory, 0);
@@ -2274,6 +2275,7 @@ void Demo::resize() {
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
         device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
+        device.unmapMemory(swapchain_image_resources[i].uniform_memory);
         device.freeMemory(swapchain_image_resources[i].uniform_memory, nullptr);
     }
 
@@ -2348,12 +2350,7 @@ void Demo::update_data_buffer() {
     mat4x4 MVP;
     mat4x4_mul(MVP, VP, model_matrix);
 
-    auto data = device.mapMemory(swapchain_image_resources[current_buffer].uniform_memory, 0, VK_WHOLE_SIZE, vk::MemoryMapFlags());
-    VERIFY(data.result == vk::Result::eSuccess);
-
-    memcpy(data.value, (const void *)&MVP[0][0], sizeof(MVP));
-
-    device.unmapMemory(swapchain_image_resources[current_buffer].uniform_memory);
+    memcpy(swapchain_image_resources[current_buffer].uniform_memory_ptr, (const void *)&MVP[0][0], sizeof(MVP));
 }
 
 /* Convert ppm image data from header file into RGBA texture image */

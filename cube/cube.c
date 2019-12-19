@@ -295,6 +295,7 @@ typedef struct {
     VkImageView view;
     VkBuffer uniform_buffer;
     VkDeviceMemory uniform_memory;
+    void *uniform_memory_ptr;
     VkFramebuffer framebuffer;
     VkDescriptorSet descriptor_set;
 } SwapchainImageResources;
@@ -869,8 +870,6 @@ void demo_build_image_ownership_cmd(struct demo *demo, int i) {
 void demo_update_data_buffer(struct demo *demo) {
     mat4x4 MVP, Model, VP;
     int matrixSize = sizeof(MVP);
-    uint8_t *pData;
-    VkResult U_ASSERT_ONLY err;
 
     mat4x4_mul(VP, demo->projection_matrix, demo->view_matrix);
 
@@ -879,13 +878,7 @@ void demo_update_data_buffer(struct demo *demo) {
     mat4x4_rotate(demo->model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(demo->spin_angle));
     mat4x4_mul(MVP, VP, demo->model_matrix);
 
-    err = vkMapMemory(demo->device, demo->swapchain_image_resources[demo->current_buffer].uniform_memory, 0, VK_WHOLE_SIZE, 0,
-                      (void **)&pData);
-    assert(!err);
-
-    memcpy(pData, (const void *)&MVP[0][0], matrixSize);
-
-    vkUnmapMemory(demo->device, demo->swapchain_image_resources[demo->current_buffer].uniform_memory);
+    memcpy(demo->swapchain_image_resources[demo->current_buffer].uniform_memory_ptr, (const void *)&MVP[0][0], matrixSize);
 }
 
 void DemoUpdateTargetIPD(struct demo *demo) {
@@ -1753,7 +1746,6 @@ void demo_prepare_cube_data_buffers(struct demo *demo) {
     VkBufferCreateInfo buf_info;
     VkMemoryRequirements mem_reqs;
     VkMemoryAllocateInfo mem_alloc;
-    uint8_t *pData;
     mat4x4 MVP, VP;
     VkResult U_ASSERT_ONLY err;
     bool U_ASSERT_ONLY pass;
@@ -1799,12 +1791,11 @@ void demo_prepare_cube_data_buffers(struct demo *demo) {
         err = vkAllocateMemory(demo->device, &mem_alloc, NULL, &demo->swapchain_image_resources[i].uniform_memory);
         assert(!err);
 
-        err = vkMapMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, 0, VK_WHOLE_SIZE, 0, (void **)&pData);
+        err = vkMapMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, 0, VK_WHOLE_SIZE, 0,
+                          &demo->swapchain_image_resources[i].uniform_memory_ptr);
         assert(!err);
 
-        memcpy(pData, &data, sizeof data);
-
-        vkUnmapMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory);
+        memcpy(demo->swapchain_image_resources[i].uniform_memory_ptr, &data, sizeof data);
 
         err = vkBindBufferMemory(demo->device, demo->swapchain_image_resources[i].uniform_buffer,
                                  demo->swapchain_image_resources[i].uniform_memory, 0);
@@ -2338,6 +2329,7 @@ static void demo_cleanup(struct demo *demo) {
             vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].view, NULL);
             vkFreeCommandBuffers(demo->device, demo->cmd_pool, 1, &demo->swapchain_image_resources[i].cmd);
             vkDestroyBuffer(demo->device, demo->swapchain_image_resources[i].uniform_buffer, NULL);
+            vkUnmapMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory);
             vkFreeMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, NULL);
         }
         free(demo->swapchain_image_resources);
@@ -2420,6 +2412,7 @@ static void demo_resize(struct demo *demo) {
         vkDestroyImageView(demo->device, demo->swapchain_image_resources[i].view, NULL);
         vkFreeCommandBuffers(demo->device, demo->cmd_pool, 1, &demo->swapchain_image_resources[i].cmd);
         vkDestroyBuffer(demo->device, demo->swapchain_image_resources[i].uniform_buffer, NULL);
+        vkUnmapMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory);
         vkFreeMemory(demo->device, demo->swapchain_image_resources[i].uniform_memory, NULL);
     }
     vkDestroyCommandPool(demo->device, demo->cmd_pool, NULL);
