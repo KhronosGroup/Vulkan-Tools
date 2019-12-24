@@ -756,7 +756,8 @@ int main(int argc, char **argv) {
     }
 
     if (selected_gpu >= gpus.size()) {
-        selected_gpu = 0;
+        std::cout << "The selected gpu (" << selected_gpu << ") is not in the valid range of 0 to " << gpus.size() - 1 << ".\n";
+        return 0;
     }
 
     std::vector<std::unique_ptr<Printer>> printers;
