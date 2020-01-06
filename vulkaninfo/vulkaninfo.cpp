@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2019 The Khronos Group Inc.
- * Copyright (c) 2015-2019 Valve Corporation
- * Copyright (c) 2015-2019 LunarG, Inc.
+ * Copyright (c) 2015-2020 The Khronos Group Inc.
+ * Copyright (c) 2015-2020 Valve Corporation
+ * Copyright (c) 2015-2020 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
     chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext);
 }
 
-void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface, std::vector<std::string> surface_types) {
+void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface, std::set<std::string> surface_types) {
     std::string header;
     if (p.Type() == OutputType::text)
         header = std::string("GPU id : ") + std::to_string(gpu.id) + " (" + gpu.props.deviceName + ")";
@@ -189,8 +189,8 @@ void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface
 
 struct SurfaceTypeGroup {
     AppSurface *surface;
-    std::vector<std::string> surface_types;
     AppGpu *gpu;
+    std::set<std::string> surface_types;
 };
 
 bool operator==(AppSurface const &a, AppSurface const &b) {
@@ -209,15 +209,16 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
         for (auto &gpu : gpus) {
             auto exists = surface_list.end();
             for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
-                // use custom comparator to check if the surface has the same values
-                if (it->gpu == gpu.get() && *it->surface == *surface.get()) {
+                // This uses a custom comparator to check if the surfaces have the same values
+                if (it->gpu == gpu.get() && *(it->surface) == *(surface.get())) {
                     exists = it;
+                    break;
                 }
             }
             if (exists != surface_list.end()) {
-                exists->surface_types.push_back(surface.get()->surface_extension.name);
+                exists->surface_types.insert(surface.get()->surface_extension.name);
             } else {
-                surface_list.push_back({surface.get(), {surface.get()->surface_extension.name}, gpu.get()});
+                surface_list.push_back({surface.get(), gpu.get(), {surface.get()->surface_extension.name}});
             }
         }
     }
