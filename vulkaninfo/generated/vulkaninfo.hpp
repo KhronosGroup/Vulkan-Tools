@@ -773,6 +773,30 @@ void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDev
     DumpVkDeviceGroupPresentModeFlagsKHR(p, name, value, width);
     p.ObjectEnd();
 }
+void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagBitsEXT value, int width = 0) {
+    if (value == 0) p.PrintElement("None");
+    if (1 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_VALIDATION_BIT_EXT");
+    if (2 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_PROFILING_BIT_EXT");
+    if (4 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_TRACING_BIT_EXT");
+    if (8 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_ADDITIONAL_FEATURES_BIT_EXT");
+    if (16 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_MODIFYING_FEATURES_BIT_EXT");
+    if (32 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
+    if (64 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
+    if (32 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
+    if (64 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
+}
+void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagsEXT value, int width = 0) {
+    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
+    p.ObjectStart(name);
+    DumpVkToolPurposeFlagsEXT(p, name, static_cast<VkToolPurposeFlagBitsEXT>(value), width);
+    p.ObjectEnd();
+}
+void DumpVkToolPurposeFlagBitsEXT(Printer &p, std::string name, VkToolPurposeFlagBitsEXT value, int width = 0) {
+    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
+    p.ObjectStart(name);
+    DumpVkToolPurposeFlagsEXT(p, name, value, width);
+    p.ObjectEnd();
+}
 void DumpVkPhysicalDeviceFeatures(Printer &p, std::string name, VkPhysicalDeviceFeatures &obj) {
     p.ObjectStart(name);
     p.PrintKeyBool("robustBufferAccess", static_cast<bool>(obj.robustBufferAccess), 39);
@@ -1616,6 +1640,15 @@ void DumpVkPhysicalDeviceBufferDeviceAddressFeaturesEXT(Printer &p, std::string 
     p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress), 32);
     p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay), 32);
     p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice), 32);
+    p.ObjectEnd();
+}
+void DumpVkPhysicalDeviceToolPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceToolPropertiesEXT &obj) {
+    p.ObjectStart(name);
+    p.PrintKeyString("name", obj.name, 16);
+    p.PrintKeyString("version", obj.version, 16);
+    DumpVkToolPurposeFlagsEXT(p, "purposes", obj.purposes, 16);
+    p.PrintKeyString("description", obj.description, 16);
+    p.PrintKeyString("layer", obj.layer, 16);
     p.ObjectEnd();
 }
 void DumpVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT &obj) {

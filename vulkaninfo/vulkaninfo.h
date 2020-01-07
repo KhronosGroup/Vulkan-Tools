@@ -296,6 +296,7 @@ struct AppInstance {
     PFN_vkGetPhysicalDeviceMemoryProperties2KHR vkGetPhysicalDeviceMemoryProperties2KHR;
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR;
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT;
+    PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT;
 
     std::vector<SurfaceExtension> surface_extensions;
 
@@ -437,6 +438,7 @@ struct AppInstance {
         LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceMemoryProperties2KHR);
         LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilities2KHR);
         LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceSurfaceCapabilities2EXT);
+        LOAD_INSTANCE_VK_CMD(vkGetPhysicalDeviceToolPropertiesEXT);
 
 #undef LOAD_INSTANCE_VK_CMD
     }
@@ -1435,6 +1437,26 @@ struct AppQueueFamilyProperties {
         }
     }
 };
+
+std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
+    uint32_t count = 0;
+    VkResult err;
+    std::vector<VkPhysicalDeviceToolPropertiesEXT> tool_properties;
+
+    if (gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
+    do {
+        err = gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT(gpu.phys_device, &count, nullptr);
+        if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
+            return {};
+        }
+        tool_properties.resize(count);
+        err = gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT(gpu.phys_device, &count, tool_properties.data());
+        if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
+            return {};
+        }
+    } while (err == VK_INCOMPLETE);
+    return tool_properties;
+}
 
 // --------- Format Properties ----------//
 
