@@ -546,6 +546,17 @@ void GpuDumpFormatProperty(Printer &p, VkFormat fmt, VkFormatProperties prop) {
     p.ObjectEnd();
 }
 
+void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
+    auto tools = GetToolingInfo(gpu);
+    if (tools.size() > 0) {
+        p.SetSubHeader().ObjectStart("Tooling Info");
+        for (auto tool : tools) {
+            DumpVkPhysicalDeviceToolPropertiesEXT(p, tool.name, tool);
+        }
+        p.ObjectEnd();
+    }
+}
+
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     if (p.Type() == OutputType::json) {
         p.ArrayStart("ArrayOfVkFormatProperties");
@@ -648,6 +659,9 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     }
     GpuDumpMemoryProps(p, gpu);
     GpuDumpFeatures(p, gpu);
+
+    if (p.Type() != OutputType::json) GpuDumpToolingInfo(p, gpu);
+
     if (p.Type() != OutputType::text || show_formats) {
         GpuDevDump(p, gpu);
     }
