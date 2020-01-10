@@ -208,6 +208,7 @@ typedef struct {
     void *uniform_memory_ptr;
     vk::Framebuffer framebuffer;
     vk::DescriptorSet descriptor_set;
+    vk::Semaphore draw_complete_semaphore;
 } SwapchainImageResources;
 
 struct Demo {
@@ -311,7 +312,6 @@ struct Demo {
     uint32_t graphics_queue_family_index;
     uint32_t present_queue_family_index;
     vk::Semaphore image_acquired_semaphores[FRAME_LAG];
-    vk::Semaphore draw_complete_semaphores[FRAME_LAG];
     vk::PhysicalDeviceProperties gpu_props;
     std::unique_ptr<vk::QueueFamilyProperties[]> queue_props;
     vk::PhysicalDeviceMemoryProperties memory_properties;
@@ -586,10 +586,10 @@ void Demo::cleanup() {
         device.waitForFences(1, &fences[i], VK_TRUE, UINT64_MAX);
         device.destroyFence(fences[i], nullptr);
         device.destroySemaphore(image_acquired_semaphores[i], nullptr);
-        device.destroySemaphore(draw_complete_semaphores[i], nullptr);
     }
 
     for (uint32_t i = 0; i < swapchainImageCount; i++) {
+        device.destroySemaphore(swapchain_image_resources[i].draw_complete_semaphore, nullptr);
         device.destroyFramebuffer(swapchain_image_resources[i].framebuffer, nullptr);
     }
     device.destroyDescriptorPool(desc_pool, nullptr);
@@ -716,7 +716,7 @@ void Demo::draw() {
                                  .setCommandBufferCount(1)
                                  .setPCommandBuffers(&swapchain_image_resources[current_buffer].cmd)
                                  .setSignalSemaphoreCount(1)
-                                 .setPSignalSemaphores(&draw_complete_semaphores[frame_index]);
+                                 .setPSignalSemaphores(&swapchain_image_resources[current_buffer].draw_complete_semaphore);
 
     result = graphics_queue.submit(1, &submit_info, fences[frame_index]);
     VERIFY(result == vk::Result::eSuccess);
@@ -725,7 +725,7 @@ void Demo::draw() {
     // otherwise wait for draw complete
     auto const presentInfo = vk::PresentInfoKHR()
                                  .setWaitSemaphoreCount(1)
-                                 .setPWaitSemaphores(&draw_complete_semaphores[frame_index])
+                                 .setPWaitSemaphores(&swapchain_image_resources[current_buffer].draw_complete_semaphore)
                                  .setSwapchainCount(1)
                                  .setPSwapchains(&swapchain)
                                  .setPImageIndices(&current_buffer);
@@ -1324,9 +1324,6 @@ void Demo::init_vk_swapchain() {
 
         result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &image_acquired_semaphores[i]);
         VERIFY(result == vk::Result::eSuccess);
-
-        result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &draw_complete_semaphores[i]);
-        VERIFY(result == vk::Result::eSuccess);
     }
     frame_index = 0;
 
@@ -1507,22 +1504,23 @@ void Demo::prepare_buffers() {
     }
 
     const uint32_t qf_indices[] = {this->graphics_queue_family_index, this->present_queue_family_index};
-    auto const swapchain_ci = vk::SwapchainCreateInfoKHR()
-                                  .setSurface(surface)
-                                  .setMinImageCount(desiredNumOfSwapchainImages)
-                                  .setImageFormat(format)
-                                  .setImageColorSpace(color_space)
-                                  .setImageExtent({swapchainExtent.width, swapchainExtent.height})
-                                  .setImageArrayLayers(1)
-                                  .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment)
-                                  .setImageSharingMode(this->separate_present_queue ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive)
-                                  .setQueueFamilyIndexCount(this->separate_present_queue ? 2 : 0)
-                                  .setPQueueFamilyIndices(qf_indices)
-                                  .setPreTransform(preTransform)
-                                  .setCompositeAlpha(compositeAlpha)
-                                  .setPresentMode(swapchainPresentMode)
-                                  .setClipped(true)
-                                  .setOldSwapchain(oldSwapchain);
+    auto const swapchain_ci =
+        vk::SwapchainCreateInfoKHR()
+            .setSurface(surface)
+            .setMinImageCount(desiredNumOfSwapchainImages)
+            .setImageFormat(format)
+            .setImageColorSpace(color_space)
+            .setImageExtent({swapchainExtent.width, swapchainExtent.height})
+            .setImageArrayLayers(1)
+            .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment)
+            .setImageSharingMode(this->separate_present_queue ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive)
+            .setQueueFamilyIndexCount(this->separate_present_queue ? 2 : 0)
+            .setPQueueFamilyIndices(qf_indices)
+            .setPreTransform(preTransform)
+            .setCompositeAlpha(compositeAlpha)
+            .setPresentMode(swapchainPresentMode)
+            .setClipped(true)
+            .setOldSwapchain(oldSwapchain);
 
     result = device.createSwapchainKHR(&swapchain_ci, nullptr, &swapchain);
     VERIFY(result == vk::Result::eSuccess);
@@ -1556,6 +1554,10 @@ void Demo::prepare_buffers() {
         color_image_view.image = swapchain_image_resources[i].image;
 
         result = device.createImageView(&color_image_view, nullptr, &swapchain_image_resources[i].view);
+        VERIFY(result == vk::Result::eSuccess);
+
+        const auto semaphoreCreateInfo = vk::SemaphoreCreateInfo();
+        result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &swapchain_image_resources[i].draw_complete_semaphore);
         VERIFY(result == vk::Result::eSuccess);
     }
 }
@@ -2141,6 +2143,7 @@ void Demo::resize() {
     VERIFY(result == vk::Result::eSuccess);
 
     for (i = 0; i < swapchainImageCount; i++) {
+        device.destroySemaphore(swapchain_image_resources[i].draw_complete_semaphore, nullptr);
         device.destroyFramebuffer(swapchain_image_resources[i].framebuffer, nullptr);
     }
 

@@ -297,6 +297,7 @@ typedef struct {
     void *uniform_memory_ptr;
     VkFramebuffer framebuffer;
     VkDescriptorSet descriptor_set;
+    VkSemaphore draw_complete_semaphore;
 } SwapchainImageResources;
 
 struct demo {
@@ -357,7 +358,6 @@ struct demo {
     uint32_t graphics_queue_family_index;
     uint32_t present_queue_family_index;
     VkSemaphore image_acquired_semaphores[FRAME_LAG];
-    VkSemaphore draw_complete_semaphores[FRAME_LAG];
     VkPhysicalDeviceProperties gpu_props;
     VkQueueFamilyProperties *queue_props;
     VkPhysicalDeviceMemoryProperties memory_properties;
@@ -1004,7 +1004,7 @@ static void demo_draw(struct demo *demo) {
     submit_info.commandBufferCount = 1;
     submit_info.pCommandBuffers = &demo->swapchain_image_resources[demo->current_buffer].cmd;
     submit_info.signalSemaphoreCount = 1;
-    submit_info.pSignalSemaphores = &demo->draw_complete_semaphores[demo->frame_index];
+    submit_info.pSignalSemaphores = &demo->swapchain_image_resources[demo->current_buffer].draw_complete_semaphore;
     err = vkQueueSubmit(demo->graphics_queue, 1, &submit_info, demo->fences[demo->frame_index]);
     assert(!err);
 
@@ -1014,7 +1014,7 @@ static void demo_draw(struct demo *demo) {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = NULL,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &demo->draw_complete_semaphores[demo->frame_index],
+        .pWaitSemaphores = &demo->swapchain_image_resources[demo->current_buffer].draw_complete_semaphore,
         .swapchainCount = 1,
         .pSwapchains = &demo->swapchain,
         .pImageIndices = &demo->current_buffer,
@@ -1306,6 +1306,11 @@ static void demo_prepare_buffers(struct demo *demo) {
 
         err = vkCreateImageView(demo->device, &color_image_view, NULL, &demo->swapchain_image_resources[i].view);
         assert(!err);
+
+        const VkSemaphoreCreateInfo semaphoreCreateInfo = {.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+        err = vkCreateSemaphore(demo->device, &semaphoreCreateInfo, NULL,
+                                &demo->swapchain_image_resources[i].draw_complete_semaphore);
+        assert(!err);  // TODO: is only debug mode assert!
     }
 
     if (demo->VK_GOOGLE_display_timing_enabled) {
@@ -2202,12 +2207,12 @@ static void demo_cleanup(struct demo *demo) {
         vkWaitForFences(demo->device, 1, &demo->fences[i], VK_TRUE, UINT64_MAX);
         vkDestroyFence(demo->device, demo->fences[i], NULL);
         vkDestroySemaphore(demo->device, demo->image_acquired_semaphores[i], NULL);
-        vkDestroySemaphore(demo->device, demo->draw_complete_semaphores[i], NULL);
     }
 
     // If the window is currently minimized, demo_resize has already done some cleanup for us.
     if (!demo->is_minimized) {
         for (i = 0; i < demo->swapchainImageCount; i++) {
+            vkDestroySemaphore(demo->device, demo->swapchain_image_resources[i].draw_complete_semaphore, NULL);
             vkDestroyFramebuffer(demo->device, demo->swapchain_image_resources[i].framebuffer, NULL);
         }
         vkDestroyDescriptorPool(demo->device, demo->desc_pool, NULL);
@@ -2240,9 +2245,8 @@ static void demo_cleanup(struct demo *demo) {
         free(demo->swapchain_image_resources);
         free(demo->queue_props);
         vkDestroyCommandPool(demo->device, demo->cmd_pool, NULL);
-
     }
-    vkDeviceWaitIdle(demo->device);
+
     vkDestroyDevice(demo->device, NULL);
     if (demo->validate) {
         demo->DestroyDebugUtilsMessengerEXT(demo->inst, demo->dbg_messenger, NULL);
@@ -2289,6 +2293,7 @@ static void demo_resize(struct demo *demo) {
     vkDeviceWaitIdle(demo->device);
 
     for (i = 0; i < demo->swapchainImageCount; i++) {
+        vkDestroySemaphore(demo->device, demo->swapchain_image_resources[i].draw_complete_semaphore, NULL);
         vkDestroyFramebuffer(demo->device, demo->swapchain_image_resources[i].framebuffer, NULL);
     }
     vkDestroyDescriptorPool(demo->device, demo->desc_pool, NULL);
@@ -3304,7 +3309,7 @@ static void demo_create_surface(struct demo *demo) {
     assert(!err);
 }
 
-static void demo_init_vk_swapchain(struct demo *demo) {
+static void demo_init_vk_swapchain(struct demo *demo) {  // TODO: why is this even called init_swapchain??
     VkResult U_ASSERT_ONLY err;
 
     demo_create_surface(demo);
@@ -3414,10 +3419,8 @@ static void demo_init_vk_swapchain(struct demo *demo) {
 
         err = vkCreateSemaphore(demo->device, &semaphoreCreateInfo, NULL, &demo->image_acquired_semaphores[i]);
         assert(!err);
-
-        err = vkCreateSemaphore(demo->device, &semaphoreCreateInfo, NULL, &demo->draw_complete_semaphores[i]);
-        assert(!err);
     }
+
     demo->frame_index = 0;
 
     // Get Memory information and properties
