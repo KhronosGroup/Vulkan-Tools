@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2019 The Khronos Group Inc.
- * Copyright (c) 2015-2019 Valve Corporation
- * Copyright (c) 2015-2019 LunarG, Inc.
+ * Copyright (c) 2015-2020 The Khronos Group Inc.
+ * Copyright (c) 2015-2020 Valve Corporation
+ * Copyright (c) 2015-2020 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -291,7 +291,6 @@ void dumpVec4(const char *note, vec4 vector) {
 typedef struct {
     VkImage image;
     VkCommandBuffer cmd;
-    VkCommandBuffer graphics_to_present_cmd;
     VkImageView view;
     VkBuffer uniform_buffer;
     VkDeviceMemory uniform_memory;
@@ -359,7 +358,6 @@ struct demo {
     uint32_t present_queue_family_index;
     VkSemaphore image_acquired_semaphores[FRAME_LAG];
     VkSemaphore draw_complete_semaphores[FRAME_LAG];
-    VkSemaphore image_ownership_semaphores[FRAME_LAG];
     VkPhysicalDeviceProperties gpu_props;
     VkQueueFamilyProperties *queue_props;
     VkPhysicalDeviceMemoryProperties memory_properties;
@@ -392,7 +390,6 @@ struct demo {
     int frame_index;
 
     VkCommandPool cmd_pool;
-    VkCommandPool present_cmd_pool;
 
     struct {
         VkFormat format;
@@ -811,59 +808,10 @@ static void demo_draw_build_cmd(struct demo *demo, VkCommandBuffer cmd_buf) {
         demo->CmdEndDebugUtilsLabelEXT(cmd_buf);
     }
 
-    if (demo->separate_present_queue) {
-        // We have to transfer ownership from the graphics queue family to the
-        // present queue family to be able to present.  Note that we don't have
-        // to transfer from present queue family back to graphics queue family at
-        // the start of the next frame because we don't care about the image's
-        // contents at that point.
-        VkImageMemoryBarrier image_ownership_barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                        .pNext = NULL,
-                                                        .srcAccessMask = 0,
-                                                        .dstAccessMask = 0,
-                                                        .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                        .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                        .srcQueueFamilyIndex = demo->graphics_queue_family_index,
-                                                        .dstQueueFamilyIndex = demo->present_queue_family_index,
-                                                        .image = demo->swapchain_image_resources[demo->current_buffer].image,
-                                                        .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1}};
-
-        vkCmdPipelineBarrier(cmd_buf, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0,
-                             NULL, 1, &image_ownership_barrier);
-    }
     if (demo->validate) {
         demo->CmdEndDebugUtilsLabelEXT(cmd_buf);
     }
     err = vkEndCommandBuffer(cmd_buf);
-    assert(!err);
-}
-
-void demo_build_image_ownership_cmd(struct demo *demo, int i) {
-    VkResult U_ASSERT_ONLY err;
-
-    const VkCommandBufferBeginInfo cmd_buf_info = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        .pNext = NULL,
-        .flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
-        .pInheritanceInfo = NULL,
-    };
-    err = vkBeginCommandBuffer(demo->swapchain_image_resources[i].graphics_to_present_cmd, &cmd_buf_info);
-    assert(!err);
-
-    VkImageMemoryBarrier image_ownership_barrier = {.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                    .pNext = NULL,
-                                                    .srcAccessMask = 0,
-                                                    .dstAccessMask = 0,
-                                                    .oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                    .newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                    .srcQueueFamilyIndex = demo->graphics_queue_family_index,
-                                                    .dstQueueFamilyIndex = demo->present_queue_family_index,
-                                                    .image = demo->swapchain_image_resources[i].image,
-                                                    .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1}};
-
-    vkCmdPipelineBarrier(demo->swapchain_image_resources[i].graphics_to_present_cmd, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_ownership_barrier);
-    err = vkEndCommandBuffer(demo->swapchain_image_resources[i].graphics_to_present_cmd);
     assert(!err);
 }
 
@@ -1060,30 +1008,13 @@ static void demo_draw(struct demo *demo) {
     err = vkQueueSubmit(demo->graphics_queue, 1, &submit_info, demo->fences[demo->frame_index]);
     assert(!err);
 
-    if (demo->separate_present_queue) {
-        // If we are using separate queues, change image ownership to the
-        // present queue before presenting, waiting for the draw complete
-        // semaphore and signalling the ownership released semaphore when finished
-        VkFence nullFence = VK_NULL_HANDLE;
-        pipe_stage_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        submit_info.waitSemaphoreCount = 1;
-        submit_info.pWaitSemaphores = &demo->draw_complete_semaphores[demo->frame_index];
-        submit_info.commandBufferCount = 1;
-        submit_info.pCommandBuffers = &demo->swapchain_image_resources[demo->current_buffer].graphics_to_present_cmd;
-        submit_info.signalSemaphoreCount = 1;
-        submit_info.pSignalSemaphores = &demo->image_ownership_semaphores[demo->frame_index];
-        err = vkQueueSubmit(demo->present_queue, 1, &submit_info, nullFence);
-        assert(!err);
-    }
-
     // If we are using separate queues we have to wait for image ownership,
     // otherwise wait for draw complete
     VkPresentInfoKHR present = {
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .pNext = NULL,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = (demo->separate_present_queue) ? &demo->image_ownership_semaphores[demo->frame_index]
-                                                          : &demo->draw_complete_semaphores[demo->frame_index],
+        .pWaitSemaphores = &demo->draw_complete_semaphores[demo->frame_index],
         .swapchainCount = 1,
         .pSwapchains = &demo->swapchain,
         .pImageIndices = &demo->current_buffer,
@@ -1303,6 +1234,7 @@ static void demo_prepare_buffers(struct demo *demo) {
         }
     }
 
+    uint32_t qfindices[] = {demo->graphics_queue_family_index, demo->present_queue_family_index};
     VkSwapchainCreateInfoKHR swapchain_ci = {
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
         .pNext = NULL,
@@ -1319,9 +1251,9 @@ static void demo_prepare_buffers(struct demo *demo) {
         .preTransform = preTransform,
         .compositeAlpha = compositeAlpha,
         .imageArrayLayers = 1,
-        .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
-        .queueFamilyIndexCount = 0,
-        .pQueueFamilyIndices = NULL,
+        .imageSharingMode = demo->separate_present_queue ? VK_SHARING_MODE_CONCURRENT : VK_SHARING_MODE_EXCLUSIVE,
+        .queueFamilyIndexCount = demo->separate_present_queue ? 2 : 0,
+        .pQueueFamilyIndices = qfindices,
         .presentMode = swapchainPresentMode,
         .oldSwapchain = oldSwapchain,
         .clipped = true,
@@ -2236,30 +2168,6 @@ static void demo_prepare(struct demo *demo) {
         assert(!err);
     }
 
-    if (demo->separate_present_queue) {
-        const VkCommandPoolCreateInfo present_cmd_pool_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            .pNext = NULL,
-            .queueFamilyIndex = demo->present_queue_family_index,
-            .flags = 0,
-        };
-        err = vkCreateCommandPool(demo->device, &present_cmd_pool_info, NULL, &demo->present_cmd_pool);
-        assert(!err);
-        const VkCommandBufferAllocateInfo present_cmd_info = {
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            .pNext = NULL,
-            .commandPool = demo->present_cmd_pool,
-            .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-            .commandBufferCount = 1,
-        };
-        for (uint32_t i = 0; i < demo->swapchainImageCount; i++) {
-            err = vkAllocateCommandBuffers(demo->device, &present_cmd_info,
-                                           &demo->swapchain_image_resources[i].graphics_to_present_cmd);
-            assert(!err);
-            demo_build_image_ownership_cmd(demo, i);
-        }
-    }
-
     demo_prepare_descriptor_pool(demo);
     demo_prepare_descriptor_set(demo);
 
@@ -2295,9 +2203,6 @@ static void demo_cleanup(struct demo *demo) {
         vkDestroyFence(demo->device, demo->fences[i], NULL);
         vkDestroySemaphore(demo->device, demo->image_acquired_semaphores[i], NULL);
         vkDestroySemaphore(demo->device, demo->draw_complete_semaphores[i], NULL);
-        if (demo->separate_present_queue) {
-            vkDestroySemaphore(demo->device, demo->image_ownership_semaphores[i], NULL);
-        }
     }
 
     // If the window is currently minimized, demo_resize has already done some cleanup for us.
@@ -2336,9 +2241,6 @@ static void demo_cleanup(struct demo *demo) {
         free(demo->queue_props);
         vkDestroyCommandPool(demo->device, demo->cmd_pool, NULL);
 
-        if (demo->separate_present_queue) {
-            vkDestroyCommandPool(demo->device, demo->present_cmd_pool, NULL);
-        }
     }
     vkDeviceWaitIdle(demo->device);
     vkDestroyDevice(demo->device, NULL);
@@ -2417,9 +2319,7 @@ static void demo_resize(struct demo *demo) {
     }
     vkDestroyCommandPool(demo->device, demo->cmd_pool, NULL);
     demo->cmd_pool = VK_NULL_HANDLE;
-    if (demo->separate_present_queue) {
-        vkDestroyCommandPool(demo->device, demo->present_cmd_pool, NULL);
-    }
+
     free(demo->swapchain_image_resources);
 
     // Second, re-perform the demo_prepare() function, which will re-create the
@@ -3337,15 +3237,7 @@ static void demo_create_device(struct demo *demo) {
         .ppEnabledExtensionNames = (const char *const *)demo->extension_names,
         .pEnabledFeatures = NULL,  // If specific features are required, pass them in here
     };
-    if (demo->separate_present_queue) {
-        queues[1].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queues[1].pNext = NULL;
-        queues[1].queueFamilyIndex = demo->present_queue_family_index;
-        queues[1].queueCount = 1;
-        queues[1].pQueuePriorities = queue_priorities;
-        queues[1].flags = 0;
-        device.queueCreateInfoCount = 2;
-    }
+
     err = vkCreateDevice(demo->gpu, &device, NULL, &demo->device);
     assert(!err);
 }
@@ -3525,11 +3417,6 @@ static void demo_init_vk_swapchain(struct demo *demo) {
 
         err = vkCreateSemaphore(demo->device, &semaphoreCreateInfo, NULL, &demo->draw_complete_semaphores[i]);
         assert(!err);
-
-        if (demo->separate_present_queue) {
-            err = vkCreateSemaphore(demo->device, &semaphoreCreateInfo, NULL, &demo->image_ownership_semaphores[i]);
-            assert(!err);
-        }
     }
     demo->frame_index = 0;
 

@@ -202,7 +202,6 @@ static const float g_uv_buffer_data[] = {
 typedef struct {
     vk::Image image;
     vk::CommandBuffer cmd;
-    vk::CommandBuffer graphics_to_present_cmd;
     vk::ImageView view;
     vk::Buffer uniform_buffer;
     vk::DeviceMemory uniform_memory;
@@ -213,7 +212,6 @@ typedef struct {
 
 struct Demo {
     Demo();
-    void build_image_ownership_cmd(uint32_t const &);
     vk::Bool32 check_layers(uint32_t, const char *const *, uint32_t, vk::LayerProperties *);
     void cleanup();
     void create_device();
@@ -314,7 +312,6 @@ struct Demo {
     uint32_t present_queue_family_index;
     vk::Semaphore image_acquired_semaphores[FRAME_LAG];
     vk::Semaphore draw_complete_semaphores[FRAME_LAG];
-    vk::Semaphore image_ownership_semaphores[FRAME_LAG];
     vk::PhysicalDeviceProperties gpu_props;
     std::unique_ptr<vk::QueueFamilyProperties[]> queue_props;
     vk::PhysicalDeviceMemoryProperties memory_properties;
@@ -337,7 +334,6 @@ struct Demo {
     uint32_t frame_index;
 
     vk::CommandPool cmd_pool;
-    vk::CommandPool present_cmd_pool;
 
     struct {
         vk::Format format;
@@ -563,30 +559,6 @@ Demo::Demo()
     memset(model_matrix, 0, sizeof(model_matrix));
 }
 
-void Demo::build_image_ownership_cmd(uint32_t const &i) {
-    auto const cmd_buf_info = vk::CommandBufferBeginInfo().setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
-    auto result = swapchain_image_resources[i].graphics_to_present_cmd.begin(&cmd_buf_info);
-    VERIFY(result == vk::Result::eSuccess);
-
-    auto const image_ownership_barrier =
-        vk::ImageMemoryBarrier()
-            .setSrcAccessMask(vk::AccessFlags())
-            .setDstAccessMask(vk::AccessFlags())
-            .setOldLayout(vk::ImageLayout::ePresentSrcKHR)
-            .setNewLayout(vk::ImageLayout::ePresentSrcKHR)
-            .setSrcQueueFamilyIndex(graphics_queue_family_index)
-            .setDstQueueFamilyIndex(present_queue_family_index)
-            .setImage(swapchain_image_resources[i].image)
-            .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
-
-    swapchain_image_resources[i].graphics_to_present_cmd.pipelineBarrier(
-        vk::PipelineStageFlagBits::eBottomOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe, vk::DependencyFlagBits(), 0, nullptr, 0,
-        nullptr, 1, &image_ownership_barrier);
-
-    result = swapchain_image_resources[i].graphics_to_present_cmd.end();
-    VERIFY(result == vk::Result::eSuccess);
-}
-
 vk::Bool32 Demo::check_layers(uint32_t check_count, char const *const *const check_names, uint32_t layer_count,
                               vk::LayerProperties *layers) {
     for (uint32_t i = 0; i < check_count; i++) {
@@ -615,9 +587,6 @@ void Demo::cleanup() {
         device.destroyFence(fences[i], nullptr);
         device.destroySemaphore(image_acquired_semaphores[i], nullptr);
         device.destroySemaphore(draw_complete_semaphores[i], nullptr);
-        if (separate_present_queue) {
-            device.destroySemaphore(image_ownership_semaphores[i], nullptr);
-        }
     }
 
     for (uint32_t i = 0; i < swapchainImageCount; i++) {
@@ -653,9 +622,6 @@ void Demo::cleanup() {
 
     device.destroyCommandPool(cmd_pool, nullptr);
 
-    if (separate_present_queue) {
-        device.destroyCommandPool(present_cmd_pool, nullptr);
-    }
     device.waitIdle();
     device.destroy(nullptr);
     inst.destroySurfaceKHR(surface, nullptr);
@@ -698,13 +664,6 @@ void Demo::create_device() {
                           .setEnabledExtensionCount(enabled_extension_count)
                           .setPpEnabledExtensionNames((const char *const *)extension_names)
                           .setPEnabledFeatures(nullptr);
-
-    if (separate_present_queue) {
-        queues[1].setQueueFamilyIndex(present_queue_family_index);
-        queues[1].setQueueCount(1);
-        queues[1].setPQueuePriorities(priorities);
-        deviceInfo.setQueueCreateInfoCount(2);
-    }
 
     auto result = gpu.createDevice(&deviceInfo, nullptr, &device);
     VERIFY(result == vk::Result::eSuccess);
@@ -762,30 +721,11 @@ void Demo::draw() {
     result = graphics_queue.submit(1, &submit_info, fences[frame_index]);
     VERIFY(result == vk::Result::eSuccess);
 
-    if (separate_present_queue) {
-        // If we are using separate queues, change image ownership to the
-        // present queue before presenting, waiting for the draw complete
-        // semaphore and signalling the ownership released semaphore when
-        // finished
-        auto const present_submit_info = vk::SubmitInfo()
-                                             .setPWaitDstStageMask(&pipe_stage_flags)
-                                             .setWaitSemaphoreCount(1)
-                                             .setPWaitSemaphores(&draw_complete_semaphores[frame_index])
-                                             .setCommandBufferCount(1)
-                                             .setPCommandBuffers(&swapchain_image_resources[current_buffer].graphics_to_present_cmd)
-                                             .setSignalSemaphoreCount(1)
-                                             .setPSignalSemaphores(&image_ownership_semaphores[frame_index]);
-
-        result = present_queue.submit(1, &present_submit_info, vk::Fence());
-        VERIFY(result == vk::Result::eSuccess);
-    }
-
     // If we are using separate queues we have to wait for image ownership,
     // otherwise wait for draw complete
     auto const presentInfo = vk::PresentInfoKHR()
                                  .setWaitSemaphoreCount(1)
-                                 .setPWaitSemaphores(separate_present_queue ? &image_ownership_semaphores[frame_index]
-                                                                            : &draw_complete_semaphores[frame_index])
+                                 .setPWaitSemaphores(&draw_complete_semaphores[frame_index])
                                  .setSwapchainCount(1)
                                  .setPSwapchains(&swapchain)
                                  .setPImageIndices(&current_buffer);
@@ -854,31 +794,6 @@ void Demo::draw_build_cmd(vk::CommandBuffer commandBuffer) {
     // Note that ending the renderpass changes the image's layout from
     // COLOR_ATTACHMENT_OPTIMAL to PRESENT_SRC_KHR
     commandBuffer.endRenderPass();
-
-    if (separate_present_queue) {
-        // We have to transfer ownership from the graphics queue family to
-        // the
-        // present queue family to be able to present.  Note that we don't
-        // have
-        // to transfer from present queue family back to graphics queue
-        // family at
-        // the start of the next frame because we don't care about the
-        // image's
-        // contents at that point.
-        auto const image_ownership_barrier =
-            vk::ImageMemoryBarrier()
-                .setSrcAccessMask(vk::AccessFlags())
-                .setDstAccessMask(vk::AccessFlags())
-                .setOldLayout(vk::ImageLayout::ePresentSrcKHR)
-                .setNewLayout(vk::ImageLayout::ePresentSrcKHR)
-                .setSrcQueueFamilyIndex(graphics_queue_family_index)
-                .setDstQueueFamilyIndex(present_queue_family_index)
-                .setImage(swapchain_image_resources[current_buffer].image)
-                .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
-
-        commandBuffer.pipelineBarrier(vk::PipelineStageFlagBits::eBottomOfPipe, vk::PipelineStageFlagBits::eBottomOfPipe,
-                                      vk::DependencyFlagBits(), 0, nullptr, 0, nullptr, 1, &image_ownership_barrier);
-    }
 
     result = commandBuffer.end();
     VERIFY(result == vk::Result::eSuccess);
@@ -1412,11 +1327,6 @@ void Demo::init_vk_swapchain() {
 
         result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &draw_complete_semaphores[i]);
         VERIFY(result == vk::Result::eSuccess);
-
-        if (separate_present_queue) {
-            result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &image_ownership_semaphores[i]);
-            VERIFY(result == vk::Result::eSuccess);
-        }
     }
     frame_index = 0;
 
@@ -1454,25 +1364,6 @@ void Demo::prepare() {
     for (uint32_t i = 0; i < swapchainImageCount; ++i) {
         result = device.allocateCommandBuffers(&cmd, &swapchain_image_resources[i].cmd);
         VERIFY(result == vk::Result::eSuccess);
-    }
-
-    if (separate_present_queue) {
-        auto const present_cmd_pool_info = vk::CommandPoolCreateInfo().setQueueFamilyIndex(present_queue_family_index);
-
-        result = device.createCommandPool(&present_cmd_pool_info, nullptr, &present_cmd_pool);
-        VERIFY(result == vk::Result::eSuccess);
-
-        auto const present_cmd = vk::CommandBufferAllocateInfo()
-                                     .setCommandPool(present_cmd_pool)
-                                     .setLevel(vk::CommandBufferLevel::ePrimary)
-                                     .setCommandBufferCount(1);
-
-        for (uint32_t i = 0; i < swapchainImageCount; i++) {
-            result = device.allocateCommandBuffers(&present_cmd, &swapchain_image_resources[i].graphics_to_present_cmd);
-            VERIFY(result == vk::Result::eSuccess);
-
-            build_image_ownership_cmd(i);
-        }
     }
 
     prepare_descriptor_pool();
@@ -1615,6 +1506,7 @@ void Demo::prepare_buffers() {
         }
     }
 
+    const uint32_t qf_indices[] = {this->graphics_queue_family_index, this->present_queue_family_index};
     auto const swapchain_ci = vk::SwapchainCreateInfoKHR()
                                   .setSurface(surface)
                                   .setMinImageCount(desiredNumOfSwapchainImages)
@@ -1623,9 +1515,9 @@ void Demo::prepare_buffers() {
                                   .setImageExtent({swapchainExtent.width, swapchainExtent.height})
                                   .setImageArrayLayers(1)
                                   .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment)
-                                  .setImageSharingMode(vk::SharingMode::eExclusive)
-                                  .setQueueFamilyIndexCount(0)
-                                  .setPQueueFamilyIndices(nullptr)
+                                  .setImageSharingMode(this->separate_present_queue ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive)
+                                  .setQueueFamilyIndexCount(this->separate_present_queue ? 2 : 0)
+                                  .setPQueueFamilyIndices(qf_indices)
                                   .setPreTransform(preTransform)
                                   .setCompositeAlpha(compositeAlpha)
                                   .setPresentMode(swapchainPresentMode)
@@ -2280,9 +2172,6 @@ void Demo::resize() {
     }
 
     device.destroyCommandPool(cmd_pool, nullptr);
-    if (separate_present_queue) {
-        device.destroyCommandPool(present_cmd_pool, nullptr);
-    }
 
     // Second, re-perform the prepare() function, which will re-create the
     // swapchain.
