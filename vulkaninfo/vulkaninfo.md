@@ -72,3 +72,5 @@ Vulkan Info can also be found as a shortcut under the Start Menu.
 * `Start Menu -> Vulkan SDK`*`version`*`-> vulkaninfo`
 
 Note: In order to review and/or save the output produced when using Visual Studio execute `vulkaninfo` with the JSON option, you will have to redirect output to a file by modifying the command line arguments in the debug options.
+
+Note: The Vulkan Info binary found in the Vulkan SDK is renamed to `vulkaninfoSDK.exe`. This was done to demark any Vulkan Info version installed by the Vulkan Runtime Package, which is from an IHV distribution. When using command line on Windows, the Vulkan info version used will be from the IHV distribution, not the SDK. To run the SDK version, either use the start menu shortcuts or navigate to the `VulkanSDK/Bin` directory and run `vulkaninfoSDK.exe` directly.
