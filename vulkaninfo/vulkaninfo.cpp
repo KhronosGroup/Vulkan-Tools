@@ -194,9 +194,9 @@ struct SurfaceTypeGroup {
 };
 
 bool operator==(AppSurface const &a, AppSurface const &b) {
-    return a.surf_present_modes == b.surf_present_modes && a.surf_formats == b.surf_formats && a.surf_formats2 == b.surf_formats2 &&
-           a.surface_capabilities == b.surface_capabilities && a.surface_capabilities2_khr == b.surface_capabilities2_khr &&
-           a.surface_capabilities2_ext == b.surface_capabilities2_ext;
+    return a.phys_device == b.phys_device && a.surf_present_modes == b.surf_present_modes && a.surf_formats == b.surf_formats &&
+           a.surf_formats2 == b.surf_formats2 && a.surface_capabilities == b.surface_capabilities &&
+           a.surface_capabilities2_khr == b.surface_capabilities2_khr && a.surface_capabilities2_ext == b.surface_capabilities2_ext;
 }
 
 void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<std::unique_ptr<AppGpu>> &gpus,
@@ -206,20 +206,24 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
     std::vector<SurfaceTypeGroup> surface_list;
 
     for (auto &surface : surfaces) {
-        for (auto &gpu : gpus) {
-            auto exists = surface_list.end();
-            for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
-                // This uses a custom comparator to check if the surfaces have the same values
-                if (it->gpu == gpu.get() && *(it->surface) == *(surface.get())) {
-                    exists = it;
-                    break;
-                }
+        auto exists = surface_list.end();
+        for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
+            // check for duplicat surfaces that differ only by the surface extension
+            if (*(it->surface) == *(surface.get())) {
+                exists = it;
+                break;
             }
-            if (exists != surface_list.end()) {
-                exists->surface_types.insert(surface.get()->surface_extension.name);
-            } else {
-                surface_list.push_back({surface.get(), gpu.get(), {surface.get()->surface_extension.name}});
+        }
+        if (exists != surface_list.end()) {
+            exists->surface_types.insert(surface.get()->surface_extension.name);
+        } else {
+            // find surface.phys_device's corresponding AppGpu
+            AppGpu *corresponding_gpu = nullptr;
+            for (auto &gpu : gpus) {
+                if (gpu->phys_device == surface->phys_device) corresponding_gpu = gpu.get();
             }
+            if (corresponding_gpu != nullptr)
+                surface_list.push_back({surface.get(), corresponding_gpu, {surface.get()->surface_extension.name}});
         }
     }
     for (auto &group : surface_list) {
