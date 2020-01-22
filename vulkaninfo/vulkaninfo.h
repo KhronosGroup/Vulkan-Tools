@@ -902,6 +902,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 class AppSurface {
    public:
     AppInstance &inst;
+	VkPhysicalDevice phys_device;
     SurfaceExtension surface_extension;
 
     std::vector<VkPresentModeKHR> surf_present_modes;
@@ -915,7 +916,7 @@ class AppSurface {
 
     AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension,
                std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
-        : inst(inst), surface_extension(surface_extension) {
+        : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
         uint32_t present_mode_count = 0;
         VkResult error =
             inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count, nullptr);

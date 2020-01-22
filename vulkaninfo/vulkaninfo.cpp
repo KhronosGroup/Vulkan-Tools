@@ -194,9 +194,9 @@ struct SurfaceTypeGroup {
 };
 
 bool operator==(AppSurface const &a, AppSurface const &b) {
-    return a.surf_present_modes == b.surf_present_modes && a.surf_formats == b.surf_formats && a.surf_formats2 == b.surf_formats2 &&
-           a.surface_capabilities == b.surface_capabilities && a.surface_capabilities2_khr == b.surface_capabilities2_khr &&
-           a.surface_capabilities2_ext == b.surface_capabilities2_ext;
+    return a.phys_device == b.phys_device && a.surf_present_modes == b.surf_present_modes && a.surf_formats == b.surf_formats &&
+           a.surf_formats2 == b.surf_formats2 && a.surface_capabilities == b.surface_capabilities &&
+           a.surface_capabilities2_khr == b.surface_capabilities2_khr && a.surface_capabilities2_ext == b.surface_capabilities2_ext;
 }
 
 void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<std::unique_ptr<AppGpu>> &gpus,
@@ -207,6 +207,9 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
 
     for (auto &surface : surfaces) {
         for (auto &gpu : gpus) {
+			if (surface->phys_device != gpu->phys_device) {
+				continue; //gpu doesn't match
+			}
             auto exists = surface_list.end();
             for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
                 // This uses a custom comparator to check if the surfaces have the same values
@@ -773,6 +776,7 @@ int main(int argc, char **argv) {
         }
     }
 #endif
+    std::cout << "surfaces count " << surfaces.size() << "\n";
 
     std::vector<std::unique_ptr<AppGpu>> gpus;
 
