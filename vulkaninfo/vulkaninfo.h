@@ -207,6 +207,27 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags
     return VK_FALSE;
 }
 
+// Helper for robustly executing the two-call pattern
+template <typename T, typename F, typename... Ts>
+auto GetVectorInit(F &&f, T init, Ts &&... ts) -> std::vector<T> {
+    uint32_t count = 0;
+    std::vector<T> results;
+    VkResult err;
+    do {
+        err = f(ts..., &count, nullptr);
+        if (err) ERR_EXIT(err);
+        results.resize(count, init);
+        err = f(ts..., &count, results.data());
+    } while (err == VK_INCOMPLETE);
+    if (err) ERR_EXIT(err);
+    return results;
+}
+
+template <typename T, typename F, typename... Ts>
+auto GetVector(F &&f, Ts &&... ts) -> std::vector<T> {
+    return GetVectorInit(f, T(), ts...);
+}
+
 // ----------- Instance Setup ------- //
 
 struct VkStructureHeader {
@@ -390,22 +411,8 @@ struct AppInstance {
     /* Gets a list of layer and instance extensions */
     void AppGetInstanceExtensions() {
         /* Scan layers */
-        std::vector<VkLayerProperties> global_layer_properties;
-
-        VkResult err;
-        uint32_t count = 0;
-        do {
-            err = vkEnumerateInstanceLayerProperties(&count, nullptr);
-            if (err) ERR_EXIT(err);
-
-            global_layer_properties.resize(count);
-
-            err = vkEnumerateInstanceLayerProperties(&count, global_layer_properties.data());
-        } while (err == VK_INCOMPLETE);
-        if (err) ERR_EXIT(err);
-
-        global_layers.resize(count);
-        assert(global_layer_properties.size() == global_layers.size());
+        auto global_layer_properties = GetVector<VkLayerProperties>(vkEnumerateInstanceLayerProperties);
+        global_layers.resize(global_layer_properties.size());
 
         for (size_t i = 0; i < global_layer_properties.size(); i++) {
             global_layers[i].layer_properties = global_layer_properties[i];
@@ -446,40 +453,11 @@ struct AppInstance {
     void AddSurfaceExtension(SurfaceExtension ext) { surface_extensions.push_back(ext); }
 
     static std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(char *layer_name) {
-        std::vector<VkExtensionProperties> ext_props;
-        VkResult err;
-        uint32_t ext_count = 0;
-        do {
-            // gets the extension count if the last parameter is nullptr
-            err = vkEnumerateInstanceExtensionProperties(layer_name, &ext_count, nullptr);
-            if (err) ERR_EXIT(err);
-
-            ext_props.resize(ext_count);
-            // gets the extension properties if the last parameter is not nullptr
-            err = vkEnumerateInstanceExtensionProperties(layer_name, &ext_count, ext_props.data());
-        } while (err == VK_INCOMPLETE);
-        if (err) ERR_EXIT(err);
-        return ext_props;
+        return GetVector<VkExtensionProperties>(vkEnumerateInstanceExtensionProperties, layer_name);
     }
 
     std::vector<VkPhysicalDevice> FindPhysicalDevices() {
-        std::vector<VkPhysicalDevice> phys_devices;
-
-        VkResult err;
-        uint32_t gpu_count = 0;
-
-        /* repeat get until VK_INCOMPLETE goes away */
-        do {
-            err = vkEnumeratePhysicalDevices(instance, &gpu_count, nullptr);
-            if (err) ERR_EXIT(err);
-
-            phys_devices.resize(gpu_count);
-            err = vkEnumeratePhysicalDevices(instance, &gpu_count, phys_devices.data());
-            if (err) ERR_EXIT(err);
-            phys_devices.resize(gpu_count);
-        } while (err == VK_INCOMPLETE);
-
-        return phys_devices;
+        return GetVector<VkPhysicalDevice>(vkEnumeratePhysicalDevices, instance);
     }
 };
 
@@ -902,7 +880,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 class AppSurface {
    public:
     AppInstance &inst;
-	VkPhysicalDevice phys_device;
+    VkPhysicalDevice phys_device;
     SurfaceExtension surface_extension;
 
     std::vector<VkPresentModeKHR> surf_present_modes;
@@ -916,39 +894,23 @@ class AppSurface {
 
     AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension,
                std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
-        : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
-        uint32_t present_mode_count = 0;
-        VkResult error =
-            inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count, nullptr);
-        if (error) ERR_EXIT(error);
-
-        surf_present_modes.resize(present_mode_count);
-        error = inst.vkGetPhysicalDeviceSurfacePresentModesKHR(phys_device, surface_extension.surface, &present_mode_count,
-                                                               surf_present_modes.data());
-        if (error) ERR_EXIT(error);
-
+        : inst(inst),
+          phys_device(phys_device),
+          surface_extension(surface_extension),
+          surf_present_modes(
+              GetVector<VkPresentModeKHR>(inst.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device, surface_extension.surface)) {
         const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
                                                                surface_extension.surface};
 
-        uint32_t format_count = 0;
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            VkResult err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(phys_device, &surface_info2, &format_count, nullptr);
-            if (err) ERR_EXIT(err);
-            surf_formats2.resize(format_count);
-            for (uint32_t i = 0; i < format_count; ++i) {
-                surf_formats2[i].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-                surf_formats2[i].pNext = nullptr;
-            }
-            err = inst.vkGetPhysicalDeviceSurfaceFormats2KHR(phys_device, &surface_info2, &format_count, surf_formats2.data());
-            if (err) ERR_EXIT(err);
+            VkSurfaceFormat2KHR init;
+            init.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+            init.pNext = nullptr;
+            surf_formats2 =
+                GetVectorInit<VkSurfaceFormat2KHR>(inst.vkGetPhysicalDeviceSurfaceFormats2KHR, init, phys_device, &surface_info2);
         } else {
-            VkResult err =
-                inst.vkGetPhysicalDeviceSurfaceFormatsKHR(phys_device, surface_extension.surface, &format_count, nullptr);
-            if (err) ERR_EXIT(err);
-            surf_formats.resize(format_count);
-            err = inst.vkGetPhysicalDeviceSurfaceFormatsKHR(phys_device, surface_extension.surface, &format_count,
-                                                            surf_formats.data());
-            if (err) ERR_EXIT(err);
+            surf_formats =
+                GetVector<VkSurfaceFormatKHR>(inst.vkGetPhysicalDeviceSurfaceFormatsKHR, phys_device, surface_extension.surface);
         }
 
         if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_EXTENSION_NAME)) {
@@ -996,23 +958,7 @@ std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
         PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR =
             reinterpret_cast<PFN_vkEnumeratePhysicalDeviceGroupsKHR>(
                 vkGetInstanceProcAddr(inst.instance, "vkEnumeratePhysicalDeviceGroupsKHR"));
-
-        std::vector<VkPhysicalDeviceGroupProperties> groups;
-        uint32_t group_count;
-        VkResult err;
-        do {
-            err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, NULL);
-            if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
-                return {};
-            }
-            groups.resize(group_count);
-
-            err = vkEnumeratePhysicalDeviceGroupsKHR(inst.instance, &group_count, groups.data());
-            if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
-                return {};
-            }
-        } while (err == VK_INCOMPLETE);
-        return groups;
+        return GetVector<VkPhysicalDeviceGroupProperties>(vkEnumeratePhysicalDeviceGroupsKHR, inst.instance);
     }
     return {};
 }
@@ -1367,23 +1313,7 @@ struct AppGpu {
     }
 
     std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(char *layer_name) {
-        std::vector<VkExtensionProperties> extension_properties;
-
-        VkResult err;
-        uint32_t ext_count = 0;
-
-        /* repeat get until VK_INCOMPLETE goes away */
-        do {
-            err = vkEnumerateDeviceExtensionProperties(phys_device, layer_name, &ext_count, nullptr);
-            if (err) ERR_EXIT(err);
-
-            extension_properties.resize(ext_count);
-            err = vkEnumerateDeviceExtensionProperties(phys_device, layer_name, &ext_count, extension_properties.data());
-            if (err) ERR_EXIT(err);
-            extension_properties.resize(ext_count);
-        } while (err == VK_INCOMPLETE);
-
-        return extension_properties;
+        return GetVector<VkExtensionProperties>(vkEnumerateDeviceExtensionProperties, phys_device, layer_name);
     }
 
     // Helper function to determine whether a format range is currently supported.
@@ -1440,23 +1370,8 @@ struct AppQueueFamilyProperties {
 };
 
 std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
-    uint32_t count = 0;
-    VkResult err;
-    std::vector<VkPhysicalDeviceToolPropertiesEXT> tool_properties;
-
     if (gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
-    do {
-        err = gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT(gpu.phys_device, &count, nullptr);
-        if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
-            return {};
-        }
-        tool_properties.resize(count);
-        err = gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT(gpu.phys_device, &count, tool_properties.data());
-        if (err != VK_SUCCESS && err != VK_INCOMPLETE) {
-            return {};
-        }
-    } while (err == VK_INCOMPLETE);
-    return tool_properties;
+    return GetVector<VkPhysicalDeviceToolPropertiesEXT>(gpu.inst.vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
 }
 
 // --------- Format Properties ----------//
