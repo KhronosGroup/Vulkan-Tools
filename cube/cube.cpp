@@ -1894,7 +1894,8 @@ void Demo::prepare_pipeline() {
                                        .setDepthBiasEnable(VK_FALSE)
                                        .setLineWidth(1.0f);
 
-    auto const multisampleInfo = vk::PipelineMultisampleStateCreateInfo();
+    auto const multisampleInfo =
+        vk::PipelineMultisampleStateCreateInfo().setPSampleMask(nullptr).setRasterizationSamples(vk::SampleCountFlagBits::e1);
 
     auto const stencilOp =
         vk::StencilOpState().setFailOp(vk::StencilOp::eKeep).setPassOp(vk::StencilOp::eKeep).setCompareOp(vk::CompareOp::eAlways);
