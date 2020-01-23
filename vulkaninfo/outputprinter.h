@@ -33,24 +33,23 @@
 std::string insert_quotes(std::string s) { return "\"" + s + "\""; }
 
 std::string to_string_16(uint8_t uid[16]) {
-    std::stringstream stream;
-    stream << std::setw(2) << std::hex;
-    stream << (int)uid[0] << (int)uid[1] << (int)uid[2] << (int)uid[3] << "-";
-    stream << (int)uid[4] << (int)uid[5] << "-";
-    stream << (int)uid[6] << (int)uid[7] << "-";
-    stream << (int)uid[8] << (int)uid[9] << "-";
-    stream << (int)uid[10] << (int)uid[11] << (int)uid[12] << (int)uid[13] << (int)uid[14] << (int)uid[15];
-
-    return stream.str();
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (int i = 0; i < 16; ++i) {
+        if (i == 4 || i == 6 || i == 8 || i == 10) ss << '-';
+        ss << std::setw(2) << static_cast<unsigned>(uid[i]);
+    }
+    return ss.str();
 }
 
 std::string to_string_8(uint8_t uid[8]) {
-    std::stringstream stream;
-    stream << std::setw(2) << std::hex;
-    stream << (int)uid[0] << (int)uid[1] << (int)uid[2] << (int)uid[3] << "-";
-    stream << (int)uid[4] << (int)uid[5] << (int)uid[6] << (int)uid[7];
-
-    return stream.str();
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (int i = 0; i < 8; ++i) {
+        if (i == 4) ss << '-';
+        ss << std::setw(2) << static_cast<unsigned>(uid[i]);
+    }
+    return ss.str();
 }
 
 std::string VkVersionString(uint32_t version) {
