@@ -1107,6 +1107,7 @@ struct AppGpu {
     AppInstance &inst;
     uint32_t id;
     VkPhysicalDevice phys_device;
+    VulkanVersion api_version;
 
     VkPhysicalDeviceProperties props;
     VkPhysicalDeviceProperties2KHR props2;
@@ -1137,6 +1138,10 @@ struct AppGpu {
     AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, pNextChainInfos chainInfos)
         : inst(inst), id(id), phys_device(phys_device) {
         vkGetPhysicalDeviceProperties(phys_device, &props);
+
+        // needs to find the minimum of the instance and device version, and use that to print the device info
+        uint32_t gpu_version = props.apiVersion < inst.instance_version ? props.apiVersion : inst.instance_version;
+        api_version = {VK_VERSION_MAJOR(gpu_version), VK_VERSION_MINOR(gpu_version), VK_VERSION_PATCH(gpu_version)};
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
