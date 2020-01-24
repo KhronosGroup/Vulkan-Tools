@@ -349,7 +349,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     if (p.Type() != OutputType::json) {
         if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             void *place = gpu.props2.pNext;
-            chain_iterator_phys_device_props2(p, gpu.inst, gpu, place, gpu.inst.vk_version);
+            chain_iterator_phys_device_props2(p, gpu.inst, gpu, place, gpu.api_version);
         }
     }
     p.AddNewline();
@@ -521,7 +521,7 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
     if (p.Type() != OutputType::json) {
         if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             void *place = gpu.features2.pNext;
-            chain_iterator_phys_device_features2(p, gpu, place, gpu.inst.vk_version);
+            chain_iterator_phys_device_features2(p, gpu, place, gpu.api_version);
         }
     }
 }
