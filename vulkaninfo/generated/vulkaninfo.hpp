@@ -782,8 +782,6 @@ void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagBi
     if (16 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_MODIFYING_FEATURES_BIT_EXT");
     if (32 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
     if (64 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
-    if (32 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
-    if (64 & value) p.SetAsType().PrintElement("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
 }
 void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagsEXT value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
