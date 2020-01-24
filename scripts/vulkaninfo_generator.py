@@ -788,6 +788,13 @@ class VulkanBitmask:
             if(support == "disabled"):
                 continue
 
+            duplicate = False
+            for option in self.options:
+                if option.name == childName:
+                    duplicate = True
+            if duplicate:
+                continue
+
             self.options.append(VulkanEnum.Option(
                 childName, childValue, childBitpos, childComment))
 
