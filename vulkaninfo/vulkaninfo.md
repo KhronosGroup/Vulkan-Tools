@@ -14,6 +14,7 @@
 # Vulkan Information
 
 Vulkan Info is a program provided in the SDK which outputs various types of Vulkan information such as:
+
 - device properties of identified GPUs
 - Vulkan extensions supported by each GPU
 - recognized layers
@@ -29,6 +30,8 @@ vulkaninfo
 
 Executing `vulkaninfo` without specifying the type of output will default to human-readable output to the console.
 
+Note: The Vulkan Info binary found in the Windows Vulkan SDK is named `vulkaninfoSDK.exe`. This is so it doesn't get confused with the Vulkan Info distributed by an IVH, as it is installed with the Vulkan Runtime Package. Since the SDK does not install Vulkan Info to the path, the Windows command line version used will be from the IHV distribution. To run the SDK version, either use the start menu shortcuts or navigate to the `VulkanSDK/Bin` directory and run `vulkaninfoSDK.exe` directly.
+
 ```
 vulkaninfo --html
 ```
@@ -42,8 +45,8 @@ vulkaninfo --json
  Use the `--json` option to produce [DevSim-schema](https://schema.khronos.org/vulkan/devsim_1_0_0.json)-compatible JSON output for your device. Additionally, JSON output can be specified with the `-j` option and for multi-GPU systems, a single GPU can be targeted using the `--json=`*`GPU-number`* option where the *`GPU-number`* indicates the GPU of interest (e.g., `--json=0`). To determine the GPU number corresponding to a particular GPU, execute `vulkaninfo` with the `--html` option (or none at all) first; doing so will summarize all GPUs in the system.
  The generated configuration information can be used as input for the [`VK_LAYER_LUNARG_device_simulation`](./device_simulation_layer.html) layer.
 
-
  Use the `--help` or `-h` option to produce a list of all available Vulkan Info options.
+
 ```
 vulkaninfo - Summarize Vulkan information in relation to the current environment.
 
@@ -69,7 +72,8 @@ OPTIONS:
 ### Windows
 
 Vulkan Info can also be found as a shortcut under the Start Menu.
-* `Start Menu -> Vulkan SDK`*`version`*`-> vulkaninfo`
+
+- `Start Menu -> Vulkan SDK`*`version`*`-> vulkaninfo`
 
 Note: In order to review and/or save the output produced when using Visual Studio execute `vulkaninfo` with the JSON option, you will have to redirect output to a file by modifying the command line arguments in the debug options.
 
