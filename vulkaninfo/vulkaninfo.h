@@ -362,7 +362,10 @@ struct AppInstance {
             if (err) ERR_EXIT(err);
         }
 
-        vk_version = {VK_VERSION_MAJOR(instance_version), VK_VERSION_MINOR(instance_version), VK_VERSION_PATCH(VK_HEADER_VERSION)};
+        // fallback to baked header version if loader returns 0 for the patch version
+        uint32_t patch_version = VK_VERSION_PATCH(instance_version);
+        if (patch_version == 0) patch_version = VK_VERSION_PATCH(VK_HEADER_VERSION);
+        vk_version = {VK_VERSION_MAJOR(instance_version), VK_VERSION_MINOR(instance_version), patch_version};
 
         AppGetInstanceExtensions();
 
