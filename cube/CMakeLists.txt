@@ -174,6 +174,7 @@ elseif(NOT WIN32)
                        cube.vert.inc
                        cube.frag.inc)
         target_link_libraries(vkcube Vulkan::Vulkan)
+        include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
         if (NEED_RT)
             target_link_libraries(vkcube rt)
