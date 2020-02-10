@@ -145,18 +145,21 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
     p.SetSubHeader();
     DumpVkSurfaceCapabilitiesKHR(p, "VkSurfaceCapabilitiesKHR", surf_cap);
 
-    p.SetSubHeader().ObjectStart("VkSurfaceCapabilities2EXT");
-    {
-        p.ObjectStart("supportedSurfaceCounters");
-        if (surface.surface_capabilities2_ext.supportedSurfaceCounters == 0) p.PrintElement("None");
-        if (surface.surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
-            p.SetAsType().PrintElement("VK_SURFACE_COUNTER_VBLANK_EXT");
+    if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
+        p.SetSubHeader().ObjectStart("VkSurfaceCapabilities2EXT");
+        {
+            p.ObjectStart("supportedSurfaceCounters");
+            if (surface.surface_capabilities2_ext.supportedSurfaceCounters == 0) p.PrintElement("None");
+            if (surface.surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
+                p.SetAsType().PrintElement("VK_SURFACE_COUNTER_VBLANK_EXT");
+            }
+            p.ObjectEnd();
         }
-        p.ObjectEnd();
+        p.ObjectEnd();  // VkSurfaceCapabilities2EXT
     }
-    p.ObjectEnd();  // VkSurfaceCapabilities2EXT
-
-    chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext, inst.vk_version);
+    if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
+        chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext, inst.vk_version);
+    }
 }
 
 void DumpSurface(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface, std::set<std::string> surface_types) {
