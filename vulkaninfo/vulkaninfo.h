@@ -1278,10 +1278,9 @@ struct AppGpu {
         supported_format_ranges = {
             {
                 // Standard formats in Vulkan 1.0
-                VK_MAKE_VERSION(1, 0, 0),
-                NULL,
-                VK_FORMAT_BEGIN_RANGE,
-                VK_FORMAT_END_RANGE,
+                VK_MAKE_VERSION(1, 0, 0), NULL,
+                static_cast<VkFormat>(0),   // first core VkFormat
+                static_cast<VkFormat>(184)  // last core VkFormat
             },
             {
                 // YCBCR extension, standard in Vulkan 1.1
