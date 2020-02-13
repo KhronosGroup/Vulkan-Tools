@@ -1296,6 +1296,13 @@ struct AppGpu {
                 VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG,
                 VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG,
             },
+            {
+                // ASTC extension, not standardized
+                0,
+                VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME,
+                VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT,
+                VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT,
+            },
         };
     }
     ~AppGpu() {
