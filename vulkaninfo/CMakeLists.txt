@@ -34,18 +34,24 @@ if(PYTHONINTERP_FOUND)
 endif()
 
 if(WIN32)
-    add_executable(vulkaninfo vulkaninfo.cpp vulkaninfo.rc)
+    add_executable(vulkaninfo vulkaninfo.cpp vulkaninfo.rc volk/volk.c)
 elseif(APPLE)
     add_executable(vulkaninfo
                    vulkaninfo.cpp
                    ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.mm
-                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
+                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h
+                   volk/volk.c)
 else()
-    add_executable(vulkaninfo vulkaninfo.cpp)
+    add_executable(vulkaninfo vulkaninfo.cpp volk/volk.c)
 endif()
 
 target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo)
 target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo/generated)
+target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo/volk)
+
+if (NOT WIN32)
+    target_link_libraries(vulkaninfo ${CMAKE_DL_LIBS})
+endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
     include(FindPkgConfig)
@@ -57,21 +63,21 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         find_package(XCB REQUIRED)
         target_include_directories(vulkaninfo PRIVATE ${XCB_INCLUDE_DIRS})
         target_link_libraries(vulkaninfo ${XCB_LIBRARIES})
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XCB_KHR)
+        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XCB_KHR -DVK_NO_PROTOTYPES)
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
         find_package(X11 REQUIRED)
         target_include_directories(vulkaninfo PRIVATE ${X11_INCLUDE_DIR})
         target_link_libraries(vulkaninfo ${X11_LIBRARIES})
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XLIB_KHR)
+        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XLIB_KHR -DVK_NO_PROTOTYPES)
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
         find_package(Wayland REQUIRED)
         target_include_directories(vulkaninfo PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
         target_link_libraries(vulkaninfo ${WAYLAND_CLIENT_LIBRARIES})
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR)
+        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_NO_PROTOTYPES)
     endif()
 endif()
 
@@ -89,7 +95,7 @@ if(APPLE)
 endif()
 
 if(WIN32)
-    target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS -DVK_NO_PROTOTYPES)
     if(NOT MSVC_VERSION LESS 1900)
         # Enable control flow guard
         message(STATUS "Building vulkaninfo with control flow guard")
@@ -120,7 +126,7 @@ if(WIN32)
 
     file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/vulkaninfo)
 elseif(APPLE)
-    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK -DVK_USE_PLATFORM_METAL_EXT)
+    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK -DVK_USE_PLATFORM_METAL_EXT -DVK_NO_PROTOTYPES)
 endif()
 
 if(APPLE)
