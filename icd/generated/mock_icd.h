@@ -245,6 +245,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
     {"VK_GOOGLE_user_type", 1},
+    {"VK_KHR_shader_non_semantic_info", 1},
 };
 
 
@@ -1869,6 +1870,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
     const VkPipelineExecutableInfoKHR*          pExecutableInfo,
     uint32_t*                                   pInternalRepresentationCount,
     VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
