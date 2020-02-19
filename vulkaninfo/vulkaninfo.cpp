@@ -261,7 +261,7 @@ void DumpGroups(Printer &p, AppInstance &inst) {
         int group_id = 0;
         for (auto &group : groups) {
             ObjectWrapper obj(p, "Group " + std::to_string(group_id));
-            auto group_props = GetGroupProps(group);
+            auto group_props = GetGroupProps(inst, group);
             {
                 ObjectWrapper obj(p, "Properties");
                 {
@@ -647,7 +647,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
                     VkFormat fmt = static_cast<VkFormat>(fmt_counter);
 
                     VkFormatProperties props;
-                    vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+                    gpu.inst.dll.vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
                     GpuDumpFormatProperty(p, fmt, props);
                 }
@@ -667,7 +667,7 @@ void GpuDevDumpJson(Printer &p, AppGpu &gpu) {
                 VkFormat fmt = static_cast<VkFormat>(fmt_counter);
 
                 VkFormatProperties props;
-                vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+                gpu.inst.dll.vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
                 // don't print format properties that are unsupported
                 if ((props.linearTilingFeatures || props.optimalTilingFeatures || props.bufferFeatures) == 0) continue;
