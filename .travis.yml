@@ -103,10 +103,9 @@ script:
     if [[ "$VULKAN_BUILD_TARGET" == "LINUX" ]]; then
       # Run vulkaninfo as a test
       cd ${TRAVIS_BUILD_DIR}
-      LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${TRAVIS_BUILD_DIR}/external/Vulkan-Loader/build/install/lib/
       cd build/vulkaninfo
       ldd vulkaninfo
-      VK_ICD_FILENAMES=../icd/VkICD_mock_icd.json ./vulkaninfo
+      LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${TRAVIS_BUILD_DIR}/external/Vulkan-Loader/build/install/lib/ VK_ICD_FILENAMES=../icd/VkICD_mock_icd.json ./vulkaninfo
       cd ${TRAVIS_BUILD_DIR}
     fi
   - |
