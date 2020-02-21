@@ -892,9 +892,9 @@ class AppSurface {
     std::vector<VkSurfaceFormatKHR> surf_formats;
     std::vector<VkSurfaceFormat2KHR> surf_formats2;
 
-    VkSurfaceCapabilitiesKHR surface_capabilities;
-    VkSurfaceCapabilities2KHR surface_capabilities2_khr;
-    VkSurfaceCapabilities2EXT surface_capabilities2_ext;
+    VkSurfaceCapabilitiesKHR surface_capabilities{};
+    VkSurfaceCapabilities2KHR surface_capabilities2_khr{};
+    VkSurfaceCapabilities2EXT surface_capabilities2_ext{};
 
     AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension,
                std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
