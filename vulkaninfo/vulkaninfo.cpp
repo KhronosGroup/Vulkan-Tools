@@ -74,7 +74,8 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
         case OutputType::html: {
             p.SetHeader();
             ArrayWrapper arr(p, "Layers", layers.size());
-            p.IndentDecrease();
+            IndentWrapper indent(p);
+
             for (auto &layer : layers) {
                 auto v_str = VkVersionString(layer.layer_properties.specVersion);
                 auto props = layer.layer_properties;
@@ -93,7 +94,6 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                     p.AddNewline();
                 }
             }
-            p.IndentIncrease();
             break;
         }
 
@@ -212,7 +212,7 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
                              const std::vector<std::unique_ptr<AppSurface>> &surfaces) {
     p.SetHeader();
     ObjectWrapper obj(p, "Presentable Surfaces");
-    p.IndentDecrease();
+    IndentWrapper indent(p);
 
     std::vector<SurfaceTypeGroup> surface_list;
 
@@ -240,7 +240,6 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
     for (auto &group : surface_list) {
         DumpSurface(p, inst, *group.gpu, *group.surface, group.surface_types);
     }
-    p.IndentIncrease();
     p.AddNewline();
 }
 
@@ -257,7 +256,8 @@ void DumpGroups(Printer &p, AppInstance &inst) {
 
         p.SetHeader();
         ObjectWrapper obj(p, "Device Groups");
-        p.IndentDecrease();
+        IndentWrapper indent(p);
+
         int group_id = 0;
         for (auto &group : groups) {
             ObjectWrapper obj(p, "Group " + std::to_string(group_id));
@@ -299,7 +299,6 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.AddNewline();
             group_id++;
         }
-        p.IndentIncrease();
         p.AddNewline();
     }
 }
@@ -435,7 +434,7 @@ std::string append_human_readible(VkDeviceSize memory) {
 void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj(p, "VkPhysicalDeviceMemoryProperties");
-    p.IndentDecrease();
+    IndentWrapper indent(p);
     {
         ObjectWrapper obj(p, "memoryHeaps", gpu.memory_props.memoryHeapCount);
 
@@ -515,8 +514,6 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             }
         }
     }
-
-    p.IndentIncrease();
     p.AddNewline();
 }
 
@@ -603,7 +600,7 @@ void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj(p, "Format Properties");
-    p.IndentDecrease();
+    IndentWrapper indent(p);
 
     if (p.Type() == OutputType::text) {
         auto fmtPropMap = FormatPropMap(gpu);
@@ -622,8 +619,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
 
             p.SetElementIndex(counter++);
             ObjectWrapper obj(p, "Common Format Group");
-            p.IndentDecrease();
-
+            IndentWrapper indent(p);
             {
                 ArrayWrapper arr(p, "Formats", prop.second.size());
                 for (auto &fmt : prop.second) {
@@ -631,8 +627,6 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
                 }
             }
             GpuDumpFormatProperty(p, VK_FORMAT_UNDEFINED, props);
-
-            p.IndentIncrease();
             p.AddNewline();
         }
 
@@ -655,7 +649,6 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
         }
     }
 
-    p.IndentIncrease();
     p.AddNewline();
 }
 
@@ -681,7 +674,7 @@ void GpuDevDumpJson(Printer &p, AppGpu &gpu) {
 // Uses a seperate function than schema-json for clarity
 void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     ObjectWrapper obj(p, "GPU" + std::to_string(gpu.id));
-    p.IndentDecrease();
+    IndentWrapper indent(p);
 
     GpuDumpProps(p, gpu);
     DumpExtensions(p, "Device", gpu.device_extensions);
@@ -702,7 +695,6 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
         GpuDevDump(p, gpu);
     }
 
-    p.IndentIncrease();
     p.AddNewline();
 }
 
@@ -809,106 +801,115 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
-
-    AppInstance instance = {};
-    SetupWindowExtensions(instance);
-
-    auto pNext_chains = get_chain_infos();
-
-    auto phys_devices = instance.FindPhysicalDevices();
-
-    std::vector<std::unique_ptr<AppSurface>> surfaces;
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    for (auto &surface_extension : instance.surface_extensions) {
-        surface_extension.create_window(instance);
-        surface_extension.surface = surface_extension.create_surface(instance);
-        for (auto &phys_device : phys_devices) {
-            surfaces.push_back(std::unique_ptr<AppSurface>(
-                new AppSurface(instance, phys_device, surface_extension, pNext_chains.surface_capabilities2)));
-        }
-    }
-#endif
-
-    std::vector<std::unique_ptr<AppGpu>> gpus;
-
-    uint32_t gpu_counter = 0;
-    for (auto &phys_device : phys_devices) {
-        gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, pNext_chains)));
-    }
-
-    if (selected_gpu >= gpus.size()) {
-        std::cout << "The selected gpu (" << selected_gpu << ") is not in the valid range of 0 to " << gpus.size() - 1 << ".\n";
-        return 0;
-    }
-
     std::vector<std::unique_ptr<Printer>> printers;
-
-    std::streambuf *buf;
-    buf = std::cout.rdbuf();
-    std::ostream out(buf);
+    std::ostream out(std::cout.rdbuf());
     std::ofstream html_out;
     std::ofstream vkconfig_out;
 
-    if (human_readable_output) {
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, out, selected_gpu, instance.vk_version)));
-    }
-    if (html_output) {
-        html_out = std::ofstream("vulkaninfo.html");
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::html, html_out, selected_gpu, instance.vk_version)));
-    }
-    if (json_output) {
-        printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version)));
-    }
-    if (vkconfig_output) {
-#ifdef WIN32
-        vkconfig_out = std::ofstream(std::string(output_path) + "\\vulkaninfo.json");
-#else
-        vkconfig_out = std::ofstream(std::string(output_path) + "/vulkaninfo.json");
-#endif
-        printers.push_back(
-            std::unique_ptr<Printer>(new Printer(OutputType::vkconfig_output, vkconfig_out, selected_gpu, instance.vk_version)));
-    }
+    // if any essential vulkan call fails, it throws an exception
+    try {
+        AppInstance instance = {};
+        SetupWindowExtensions(instance);
 
-    for (auto &p : printers) {
-        if (p->Type() == OutputType::json) {
-            DumpLayers(*p.get(), instance.global_layers, gpus);
-            DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
+        auto pNext_chains = get_chain_infos();
 
-        } else {
-            p->SetHeader();
-            DumpExtensions(*p.get(), "Instance", instance.global_extensions);
-            p->AddNewline();
+        auto phys_devices = instance.FindPhysicalDevices();
 
-            DumpLayers(*p.get(), instance.global_layers, gpus);
-
+        std::vector<std::unique_ptr<AppSurface>> surfaces;
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
-            DumpPresentableSurfaces(*p.get(), instance, gpus, surfaces);
-#endif
-            DumpGroups(*p.get(), instance);
-
-            p->SetHeader();
-            ObjectWrapper obj(*p, "Device Properties and Extensions");
-            p->IndentDecrease();
-
-            for (auto &gpu : gpus) {
-                DumpGpu(*p.get(), *gpu.get(), show_formats);
+        for (auto &surface_extension : instance.surface_extensions) {
+            surface_extension.create_window(instance);
+            surface_extension.surface = surface_extension.create_surface(instance);
+            for (auto &phys_device : phys_devices) {
+                surfaces.push_back(std::unique_ptr<AppSurface>(
+                    new AppSurface(instance, phys_device, surface_extension, pNext_chains.surface_capabilities2)));
             }
-
-            p->IndentIncrease();
         }
-        p.reset();
-    }
+#endif
+
+        std::vector<std::unique_ptr<AppGpu>> gpus;
+
+        uint32_t gpu_counter = 0;
+        for (auto &phys_device : phys_devices) {
+            gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, pNext_chains)));
+        }
+
+        if (selected_gpu >= gpus.size()) {
+            std::cout << "The selected gpu (" << selected_gpu << ") is not in the valid range of 0 to " << gpus.size() - 1 << ".\n";
+            return 0;
+        }
+
+        if (human_readable_output) {
+            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, out, selected_gpu, instance.vk_version)));
+        }
+        if (html_output) {
+            html_out = std::ofstream("vulkaninfo.html");
+            printers.push_back(
+                std::unique_ptr<Printer>(new Printer(OutputType::html, html_out, selected_gpu, instance.vk_version)));
+        }
+        if (json_output) {
+            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version)));
+        }
+        if (vkconfig_output) {
+#ifdef WIN32
+            vkconfig_out = std::ofstream(std::string(output_path) + "\\vulkaninfo.json");
+#else
+            vkconfig_out = std::ofstream(std::string(output_path) + "/vulkaninfo.json");
+#endif
+            printers.push_back(std::unique_ptr<Printer>(
+                new Printer(OutputType::vkconfig_output, vkconfig_out, selected_gpu, instance.vk_version)));
+        }
+
+        for (auto &p : printers) {
+            if (p->Type() == OutputType::json) {
+                DumpLayers(*p.get(), instance.global_layers, gpus);
+                DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
+
+            } else {
+                p->SetHeader();
+                DumpExtensions(*p.get(), "Instance", instance.global_extensions);
+                p->AddNewline();
+
+                DumpLayers(*p.get(), instance.global_layers, gpus);
+
+#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
+                DumpPresentableSurfaces(*p.get(), instance, gpus, surfaces);
+#endif
+                DumpGroups(*p.get(), instance);
+
+                p->SetHeader();
+                ObjectWrapper obj(*p, "Device Properties and Extensions");
+                IndentWrapper indent(*p);
+
+                for (auto &gpu : gpus) {
+                    DumpGpu(*p.get(), *gpu.get(), show_formats);
+                }
+            }
+        }
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) || \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR)
 
-    for (auto &surface_extension : instance.surface_extensions) {
-        AppDestroySurface(instance, surface_extension.surface);
-        surface_extension.destroy_window(instance);
-    }
+        for (auto &surface_extension : instance.surface_extensions) {
+            AppDestroySurface(instance, surface_extension.surface);
+            surface_extension.destroy_window(instance);
+        }
 #endif
+    } catch (std::exception &e) {
+        // Print the error to stderr and leave all outputs in a valid state (mainly for json)
+        std::cerr << "ERROR at " << e.what() << "\n";
+        for (auto &p : printers) {
+            if (p) {
+                p->FinishOutput();
+            }
+        }
+    }
+    // Call the printer's descrtuctor before the file handle gets closed
+    for (auto &p : printers) {
+        p.reset(nullptr);
+    }
 
     WAIT_FOR_CONSOLE_DESTROY;
 #ifdef _WIN32
