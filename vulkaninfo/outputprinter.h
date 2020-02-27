@@ -181,12 +181,14 @@ class Printer {
                 out << "\t}";
                 indents++;
                 is_first_item.push(false);
+                is_array.push(false);
                 break;
             case (OutputType::vkconfig_output):
                 out << "{\n";
                 out << "\t\"Vulkan Instance Version\": \"" << VkVersionString(vulkan_version) << "\"";
                 indents++;
                 is_first_item.push(false);
+                is_array.push(false);
                 break;
             default:
                 break;
@@ -209,6 +211,7 @@ class Printer {
                 indents--;
                 is_first_item.pop();
                 assert(is_first_item.empty() && "mismatched number of ObjectStart/ObjectEnd or ArrayStart/ArrayEnd's");
+                is_array.pop();
                 break;
         }
         assert(indents == 0 && "indents must be zero at program end");
@@ -218,6 +221,34 @@ class Printer {
     const Printer &operator=(const Printer &) = delete;
 
     OutputType Type() { return output_type; }
+
+    // When an error occurs, call this to create a valid output file. Needed for json/html
+    void FinishOutput() {
+        switch (output_type) {
+            case (OutputType::text):
+                indents = 0;
+                break;
+            case (OutputType::html):
+                while (indents > 3) {
+                    out << "</details>\n";
+                    indents--;
+                }
+                break;
+            case (OutputType::json):
+            case (OutputType::vkconfig_output):
+                while (indents > 1) {
+                    out << "\n" << std::string(static_cast<size_t>(indents), '\t');
+                    if (is_array.top()) {
+                        out << "]";
+                    } else {
+                        out << "}";
+                    }
+                    is_array.pop();
+                    indents--;
+                }
+                break;
+        }
+    }
 
     // Custom Formatting
     // use by prepending with p.SetXXX().ObjectStart/ArrayStart
@@ -316,6 +347,8 @@ class Printer {
                 }
 
                 is_first_item.push(true);
+                is_array.push(false);
+
                 break;
             case (OutputType::vkconfig_output):
                 if (!is_first_item.top()) {
@@ -332,6 +365,8 @@ class Printer {
                     out << "\"" << object_name << "\": {\n";
                 }
                 is_first_item.push(true);
+                is_array.push(false);
+
                 break;
             default:
                 break;
@@ -352,6 +387,8 @@ class Printer {
             case (OutputType::vkconfig_output):
                 out << "\n" << std::string(static_cast<size_t>(indents), '\t') << "}";
                 is_first_item.pop();
+                assert(is_array.top() == false && "cannot call ObjectEnd while inside an Array");
+                is_array.pop();
                 break;
             default:
                 break;
@@ -394,6 +431,7 @@ class Printer {
                 out << std::string(static_cast<size_t>(indents), '\t') << "\"" << array_name << "\": "
                     << "[\n";
                 is_first_item.push(true);
+                is_array.push(true);
                 break;
             default:
                 break;
@@ -414,6 +452,8 @@ class Printer {
             case (OutputType::vkconfig_output):
                 out << "\n" << std::string(static_cast<size_t>(indents), '\t') << "]";
                 is_first_item.pop();
+                assert(is_array.top() == true && "cannot call ArrayEnd while inside an Object");
+                is_array.pop();
                 break;
             default:
                 break;
@@ -636,7 +676,8 @@ class Printer {
     int element_index = -1;  // negative one is the sentinel value
 
     // json
-    std::stack<bool> is_first_item;
+    std::stack<bool> is_first_item;  // for json: for adding a comma inbetween objects
+    std::stack<bool> is_array;       // for json: match pairs of {}'s and []'s
 
     // utility
     void PrintHeaderUnderlines(size_t length) {
@@ -650,6 +691,21 @@ class Printer {
             set_next_subheader = false;
         }
     }
+};
+// Purpose: When a Printer starts an object or array it will automatically indent the output. This isn't
+// always desired, requiring a manual decrease of indention. This wrapper facilitates that while also
+// automatically re-indenting the output to the previous indent level on scope exit.
+class IndentWrapper {
+   public:
+    IndentWrapper(Printer &p) : p(p) {
+        if (p.Type() == OutputType::text) p.IndentDecrease();
+    }
+    ~IndentWrapper() {
+        if (p.Type() == OutputType::text) p.IndentIncrease();
+    }
+
+   private:
+    Printer &p;
 };
 
 class ObjectWrapper {

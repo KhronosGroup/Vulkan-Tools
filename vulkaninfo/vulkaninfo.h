@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <array>
+#include <exception>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -73,7 +74,33 @@
 
 #include <vulkan/vulkan.h>
 
-#define ERR(err) std::cerr << __FILE__ << ":" << __LINE__ << ": failed with " << VkResultString(err) << "\n";
+static const char *VkResultString(VkResult err);
+
+// General error: Get file + line and a short message
+struct FileLineException : std::runtime_error {
+    FileLineException(const std::string &arg, const char *file, int line) : runtime_error(arg) {
+        msg = std::string(file) + ":" + std::to_string(line) + ": " + arg;
+    }
+    ~FileLineException() throw() {}
+    const char *what() const throw() { return msg.c_str(); }
+
+   private:
+    std::string msg;
+};
+#define THROW_ERR(arg) throw FileLineException(arg, __FILE__, __LINE__);
+
+// Vulkan function error: Get name of function, file, line, and the error code returned by the function
+struct VulkanException : std::runtime_error {
+    VulkanException(const std::string &function, const char *file, int line, VkResult err) : runtime_error(function) {
+        msg = std::string(file) + ":" + std::to_string(line) + ":" + function + " failed with " + VkResultString(err);
+    }
+    ~VulkanException() throw() {}
+    const char *what() const throw() { return msg.c_str(); }
+
+   private:
+    std::string msg;
+};
+#define THROW_VK_ERR(func_name, err) throw VulkanException(func_name, __FILE__, __LINE__, err);
 
 // global configuration
 bool human_readable_output = true;
@@ -100,15 +127,6 @@ static int ConsoleIsExclusive(void) {
 #else
 #define WAIT_FOR_CONSOLE_DESTROY
 #endif
-
-#define ERR_EXIT(err)             \
-    do {                          \
-        ERR(err);                 \
-        fflush(stdout);           \
-        fflush(stderr);           \
-        WAIT_FOR_CONSOLE_DESTROY; \
-        exit(-1);                 \
-    } while (0)
 
 #ifdef _WIN32
 
@@ -177,8 +195,6 @@ void FreeUser32Dll() {
 }
 #endif  // _WIN32
 
-static const char *VkResultString(VkResult err);
-
 const char *app_short_name = "vulkaninfo";
 
 std::vector<const char *> get_c_str_array(std::vector<std::string> const &vec) {
@@ -208,30 +224,30 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags
                                                   const char *pMsg, void *pUserData) {
     std::cerr << VkDebugReportFlagsEXTString(msgFlags) << ": [" << pLayerPrefix << "] Code " << msgCode << " : " << pMsg << "\n";
 
-    // True is reserved for layer developers, and MAY mean calls are not distributed down the layer chain after validation error.
-    // False SHOULD always be returned by apps:
+    // True is reserved for layer developers, and MAY mean calls are not distributed down the layer chain after validation
+    // error. False SHOULD always be returned by apps:
     return VK_FALSE;
 }
 
 // Helper for robustly executing the two-call pattern
 template <typename T, typename F, typename... Ts>
-auto GetVectorInit(F &&f, T init, Ts &&... ts) -> std::vector<T> {
+auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&... ts) -> std::vector<T> {
     uint32_t count = 0;
     std::vector<T> results;
     VkResult err;
     do {
         err = f(ts..., &count, nullptr);
-        if (err) ERR_EXIT(err);
+        if (err) THROW_VK_ERR(func_name, err);
         results.resize(count, init);
         err = f(ts..., &count, results.data());
     } while (err == VK_INCOMPLETE);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR(func_name, err);
     return results;
 }
 
 template <typename T, typename F, typename... Ts>
-auto GetVector(F &&f, Ts &&... ts) -> std::vector<T> {
-    return GetVectorInit(f, T(), ts...);
+auto GetVector(const char *func_name, F &&f, Ts &&... ts) -> std::vector<T> {
+    return GetVectorInit(func_name, f, T(), ts...);
 }
 
 // ----------- Instance Setup ------- //
@@ -470,7 +486,7 @@ void buildpNextChain(VkStructureHeader *first, const std::vector<pNextChainBuild
     for (uint32_t i = 0; i < chain_info.size(); i++) {
         place->pNext = static_cast<VkStructureHeader *>(malloc(chain_info[i].mem_size));
         if (!place->pNext) {
-            ERR_EXIT(VK_ERROR_OUT_OF_HOST_MEMORY);
+            THROW_ERR("buildpNextChain's malloc failed to allocate");
         }
         std::memset(place->pNext, 0, chain_info[i].mem_size);
         place = place->pNext;
@@ -565,10 +581,9 @@ struct AppInstance {
     ANativeWindow *window;
 #endif
     AppInstance() {
-        if (dll.Initialize() != VK_SUCCESS) {
-            std::cerr << "Failed to initialize: Vulkan loader is not installed, not found, or failed to load.\n";
-            WAIT_FOR_CONSOLE_DESTROY;
-            exit(1);
+        VkResult dllErr = dll.Initialize();
+        if (dllErr != VK_SUCCESS) {
+            THROW_ERR("Failed to initialize: Vulkan loader is not installed, not found, or failed to load.");
         }
         dll.InitializeDispatchPointers();
 
@@ -576,7 +591,7 @@ struct AppInstance {
             instance_version = VK_API_VERSION_1_0;
         } else {
             const VkResult err = dll.vkEnumerateInstanceVersion(&instance_version);
-            if (err) ERR_EXIT(err);
+            if (err) THROW_VK_ERR("vkEnumerateInstanceVersion", err);
         }
 
         // fallback to baked header version if loader returns 0 for the patch version
@@ -606,9 +621,9 @@ struct AppInstance {
             std::cerr << "Cannot create Vulkan instance.\n";
             std::cerr << "This problem is often caused by a faulty installation of the Vulkan driver or attempting to use a GPU "
                          "that does not support Vulkan.\n";
-            ERR_EXIT(err);
+            THROW_VK_ERR("vkCreateInstance", err);
         } else if (err) {
-            ERR_EXIT(err);
+            THROW_VK_ERR("vkCreateInstance", err);
         }
         ext_funcs.LoadInstanceExtensionDispatchPointers(dll.vkGetInstanceProcAddr, instance);
     }
@@ -633,7 +648,8 @@ struct AppInstance {
     /* Gets a list of layer and instance extensions */
     void AppGetInstanceExtensions() {
         /* Scan layers */
-        auto global_layer_properties = GetVector<VkLayerProperties>(dll.vkEnumerateInstanceLayerProperties);
+        auto global_layer_properties =
+            GetVector<VkLayerProperties>("vkEnumerateInstanceLayerProperties", dll.vkEnumerateInstanceLayerProperties);
         global_layers.resize(global_layer_properties.size());
 
         for (size_t i = 0; i < global_layer_properties.size(); i++) {
@@ -656,11 +672,12 @@ struct AppInstance {
     void AddSurfaceExtension(SurfaceExtension ext) { surface_extensions.push_back(ext); }
 
     std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(char *layer_name) {
-        return GetVector<VkExtensionProperties>(dll.vkEnumerateInstanceExtensionProperties, layer_name);
+        return GetVector<VkExtensionProperties>("vkEnumerateInstanceExtensionProperties",
+                                                dll.vkEnumerateInstanceExtensionProperties, layer_name);
     }
 
     std::vector<VkPhysicalDevice> FindPhysicalDevices() {
-        return GetVector<VkPhysicalDevice>(dll.vkEnumeratePhysicalDevices, instance);
+        return GetVector<VkPhysicalDevice>("vkEnumerateInstanceExtensionProperties", dll.vkEnumeratePhysicalDevices, instance);
     }
 };
 
@@ -696,8 +713,7 @@ static void AppCreateWin32Window(AppInstance &inst) {
     // Register window class:
     if (!CALL_PFN(RegisterClassExA)(&win_class)) {
         // It didn't work, so try to give a useful error:
-        fprintf(stderr, "Failed to register the window class!\n");
-        exit(1);
+        THROW_ERR("Failed to register the window class!");
     }
     // Create window with the registered class:
     RECT wr = {0, 0, inst.width, inst.height};
@@ -716,8 +732,7 @@ static void AppCreateWin32Window(AppInstance &inst) {
                                            nullptr);             // no extra parameters
     if (!inst.h_wnd) {
         // It didn't work, so try to give a useful error:
-        fprintf(stderr, "Failed to create a window!\n");
-        exit(1);
+        THROW_ERR("Failed to create a window!");
     }
 }
 
@@ -731,7 +746,7 @@ static VkSurfaceKHR AppCreateWin32Surface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateWin32SurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateWin32SurfaceKHR", err);
     return surface;
 }
 
@@ -787,7 +802,7 @@ static void AppCreateXcbWindow(AppInstance &inst) {
 
 static VkSurfaceKHR AppCreateXcbSurface(AppInstance &inst) {
     if (!inst.xcb_connection) {
-        ERR_EXIT(VK_ERROR_INITIALIZATION_FAILED);
+        THROW_ERR("AppCreateXcbSurface failed to establish connection");
     }
 
     VkXcbSurfaceCreateInfoKHR xcb_createInfo;
@@ -799,7 +814,7 @@ static VkSurfaceKHR AppCreateXcbSurface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateXcbSurfaceKHR(inst.instance, &xcb_createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateXcbSurfaceKHR", err);
     return surface;
 }
 
@@ -822,8 +837,7 @@ static void AppCreateXlibWindow(AppInstance &inst) {
 
     inst.xlib_display = XOpenDisplay(nullptr);
     if (inst.xlib_display == nullptr) {
-        fprintf(stderr, "XLib failed to connect to the X server.\nExiting ...\n");
-        exit(1);
+        THROW_ERR("XLib failed to connect to the X server.\nExiting...");
     }
 
     XVisualInfo vInfoTemplate = {};
@@ -846,7 +860,7 @@ static VkSurfaceKHR AppCreateXlibSurface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateXlibSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateXlibSurfaceKHR", err);
     return surface;
 }
 
@@ -862,8 +876,7 @@ static void AppDestroyXlibWindow(AppInstance &inst) {
 static void AppCreateMacOSWindow(AppInstance &inst) {
     inst.macos_window = CreateMetalView(inst.width, inst.height);
     if (inst.macos_window == nullptr) {
-        fprintf(stderr, "Could not create a native Metal view.\nExiting...\n");
-        exit(1);
+        THROW_ERR("Could not create a native Metal view.\nExiting...");
     }
 }
 
@@ -876,7 +889,7 @@ static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateMacOSSurfaceMVK(inst.instance, &createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateMacOSSurfaceMVK", err);
     return surface;
 }
 
@@ -889,8 +902,7 @@ static void AppDestroyMacOSWindow(AppInstance &inst) { DestroyMetalView(inst.mac
 static void AppCreateMetalWindow(AppInstance &inst) {
     inst.metal_window = CreateMetalView(inst.width, inst.height);
     if (inst.metal_window == nullptr) {
-        fprintf(stderr, "Could not create a native Metal view.\nExiting...\n");
-        exit(1);
+        THROW_ERR("Could not create a native Metal view.\nExiting...");
     }
 }
 
@@ -903,7 +915,7 @@ static VkSurfaceKHR AppCreateMetalSurface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateMetalSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateMetalSurfaceEXT", err);
     return surface;
 }
 
@@ -942,7 +954,7 @@ static VkSurfaceKHR AppCreateWaylandSurface(AppInstance &inst) {
 
     VkSurfaceKHR surface;
     VkResult err = inst.dll.vkCreateWaylandSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkCreateWaylandSurfaceKHR", err);
     return surface;
 }
 
@@ -961,7 +973,7 @@ static VkSurfaceKHR AppCreateAndroidSurface(AppInstance &inst) {
     createInfo.window = (struct ANativeWindow *)(inst.window);
 
     err = inst.dll.vkCreateAndroidSurfaceKHR(inst.inst, &createInfo, NULL, &inst.surface);
-    EXIT_ERR(err);
+    THROW_VK_ERR("vkCreateAndroidSurfaceKHR", err);
 }
 static VkSurfaceKHR AppDestroyAndroidSurface(AppInstance &inst) {}
 #endif
@@ -974,9 +986,8 @@ void SetupWindowExtensions(AppInstance &inst) {
     bool has_display = true;
     const char *display_var = getenv("DISPLAY");
     if (display_var == nullptr || strlen(display_var) == 0) {
-        fprintf(stderr, "'DISPLAY' environment variable not set... skipping surface info\n");
-        fflush(stderr);
         has_display = false;
+        THROW_ERR("'DISPLAY' environment variable not set... skipping surface info");
     }
 #endif
 
@@ -1100,7 +1111,8 @@ class AppSurface {
         : inst(inst),
           phys_device(phys_device),
           surface_extension(surface_extension),
-          surf_present_modes(GetVector<VkPresentModeKHR>(inst.ext_funcs.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device,
+          surf_present_modes(GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR",
+                                                         inst.ext_funcs.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device,
                                                          surface_extension.surface)) {
         const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
                                                                surface_extension.surface};
@@ -1109,17 +1121,19 @@ class AppSurface {
             VkSurfaceFormat2KHR init;
             init.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
             init.pNext = nullptr;
-            surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>(inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormats2KHR, init,
+            surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>("vkGetPhysicalDeviceSurfaceFormats2KHR",
+                                                               inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormats2KHR, init,
                                                                phys_device, &surface_info2);
         } else {
-            surf_formats = GetVector<VkSurfaceFormatKHR>(inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormatsKHR, phys_device,
+            surf_formats = GetVector<VkSurfaceFormatKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR",
+                                                         inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormatsKHR, phys_device,
                                                          surface_extension.surface);
         }
 
         if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_EXTENSION_NAME)) {
             VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phys_device, surface_extension.surface,
                                                                                     &surface_capabilities);
-            if (err) ERR_EXIT(err);
+            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", err);
         }
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
@@ -1133,7 +1147,7 @@ class AppSurface {
 
             VkResult err =
                 inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
-            if (err) ERR_EXIT(err);
+            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2KHR", err);
         }
 
         if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
@@ -1141,7 +1155,7 @@ class AppSurface {
             surface_capabilities2_ext.pNext = nullptr;
             VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2EXT(phys_device, surface_extension.surface,
                                                                                      &surface_capabilities2_ext);
-            if (err) ERR_EXIT(err);
+            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2EXT", err);
         }
     }
 
@@ -1159,7 +1173,8 @@ class AppSurface {
 
 std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
-        return GetVector<VkPhysicalDeviceGroupProperties>(inst.ext_funcs.vkEnumeratePhysicalDeviceGroupsKHR, inst.instance);
+        return GetVector<VkPhysicalDeviceGroupProperties>("vkEnumeratePhysicalDeviceGroupsKHR",
+                                                          inst.ext_funcs.vkEnumeratePhysicalDeviceGroupsKHR, inst.instance);
     }
     return {};
 }
@@ -1193,7 +1208,7 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
     VkDevice logical_device = VK_NULL_HANDLE;
 
     VkResult err = inst.dll.vkCreateDevice(group.physicalDevices[0], &device_ci, nullptr, &logical_device);
-    if (err != VK_SUCCESS && err != VK_ERROR_EXTENSION_NOT_PRESENT) ERR_EXIT(err);
+    if (err != VK_SUCCESS && err != VK_ERROR_EXTENSION_NOT_PRESENT) THROW_VK_ERR("vkCreateDevice", err);
 
     if (err == VK_ERROR_EXTENSION_NOT_PRESENT) {
         VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR, nullptr};
@@ -1206,7 +1221,7 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
     // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
     // output to user.
     err = inst.ext_funcs.vkGetDeviceGroupPresentCapabilitiesKHR(logical_device, &group_capabilities);
-    if (err) ERR_EXIT(err);
+    if (err) THROW_VK_ERR("vkGetDeviceGroupPresentCapabilitiesKHR", err);
 
     inst.dll.vkDestroyDevice(logical_device, nullptr);
 
@@ -1293,7 +1308,6 @@ struct AppGpu {
 
             inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
         }
-
         /* get queue count */
         inst.dll.vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
 
@@ -1342,7 +1356,7 @@ struct AppGpu {
             VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, nullptr, 0, 1, &q_ci, 0, nullptr, 0, nullptr, &enabled_features};
 
         VkResult err = inst.dll.vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
-        if (err) ERR_EXIT(err);
+        if (err) THROW_VK_ERR("vkCreateDevice", err);
 
         const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
         const std::vector<VkFormat> formats = {
@@ -1431,11 +1445,11 @@ struct AppGpu {
                         if (err == VK_ERROR_FORMAT_NOT_SUPPORTED) {
                             *support = false;
                         } else {
-                            if (err) ERR_EXIT(err);
+                            if (err != VK_SUCCESS) THROW_VK_ERR("vkGetPhysicalDeviceImageFormatProperties", err);
 
                             VkImage dummy_img;
                             err = inst.dll.vkCreateImage(dev, &image_ci, nullptr, &dummy_img);
-                            if (err) ERR_EXIT(err);
+                            if (err) THROW_VK_ERR("vkCreateImage", err);
 
                             VkMemoryRequirements mem_req;
                             inst.dll.vkGetImageMemoryRequirements(dev, dummy_img, &mem_req);
@@ -1523,7 +1537,8 @@ struct AppGpu {
     }
 
     std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(char *layer_name) {
-        return GetVector<VkExtensionProperties>(inst.dll.vkEnumerateDeviceExtensionProperties, phys_device, layer_name);
+        return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties",
+                                                inst.dll.vkEnumerateDeviceExtensionProperties, phys_device, layer_name);
     }
 
     // Helper function to determine whether a format range is currently supported.
@@ -1567,7 +1582,7 @@ struct AppQueueFamilyProperties {
         for (auto &surface_ext : gpu.inst.surface_extensions) {
             VkResult err = gpu.inst.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(
                 gpu.phys_device, queue_index, surface_ext.surface, &surface_ext.supports_present);
-            if (err) ERR_EXIT(err);
+            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceSupportKHR", err);
 
             const bool first = (surface_ext == gpu.inst.surface_extensions.at(0));
             if (!first && platforms_support_present != surface_ext.supports_present) {
@@ -1581,7 +1596,8 @@ struct AppQueueFamilyProperties {
 
 std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
     if (gpu.inst.ext_funcs.vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
-    return GetVector<VkPhysicalDeviceToolPropertiesEXT>(gpu.inst.ext_funcs.vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
+    return GetVector<VkPhysicalDeviceToolPropertiesEXT>("vkGetPhysicalDeviceToolPropertiesEXT",
+                                                        gpu.inst.ext_funcs.vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
 }
 
 // --------- Format Properties ----------//
@@ -1626,7 +1642,6 @@ VkFormatProperties2 GetFormatProperties2(AppGpu &gpu, VkFormat format, pNextChai
     VkFormatProperties2 props;
     props.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     buildpNextChain((VkStructureHeader *)&props, chainInfos.format_properties2);
-
     gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, format, &props);
     return props;
 }
