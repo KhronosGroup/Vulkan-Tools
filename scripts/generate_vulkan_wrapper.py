@@ -267,6 +267,22 @@ VK_core_1 = Extension(name='VK_core_1', version=1, guard=None, commands=[
     Command(name='vkGetDescriptorSetLayoutSupport', dispatch='VkDevice'),
 ])
 
+VK_core_2 = Extension(name='VK_core_2', version=2, guard=None, commands=[
+    Command(name='vkCmdDrawIndirectCount', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDrawIndexedIndirectCount', dispatch='VkCommandBuffer'),
+    Command(name='vkCreateRenderPass2', dispatch='VkDevice'),
+    Command(name='vkCmdBeginRenderPass2', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdNextSubpass2', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdEndRenderPass2', dispatch='VkCommandBuffer'),
+    Command(name='vkResetQueryPool', dispatch='VkDevice'),
+    Command(name='vkGetSemaphoreCounterValue', dispatch='VkDevice'),
+    Command(name='vkWaitSemaphores', dispatch='VkDevice'),
+    Command(name='vkSignalSemaphore', dispatch='VkDevice'),
+    Command(name='vkGetBufferDeviceAddress', dispatch='VkDevice'),
+    Command(name='vkGetBufferOpaqueCaptureAddress', dispatch='VkDevice'),
+    Command(name='vkGetDeviceMemoryOpaqueCaptureAddress', dispatch='VkDevice'),
+])
+
 VK_KHR_surface = Extension(name='VK_KHR_surface', version=25, guard=None, commands=[
     Command(name='vkDestroySurfaceKHR', dispatch='VkInstance'),
     Command(name='vkGetPhysicalDeviceSurfaceSupportKHR', dispatch='VkPhysicalDevice'),
@@ -287,7 +303,7 @@ VK_KHR_swapchain = Extension(name='VK_KHR_swapchain', version=70, guard=None, co
     Command(name='vkAcquireNextImage2KHR', dispatch='VkDevice'),
 ])
 
-VK_KHR_display = Extension(name='VK_KHR_display', version=21, guard=None, commands=[
+VK_KHR_display = Extension(name='VK_KHR_display', version=23, guard=None, commands=[
     Command(name='vkGetPhysicalDeviceDisplayPropertiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetPhysicalDeviceDisplayPlanePropertiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetDisplayPlaneSupportedDisplaysKHR', dispatch='VkPhysicalDevice'),
@@ -297,17 +313,17 @@ VK_KHR_display = Extension(name='VK_KHR_display', version=21, guard=None, comman
     Command(name='vkCreateDisplayPlaneSurfaceKHR', dispatch='VkInstance'),
 ])
 
-VK_KHR_display_swapchain = Extension(name='VK_KHR_display_swapchain', version=9, guard=None, commands=[
+VK_KHR_display_swapchain = Extension(name='VK_KHR_display_swapchain', version=10, guard=None, commands=[
     Command(name='vkCreateSharedSwapchainsKHR', dispatch='VkDevice'),
 ])
 
-VK_KHR_sampler_mirror_clamp_to_edge = Extension(name='VK_KHR_sampler_mirror_clamp_to_edge', version=1, guard=None, commands=[
+VK_KHR_sampler_mirror_clamp_to_edge = Extension(name='VK_KHR_sampler_mirror_clamp_to_edge', version=3, guard=None, commands=[
 ])
 
 VK_KHR_multiview = Extension(name='VK_KHR_multiview', version=1, guard=None, commands=[
 ])
 
-VK_KHR_get_physical_device_properties2 = Extension(name='VK_KHR_get_physical_device_properties2', version=1, guard=None, commands=[
+VK_KHR_get_physical_device_properties2 = Extension(name='VK_KHR_get_physical_device_properties2', version=2, guard=None, commands=[
     Command(name='vkGetPhysicalDeviceFeatures2KHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetPhysicalDeviceProperties2KHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetPhysicalDeviceFormatProperties2KHR', dispatch='VkPhysicalDevice'),
@@ -317,7 +333,7 @@ VK_KHR_get_physical_device_properties2 = Extension(name='VK_KHR_get_physical_dev
     Command(name='vkGetPhysicalDeviceSparseImageFormatProperties2KHR', dispatch='VkPhysicalDevice'),
 ])
 
-VK_KHR_device_group = Extension(name='VK_KHR_device_group', version=3, guard=None, commands=[
+VK_KHR_device_group = Extension(name='VK_KHR_device_group', version=4, guard=None, commands=[
     Command(name='vkGetDeviceGroupPeerMemoryFeaturesKHR', dispatch='VkDevice'),
     Command(name='vkCmdSetDeviceMaskKHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdDispatchBaseKHR', dispatch='VkCommandBuffer'),
@@ -363,6 +379,9 @@ VK_KHR_push_descriptor = Extension(name='VK_KHR_push_descriptor', version=2, gua
     Command(name='vkCmdPushDescriptorSetWithTemplateKHR', dispatch='VkCommandBuffer'),
 ])
 
+VK_KHR_shader_float16_int8 = Extension(name='VK_KHR_shader_float16_int8', version=1, guard=None, commands=[
+])
+
 VK_KHR_16bit_storage = Extension(name='VK_KHR_16bit_storage', version=1, guard=None, commands=[
 ])
 
@@ -373,6 +392,9 @@ VK_KHR_descriptor_update_template = Extension(name='VK_KHR_descriptor_update_tem
     Command(name='vkCreateDescriptorUpdateTemplateKHR', dispatch='VkDevice'),
     Command(name='vkDestroyDescriptorUpdateTemplateKHR', dispatch='VkDevice'),
     Command(name='vkUpdateDescriptorSetWithTemplateKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_imageless_framebuffer = Extension(name='VK_KHR_imageless_framebuffer', version=1, guard=None, commands=[
 ])
 
 VK_KHR_create_renderpass2 = Extension(name='VK_KHR_create_renderpass2', version=1, guard=None, commands=[
@@ -396,6 +418,13 @@ VK_KHR_external_fence = Extension(name='VK_KHR_external_fence', version=1, guard
 VK_KHR_external_fence_fd = Extension(name='VK_KHR_external_fence_fd', version=1, guard=None, commands=[
     Command(name='vkImportFenceFdKHR', dispatch='VkDevice'),
     Command(name='vkGetFenceFdKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_performance_query = Extension(name='VK_KHR_performance_query', version=1, guard=None, commands=[
+    Command(name='vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR', dispatch='VkPhysicalDevice'),
+    Command(name='vkAcquireProfilingLockKHR', dispatch='VkDevice'),
+    Command(name='vkReleaseProfilingLockKHR', dispatch='VkDevice'),
 ])
 
 VK_KHR_maintenance2 = Extension(name='VK_KHR_maintenance2', version=1, guard=None, commands=[
@@ -434,7 +463,7 @@ VK_KHR_get_memory_requirements2 = Extension(name='VK_KHR_get_memory_requirements
 VK_KHR_image_format_list = Extension(name='VK_KHR_image_format_list', version=1, guard=None, commands=[
 ])
 
-VK_KHR_sampler_ycbcr_conversion = Extension(name='VK_KHR_sampler_ycbcr_conversion', version=1, guard=None, commands=[
+VK_KHR_sampler_ycbcr_conversion = Extension(name='VK_KHR_sampler_ycbcr_conversion', version=14, guard=None, commands=[
     Command(name='vkCreateSamplerYcbcrConversionKHR', dispatch='VkDevice'),
     Command(name='vkDestroySamplerYcbcrConversionKHR', dispatch='VkDevice'),
 ])
@@ -453,16 +482,64 @@ VK_KHR_draw_indirect_count = Extension(name='VK_KHR_draw_indirect_count', versio
     Command(name='vkCmdDrawIndexedIndirectCountKHR', dispatch='VkCommandBuffer'),
 ])
 
+VK_KHR_shader_subgroup_extended_types = Extension(name='VK_KHR_shader_subgroup_extended_types', version=1, guard=None, commands=[
+])
+
 VK_KHR_8bit_storage = Extension(name='VK_KHR_8bit_storage', version=1, guard=None, commands=[
 ])
 
 VK_KHR_shader_atomic_int64 = Extension(name='VK_KHR_shader_atomic_int64', version=1, guard=None, commands=[
 ])
 
+VK_KHR_shader_clock = Extension(name='VK_KHR_shader_clock', version=1, guard=None, commands=[
+])
+
 VK_KHR_driver_properties = Extension(name='VK_KHR_driver_properties', version=1, guard=None, commands=[
 ])
 
-VK_KHR_vulkan_memory_model = Extension(name='VK_KHR_vulkan_memory_model', version=2, guard=None, commands=[
+VK_KHR_shader_float_controls = Extension(name='VK_KHR_shader_float_controls', version=4, guard=None, commands=[
+])
+
+VK_KHR_depth_stencil_resolve = Extension(name='VK_KHR_depth_stencil_resolve', version=1, guard=None, commands=[
+])
+
+VK_KHR_swapchain_mutable_format = Extension(name='VK_KHR_swapchain_mutable_format', version=1, guard=None, commands=[
+])
+
+VK_KHR_timeline_semaphore = Extension(name='VK_KHR_timeline_semaphore', version=2, guard=None, commands=[
+    Command(name='vkGetSemaphoreCounterValueKHR', dispatch='VkDevice'),
+    Command(name='vkWaitSemaphoresKHR', dispatch='VkDevice'),
+    Command(name='vkSignalSemaphoreKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_vulkan_memory_model = Extension(name='VK_KHR_vulkan_memory_model', version=3, guard=None, commands=[
+])
+
+VK_KHR_spirv_1_4 = Extension(name='VK_KHR_spirv_1_4', version=1, guard=None, commands=[
+])
+
+VK_KHR_surface_protected_capabilities = Extension(name='VK_KHR_surface_protected_capabilities', version=1, guard=None, commands=[
+])
+
+VK_KHR_separate_depth_stencil_layouts = Extension(name='VK_KHR_separate_depth_stencil_layouts', version=1, guard=None, commands=[
+])
+
+VK_KHR_uniform_buffer_standard_layout = Extension(name='VK_KHR_uniform_buffer_standard_layout', version=1, guard=None, commands=[
+])
+
+VK_KHR_buffer_device_address = Extension(name='VK_KHR_buffer_device_address', version=1, guard=None, commands=[
+    Command(name='vkGetBufferDeviceAddressKHR', dispatch='VkDevice'),
+    Command(name='vkGetBufferOpaqueCaptureAddressKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeviceMemoryOpaqueCaptureAddressKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_pipeline_executable_properties = Extension(name='VK_KHR_pipeline_executable_properties', version=1, guard=None, commands=[
+    Command(name='vkGetPipelineExecutablePropertiesKHR', dispatch='VkDevice'),
+    Command(name='vkGetPipelineExecutableStatisticsKHR', dispatch='VkDevice'),
+    Command(name='vkGetPipelineExecutableInternalRepresentationsKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_shader_non_semantic_info = Extension(name='VK_KHR_shader_non_semantic_info', version=1, guard=None, commands=[
 ])
 
 VK_EXT_debug_report = Extension(name='VK_EXT_debug_report', version=9, guard=None, commands=[
@@ -512,7 +589,11 @@ VK_EXT_transform_feedback = Extension(name='VK_EXT_transform_feedback', version=
     Command(name='vkCmdDrawIndirectByteCountEXT', dispatch='VkCommandBuffer'),
 ])
 
-VK_AMD_draw_indirect_count = Extension(name='VK_AMD_draw_indirect_count', version=1, guard=None, commands=[
+VK_NVX_image_view_handle = Extension(name='VK_NVX_image_view_handle', version=1, guard=None, commands=[
+    Command(name='vkGetImageViewHandleNVX', dispatch='VkDevice'),
+])
+
+VK_AMD_draw_indirect_count = Extension(name='VK_AMD_draw_indirect_count', version=2, guard=None, commands=[
     Command(name='vkCmdDrawIndirectCountAMD', dispatch='VkCommandBuffer'),
     Command(name='vkCmdDrawIndexedIndirectCountAMD', dispatch='VkCommandBuffer'),
 ])
@@ -520,7 +601,7 @@ VK_AMD_draw_indirect_count = Extension(name='VK_AMD_draw_indirect_count', versio
 VK_AMD_negative_viewport_height = Extension(name='VK_AMD_negative_viewport_height', version=1, guard=None, commands=[
 ])
 
-VK_AMD_gpu_shader_half_float = Extension(name='VK_AMD_gpu_shader_half_float', version=1, guard=None, commands=[
+VK_AMD_gpu_shader_half_float = Extension(name='VK_AMD_gpu_shader_half_float', version=2, guard=None, commands=[
 ])
 
 VK_AMD_shader_ballot = Extension(name='VK_AMD_shader_ballot', version=1, guard=None, commands=[
@@ -549,7 +630,7 @@ VK_NV_external_memory_capabilities = Extension(name='VK_NV_external_memory_capab
 VK_NV_external_memory = Extension(name='VK_NV_external_memory', version=1, guard=None, commands=[
 ])
 
-VK_EXT_validation_flags = Extension(name='VK_EXT_validation_flags', version=1, guard=None, commands=[
+VK_EXT_validation_flags = Extension(name='VK_EXT_validation_flags', version=2, guard=None, commands=[
 ])
 
 VK_EXT_shader_subgroup_ballot = Extension(name='VK_EXT_shader_subgroup_ballot', version=1, guard=None, commands=[
@@ -558,24 +639,15 @@ VK_EXT_shader_subgroup_ballot = Extension(name='VK_EXT_shader_subgroup_ballot', 
 VK_EXT_shader_subgroup_vote = Extension(name='VK_EXT_shader_subgroup_vote', version=1, guard=None, commands=[
 ])
 
+VK_EXT_texture_compression_astc_hdr = Extension(name='VK_EXT_texture_compression_astc_hdr', version=1, guard=None, commands=[
+])
+
 VK_EXT_astc_decode_mode = Extension(name='VK_EXT_astc_decode_mode', version=1, guard=None, commands=[
 ])
 
-VK_EXT_conditional_rendering = Extension(name='VK_EXT_conditional_rendering', version=1, guard=None, commands=[
+VK_EXT_conditional_rendering = Extension(name='VK_EXT_conditional_rendering', version=2, guard=None, commands=[
     Command(name='vkCmdBeginConditionalRenderingEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdEndConditionalRenderingEXT', dispatch='VkCommandBuffer'),
-])
-
-VK_NVX_device_generated_commands = Extension(name='VK_NVX_device_generated_commands', version=3, guard=None, commands=[
-    Command(name='vkCmdProcessCommandsNVX', dispatch='VkCommandBuffer'),
-    Command(name='vkCmdReserveSpaceForCommandsNVX', dispatch='VkCommandBuffer'),
-    Command(name='vkCreateIndirectCommandsLayoutNVX', dispatch='VkDevice'),
-    Command(name='vkDestroyIndirectCommandsLayoutNVX', dispatch='VkDevice'),
-    Command(name='vkCreateObjectTableNVX', dispatch='VkDevice'),
-    Command(name='vkDestroyObjectTableNVX', dispatch='VkDevice'),
-    Command(name='vkRegisterObjectsNVX', dispatch='VkDevice'),
-    Command(name='vkUnregisterObjectsNVX', dispatch='VkDevice'),
-    Command(name='vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX', dispatch='VkPhysicalDevice'),
 ])
 
 VK_NV_clip_space_w_scaling = Extension(name='VK_NV_clip_space_w_scaling', version=1, guard=None, commands=[
@@ -624,10 +696,13 @@ VK_EXT_discard_rectangles = Extension(name='VK_EXT_discard_rectangles', version=
 VK_EXT_conservative_rasterization = Extension(name='VK_EXT_conservative_rasterization', version=1, guard=None, commands=[
 ])
 
-VK_EXT_swapchain_colorspace = Extension(name='VK_EXT_swapchain_colorspace', version=3, guard=None, commands=[
+VK_EXT_depth_clip_enable = Extension(name='VK_EXT_depth_clip_enable', version=1, guard=None, commands=[
 ])
 
-VK_EXT_hdr_metadata = Extension(name='VK_EXT_hdr_metadata', version=1, guard=None, commands=[
+VK_EXT_swapchain_colorspace = Extension(name='VK_EXT_swapchain_colorspace', version=4, guard=None, commands=[
+])
+
+VK_EXT_hdr_metadata = Extension(name='VK_EXT_hdr_metadata', version=2, guard=None, commands=[
     Command(name='vkSetHdrMetadataEXT', dispatch='VkDevice'),
 ])
 
@@ -651,10 +726,10 @@ VK_EXT_debug_utils = Extension(name='VK_EXT_debug_utils', version=1, guard=None,
     Command(name='vkSubmitDebugUtilsMessageEXT', dispatch='VkInstance'),
 ])
 
-VK_EXT_sampler_filter_minmax = Extension(name='VK_EXT_sampler_filter_minmax', version=1, guard=None, commands=[
+VK_EXT_sampler_filter_minmax = Extension(name='VK_EXT_sampler_filter_minmax', version=2, guard=None, commands=[
 ])
 
-VK_AMD_gpu_shader_int16 = Extension(name='VK_AMD_gpu_shader_int16', version=1, guard=None, commands=[
+VK_AMD_gpu_shader_int16 = Extension(name='VK_AMD_gpu_shader_int16', version=2, guard=None, commands=[
 ])
 
 VK_AMD_mixed_attachment_samples = Extension(name='VK_AMD_mixed_attachment_samples', version=1, guard=None, commands=[
@@ -686,10 +761,10 @@ VK_NV_framebuffer_mixed_samples = Extension(name='VK_NV_framebuffer_mixed_sample
 VK_NV_fill_rectangle = Extension(name='VK_NV_fill_rectangle', version=1, guard=None, commands=[
 ])
 
-VK_EXT_post_depth_coverage = Extension(name='VK_EXT_post_depth_coverage', version=1, guard=None, commands=[
+VK_NV_shader_sm_builtins = Extension(name='VK_NV_shader_sm_builtins', version=1, guard=None, commands=[
 ])
 
-VK_EXT_extension_159 = Extension(name='VK_EXT_extension_159', version=0, guard=None, commands=[
+VK_EXT_post_depth_coverage = Extension(name='VK_EXT_post_depth_coverage', version=1, guard=None, commands=[
 ])
 
 VK_EXT_image_drm_format_modifier = Extension(name='VK_EXT_image_drm_format_modifier', version=1, guard=None, commands=[
@@ -715,22 +790,29 @@ VK_NV_shading_rate_image = Extension(name='VK_NV_shading_rate_image', version=3,
     Command(name='vkCmdSetCoarseSampleOrderNV', dispatch='VkCommandBuffer'),
 ])
 
-VK_NV_ray_tracing = Extension(name='VK_NV_ray_tracing', version=2, guard=None, commands=[
+VK_NV_ray_tracing = Extension(name='VK_NV_ray_tracing', version=3, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureNV', dispatch='VkDevice'),
+    Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureNV', dispatch='VkDevice'),
     Command(name='vkGetAccelerationStructureMemoryRequirementsNV', dispatch='VkDevice'),
+    Command(name='vkBindAccelerationStructureMemoryKHR', dispatch='VkDevice'),
     Command(name='vkBindAccelerationStructureMemoryNV', dispatch='VkDevice'),
     Command(name='vkCmdBuildAccelerationStructureNV', dispatch='VkCommandBuffer'),
     Command(name='vkCmdCopyAccelerationStructureNV', dispatch='VkCommandBuffer'),
     Command(name='vkCmdTraceRaysNV', dispatch='VkCommandBuffer'),
     Command(name='vkCreateRayTracingPipelinesNV', dispatch='VkDevice'),
+    Command(name='vkGetRayTracingShaderGroupHandlesKHR', dispatch='VkDevice'),
     Command(name='vkGetRayTracingShaderGroupHandlesNV', dispatch='VkDevice'),
     Command(name='vkGetAccelerationStructureHandleNV', dispatch='VkDevice'),
+    Command(name='vkCmdWriteAccelerationStructuresPropertiesKHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdWriteAccelerationStructuresPropertiesNV', dispatch='VkCommandBuffer'),
     Command(name='vkCompileDeferredNV', dispatch='VkDevice'),
 ])
 
-VK_NV_representative_fragment_test = Extension(name='VK_NV_representative_fragment_test', version=1, guard=None, commands=[
+VK_NV_representative_fragment_test = Extension(name='VK_NV_representative_fragment_test', version=2, guard=None, commands=[
+])
+
+VK_EXT_filter_cubic = Extension(name='VK_EXT_filter_cubic', version=3, guard=None, commands=[
 ])
 
 VK_EXT_global_priority = Extension(name='VK_EXT_global_priority', version=2, guard=None, commands=[
@@ -744,18 +826,24 @@ VK_AMD_buffer_marker = Extension(name='VK_AMD_buffer_marker', version=1, guard=N
     Command(name='vkCmdWriteBufferMarkerAMD', dispatch='VkCommandBuffer'),
 ])
 
+VK_AMD_pipeline_compiler_control = Extension(name='VK_AMD_pipeline_compiler_control', version=1, guard=None, commands=[
+])
+
 VK_EXT_calibrated_timestamps = Extension(name='VK_EXT_calibrated_timestamps', version=1, guard=None, commands=[
     Command(name='vkGetPhysicalDeviceCalibrateableTimeDomainsEXT', dispatch='VkPhysicalDevice'),
     Command(name='vkGetCalibratedTimestampsEXT', dispatch='VkDevice'),
 ])
 
-VK_AMD_shader_core_properties = Extension(name='VK_AMD_shader_core_properties', version=1, guard=None, commands=[
+VK_AMD_shader_core_properties = Extension(name='VK_AMD_shader_core_properties', version=2, guard=None, commands=[
 ])
 
 VK_AMD_memory_overallocation_behavior = Extension(name='VK_AMD_memory_overallocation_behavior', version=1, guard=None, commands=[
 ])
 
 VK_EXT_vertex_attribute_divisor = Extension(name='VK_EXT_vertex_attribute_divisor', version=3, guard=None, commands=[
+])
+
+VK_EXT_pipeline_creation_feedback = Extension(name='VK_EXT_pipeline_creation_feedback', version=1, guard=None, commands=[
 ])
 
 VK_NV_shader_subgroup_partitioned = Extension(name='VK_NV_shader_subgroup_partitioned', version=1, guard=None, commands=[
@@ -773,7 +861,7 @@ VK_NV_mesh_shader = Extension(name='VK_NV_mesh_shader', version=1, guard=None, c
 VK_NV_fragment_shader_barycentric = Extension(name='VK_NV_fragment_shader_barycentric', version=1, guard=None, commands=[
 ])
 
-VK_NV_shader_image_footprint = Extension(name='VK_NV_shader_image_footprint', version=1, guard=None, commands=[
+VK_NV_shader_image_footprint = Extension(name='VK_NV_shader_image_footprint', version=2, guard=None, commands=[
 ])
 
 VK_NV_scissor_exclusive = Extension(name='VK_NV_scissor_exclusive', version=1, guard=None, commands=[
@@ -785,13 +873,126 @@ VK_NV_device_diagnostic_checkpoints = Extension(name='VK_NV_device_diagnostic_ch
     Command(name='vkGetQueueCheckpointDataNV', dispatch='VkQueue'),
 ])
 
-VK_EXT_pci_bus_info = Extension(name='VK_EXT_pci_bus_info', version=1, guard=None, commands=[
+VK_INTEL_shader_integer_functions2 = Extension(name='VK_INTEL_shader_integer_functions2', version=1, guard=None, commands=[
 ])
 
-VK_GOOGLE_hlsl_functionality1 = Extension(name='VK_GOOGLE_hlsl_functionality1', version=0, guard=None, commands=[
+VK_INTEL_performance_query = Extension(name='VK_INTEL_performance_query', version=2, guard=None, commands=[
+    Command(name='vkInitializePerformanceApiINTEL', dispatch='VkDevice'),
+    Command(name='vkUninitializePerformanceApiINTEL', dispatch='VkDevice'),
+    Command(name='vkCmdSetPerformanceMarkerINTEL', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdSetPerformanceStreamMarkerINTEL', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdSetPerformanceOverrideINTEL', dispatch='VkCommandBuffer'),
+    Command(name='vkAcquirePerformanceConfigurationINTEL', dispatch='VkDevice'),
+    Command(name='vkReleasePerformanceConfigurationINTEL', dispatch='VkDevice'),
+    Command(name='vkQueueSetPerformanceConfigurationINTEL', dispatch='VkQueue'),
+    Command(name='vkGetPerformanceParameterINTEL', dispatch='VkDevice'),
 ])
 
-VK_GOOGLE_decorate_string = Extension(name='VK_GOOGLE_decorate_string', version=0, guard=None, commands=[
+VK_EXT_pci_bus_info = Extension(name='VK_EXT_pci_bus_info', version=2, guard=None, commands=[
+])
+
+VK_AMD_display_native_hdr = Extension(name='VK_AMD_display_native_hdr', version=1, guard=None, commands=[
+    Command(name='vkSetLocalDimmingAMD', dispatch='VkDevice'),
+])
+
+VK_EXT_fragment_density_map = Extension(name='VK_EXT_fragment_density_map', version=1, guard=None, commands=[
+])
+
+VK_EXT_scalar_block_layout = Extension(name='VK_EXT_scalar_block_layout', version=1, guard=None, commands=[
+])
+
+VK_GOOGLE_hlsl_functionality1 = Extension(name='VK_GOOGLE_hlsl_functionality1', version=1, guard=None, commands=[
+])
+
+VK_GOOGLE_decorate_string = Extension(name='VK_GOOGLE_decorate_string', version=1, guard=None, commands=[
+])
+
+VK_EXT_subgroup_size_control = Extension(name='VK_EXT_subgroup_size_control', version=2, guard=None, commands=[
+])
+
+VK_AMD_shader_core_properties2 = Extension(name='VK_AMD_shader_core_properties2', version=1, guard=None, commands=[
+])
+
+VK_AMD_device_coherent_memory = Extension(name='VK_AMD_device_coherent_memory', version=1, guard=None, commands=[
+])
+
+VK_EXT_memory_budget = Extension(name='VK_EXT_memory_budget', version=1, guard=None, commands=[
+])
+
+VK_EXT_memory_priority = Extension(name='VK_EXT_memory_priority', version=1, guard=None, commands=[
+])
+
+VK_NV_dedicated_allocation_image_aliasing = Extension(name='VK_NV_dedicated_allocation_image_aliasing', version=1, guard=None, commands=[
+])
+
+VK_EXT_buffer_device_address = Extension(name='VK_EXT_buffer_device_address', version=2, guard=None, commands=[
+    Command(name='vkGetBufferDeviceAddressEXT', dispatch='VkDevice'),
+])
+
+VK_EXT_tooling_info = Extension(name='VK_EXT_tooling_info', version=1, guard=None, commands=[
+    Command(name='vkGetPhysicalDeviceToolPropertiesEXT', dispatch='VkPhysicalDevice'),
+])
+
+VK_EXT_separate_stencil_usage = Extension(name='VK_EXT_separate_stencil_usage', version=1, guard=None, commands=[
+])
+
+VK_EXT_validation_features = Extension(name='VK_EXT_validation_features', version=3, guard=None, commands=[
+])
+
+VK_NV_cooperative_matrix = Extension(name='VK_NV_cooperative_matrix', version=1, guard=None, commands=[
+    Command(name='vkGetPhysicalDeviceCooperativeMatrixPropertiesNV', dispatch='VkPhysicalDevice'),
+])
+
+VK_NV_coverage_reduction_mode = Extension(name='VK_NV_coverage_reduction_mode', version=1, guard=None, commands=[
+    Command(name='vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV', dispatch='VkPhysicalDevice'),
+])
+
+VK_EXT_fragment_shader_interlock = Extension(name='VK_EXT_fragment_shader_interlock', version=1, guard=None, commands=[
+])
+
+VK_EXT_ycbcr_image_arrays = Extension(name='VK_EXT_ycbcr_image_arrays', version=1, guard=None, commands=[
+])
+
+VK_EXT_headless_surface = Extension(name='VK_EXT_headless_surface', version=1, guard=None, commands=[
+    Command(name='vkCreateHeadlessSurfaceEXT', dispatch='VkInstance'),
+])
+
+VK_EXT_line_rasterization = Extension(name='VK_EXT_line_rasterization', version=1, guard=None, commands=[
+    Command(name='vkCmdSetLineStippleEXT', dispatch='VkCommandBuffer'),
+])
+
+VK_EXT_host_query_reset = Extension(name='VK_EXT_host_query_reset', version=1, guard=None, commands=[
+    Command(name='vkResetQueryPoolEXT', dispatch='VkDevice'),
+])
+
+VK_EXT_index_type_uint8 = Extension(name='VK_EXT_index_type_uint8', version=1, guard=None, commands=[
+])
+
+VK_EXT_shader_demote_to_helper_invocation = Extension(name='VK_EXT_shader_demote_to_helper_invocation', version=1, guard=None, commands=[
+])
+
+VK_NV_device_generated_commands = Extension(name='VK_NV_device_generated_commands', version=3, guard=None, commands=[
+    Command(name='vkGetGeneratedCommandsMemoryRequirementsNV', dispatch='VkDevice'),
+    Command(name='vkCmdPreprocessGeneratedCommandsNV', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdExecuteGeneratedCommandsNV', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdBindPipelineShaderGroupNV', dispatch='VkCommandBuffer'),
+    Command(name='vkCreateIndirectCommandsLayoutNV', dispatch='VkDevice'),
+    Command(name='vkDestroyIndirectCommandsLayoutNV', dispatch='VkDevice'),
+])
+
+VK_EXT_texel_buffer_alignment = Extension(name='VK_EXT_texel_buffer_alignment', version=1, guard=None, commands=[
+])
+
+VK_QCOM_render_pass_transform = Extension(name='VK_QCOM_render_pass_transform', version=1, guard=None, commands=[
+])
+
+VK_GOOGLE_user_type = Extension(name='VK_GOOGLE_user_type', version=1, guard=None, commands=[
+])
+
+VK_EXT_pipeline_creation_cache_control = Extension(name='VK_EXT_pipeline_creation_cache_control', version=2, guard=None, commands=[
+])
+
+VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_config', version=1, guard=None, commands=[
 ])
 
 VK_KHR_android_surface = Extension(name='VK_KHR_android_surface', version=6, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
@@ -813,6 +1014,10 @@ VK_MVK_ios_surface = Extension(name='VK_MVK_ios_surface', version=2, guard='VK_U
 
 VK_MVK_macos_surface = Extension(name='VK_MVK_macos_surface', version=2, guard='VK_USE_PLATFORM_MACOS_MVK', commands=[
     Command(name='vkCreateMacOSSurfaceMVK', dispatch='VkInstance'),
+])
+
+VK_EXT_metal_surface = Extension(name='VK_EXT_metal_surface', version=1, guard='VK_USE_PLATFORM_METAL_EXT', commands=[
+    Command(name='vkCreateMetalSurfaceEXT', dispatch='VkInstance'),
 ])
 
 VK_NN_vi_surface = Extension(name='VK_NN_vi_surface', version=1, guard='VK_USE_PLATFORM_VI_NN', commands=[
@@ -851,7 +1056,14 @@ VK_NV_external_memory_win32 = Extension(name='VK_NV_external_memory_win32', vers
     Command(name='vkGetMemoryWin32HandleNV', dispatch='VkDevice'),
 ])
 
-VK_NV_win32_keyed_mutex = Extension(name='VK_NV_win32_keyed_mutex', version=1, guard='VK_USE_PLATFORM_WIN32_KHR', commands=[
+VK_NV_win32_keyed_mutex = Extension(name='VK_NV_win32_keyed_mutex', version=2, guard='VK_USE_PLATFORM_WIN32_KHR', commands=[
+])
+
+VK_EXT_full_screen_exclusive = Extension(name='VK_EXT_full_screen_exclusive', version=4, guard='VK_USE_PLATFORM_WIN32_KHR', commands=[
+    Command(name='vkGetPhysicalDeviceSurfacePresentModes2EXT', dispatch='VkPhysicalDevice'),
+    Command(name='vkAcquireFullScreenExclusiveModeEXT', dispatch='VkDevice'),
+    Command(name='vkReleaseFullScreenExclusiveModeEXT', dispatch='VkDevice'),
+    Command(name='vkGetDeviceGroupSurfacePresentModes2EXT', dispatch='VkDevice'),
 ])
 
 VK_KHR_xcb_surface = Extension(name='VK_KHR_xcb_surface', version=6, guard='VK_USE_PLATFORM_XCB_KHR', commands=[
@@ -869,9 +1081,49 @@ VK_EXT_acquire_xlib_display = Extension(name='VK_EXT_acquire_xlib_display', vers
     Command(name='vkGetRandROutputDisplayEXT', dispatch='VkPhysicalDevice'),
 ])
 
+VK_GGP_stream_descriptor_surface = Extension(name='VK_GGP_stream_descriptor_surface', version=1, guard='VK_USE_PLATFORM_GGP', commands=[
+    Command(name='vkCreateStreamDescriptorSurfaceGGP', dispatch='VkInstance'),
+])
+
+VK_GGP_frame_token = Extension(name='VK_GGP_frame_token', version=1, guard='VK_USE_PLATFORM_GGP', commands=[
+])
+
+VK_KHR_deferred_host_operations = Extension(name='VK_KHR_deferred_host_operations', version=2, guard='VK_USE_PLATFORM_GGP', commands=[
+    Command(name='vkCreateDeferredOperationKHR', dispatch='VkDevice'),
+    Command(name='vkDestroyDeferredOperationKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeferredOperationMaxConcurrencyKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeferredOperationResultKHR', dispatch='VkDevice'),
+    Command(name='vkDeferredOperationJoinKHR', dispatch='VkDevice'),
+])
+
+VK_KHR_pipeline_library = Extension(name='VK_KHR_pipeline_library', version=1, guard='VK_USE_PLATFORM_GGP', commands=[
+])
+
+VK_KHR_ray_tracing = Extension(name='VK_KHR_ray_tracing', version=8, guard='VK_USE_PLATFORM_GGP', commands=[
+    Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
+    Command(name='vkGetAccelerationStructureMemoryRequirementsKHR', dispatch='VkDevice'),
+    Command(name='vkCmdBuildAccelerationStructureKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdBuildAccelerationStructureIndirectKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkBuildAccelerationStructureKHR', dispatch='VkDevice'),
+    Command(name='vkCopyAccelerationStructureKHR', dispatch='VkDevice'),
+    Command(name='vkCopyAccelerationStructureToMemoryKHR', dispatch='VkDevice'),
+    Command(name='vkCopyMemoryToAccelerationStructureKHR', dispatch='VkDevice'),
+    Command(name='vkWriteAccelerationStructuresPropertiesKHR', dispatch='VkDevice'),
+    Command(name='vkCmdCopyAccelerationStructureKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdCopyAccelerationStructureToMemoryKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdCopyMemoryToAccelerationStructureKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdTraceRaysKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCreateRayTracingPipelinesKHR', dispatch='VkDevice'),
+    Command(name='vkGetAccelerationStructureDeviceAddressKHR', dispatch='VkDevice'),
+    Command(name='vkGetRayTracingCaptureReplayShaderGroupHandlesKHR', dispatch='VkDevice'),
+    Command(name='vkCmdTraceRaysIndirectKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkGetDeviceAccelerationStructureCompatibilityKHR', dispatch='VkDevice'),
+])
+
 extensions = [
     VK_core_0,
     VK_core_1,
+    VK_core_2,
     VK_KHR_surface,
     VK_KHR_swapchain,
     VK_KHR_display,
@@ -890,14 +1142,17 @@ extensions = [
     VK_KHR_external_semaphore,
     VK_KHR_external_semaphore_fd,
     VK_KHR_push_descriptor,
+    VK_KHR_shader_float16_int8,
     VK_KHR_16bit_storage,
     VK_KHR_incremental_present,
     VK_KHR_descriptor_update_template,
+    VK_KHR_imageless_framebuffer,
     VK_KHR_create_renderpass2,
     VK_KHR_shared_presentable_image,
     VK_KHR_external_fence_capabilities,
     VK_KHR_external_fence,
     VK_KHR_external_fence_fd,
+    VK_KHR_performance_query,
     VK_KHR_maintenance2,
     VK_KHR_get_surface_capabilities2,
     VK_KHR_variable_pointers,
@@ -911,10 +1166,23 @@ extensions = [
     VK_KHR_bind_memory2,
     VK_KHR_maintenance3,
     VK_KHR_draw_indirect_count,
+    VK_KHR_shader_subgroup_extended_types,
     VK_KHR_8bit_storage,
     VK_KHR_shader_atomic_int64,
+    VK_KHR_shader_clock,
     VK_KHR_driver_properties,
+    VK_KHR_shader_float_controls,
+    VK_KHR_depth_stencil_resolve,
+    VK_KHR_swapchain_mutable_format,
+    VK_KHR_timeline_semaphore,
     VK_KHR_vulkan_memory_model,
+    VK_KHR_spirv_1_4,
+    VK_KHR_surface_protected_capabilities,
+    VK_KHR_separate_depth_stencil_layouts,
+    VK_KHR_uniform_buffer_standard_layout,
+    VK_KHR_buffer_device_address,
+    VK_KHR_pipeline_executable_properties,
+    VK_KHR_shader_non_semantic_info,
     VK_EXT_debug_report,
     VK_NV_glsl_shader,
     VK_EXT_depth_range_unrestricted,
@@ -926,6 +1194,7 @@ extensions = [
     VK_AMD_gcn_shader,
     VK_NV_dedicated_allocation,
     VK_EXT_transform_feedback,
+    VK_NVX_image_view_handle,
     VK_AMD_draw_indirect_count,
     VK_AMD_negative_viewport_height,
     VK_AMD_gpu_shader_half_float,
@@ -940,9 +1209,9 @@ extensions = [
     VK_EXT_validation_flags,
     VK_EXT_shader_subgroup_ballot,
     VK_EXT_shader_subgroup_vote,
+    VK_EXT_texture_compression_astc_hdr,
     VK_EXT_astc_decode_mode,
     VK_EXT_conditional_rendering,
-    VK_NVX_device_generated_commands,
     VK_NV_clip_space_w_scaling,
     VK_EXT_direct_mode_display,
     VK_EXT_display_surface_counter,
@@ -955,6 +1224,7 @@ extensions = [
     VK_NV_viewport_swizzle,
     VK_EXT_discard_rectangles,
     VK_EXT_conservative_rasterization,
+    VK_EXT_depth_clip_enable,
     VK_EXT_swapchain_colorspace,
     VK_EXT_hdr_metadata,
     VK_EXT_external_memory_dma_buf,
@@ -971,8 +1241,8 @@ extensions = [
     VK_NV_fragment_coverage_to_color,
     VK_NV_framebuffer_mixed_samples,
     VK_NV_fill_rectangle,
+    VK_NV_shader_sm_builtins,
     VK_EXT_post_depth_coverage,
-    VK_EXT_extension_159,
     VK_EXT_image_drm_format_modifier,
     VK_EXT_validation_cache,
     VK_EXT_descriptor_indexing,
@@ -980,13 +1250,16 @@ extensions = [
     VK_NV_shading_rate_image,
     VK_NV_ray_tracing,
     VK_NV_representative_fragment_test,
+    VK_EXT_filter_cubic,
     VK_EXT_global_priority,
     VK_EXT_external_memory_host,
     VK_AMD_buffer_marker,
+    VK_AMD_pipeline_compiler_control,
     VK_EXT_calibrated_timestamps,
     VK_AMD_shader_core_properties,
     VK_AMD_memory_overallocation_behavior,
     VK_EXT_vertex_attribute_divisor,
+    VK_EXT_pipeline_creation_feedback,
     VK_NV_shader_subgroup_partitioned,
     VK_NV_compute_shader_derivatives,
     VK_NV_mesh_shader,
@@ -994,14 +1267,45 @@ extensions = [
     VK_NV_shader_image_footprint,
     VK_NV_scissor_exclusive,
     VK_NV_device_diagnostic_checkpoints,
+    VK_INTEL_shader_integer_functions2,
+    VK_INTEL_performance_query,
     VK_EXT_pci_bus_info,
+    VK_AMD_display_native_hdr,
+    VK_EXT_fragment_density_map,
+    VK_EXT_scalar_block_layout,
     VK_GOOGLE_hlsl_functionality1,
     VK_GOOGLE_decorate_string,
+    VK_EXT_subgroup_size_control,
+    VK_AMD_shader_core_properties2,
+    VK_AMD_device_coherent_memory,
+    VK_EXT_memory_budget,
+    VK_EXT_memory_priority,
+    VK_NV_dedicated_allocation_image_aliasing,
+    VK_EXT_buffer_device_address,
+    VK_EXT_tooling_info,
+    VK_EXT_separate_stencil_usage,
+    VK_EXT_validation_features,
+    VK_NV_cooperative_matrix,
+    VK_NV_coverage_reduction_mode,
+    VK_EXT_fragment_shader_interlock,
+    VK_EXT_ycbcr_image_arrays,
+    VK_EXT_headless_surface,
+    VK_EXT_line_rasterization,
+    VK_EXT_host_query_reset,
+    VK_EXT_index_type_uint8,
+    VK_EXT_shader_demote_to_helper_invocation,
+    VK_NV_device_generated_commands,
+    VK_EXT_texel_buffer_alignment,
+    VK_QCOM_render_pass_transform,
+    VK_GOOGLE_user_type,
+    VK_EXT_pipeline_creation_cache_control,
+    VK_NV_device_diagnostics_config,
     VK_KHR_android_surface,
     VK_ANDROID_external_memory_android_hardware_buffer,
     VK_FUCHSIA_imagepipe_surface,
     VK_MVK_ios_surface,
     VK_MVK_macos_surface,
+    VK_EXT_metal_surface,
     VK_NN_vi_surface,
     VK_KHR_wayland_surface,
     VK_KHR_win32_surface,
@@ -1011,9 +1315,15 @@ extensions = [
     VK_KHR_external_fence_win32,
     VK_NV_external_memory_win32,
     VK_NV_win32_keyed_mutex,
+    VK_EXT_full_screen_exclusive,
     VK_KHR_xcb_surface,
     VK_KHR_xlib_surface,
     VK_EXT_acquire_xlib_display,
+    VK_GGP_stream_descriptor_surface,
+    VK_GGP_frame_token,
+    VK_KHR_deferred_host_operations,
+    VK_KHR_pipeline_library,
+    VK_KHR_ray_tracing,
 ]
 # end of generated code
 

@@ -34,8 +34,6 @@ static inline const char* string_VkObjectType(VkObjectType input_value)
     {
         case VK_OBJECT_TYPE_QUERY_POOL:
             return "VK_OBJECT_TYPE_QUERY_POOL";
-        case VK_OBJECT_TYPE_OBJECT_TABLE_NVX:
-            return "VK_OBJECT_TYPE_OBJECT_TABLE_NVX";
         case VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION:
             return "VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION";
         case VK_OBJECT_TYPE_SEMAPHORE:
@@ -46,8 +44,8 @@ static inline const char* string_VkObjectType(VkObjectType input_value)
             return "VK_OBJECT_TYPE_SWAPCHAIN_KHR";
         case VK_OBJECT_TYPE_SAMPLER:
             return "VK_OBJECT_TYPE_SAMPLER";
-        case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX:
-            return "VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX";
+        case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV:
+            return "VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NV";
         case VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT:
             return "VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT";
         case VK_OBJECT_TYPE_IMAGE:

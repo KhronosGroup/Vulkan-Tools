@@ -232,6 +232,22 @@ int InitVulkan(void) {
         dlsym(libvulkan, "vkGetPhysicalDeviceExternalSemaphoreProperties"));
     vkGetDescriptorSetLayoutSupport =
         reinterpret_cast<PFN_vkGetDescriptorSetLayoutSupport>(dlsym(libvulkan, "vkGetDescriptorSetLayoutSupport"));
+    vkCmdDrawIndirectCount = reinterpret_cast<PFN_vkCmdDrawIndirectCount>(dlsym(libvulkan, "vkCmdDrawIndirectCount"));
+    vkCmdDrawIndexedIndirectCount =
+        reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCount>(dlsym(libvulkan, "vkCmdDrawIndexedIndirectCount"));
+    vkCreateRenderPass2 = reinterpret_cast<PFN_vkCreateRenderPass2>(dlsym(libvulkan, "vkCreateRenderPass2"));
+    vkCmdBeginRenderPass2 = reinterpret_cast<PFN_vkCmdBeginRenderPass2>(dlsym(libvulkan, "vkCmdBeginRenderPass2"));
+    vkCmdNextSubpass2 = reinterpret_cast<PFN_vkCmdNextSubpass2>(dlsym(libvulkan, "vkCmdNextSubpass2"));
+    vkCmdEndRenderPass2 = reinterpret_cast<PFN_vkCmdEndRenderPass2>(dlsym(libvulkan, "vkCmdEndRenderPass2"));
+    vkResetQueryPool = reinterpret_cast<PFN_vkResetQueryPool>(dlsym(libvulkan, "vkResetQueryPool"));
+    vkGetSemaphoreCounterValue = reinterpret_cast<PFN_vkGetSemaphoreCounterValue>(dlsym(libvulkan, "vkGetSemaphoreCounterValue"));
+    vkWaitSemaphores = reinterpret_cast<PFN_vkWaitSemaphores>(dlsym(libvulkan, "vkWaitSemaphores"));
+    vkSignalSemaphore = reinterpret_cast<PFN_vkSignalSemaphore>(dlsym(libvulkan, "vkSignalSemaphore"));
+    vkGetBufferDeviceAddress = reinterpret_cast<PFN_vkGetBufferDeviceAddress>(dlsym(libvulkan, "vkGetBufferDeviceAddress"));
+    vkGetBufferOpaqueCaptureAddress =
+        reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddress>(dlsym(libvulkan, "vkGetBufferOpaqueCaptureAddress"));
+    vkGetDeviceMemoryOpaqueCaptureAddress =
+        reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddress>(dlsym(libvulkan, "vkGetDeviceMemoryOpaqueCaptureAddress"));
     vkDestroySurfaceKHR = reinterpret_cast<PFN_vkDestroySurfaceKHR>(dlsym(libvulkan, "vkDestroySurfaceKHR"));
     vkGetPhysicalDeviceSurfaceSupportKHR =
         reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>(dlsym(libvulkan, "vkGetPhysicalDeviceSurfaceSupportKHR"));
@@ -315,6 +331,14 @@ int InitVulkan(void) {
         dlsym(libvulkan, "vkGetPhysicalDeviceExternalFencePropertiesKHR"));
     vkImportFenceFdKHR = reinterpret_cast<PFN_vkImportFenceFdKHR>(dlsym(libvulkan, "vkImportFenceFdKHR"));
     vkGetFenceFdKHR = reinterpret_cast<PFN_vkGetFenceFdKHR>(dlsym(libvulkan, "vkGetFenceFdKHR"));
+    vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR =
+        reinterpret_cast<PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR>(
+            dlsym(libvulkan, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR"));
+    vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR =
+        reinterpret_cast<PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR>(
+            dlsym(libvulkan, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR"));
+    vkAcquireProfilingLockKHR = reinterpret_cast<PFN_vkAcquireProfilingLockKHR>(dlsym(libvulkan, "vkAcquireProfilingLockKHR"));
+    vkReleaseProfilingLockKHR = reinterpret_cast<PFN_vkReleaseProfilingLockKHR>(dlsym(libvulkan, "vkReleaseProfilingLockKHR"));
     vkGetPhysicalDeviceSurfaceCapabilities2KHR = reinterpret_cast<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>(
         dlsym(libvulkan, "vkGetPhysicalDeviceSurfaceCapabilities2KHR"));
     vkGetPhysicalDeviceSurfaceFormats2KHR =
@@ -344,6 +368,22 @@ int InitVulkan(void) {
     vkCmdDrawIndirectCountKHR = reinterpret_cast<PFN_vkCmdDrawIndirectCountKHR>(dlsym(libvulkan, "vkCmdDrawIndirectCountKHR"));
     vkCmdDrawIndexedIndirectCountKHR =
         reinterpret_cast<PFN_vkCmdDrawIndexedIndirectCountKHR>(dlsym(libvulkan, "vkCmdDrawIndexedIndirectCountKHR"));
+    vkGetSemaphoreCounterValueKHR =
+        reinterpret_cast<PFN_vkGetSemaphoreCounterValueKHR>(dlsym(libvulkan, "vkGetSemaphoreCounterValueKHR"));
+    vkWaitSemaphoresKHR = reinterpret_cast<PFN_vkWaitSemaphoresKHR>(dlsym(libvulkan, "vkWaitSemaphoresKHR"));
+    vkSignalSemaphoreKHR = reinterpret_cast<PFN_vkSignalSemaphoreKHR>(dlsym(libvulkan, "vkSignalSemaphoreKHR"));
+    vkGetBufferDeviceAddressKHR =
+        reinterpret_cast<PFN_vkGetBufferDeviceAddressKHR>(dlsym(libvulkan, "vkGetBufferDeviceAddressKHR"));
+    vkGetBufferOpaqueCaptureAddressKHR =
+        reinterpret_cast<PFN_vkGetBufferOpaqueCaptureAddressKHR>(dlsym(libvulkan, "vkGetBufferOpaqueCaptureAddressKHR"));
+    vkGetDeviceMemoryOpaqueCaptureAddressKHR = reinterpret_cast<PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR>(
+        dlsym(libvulkan, "vkGetDeviceMemoryOpaqueCaptureAddressKHR"));
+    vkGetPipelineExecutablePropertiesKHR =
+        reinterpret_cast<PFN_vkGetPipelineExecutablePropertiesKHR>(dlsym(libvulkan, "vkGetPipelineExecutablePropertiesKHR"));
+    vkGetPipelineExecutableStatisticsKHR =
+        reinterpret_cast<PFN_vkGetPipelineExecutableStatisticsKHR>(dlsym(libvulkan, "vkGetPipelineExecutableStatisticsKHR"));
+    vkGetPipelineExecutableInternalRepresentationsKHR = reinterpret_cast<PFN_vkGetPipelineExecutableInternalRepresentationsKHR>(
+        dlsym(libvulkan, "vkGetPipelineExecutableInternalRepresentationsKHR"));
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     vkCreateAndroidSurfaceKHR = reinterpret_cast<PFN_vkCreateAndroidSurfaceKHR>(dlsym(libvulkan, "vkCreateAndroidSurfaceKHR"));
@@ -393,6 +433,58 @@ int InitVulkan(void) {
     vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(dlsym(libvulkan, "vkCreateXlibSurfaceKHR"));
     vkGetPhysicalDeviceXlibPresentationSupportKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR>(
         dlsym(libvulkan, "vkGetPhysicalDeviceXlibPresentationSupportKHR"));
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+    vkCreateDeferredOperationKHR =
+        reinterpret_cast<PFN_vkCreateDeferredOperationKHR>(dlsym(libvulkan, "vkCreateDeferredOperationKHR"));
+    vkDestroyDeferredOperationKHR =
+        reinterpret_cast<PFN_vkDestroyDeferredOperationKHR>(dlsym(libvulkan, "vkDestroyDeferredOperationKHR"));
+    vkGetDeferredOperationMaxConcurrencyKHR =
+        reinterpret_cast<PFN_vkGetDeferredOperationMaxConcurrencyKHR>(dlsym(libvulkan, "vkGetDeferredOperationMaxConcurrencyKHR"));
+    vkGetDeferredOperationResultKHR =
+        reinterpret_cast<PFN_vkGetDeferredOperationResultKHR>(dlsym(libvulkan, "vkGetDeferredOperationResultKHR"));
+    vkDeferredOperationJoinKHR = reinterpret_cast<PFN_vkDeferredOperationJoinKHR>(dlsym(libvulkan, "vkDeferredOperationJoinKHR"));
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+    vkCreateAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(dlsym(libvulkan, "vkCreateAccelerationStructureKHR"));
+    vkGetAccelerationStructureMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetAccelerationStructureMemoryRequirementsKHR>(
+        dlsym(libvulkan, "vkGetAccelerationStructureMemoryRequirementsKHR"));
+    vkCmdBuildAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkCmdBuildAccelerationStructureKHR>(dlsym(libvulkan, "vkCmdBuildAccelerationStructureKHR"));
+    vkCmdBuildAccelerationStructureIndirectKHR = reinterpret_cast<PFN_vkCmdBuildAccelerationStructureIndirectKHR>(
+        dlsym(libvulkan, "vkCmdBuildAccelerationStructureIndirectKHR"));
+    vkBuildAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkBuildAccelerationStructureKHR>(dlsym(libvulkan, "vkBuildAccelerationStructureKHR"));
+    vkCopyAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkCopyAccelerationStructureKHR>(dlsym(libvulkan, "vkCopyAccelerationStructureKHR"));
+    vkCopyAccelerationStructureToMemoryKHR =
+        reinterpret_cast<PFN_vkCopyAccelerationStructureToMemoryKHR>(dlsym(libvulkan, "vkCopyAccelerationStructureToMemoryKHR"));
+    vkCopyMemoryToAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkCopyMemoryToAccelerationStructureKHR>(dlsym(libvulkan, "vkCopyMemoryToAccelerationStructureKHR"));
+    vkWriteAccelerationStructuresPropertiesKHR = reinterpret_cast<PFN_vkWriteAccelerationStructuresPropertiesKHR>(
+        dlsym(libvulkan, "vkWriteAccelerationStructuresPropertiesKHR"));
+    vkCmdCopyAccelerationStructureKHR =
+        reinterpret_cast<PFN_vkCmdCopyAccelerationStructureKHR>(dlsym(libvulkan, "vkCmdCopyAccelerationStructureKHR"));
+    vkCmdCopyAccelerationStructureToMemoryKHR = reinterpret_cast<PFN_vkCmdCopyAccelerationStructureToMemoryKHR>(
+        dlsym(libvulkan, "vkCmdCopyAccelerationStructureToMemoryKHR"));
+    vkCmdCopyMemoryToAccelerationStructureKHR = reinterpret_cast<PFN_vkCmdCopyMemoryToAccelerationStructureKHR>(
+        dlsym(libvulkan, "vkCmdCopyMemoryToAccelerationStructureKHR"));
+    vkCmdTraceRaysKHR = reinterpret_cast<PFN_vkCmdTraceRaysKHR>(dlsym(libvulkan, "vkCmdTraceRaysKHR"));
+    vkCreateRayTracingPipelinesKHR =
+        reinterpret_cast<PFN_vkCreateRayTracingPipelinesKHR>(dlsym(libvulkan, "vkCreateRayTracingPipelinesKHR"));
+    vkGetAccelerationStructureDeviceAddressKHR = reinterpret_cast<PFN_vkGetAccelerationStructureDeviceAddressKHR>(
+        dlsym(libvulkan, "vkGetAccelerationStructureDeviceAddressKHR"));
+    vkGetRayTracingCaptureReplayShaderGroupHandlesKHR = reinterpret_cast<PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR>(
+        dlsym(libvulkan, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR"));
+    vkCmdTraceRaysIndirectKHR = reinterpret_cast<PFN_vkCmdTraceRaysIndirectKHR>(dlsym(libvulkan, "vkCmdTraceRaysIndirectKHR"));
+    vkGetDeviceAccelerationStructureCompatibilityKHR = reinterpret_cast<PFN_vkGetDeviceAccelerationStructureCompatibilityKHR>(
+        dlsym(libvulkan, "vkGetDeviceAccelerationStructureCompatibilityKHR"));
 #endif
     return 1;
 }
@@ -563,6 +655,19 @@ PFN_vkGetPhysicalDeviceExternalBufferProperties vkGetPhysicalDeviceExternalBuffe
 PFN_vkGetPhysicalDeviceExternalFenceProperties vkGetPhysicalDeviceExternalFenceProperties;
 PFN_vkGetPhysicalDeviceExternalSemaphoreProperties vkGetPhysicalDeviceExternalSemaphoreProperties;
 PFN_vkGetDescriptorSetLayoutSupport vkGetDescriptorSetLayoutSupport;
+PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount;
+PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount;
+PFN_vkCreateRenderPass2 vkCreateRenderPass2;
+PFN_vkCmdBeginRenderPass2 vkCmdBeginRenderPass2;
+PFN_vkCmdNextSubpass2 vkCmdNextSubpass2;
+PFN_vkCmdEndRenderPass2 vkCmdEndRenderPass2;
+PFN_vkResetQueryPool vkResetQueryPool;
+PFN_vkGetSemaphoreCounterValue vkGetSemaphoreCounterValue;
+PFN_vkWaitSemaphores vkWaitSemaphores;
+PFN_vkSignalSemaphore vkSignalSemaphore;
+PFN_vkGetBufferDeviceAddress vkGetBufferDeviceAddress;
+PFN_vkGetBufferOpaqueCaptureAddress vkGetBufferOpaqueCaptureAddress;
+PFN_vkGetDeviceMemoryOpaqueCaptureAddress vkGetDeviceMemoryOpaqueCaptureAddress;
 PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
@@ -616,6 +721,10 @@ PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR;
 PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR vkGetPhysicalDeviceExternalFencePropertiesKHR;
 PFN_vkImportFenceFdKHR vkImportFenceFdKHR;
 PFN_vkGetFenceFdKHR vkGetFenceFdKHR;
+PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR;
+PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR;
+PFN_vkAcquireProfilingLockKHR vkAcquireProfilingLockKHR;
+PFN_vkReleaseProfilingLockKHR vkReleaseProfilingLockKHR;
 PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR;
 PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR;
 PFN_vkGetPhysicalDeviceDisplayProperties2KHR vkGetPhysicalDeviceDisplayProperties2KHR;
@@ -632,6 +741,15 @@ PFN_vkBindImageMemory2KHR vkBindImageMemory2KHR;
 PFN_vkGetDescriptorSetLayoutSupportKHR vkGetDescriptorSetLayoutSupportKHR;
 PFN_vkCmdDrawIndirectCountKHR vkCmdDrawIndirectCountKHR;
 PFN_vkCmdDrawIndexedIndirectCountKHR vkCmdDrawIndexedIndirectCountKHR;
+PFN_vkGetSemaphoreCounterValueKHR vkGetSemaphoreCounterValueKHR;
+PFN_vkWaitSemaphoresKHR vkWaitSemaphoresKHR;
+PFN_vkSignalSemaphoreKHR vkSignalSemaphoreKHR;
+PFN_vkGetBufferDeviceAddressKHR vkGetBufferDeviceAddressKHR;
+PFN_vkGetBufferOpaqueCaptureAddressKHR vkGetBufferOpaqueCaptureAddressKHR;
+PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR vkGetDeviceMemoryOpaqueCaptureAddressKHR;
+PFN_vkGetPipelineExecutablePropertiesKHR vkGetPipelineExecutablePropertiesKHR;
+PFN_vkGetPipelineExecutableStatisticsKHR vkGetPipelineExecutableStatisticsKHR;
+PFN_vkGetPipelineExecutableInternalRepresentationsKHR vkGetPipelineExecutableInternalRepresentationsKHR;
 PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
 PFN_vkDebugReportMessageEXT vkDebugReportMessageEXT;
@@ -646,21 +764,13 @@ PFN_vkCmdEndTransformFeedbackEXT vkCmdEndTransformFeedbackEXT;
 PFN_vkCmdBeginQueryIndexedEXT vkCmdBeginQueryIndexedEXT;
 PFN_vkCmdEndQueryIndexedEXT vkCmdEndQueryIndexedEXT;
 PFN_vkCmdDrawIndirectByteCountEXT vkCmdDrawIndirectByteCountEXT;
+PFN_vkGetImageViewHandleNVX vkGetImageViewHandleNVX;
 PFN_vkCmdDrawIndirectCountAMD vkCmdDrawIndirectCountAMD;
 PFN_vkCmdDrawIndexedIndirectCountAMD vkCmdDrawIndexedIndirectCountAMD;
 PFN_vkGetShaderInfoAMD vkGetShaderInfoAMD;
 PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV vkGetPhysicalDeviceExternalImageFormatPropertiesNV;
 PFN_vkCmdBeginConditionalRenderingEXT vkCmdBeginConditionalRenderingEXT;
 PFN_vkCmdEndConditionalRenderingEXT vkCmdEndConditionalRenderingEXT;
-PFN_vkCmdProcessCommandsNVX vkCmdProcessCommandsNVX;
-PFN_vkCmdReserveSpaceForCommandsNVX vkCmdReserveSpaceForCommandsNVX;
-PFN_vkCreateIndirectCommandsLayoutNVX vkCreateIndirectCommandsLayoutNVX;
-PFN_vkDestroyIndirectCommandsLayoutNVX vkDestroyIndirectCommandsLayoutNVX;
-PFN_vkCreateObjectTableNVX vkCreateObjectTableNVX;
-PFN_vkDestroyObjectTableNVX vkDestroyObjectTableNVX;
-PFN_vkRegisterObjectsNVX vkRegisterObjectsNVX;
-PFN_vkUnregisterObjectsNVX vkUnregisterObjectsNVX;
-PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX;
 PFN_vkCmdSetViewportWScalingNV vkCmdSetViewportWScalingNV;
 PFN_vkReleaseDisplayEXT vkReleaseDisplayEXT;
 PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT;
@@ -694,15 +804,19 @@ PFN_vkCmdBindShadingRateImageNV vkCmdBindShadingRateImageNV;
 PFN_vkCmdSetViewportShadingRatePaletteNV vkCmdSetViewportShadingRatePaletteNV;
 PFN_vkCmdSetCoarseSampleOrderNV vkCmdSetCoarseSampleOrderNV;
 PFN_vkCreateAccelerationStructureNV vkCreateAccelerationStructureNV;
+PFN_vkDestroyAccelerationStructureKHR vkDestroyAccelerationStructureKHR;
 PFN_vkDestroyAccelerationStructureNV vkDestroyAccelerationStructureNV;
 PFN_vkGetAccelerationStructureMemoryRequirementsNV vkGetAccelerationStructureMemoryRequirementsNV;
+PFN_vkBindAccelerationStructureMemoryKHR vkBindAccelerationStructureMemoryKHR;
 PFN_vkBindAccelerationStructureMemoryNV vkBindAccelerationStructureMemoryNV;
 PFN_vkCmdBuildAccelerationStructureNV vkCmdBuildAccelerationStructureNV;
 PFN_vkCmdCopyAccelerationStructureNV vkCmdCopyAccelerationStructureNV;
 PFN_vkCmdTraceRaysNV vkCmdTraceRaysNV;
 PFN_vkCreateRayTracingPipelinesNV vkCreateRayTracingPipelinesNV;
+PFN_vkGetRayTracingShaderGroupHandlesKHR vkGetRayTracingShaderGroupHandlesKHR;
 PFN_vkGetRayTracingShaderGroupHandlesNV vkGetRayTracingShaderGroupHandlesNV;
 PFN_vkGetAccelerationStructureHandleNV vkGetAccelerationStructureHandleNV;
+PFN_vkCmdWriteAccelerationStructuresPropertiesKHR vkCmdWriteAccelerationStructuresPropertiesKHR;
 PFN_vkCmdWriteAccelerationStructuresPropertiesNV vkCmdWriteAccelerationStructuresPropertiesNV;
 PFN_vkCompileDeferredNV vkCompileDeferredNV;
 PFN_vkGetMemoryHostPointerPropertiesEXT vkGetMemoryHostPointerPropertiesEXT;
@@ -715,6 +829,30 @@ PFN_vkCmdDrawMeshTasksIndirectCountNV vkCmdDrawMeshTasksIndirectCountNV;
 PFN_vkCmdSetExclusiveScissorNV vkCmdSetExclusiveScissorNV;
 PFN_vkCmdSetCheckpointNV vkCmdSetCheckpointNV;
 PFN_vkGetQueueCheckpointDataNV vkGetQueueCheckpointDataNV;
+PFN_vkInitializePerformanceApiINTEL vkInitializePerformanceApiINTEL;
+PFN_vkUninitializePerformanceApiINTEL vkUninitializePerformanceApiINTEL;
+PFN_vkCmdSetPerformanceMarkerINTEL vkCmdSetPerformanceMarkerINTEL;
+PFN_vkCmdSetPerformanceStreamMarkerINTEL vkCmdSetPerformanceStreamMarkerINTEL;
+PFN_vkCmdSetPerformanceOverrideINTEL vkCmdSetPerformanceOverrideINTEL;
+PFN_vkAcquirePerformanceConfigurationINTEL vkAcquirePerformanceConfigurationINTEL;
+PFN_vkReleasePerformanceConfigurationINTEL vkReleasePerformanceConfigurationINTEL;
+PFN_vkQueueSetPerformanceConfigurationINTEL vkQueueSetPerformanceConfigurationINTEL;
+PFN_vkGetPerformanceParameterINTEL vkGetPerformanceParameterINTEL;
+PFN_vkSetLocalDimmingAMD vkSetLocalDimmingAMD;
+PFN_vkGetBufferDeviceAddressEXT vkGetBufferDeviceAddressEXT;
+PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT;
+PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV vkGetPhysicalDeviceCooperativeMatrixPropertiesNV;
+PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV
+    vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV;
+PFN_vkCreateHeadlessSurfaceEXT vkCreateHeadlessSurfaceEXT;
+PFN_vkCmdSetLineStippleEXT vkCmdSetLineStippleEXT;
+PFN_vkResetQueryPoolEXT vkResetQueryPoolEXT;
+PFN_vkGetGeneratedCommandsMemoryRequirementsNV vkGetGeneratedCommandsMemoryRequirementsNV;
+PFN_vkCmdPreprocessGeneratedCommandsNV vkCmdPreprocessGeneratedCommandsNV;
+PFN_vkCmdExecuteGeneratedCommandsNV vkCmdExecuteGeneratedCommandsNV;
+PFN_vkCmdBindPipelineShaderGroupNV vkCmdBindPipelineShaderGroupNV;
+PFN_vkCreateIndirectCommandsLayoutNV vkCreateIndirectCommandsLayoutNV;
+PFN_vkDestroyIndirectCommandsLayoutNV vkDestroyIndirectCommandsLayoutNV;
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 PFN_vkCreateAndroidSurfaceKHR vkCreateAndroidSurfaceKHR;
@@ -735,6 +873,10 @@ PFN_vkCreateIOSSurfaceMVK vkCreateIOSSurfaceMVK;
 
 #ifdef VK_USE_PLATFORM_MACOS_MVK
 PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
+#endif
+
+#ifdef VK_USE_PLATFORM_METAL_EXT
+PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT;
 #endif
 
 #ifdef VK_USE_PLATFORM_VI_NN
@@ -776,6 +918,13 @@ PFN_vkGetMemoryWin32HandleNV vkGetMemoryWin32HandleNV;
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 #endif
 
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT vkGetPhysicalDeviceSurfacePresentModes2EXT;
+PFN_vkAcquireFullScreenExclusiveModeEXT vkAcquireFullScreenExclusiveModeEXT;
+PFN_vkReleaseFullScreenExclusiveModeEXT vkReleaseFullScreenExclusiveModeEXT;
+PFN_vkGetDeviceGroupSurfacePresentModes2EXT vkGetDeviceGroupSurfacePresentModes2EXT;
+#endif
+
 #ifdef VK_USE_PLATFORM_XCB_KHR
 PFN_vkCreateXcbSurfaceKHR vkCreateXcbSurfaceKHR;
 PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR vkGetPhysicalDeviceXcbPresentationSupportKHR;
@@ -789,6 +938,45 @@ PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR vkGetPhysicalDeviceXlibPresent
 #ifdef VK_USE_PLATFORM_XLIB_XRANDR_EXT
 PFN_vkAcquireXlibDisplayEXT vkAcquireXlibDisplayEXT;
 PFN_vkGetRandROutputDisplayEXT vkGetRandROutputDisplayEXT;
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP;
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+PFN_vkCreateDeferredOperationKHR vkCreateDeferredOperationKHR;
+PFN_vkDestroyDeferredOperationKHR vkDestroyDeferredOperationKHR;
+PFN_vkGetDeferredOperationMaxConcurrencyKHR vkGetDeferredOperationMaxConcurrencyKHR;
+PFN_vkGetDeferredOperationResultKHR vkGetDeferredOperationResultKHR;
+PFN_vkDeferredOperationJoinKHR vkDeferredOperationJoinKHR;
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+#endif
+
+#ifdef VK_USE_PLATFORM_GGP
+PFN_vkCreateAccelerationStructureKHR vkCreateAccelerationStructureKHR;
+PFN_vkGetAccelerationStructureMemoryRequirementsKHR vkGetAccelerationStructureMemoryRequirementsKHR;
+PFN_vkCmdBuildAccelerationStructureKHR vkCmdBuildAccelerationStructureKHR;
+PFN_vkCmdBuildAccelerationStructureIndirectKHR vkCmdBuildAccelerationStructureIndirectKHR;
+PFN_vkBuildAccelerationStructureKHR vkBuildAccelerationStructureKHR;
+PFN_vkCopyAccelerationStructureKHR vkCopyAccelerationStructureKHR;
+PFN_vkCopyAccelerationStructureToMemoryKHR vkCopyAccelerationStructureToMemoryKHR;
+PFN_vkCopyMemoryToAccelerationStructureKHR vkCopyMemoryToAccelerationStructureKHR;
+PFN_vkWriteAccelerationStructuresPropertiesKHR vkWriteAccelerationStructuresPropertiesKHR;
+PFN_vkCmdCopyAccelerationStructureKHR vkCmdCopyAccelerationStructureKHR;
+PFN_vkCmdCopyAccelerationStructureToMemoryKHR vkCmdCopyAccelerationStructureToMemoryKHR;
+PFN_vkCmdCopyMemoryToAccelerationStructureKHR vkCmdCopyMemoryToAccelerationStructureKHR;
+PFN_vkCmdTraceRaysKHR vkCmdTraceRaysKHR;
+PFN_vkCreateRayTracingPipelinesKHR vkCreateRayTracingPipelinesKHR;
+PFN_vkGetAccelerationStructureDeviceAddressKHR vkGetAccelerationStructureDeviceAddressKHR;
+PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR vkGetRayTracingCaptureReplayShaderGroupHandlesKHR;
+PFN_vkCmdTraceRaysIndirectKHR vkCmdTraceRaysIndirectKHR;
+PFN_vkGetDeviceAccelerationStructureCompatibilityKHR vkGetDeviceAccelerationStructureCompatibilityKHR;
 #endif
 
 #ifdef __cplusplus

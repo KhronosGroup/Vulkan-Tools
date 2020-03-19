@@ -80,9 +80,15 @@ static const char *VkResultString(VkResult value) {
         case (-1000003001): return "ERROR_INCOMPATIBLE_DISPLAY_KHR";
         case (-1000011001): return "ERROR_VALIDATION_FAILED_EXT";
         case (-1000012000): return "ERROR_INVALID_SHADER_NV";
+        case (-1000150000): return "ERROR_INCOMPATIBLE_VERSION_KHR";
         case (-1000158000): return "ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
         case (-1000174001): return "ERROR_NOT_PERMITTED_EXT";
         case (-1000255000): return "ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
+        case (1000268000): return "THREAD_IDLE_KHR";
+        case (1000268001): return "THREAD_DONE_KHR";
+        case (1000268002): return "OPERATION_DEFERRED_KHR";
+        case (1000268003): return "OPERATION_NOT_DEFERRED_KHR";
+        case (1000297000): return "ERROR_PIPELINE_COMPILE_REQUIRED_EXT";
         default: return "UNKNOWN_VkResult";
     }
 }
@@ -504,6 +510,7 @@ std::vector<const char *>VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBi
     if (0x800000 & value) strings.push_back("FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT");
     if (0x10000 & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT");
     if (0x2000 & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG");
+    if (0x20000000 & value) strings.push_back("FORMAT_FEATURE_ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR");
     if (0x1000000 & value) strings.push_back("FORMAT_FEATURE_FRAGMENT_DENSITY_MAP_BIT_EXT");
     return strings;
 }
@@ -680,12 +687,12 @@ std::vector<const char *>VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits v
     if (0x20 & value) strings.push_back("SHADER_STAGE_COMPUTE_BIT");
     if (0x0000001F & value) strings.push_back("SHADER_STAGE_ALL_GRAPHICS");
     if (0x7FFFFFFF & value) strings.push_back("SHADER_STAGE_ALL");
-    if (0x100 & value) strings.push_back("SHADER_STAGE_RAYGEN_BIT_NV");
-    if (0x200 & value) strings.push_back("SHADER_STAGE_ANY_HIT_BIT_NV");
-    if (0x400 & value) strings.push_back("SHADER_STAGE_CLOSEST_HIT_BIT_NV");
-    if (0x800 & value) strings.push_back("SHADER_STAGE_MISS_BIT_NV");
-    if (0x1000 & value) strings.push_back("SHADER_STAGE_INTERSECTION_BIT_NV");
-    if (0x2000 & value) strings.push_back("SHADER_STAGE_CALLABLE_BIT_NV");
+    if (0x100 & value) strings.push_back("SHADER_STAGE_RAYGEN_BIT_KHR");
+    if (0x200 & value) strings.push_back("SHADER_STAGE_ANY_HIT_BIT_KHR");
+    if (0x400 & value) strings.push_back("SHADER_STAGE_CLOSEST_HIT_BIT_KHR");
+    if (0x800 & value) strings.push_back("SHADER_STAGE_MISS_BIT_KHR");
+    if (0x1000 & value) strings.push_back("SHADER_STAGE_INTERSECTION_BIT_KHR");
+    if (0x2000 & value) strings.push_back("SHADER_STAGE_CALLABLE_BIT_KHR");
     if (0x40 & value) strings.push_back("SHADER_STAGE_TASK_BIT_NV");
     if (0x80 & value) strings.push_back("SHADER_STAGE_MESH_BIT_NV");
     return strings;
@@ -1566,6 +1573,34 @@ void DumpVkPhysicalDeviceBlendOperationAdvancedPropertiesEXT(Printer &p, std::st
     p.PrintKeyBool("advancedBlendCorrelatedOverlap", static_cast<bool>(obj.advancedBlendCorrelatedOverlap), 37);
     p.PrintKeyBool("advancedBlendAllOperations", static_cast<bool>(obj.advancedBlendAllOperations), 37);
 }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDeviceRayTracingFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceRayTracingFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("rayTracing", static_cast<bool>(obj.rayTracing), 45);
+    p.PrintKeyBool("rayTracingShaderGroupHandleCaptureReplay", static_cast<bool>(obj.rayTracingShaderGroupHandleCaptureReplay), 45);
+    p.PrintKeyBool("rayTracingShaderGroupHandleCaptureReplayMixed", static_cast<bool>(obj.rayTracingShaderGroupHandleCaptureReplayMixed), 45);
+    p.PrintKeyBool("rayTracingAccelerationStructureCaptureReplay", static_cast<bool>(obj.rayTracingAccelerationStructureCaptureReplay), 45);
+    p.PrintKeyBool("rayTracingIndirectTraceRays", static_cast<bool>(obj.rayTracingIndirectTraceRays), 45);
+    p.PrintKeyBool("rayTracingIndirectAccelerationStructureBuild", static_cast<bool>(obj.rayTracingIndirectAccelerationStructureBuild), 45);
+    p.PrintKeyBool("rayTracingHostAccelerationStructureCommands", static_cast<bool>(obj.rayTracingHostAccelerationStructureCommands), 45);
+    p.PrintKeyBool("rayQuery", static_cast<bool>(obj.rayQuery), 45);
+    p.PrintKeyBool("rayTracingPrimitiveCulling", static_cast<bool>(obj.rayTracingPrimitiveCulling), 45);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDeviceRayTracingPropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceRayTracingPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyValue("shaderGroupHandleSize", obj.shaderGroupHandleSize, 38);
+    p.PrintKeyValue("maxRecursionDepth", obj.maxRecursionDepth, 38);
+    p.PrintKeyValue("maxShaderGroupStride", obj.maxShaderGroupStride, 38);
+    p.PrintKeyValue("shaderGroupBaseAlignment", obj.shaderGroupBaseAlignment, 38);
+    p.PrintKeyValue("maxGeometryCount", obj.maxGeometryCount, 38);
+    p.PrintKeyValue("maxInstanceCount", obj.maxInstanceCount, 38);
+    p.PrintKeyValue("maxPrimitiveCount", obj.maxPrimitiveCount, 38);
+    p.PrintKeyValue("maxDescriptorSetAccelerationStructures", obj.maxDescriptorSetAccelerationStructures, 38);
+    p.PrintKeyValue("shaderGroupHandleCaptureReplaySize", obj.shaderGroupHandleCaptureReplaySize, 38);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkDrmFormatModifierPropertiesEXT(Printer &p, std::string name, VkDrmFormatModifierPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier, 27);
@@ -1763,6 +1798,10 @@ void DumpVkPhysicalDeviceTransformFeedbackPropertiesEXT(Printer &p, std::string 
     p.PrintKeyBool("transformFeedbackRasterizationStreamSelect", static_cast<bool>(obj.transformFeedbackRasterizationStreamSelect), 42);
     p.PrintKeyBool("transformFeedbackDraw", static_cast<bool>(obj.transformFeedbackDraw), 42);
 }
+void DumpVkPhysicalDevicePipelineCreationCacheControlFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl), 28);
+}
 void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR), 26);
@@ -1802,6 +1841,9 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES, sizeof(VkPhysicalDevicePointClippingProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES, sizeof(VkPhysicalDeviceProtectedMemoryProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR, sizeof(VkPhysicalDevicePushDescriptorPropertiesKHR)},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_KHR, sizeof(VkPhysicalDeviceRayTracingPropertiesKHR)},
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT, sizeof(VkPhysicalDeviceSampleLocationsPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES, sizeof(VkPhysicalDeviceSamplerFilterMinmaxProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES, sizeof(VkPhysicalDeviceSubgroupProperties)},
@@ -1836,8 +1878,12 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT, sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES, sizeof(VkPhysicalDeviceMultiviewFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR, sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT, sizeof(VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR, sizeof(VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES, sizeof(VkPhysicalDeviceProtectedMemoryFeatures)},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR, sizeof(VkPhysicalDeviceRayTracingFeaturesKHR)},
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES, sizeof(VkPhysicalDeviceSamplerYcbcrConversionFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES, sizeof(VkPhysicalDeviceScalarBlockLayoutFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES, sizeof(VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures)},
@@ -2006,6 +2052,14 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDeviceBlendOperationAdvancedPropertiesEXT(p, "VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT", *props);
             p.AddNewline();
         }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_EXTENSION_NAME))) {
+            VkPhysicalDeviceRayTracingPropertiesKHR* props = (VkPhysicalDeviceRayTracingPropertiesKHR*)structure;
+            DumpVkPhysicalDeviceRayTracingPropertiesKHR(p, "VkPhysicalDeviceRayTracingPropertiesKHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT && 
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME))) {
             VkPhysicalDeviceExternalMemoryHostPropertiesEXT* props = (VkPhysicalDeviceExternalMemoryHostPropertiesEXT*)structure;
@@ -2247,6 +2301,14 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceBlendOperationAdvancedFeaturesEXT(p, "VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT", *props);
             p.AddNewline();
         }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_EXTENSION_NAME))) {
+            VkPhysicalDeviceRayTracingFeaturesKHR* props = (VkPhysicalDeviceRayTracingFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceRayTracingFeaturesKHR(p, "VkPhysicalDeviceRayTracingFeaturesKHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR && 
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_CLOCK_EXTENSION_NAME))) {
             VkPhysicalDeviceShaderClockFeaturesKHR* props = (VkPhysicalDeviceShaderClockFeaturesKHR*)structure;
@@ -2329,6 +2391,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME))) {
             VkPhysicalDeviceTransformFeedbackFeaturesEXT* props = (VkPhysicalDeviceTransformFeedbackFeaturesEXT*)structure;
             DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(p, "VkPhysicalDeviceTransformFeedbackFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME))) {
+            VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT* props = (VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT*)structure;
+            DumpVkPhysicalDevicePipelineCreationCacheControlFeaturesEXT(p, "VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT && 
