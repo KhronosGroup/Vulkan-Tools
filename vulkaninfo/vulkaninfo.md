@@ -66,7 +66,7 @@ OPTIONS:
 --show-formats        Display the format properties of each physical device.
                       Note: This option does not affect html or json output;
                       they will always print format properties.
-
+--summary             Show a summary of the instance and GPU's on a system.
 ```
 
 ### Windows

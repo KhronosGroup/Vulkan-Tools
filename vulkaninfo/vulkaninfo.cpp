@@ -43,31 +43,29 @@ HMODULE User32Handles::user32DllHandle = nullptr;
 
 // =========== Dump Functions ========= //
 
-void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionProperties> extensions) {
+void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionProperties> extensions, bool do_indent) {
     std::sort(extensions.begin(), extensions.end(), [](VkExtensionProperties &a, VkExtensionProperties &b) -> int {
         return std::string(a.extensionName) < std::string(b.extensionName);
     });
 
-    int max_length = 0;
-    if (extensions.size() > 0) {
-        max_length = static_cast<int>(strlen(extensions.at(0).extensionName));
-        for (auto &ext : extensions) {
-            int len = static_cast<int>(strlen(ext.extensionName));
-            if (len > max_length) max_length = len;
-        }
+    size_t max_length = 0;
+    for (const auto &ext : extensions) {
+        max_length = std::max(max_length, std::strlen(ext.extensionName));
     }
 
     ObjectWrapper obj(p, layer_name + " Extensions", extensions.size());
+    if (do_indent) p.IndentDecrease();
     for (auto &ext : extensions) {
         p.PrintExtension(ext.extensionName, ext.specVersion, max_length);
     }
+    if (do_indent) p.IndentIncrease();
 }
-
+void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionProperties> extensions) {
+    DumpExtensions(p, layer_name, extensions, false);
+}
 void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::vector<std::unique_ptr<AppGpu>> &gpus) {
     std::sort(layers.begin(), layers.end(), [](LayerExtensionList &left, LayerExtensionList &right) -> int {
-        const char *a = left.layer_properties.layerName;
-        const char *b = right.layer_properties.layerName;
-        return a && (!b || std::strcmp(a, b) < 0);
+        return std::strncmp(left.layer_properties.layerName, right.layer_properties.layerName, VK_MAX_DESCRIPTION_SIZE) < 0;
     });
     switch (p.Type()) {
         case OutputType::text:
@@ -705,6 +703,69 @@ void DumpGpuJson(Printer &p, AppGpu &gpu) {
     GpuDevDumpJson(p, gpu);
 }
 
+// Print summary of system
+void DumpSummaryInstance(Printer &p, AppInstance &inst) {
+    p.SetSubHeader();
+    DumpExtensions(p, "Instance", inst.global_extensions, true);
+    p.AddNewline();
+
+    p.SetSubHeader();
+    ArrayWrapper arr(p, "Instance Layers", inst.global_layers.size());
+    IndentWrapper indent(p);
+    std::sort(inst.global_layers.begin(), inst.global_layers.end(), [](LayerExtensionList &left, LayerExtensionList &right) -> int {
+        return std::strncmp(left.layer_properties.layerName, right.layer_properties.layerName, VK_MAX_DESCRIPTION_SIZE) < 0;
+    });
+    size_t layer_name_max = 0;
+    size_t layer_desc_max = 0;
+    size_t layer_version_max = 0;
+
+    // find max of each type to align everything in columns
+    for (auto &layer : inst.global_layers) {
+        auto props = layer.layer_properties;
+        layer_name_max = std::max(layer_name_max, strlen(props.layerName));
+        layer_desc_max = std::max(layer_desc_max, strlen(props.description));
+        layer_version_max = std::max(layer_version_max, VkVersionString(layer.layer_properties.specVersion).size());
+    }
+    for (auto &layer : inst.global_layers) {
+        auto v_str = VkVersionString(layer.layer_properties.specVersion);
+        auto props = layer.layer_properties;
+
+        auto name_padding = std::string(layer_name_max - strlen(props.layerName), ' ');
+        auto desc_padding = std::string(layer_desc_max - strlen(props.description), ' ');
+        auto version_padding = std::string(layer_version_max - v_str.size(), ' ');
+        p.PrintString(std::string(props.layerName) + name_padding + " " + props.description + desc_padding + " " + v_str + " " +
+                      version_padding + " version " + std::to_string(props.implementationVersion));
+    }
+    p.AddNewline();
+}
+
+void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
+    ObjectWrapper obj(p, "GPU" + std::to_string(gpu.id));
+    auto props = gpu.GetDeviceProperties();
+    p.PrintKeyValue("apiVersion", props.apiVersion, 18, VkVersionString(props.apiVersion));
+    p.PrintKeyValue("driverVersion", props.driverVersion, 18, to_hex_str(props.driverVersion));
+    p.PrintKeyString("vendorID", to_hex_str(props.vendorID), 18);
+    p.PrintKeyString("deviceID", to_hex_str(props.deviceID), 18);
+    p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType), 18);
+    p.PrintKeyString("deviceName", props.deviceName, 18);
+
+    if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) &&
+        (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || gpu.api_version.minor >= 2)) {
+        void *place = gpu.props2.pNext;
+        while (place) {
+            struct VkStructureHeader *structure = (struct VkStructureHeader *)place;
+            if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
+                VkPhysicalDeviceDriverProperties *props = (VkPhysicalDeviceDriverProperties *)structure;
+                DumpVkDriverId(p, "driverID", props->driverID, 18);
+                p.PrintKeyString("driverName", props->driverName, 18);
+                p.PrintKeyString("driverInfo", props->driverInfo, 18);
+                DumpVkConformanceVersion(p, "conformanceVersion", props->conformanceVersion, 18);
+            }
+            place = structure->pNext;
+        }
+    }
+}
+
 // ============ Printing Logic ============= //
 
 #ifdef _WIN32
@@ -749,6 +810,7 @@ void print_usage(const char *argv0) {
     std::cout << "--show-formats        Display the format properties of each physical device.\n";
     std::cout << "                      Note: This option does not affect html or json output;\n";
     std::cout << "                      they will always print format properties.\n\n";
+    std::cout << "--summary             Show a summary of the instance and GPU's on a system.\n\n";
 }
 
 int main(int argc, char **argv) {
@@ -780,6 +842,8 @@ int main(int argc, char **argv) {
             }
             human_readable_output = false;
             json_output = true;
+        } else if (strcmp(argv[i], "--summary") == 0) {
+            summary = true;
         } else if (strcmp(argv[i], "--html") == 0) {
             human_readable_output = false;
             html_output = true;
@@ -854,7 +918,15 @@ int main(int argc, char **argv) {
         }
 
         for (auto &p : printers) {
-            if (p->Type() == OutputType::json) {
+            if (summary) {
+                DumpSummaryInstance(*p.get(), instance);
+                p->SetHeader();
+                ObjectWrapper obj(*p, "Devices");
+                IndentWrapper indent(*p);
+                for (auto &gpu : gpus) {
+                    DumpSummaryGPU(*p.get(), *gpu.get());
+                }
+            } else if (p->Type() == OutputType::json) {
                 DumpLayers(*p.get(), instance.global_layers, gpus);
                 DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
 
