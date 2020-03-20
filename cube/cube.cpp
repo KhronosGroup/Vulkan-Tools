@@ -2064,7 +2064,6 @@ void Demo::prepare_texture_buffer(const char *filename, texture_object *tex_obj)
     VERIFY(result == vk::Result::eSuccess);
 
     vk::SubresourceLayout layout;
-    memset(&layout, 0, sizeof(layout));
     layout.rowPitch = tex_width * 4;
     auto data = device.mapMemory(tex_obj->mem, 0, tex_obj->mem_alloc.allocationSize);
     VERIFY(data.result == vk::Result::eSuccess);
