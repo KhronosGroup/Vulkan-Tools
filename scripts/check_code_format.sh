@@ -22,6 +22,8 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+clang-format --version
+
 FILES_TO_CHECK=$(git diff --name-only master | grep -v -E "^include/vulkan" | grep -E ".*\.(cpp|cc|c\+\+|cxx|c|h|hpp)$")
 
 if [ -z "${FILES_TO_CHECK}" ]; then
@@ -37,5 +39,7 @@ if [ -z "${FORMAT_DIFF}" ]; then
 else
   echo -e "${RED}Found formatting errors!${NC}"
   echo "${FORMAT_DIFF}"
+  echo "Be sure you are using the following version of clang-format:"
+  clang-format --version
   exit 1
 fi
