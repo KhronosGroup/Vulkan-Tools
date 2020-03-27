@@ -987,7 +987,7 @@ void SetupWindowExtensions(AppInstance &inst) {
     const char *display_var = getenv("DISPLAY");
     if (display_var == nullptr || strlen(display_var) == 0) {
         has_display = false;
-        THROW_ERR("'DISPLAY' environment variable not set... skipping surface info");
+        std::cerr << "'DISPLAY' environment variable not set... skipping surface info\n";
     }
 #endif
 
