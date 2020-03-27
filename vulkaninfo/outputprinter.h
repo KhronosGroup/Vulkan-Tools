@@ -710,8 +710,9 @@ class IndentWrapper {
 
 class ObjectWrapper {
    public:
-    ObjectWrapper(Printer &p, std::string object_name, int32_t count_subobjects = -1) : p(p) {
-        p.ObjectStart(object_name, count_subobjects);
+    ObjectWrapper(Printer &p, std::string object_name) : p(p) { p.ObjectStart(object_name); }
+    ObjectWrapper(Printer &p, std::string object_name, size_t count_subobjects) : p(p) {
+        p.ObjectStart(object_name, static_cast<int32_t>(count_subobjects));
     }
     ~ObjectWrapper() { p.ObjectEnd(); }
 
@@ -721,7 +722,9 @@ class ObjectWrapper {
 
 class ArrayWrapper {
    public:
-    ArrayWrapper(Printer &p, std::string array_name, int32_t element_count = 0) : p(p) { p.ArrayStart(array_name, element_count); }
+    ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) {
+        p.ArrayStart(array_name, static_cast<int32_t>(element_count));
+    }
     ~ArrayWrapper() { p.ArrayEnd(); }
 
    private:
