@@ -3489,15 +3489,8 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     VkSurfaceFormatKHR *surfFormats = (VkSurfaceFormatKHR *)malloc(formatCount * sizeof(VkSurfaceFormatKHR));
     err = demo->fpGetPhysicalDeviceSurfaceFormatsKHR(demo->gpu, demo->surface, &formatCount, surfFormats);
     assert(!err);
-    // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
-    // the surface has no preferred format.  Otherwise, at least one
-    // supported format will be returned.
-    if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
-        demo->format = VK_FORMAT_B8G8R8A8_UNORM;
-    } else {
-        assert(formatCount >= 1);
-        demo->format = surfFormats[0].format;
-    }
+    assert(formatCount >= 1);
+    demo->format = surfFormats[0].format;
     demo->color_space = surfFormats[0].colorSpace;
     free(surfFormats);
 
