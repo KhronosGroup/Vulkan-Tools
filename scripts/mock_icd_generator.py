@@ -57,7 +57,7 @@ using std::unordered_map;
 // Map device memory handle to any mapped allocations that we'll need to free on unmap
 static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
 
-static VkPhysicalDevice physical_device = nullptr;
+static VkPhysicalDevice physical_device = (VkPhysicalDevice)CreateDispObjHandle();
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
 
@@ -425,16 +425,10 @@ CUSTOM_C_INTERCEPTS = {
     return VK_SUCCESS;
 ''',
 'vkDestroyInstance': '''
-    // Destroy physical device
-    DestroyDispObjHandle((void*)physical_device);
-
     DestroyDispObjHandle((void*)instance);
 ''',
 'vkEnumeratePhysicalDevices': '''
     if (pPhysicalDevices) {
-        if (!physical_device) {
-            physical_device = (VkPhysicalDevice)CreateDispObjHandle();
-        }
         *pPhysicalDevices = physical_device;
     } else {
         *pPhysicalDeviceCount = 1;
