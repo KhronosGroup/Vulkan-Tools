@@ -3,7 +3,8 @@ BASEDIR=`dirname $0`
 
 if [ -d /System/Applications/Utilities/Terminal.app ]
 then
-    open /System/Applications/Utilities/Terminal.app $BASEDIR/vulkaninfo
+    open /System/Applications/Utilities/Terminal.app ./$BASEDIR/vulkaninfo_run.command
 else
-    open /Applications/Utilities/Terminal.app $BASEDIR/vulkaninfo
+    open /Applications/Utilities/Terminal.app ./$BASEDIR/vulkaninfo_run.command
 fi
+
