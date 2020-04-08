@@ -32,6 +32,9 @@ using std::unordered_map;
 // Map device memory handle to any mapped allocations that we'll need to free on unmap
 static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
 
+// Map device memory allocation handle to the size
+static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
+
 static VkPhysicalDevice physical_device = (VkPhysicalDevice)CreateDispObjHandle();
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
@@ -486,6 +489,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL AllocateMemory(
     VkDeviceMemory*                             pMemory)
 {
     unique_lock_t lock(global_lock);
+    allocated_memory_size_map[(VkDeviceMemory)global_unique_handle] = pAllocateInfo->allocationSize;
     *pMemory = (VkDeviceMemory)global_unique_handle++;
     return VK_SUCCESS;
 }
@@ -496,6 +500,7 @@ static VKAPI_ATTR void VKAPI_CALL FreeMemory(
     const VkAllocationCallbacks*                pAllocator)
 {
 //Destroy object
+    allocated_memory_size_map.erase(memory);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL MapMemory(
@@ -507,9 +512,12 @@ static VKAPI_ATTR VkResult VKAPI_CALL MapMemory(
     void**                                      ppData)
 {
     unique_lock_t lock(global_lock);
-    // TODO: Just hard-coding 64k whole size for now
-    if (VK_WHOLE_SIZE == size)
-        size = 0x10000;
+    if (VK_WHOLE_SIZE == size) {
+        if (allocated_memory_size_map.count(memory) != 0)
+            size = allocated_memory_size_map[memory] - offset;
+        else
+            size = 0x10000;
+    }
     void* map_addr = malloc((size_t)size);
     mapped_memory_map[memory].push_back(map_addr);
     *ppData = map_addr;
