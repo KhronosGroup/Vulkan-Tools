@@ -641,7 +641,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
                     VkFormat fmt = static_cast<VkFormat>(fmt_counter);
 
                     VkFormatProperties props;
-                    gpu.inst.dll.vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+                    gpu.inst.dll.fp_vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
                     GpuDumpFormatProperty(p, fmt, props);
                 }
@@ -660,7 +660,7 @@ void GpuDevDumpJson(Printer &p, AppGpu &gpu) {
                 VkFormat fmt = static_cast<VkFormat>(fmt_counter);
 
                 VkFormatProperties props;
-                gpu.inst.dll.vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+                gpu.inst.dll.fp_vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
                 // don't print format properties that are unsupported
                 if ((props.linearTilingFeatures || props.optimalTilingFeatures || props.bufferFeatures) == 0) continue;

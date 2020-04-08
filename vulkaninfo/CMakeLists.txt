@@ -124,7 +124,7 @@ if(WIN32)
 
     file(COPY vulkaninfo.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/vulkaninfo)
 elseif(APPLE)
-    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK -DVK_USE_PLATFORM_METAL_EXT -DVK_NO_PROTOTYPES)
+    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK -DVK_USE_PLATFORM_METAL_EXT)
 endif()
 
 if(APPLE)

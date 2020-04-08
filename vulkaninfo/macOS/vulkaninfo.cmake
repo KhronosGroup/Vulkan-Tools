@@ -25,7 +25,6 @@ add_executable(vulkaninfo-bundle
                vulkaninfo.cpp
                ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.sh
-               ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo_run.command
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/Resources/VulkanIcon.icns
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.mm
                ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
@@ -39,7 +38,6 @@ target_link_libraries(vulkaninfo-bundle ${Vulkan_LIBRARY} "-framework AppKit -fr
 target_include_directories(vulkaninfo-bundle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${CMAKE_CURRENT_SOURCE_DIR}/generated ${CMAKE_BINARY_DIR}/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
 add_dependencies(vulkaninfo-bundle MoltenVK_icd-staging-json)
 
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo_run.command PROPERTIES MACOSX_PACKAGE_LOCATION "MacOS")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.sh PROPERTIES MACOSX_PACKAGE_LOCATION "MacOS")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/macOS/Resources/VulkanIcon.icns
                             PROPERTIES
