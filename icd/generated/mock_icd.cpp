@@ -2152,7 +2152,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL AcquireNextImageKHR(
     VkFence                                     fence,
     uint32_t*                                   pImageIndex)
 {
-//Not a CREATE or DESTROY function
+    *pImageIndex = 0;
     return VK_SUCCESS;
 }
 
@@ -2196,7 +2196,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL AcquireNextImage2KHR(
     const VkAcquireNextImageInfoKHR*            pAcquireInfo,
     uint32_t*                                   pImageIndex)
 {
-//Not a CREATE or DESTROY function
+    *pImageIndex = 0;
     return VK_SUCCESS;
 }
 

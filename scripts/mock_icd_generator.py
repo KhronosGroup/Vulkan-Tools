@@ -884,7 +884,11 @@ CUSTOM_C_INTERCEPTS = {
     }
     return VK_SUCCESS;
 ''',
-'vkAcquireNextImagesKHR': '''
+'vkAcquireNextImageKHR': '''
+    *pImageIndex = 0;
+    return VK_SUCCESS;
+''',
+'vkAcquireNextImage2KHR': '''
     *pImageIndex = 0;
     return VK_SUCCESS;
 ''',
