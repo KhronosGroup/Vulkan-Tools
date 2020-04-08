@@ -874,13 +874,19 @@ CUSTOM_C_INTERCEPTS = {
     *pLayout = VkSubresourceLayout(); // Default constructor zero values.
 ''',
 'vkGetSwapchainImagesKHR': '''
+    constexpr uint32_t icd_image_count = 2;
+
     if (!pSwapchainImages) {
-        *pSwapchainImageCount = 1;
-    } else if (*pSwapchainImageCount > 0) {
-        pSwapchainImages[0] = (VkImage)global_unique_handle++;
-        if (*pSwapchainImageCount != 1) {
-            return VK_INCOMPLETE;
+        *pSwapchainImageCount = icd_image_count;
+    } else {
+        unique_lock_t lock(global_lock);
+        for (uint32_t img_i = 0; img_i < (std::min)(*pSwapchainImageCount, icd_image_count); ++img_i){
+            // For simplicity always returns new handles, which is wrong
+            pSwapchainImages[img_i] = (VkImage)global_unique_handle++;
         }
+
+        if (*pSwapchainImageCount < icd_image_count) return VK_INCOMPLETE;
+        else if (*pSwapchainImageCount > icd_image_count) *pSwapchainImageCount = icd_image_count;
     }
     return VK_SUCCESS;
 ''',
@@ -1064,6 +1070,7 @@ class MockICDOutputGenerator(OutputGenerator):
         else:
             write('#include "mock_icd.h"', file=self.outFile)
             write('#include <stdlib.h>', file=self.outFile)
+            write('#include <algorithm>', file=self.outFile)
             write('#include <vector>', file=self.outFile)
             write('#include "vk_typemap_helper.h"', file=self.outFile)
 
