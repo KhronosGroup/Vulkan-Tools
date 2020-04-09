@@ -39,9 +39,6 @@ static VkPhysicalDevice physical_device = (VkPhysicalDevice)CreateDispObjHandle(
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
 
-static constexpr uint32_t icd_swapchain_image_count = 2;
-static std::unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
-
 // TODO: Would like to codegen this but limits aren't in XML
 static VkPhysicalDeviceLimits SetLimits(VkPhysicalDeviceLimits *limits) {
     limits->maxImageDimension1D = 4096;
@@ -852,7 +849,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout(
     const VkImageSubresource*                   pSubresource,
     VkSubresourceLayout*                        pLayout)
 {
-    // Need safe values. Callers are computing memory offsets from pLayout, with no return code to flag failure.
+    // Need safe values. Callers are computing memory offsets from pLayout, with no return code to flag failure. 
     *pLayout = VkSubresourceLayout(); // Default constructor zero values.
 }
 
@@ -2128,9 +2125,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateSwapchainKHR(
 {
     unique_lock_t lock(global_lock);
     *pSwapchain = (VkSwapchainKHR)global_unique_handle++;
-    for(uint32_t i = 0; i < icd_swapchain_image_count; ++i){
-        swapchain_image_map[*pSwapchain][i] = (VkImage)global_unique_handle++;
-    }
     return VK_SUCCESS;
 }
 
@@ -2139,8 +2133,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroySwapchainKHR(
     VkSwapchainKHR                              swapchain,
     const VkAllocationCallbacks*                pAllocator)
 {
-    unique_lock_t lock(global_lock);
-    swapchain_image_map.clear();
+//Destroy object
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainImagesKHR(
@@ -2149,16 +2142,19 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainImagesKHR(
     uint32_t*                                   pSwapchainImageCount,
     VkImage*                                    pSwapchainImages)
 {
+    constexpr uint32_t icd_image_count = 2;
+
     if (!pSwapchainImages) {
-        *pSwapchainImageCount = icd_swapchain_image_count;
+        *pSwapchainImageCount = icd_image_count;
     } else {
         unique_lock_t lock(global_lock);
-        for (uint32_t img_i = 0; img_i < (std::min)(*pSwapchainImageCount, icd_swapchain_image_count); ++img_i){
-            pSwapchainImages[img_i] = swapchain_image_map.at(swapchain)[img_i];
+        for (uint32_t img_i = 0; img_i < (std::min)(*pSwapchainImageCount, icd_image_count); ++img_i){
+            // For simplicity always returns new handles, which is wrong
+            pSwapchainImages[img_i] = (VkImage)global_unique_handle++;
         }
 
-        if (*pSwapchainImageCount < icd_swapchain_image_count) return VK_INCOMPLETE;
-        else if (*pSwapchainImageCount > icd_swapchain_image_count) *pSwapchainImageCount = icd_swapchain_image_count;
+        if (*pSwapchainImageCount < icd_image_count) return VK_INCOMPLETE;
+        else if (*pSwapchainImageCount > icd_image_count) *pSwapchainImageCount = icd_image_count;
     }
     return VK_SUCCESS;
 }
