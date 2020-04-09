@@ -21,7 +21,6 @@
 
 #include "mock_icd.h"
 #include <stdlib.h>
-#include <algorithm>
 #include <vector>
 #include "vk_typemap_helper.h"
 namespace vkmock {
@@ -2142,19 +2141,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainImagesKHR(
     uint32_t*                                   pSwapchainImageCount,
     VkImage*                                    pSwapchainImages)
 {
-    constexpr uint32_t icd_image_count = 2;
-
     if (!pSwapchainImages) {
-        *pSwapchainImageCount = icd_image_count;
-    } else {
-        unique_lock_t lock(global_lock);
-        for (uint32_t img_i = 0; img_i < (std::min)(*pSwapchainImageCount, icd_image_count); ++img_i){
-            // For simplicity always returns new handles, which is wrong
-            pSwapchainImages[img_i] = (VkImage)global_unique_handle++;
+        *pSwapchainImageCount = 1;
+    } else if (*pSwapchainImageCount > 0) {
+        pSwapchainImages[0] = (VkImage)global_unique_handle++;
+        if (*pSwapchainImageCount != 1) {
+            return VK_INCOMPLETE;
         }
-
-        if (*pSwapchainImageCount < icd_image_count) return VK_INCOMPLETE;
-        else if (*pSwapchainImageCount > icd_image_count) *pSwapchainImageCount = icd_image_count;
     }
     return VK_SUCCESS;
 }
