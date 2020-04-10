@@ -75,7 +75,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_KHR_get_display_properties2", 1},
     {"VK_MVK_ios_surface", 2},
     {"VK_MVK_macos_surface", 2},
-    {"VK_EXT_debug_utils", 1},
+    {"VK_EXT_debug_utils", 2},
     {"VK_FUCHSIA_imagepipe_surface", 1},
     {"VK_EXT_metal_surface", 1},
     {"VK_KHR_surface_protected_capabilities", 1},
@@ -97,7 +97,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
-    {"VK_NVX_image_view_handle", 1},
+    {"VK_NVX_image_view_handle", 2},
     {"VK_AMD_draw_indirect_count", 2},
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
@@ -250,8 +250,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_GOOGLE_user_type", 1},
     {"VK_KHR_pipeline_library", 1},
     {"VK_KHR_shader_non_semantic_info", 1},
-    {"VK_EXT_pipeline_creation_cache_control", 2},
+    {"VK_EXT_pipeline_creation_cache_control", 3},
     {"VK_NV_device_diagnostics_config", 1},
+    {"VK_QCOM_render_pass_store_ops", 2},
 };
 
 
@@ -2006,6 +2007,11 @@ static VKAPI_ATTR uint32_t VKAPI_CALL GetImageViewHandleNVX(
     VkDevice                                    device,
     const VkImageViewHandleInfoNVX*             pInfo);
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetImageViewAddressNVX(
+    VkDevice                                    device,
+    VkImageView                                 imageView,
+    VkImageViewAddressPropertiesNVX*            pProperties);
+
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectCountAMD(
     VkCommandBuffer                             commandBuffer,
@@ -2721,6 +2727,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyIndirectCommandsLayoutNV(
 
 
 
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
@@ -3167,6 +3174,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdEndQueryIndexedEXT", (void*)CmdEndQueryIndexedEXT},
     {"vkCmdDrawIndirectByteCountEXT", (void*)CmdDrawIndirectByteCountEXT},
     {"vkGetImageViewHandleNVX", (void*)GetImageViewHandleNVX},
+    {"vkGetImageViewAddressNVX", (void*)GetImageViewAddressNVX},
     {"vkCmdDrawIndirectCountAMD", (void*)CmdDrawIndirectCountAMD},
     {"vkCmdDrawIndexedIndirectCountAMD", (void*)CmdDrawIndexedIndirectCountAMD},
     {"vkGetShaderInfoAMD", (void*)GetShaderInfoAMD},

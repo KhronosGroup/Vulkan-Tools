@@ -88,7 +88,7 @@ static const char *VkResultString(VkResult value) {
         case (1000268001): return "THREAD_DONE_KHR";
         case (1000268002): return "OPERATION_DEFERRED_KHR";
         case (1000268003): return "OPERATION_NOT_DEFERRED_KHR";
-        case (1000297000): return "ERROR_PIPELINE_COMPILE_REQUIRED_EXT";
+        case (1000297000): return "PIPELINE_COMPILE_REQUIRED_EXT";
         default: return "UNKNOWN_VkResult";
     }
 }
