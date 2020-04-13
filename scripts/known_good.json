@@ -1,17 +1,6 @@
 {
   "repos" : [
     {
-      "name" : "glslang",
-      "url" : "https://github.com/KhronosGroup/glslang.git",
-      "sub_dir" : "glslang",
-      "build_dir" : "glslang/build",
-      "install_dir" : "glslang/build/install",
-      "commit" : "e157435c1e777aa1052f446dafed162b4a722e03",
-      "prebuild" : [
-        "python update_glslang_sources.py"
-      ]
-    },
-    {
       "name" : "Vulkan-Headers",
       "url" : "https://github.com/KhronosGroup/Vulkan-Headers.git",
       "sub_dir" : "Vulkan-Headers",
@@ -27,7 +16,7 @@
       "install_dir" : "MoltenVK",
       "commit" : "v1.0.41",
       "custom_build" : [
-        "./fetchDependencies --glslang-root {0[glslang][repo_dir]}",
+        "./fetchDependencies",
         "xcodebuild -project MoltenVKPackaging.xcodeproj GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS MVK_CONFIG_LOG_LEVEL=1' -scheme \"MoltenVK Package\" build"
       ],
       "build_step" : "custom",
@@ -58,7 +47,6 @@
     }
   ],
   "install_names" : {
-      "glslang" : "GLSLANG_INSTALL_DIR",
       "Vulkan-Headers" : "VULKAN_HEADERS_INSTALL_DIR",
       "Vulkan-Loader" : "VULKAN_LOADER_INSTALL_DIR",
       "MoltenVK" : "MOLTENVK_REPO_ROOT"
