@@ -22,6 +22,7 @@
 #include "mock_icd.h"
 #include <stdlib.h>
 #include <algorithm>
+#include <array>
 #include <vector>
 #include "vk_typemap_helper.h"
 namespace vkmock {
@@ -29,18 +30,20 @@ namespace vkmock {
 
 using std::unordered_map;
 
+static constexpr uint32_t icd_physical_device_count = 1;
+static unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_device_count>> physical_device_map;
+
 // Map device memory handle to any mapped allocations that we'll need to free on unmap
 static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
 
 // Map device memory allocation handle to the size
 static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
 
-static VkPhysicalDevice physical_device = (VkPhysicalDevice)CreateDispObjHandle();
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
 
 static constexpr uint32_t icd_swapchain_image_count = 1;
-static std::unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
+static unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
 
 // TODO: Would like to codegen this but limits aren't in XML
 static VkPhysicalDeviceLimits SetLimits(VkPhysicalDeviceLimits *limits) {
@@ -184,6 +187,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateInstance(
         return VK_ERROR_INCOMPATIBLE_DRIVER;
     }
     *pInstance = (VkInstance)CreateDispObjHandle();
+    for (auto& physical_device : physical_device_map[*pInstance])
+        physical_device = (VkPhysicalDevice)CreateDispObjHandle();
     // TODO: If emulating specific device caps, will need to add intelligence here
     return VK_SUCCESS;
 }
@@ -193,7 +198,12 @@ static VKAPI_ATTR void VKAPI_CALL DestroyInstance(
     const VkAllocationCallbacks*                pAllocator)
 {
 
-    DestroyDispObjHandle((void*)instance);
+    if (instance) {
+        for (const auto physical_device : physical_device_map.at(instance))
+            DestroyDispObjHandle((void*)physical_device);
+        physical_device_map.erase(instance);
+        DestroyDispObjHandle((void*)instance);
+    }
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDevices(
@@ -201,12 +211,16 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDevices(
     uint32_t*                                   pPhysicalDeviceCount,
     VkPhysicalDevice*                           pPhysicalDevices)
 {
+    VkResult result_code = VK_SUCCESS;
     if (pPhysicalDevices) {
-        *pPhysicalDevices = physical_device;
+        const auto return_count = (std::min)(*pPhysicalDeviceCount, icd_physical_device_count);
+        for (uint32_t i = 0; i < return_count; ++i) pPhysicalDevices[i] = physical_device_map.at(instance)[i];
+        if (return_count < icd_physical_device_count) result_code = VK_INCOMPLETE;
+        *pPhysicalDeviceCount = return_count;
     } else {
-        *pPhysicalDeviceCount = 1;
+        *pPhysicalDeviceCount = icd_physical_device_count;
     }
-    return VK_SUCCESS;
+    return result_code;
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures(
