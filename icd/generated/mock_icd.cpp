@@ -41,6 +41,7 @@ static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
 
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
+static unordered_map<VkDevice, unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
 
 static constexpr uint32_t icd_swapchain_image_count = 1;
 static unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
@@ -372,6 +373,8 @@ static VKAPI_ATTR void VKAPI_CALL DestroyDevice(
         }
     }
     queue_map.clear();
+    buffer_map.erase(device);
+    image_memory_size_map.erase(device);
     // Now destroy device
     DestroyDispObjHandle((void*)device);
     // TODO: If emulating specific device caps, will need to add intelligence here
@@ -619,10 +622,16 @@ static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements(
     VkImage                                     image,
     VkMemoryRequirements*                       pMemoryRequirements)
 {
-    // TODO: Just hard-coding reqs for now
-    pMemoryRequirements->size = 4096;
+    pMemoryRequirements->size = 0;
     pMemoryRequirements->alignment = 1;
 
+    auto d_iter = image_memory_size_map.find(device);
+    if(d_iter != image_memory_size_map.end()){
+        auto iter = d_iter->second.find(image);
+        if (iter != d_iter->second.end()) {
+            pMemoryRequirements->size = iter->second;
+        }
+    }
     // Here we hard-code that the memory type at index 3 doesn't support this image.
     pMemoryRequirements->memoryTypeBits = 0xFFFF & ~(0x1 << 3);
 }
@@ -849,6 +858,38 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateImage(
 {
     unique_lock_t lock(global_lock);
     *pImage = (VkImage)global_unique_handle++;
+    // TODO: A texel size is 4 bytes for now whatever the format is. It could be changed to more accurate size if need be.
+    image_memory_size_map[device][*pImage] = pCreateInfo->extent.width * pCreateInfo->extent.height * pCreateInfo->extent.depth *
+                                             4 * pCreateInfo->arrayLayers * (pCreateInfo->mipLevels > 1 ? 2 : 1);
+    // plane count
+    switch (pCreateInfo->format) {
+        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
+        case VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
+        case VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:
+            image_memory_size_map[device][*pImage] *= 3;
+            break;
+        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
+        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
+        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
+        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
+        case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
+            image_memory_size_map[device][*pImage] *= 2;
+            break;
+        default:
+            break;
+    }
     return VK_SUCCESS;
 }
 
@@ -857,7 +898,8 @@ static VKAPI_ATTR void VKAPI_CALL DestroyImage(
     VkImage                                     image,
     const VkAllocationCallbacks*                pAllocator)
 {
-//Destroy object
+    unique_lock_t lock(global_lock);
+    image_memory_size_map[device].erase(image);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout(
