@@ -463,54 +463,45 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             const uint32_t memtype_bit = 1U << i;
 
             // only linear and optimal tiling considered
-            for (uint32_t tiling = VK_IMAGE_TILING_OPTIMAL; tiling < gpu.mem_type_res_support.image.size(); ++tiling) {
-                std::string usable;
-                usable += std::string(VkImageTilingString(VkImageTiling(tiling))) + ": ";
-                size_t orig_usable_str_size = usable.size();
-                bool first = true;
-                for (size_t fmt_i = 0; fmt_i < gpu.mem_type_res_support.image[tiling].size(); ++fmt_i) {
-                    const MemImageSupport *image_support = &gpu.mem_type_res_support.image[tiling][fmt_i];
-                    const bool regular_compatible =
-                        image_support->regular_supported && (image_support->regular_memtypes & memtype_bit);
-                    const bool sparse_compatible =
-                        image_support->sparse_supported && (image_support->sparse_memtypes & memtype_bit);
-                    const bool transient_compatible =
-                        image_support->transient_supported && (image_support->transient_memtypes & memtype_bit);
-
-                    if (regular_compatible || sparse_compatible || transient_compatible) {
-                        if (!first) usable += ", ";
-                        first = false;
-
-                        if (fmt_i == 0) {
-                            usable += "color images";
-                        } else {
-                            usable += VkFormatString(gpu.mem_type_res_support.image[tiling][fmt_i].format);
+            std::vector<VkFormat> tiling_optimal_formats;
+            std::vector<VkFormat> tiling_linear_formats;
+            for (auto &image_tiling : gpu.memory_image_support_types) {
+                ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)), -1);
+                bool has_any_support_types = false;
+                bool regular = false;
+                bool transient = false;
+                bool sparse = false;
+                for (auto &image_format : image_tiling.formats) {
+                    if (image_format.type_support.size() > 0) {
+                        bool has_a_support_type = false;
+                        for (auto &img_type : image_format.type_support) {
+                            if (img_type.Compatible(memtype_bit)) {
+                                has_a_support_type = true;
+                                has_any_support_types = true;
+                                if (img_type.type == ImageTypeSupport::Type::regular) regular = true;
+                                if (img_type.type == ImageTypeSupport::Type::transient) transient = true;
+                                if (img_type.type == ImageTypeSupport::Type::sparse) sparse = true;
+                            }
                         }
-
-                        if (regular_compatible && !sparse_compatible && !transient_compatible && image_support->sparse_supported &&
-                            image_support->transient_supported) {
-                            usable += "(non-sparse, non-transient)";
-                        } else if (regular_compatible && !sparse_compatible && image_support->sparse_supported) {
-                            if (image_support->sparse_supported) usable += "(non-sparse)";
-                        } else if (regular_compatible && !transient_compatible && image_support->transient_supported) {
-                            if (image_support->transient_supported) usable += "(non-transient)";
-                        } else if (!regular_compatible && sparse_compatible && !transient_compatible &&
-                                   image_support->sparse_supported) {
-                            if (image_support->sparse_supported) usable += "(sparse only)";
-                        } else if (!regular_compatible && !sparse_compatible && transient_compatible &&
-                                   image_support->transient_supported) {
-                            if (image_support->transient_supported) usable += "(transient only)";
-                        } else if (!regular_compatible && sparse_compatible && transient_compatible &&
-                                   image_support->sparse_supported && image_support->transient_supported) {
-                            usable += "(sparse and transient only)";
+                        if (has_a_support_type) {
+                            if (image_format.format == color_format) {
+                                p.PrintString("color images");
+                            } else {
+                                p.PrintString(VkFormatString(image_format.format));
+                            }
                         }
                     }
                 }
-                if (usable.size() == orig_usable_str_size)  // not usable for anything
-                {
-                    usable += "None";
+                if (!has_any_support_types) {
+                    p.PrintString("None");
+                } else {
+                    if (regular && !transient && sparse) p.PrintString("(non-transient)");
+                    if (regular && transient && !sparse) p.PrintString("(non-sparse)");
+                    if (regular && !transient && !sparse) p.PrintString("(non-sparse, non-transient)");
+                    if (!regular && transient && sparse) p.PrintString("(sparse and transient only)");
+                    if (!regular && !transient && sparse) p.PrintString("(sparse only)");
+                    if (!regular && transient && !sparse) p.PrintString("(transient only)");
                 }
-                p.PrintString(usable);
             }
         }
     }

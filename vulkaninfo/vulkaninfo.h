@@ -1246,16 +1246,71 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
 
 // -------------------- Device Setup ------------------- //
 
-struct MemImageSupport {
-    bool regular_supported, sparse_supported, transient_supported;
-    VkFormat format;
-    uint32_t regular_memtypes, sparse_memtypes, transient_memtypes;
+const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
+
+struct ImageTypeSupport {
+    enum class Type { regular, sparse, transient } type = Type::regular;
+    bool supported = false;
+    uint32_t memoryTypeBits = 0;
+
+    bool Compatible(uint32_t memtype_bit) { return supported && (memoryTypeBits & memtype_bit); }
 };
 
-struct MemResSupport {
-    std::array<std::array<MemImageSupport, 8>, 2> image;
-    // TODO: buffers
+struct ImageTypeFormatInfo {
+    VkFormat format;
+    std::vector<ImageTypeSupport> type_support;
 };
+
+struct ImageTypeInfos {
+    VkImageTiling tiling;
+    std::vector<ImageTypeFormatInfo> formats;
+};
+
+VkImageCreateInfo GetImageCreateInfo(VkFormat format, VkImageTiling tiling, VkImageCreateFlags flags, VkImageUsageFlags usages) {
+    return {VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+            nullptr,
+            flags,
+            VK_IMAGE_TYPE_2D,
+            format,
+            {8, 8, 1},
+            1,
+            1,
+            VK_SAMPLE_COUNT_1_BIT,
+            tiling,
+            usages,
+            VK_SHARING_MODE_EXCLUSIVE,
+            0,
+            nullptr,
+            VK_IMAGE_LAYOUT_UNDEFINED};
+}
+
+ImageTypeSupport FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
+                                      ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
+    VkImageFormatProperties img_props;
+    VkResult res = inst.dll.fp_vkGetPhysicalDeviceImageFormatProperties(
+        phys_device, image_ci.format, image_ci.imageType, image_ci.tiling, image_ci.usage, image_ci.flags, &img_props);
+
+    if (res == VK_SUCCESS) {
+        ImageTypeSupport img_type_support{};
+        img_type_support.type = img_type;
+        img_type_support.supported = true;
+
+        VkImage dummy_img;
+        res = inst.dll.fp_vkCreateImage(device, &image_ci, nullptr, &dummy_img);
+        if (res) THROW_VK_ERR("vkCreateImage", res);
+
+        VkMemoryRequirements mem_req;
+        inst.dll.fp_vkGetImageMemoryRequirements(device, dummy_img, &mem_req);
+        img_type_support.memoryTypeBits = mem_req.memoryTypeBits;
+
+        inst.dll.fp_vkDestroyImage(device, dummy_img, nullptr);
+        return img_type_support;
+    } else if (res == VK_ERROR_FORMAT_NOT_SUPPORTED) {
+        return {};  // default initialization has supported being false
+    }
+    THROW_VK_ERR("vkGetPhysicalDeviceImageFormatProperties", res);
+    return {};
+}
 
 struct pNextChainInfos {
     std::vector<pNextChainBuildingBlockInfo> phys_device_props2;
@@ -1294,7 +1349,7 @@ struct AppGpu {
     VkPhysicalDeviceMemoryProperties memory_props;
     VkPhysicalDeviceMemoryProperties2KHR memory_props2;
 
-    MemResSupport mem_type_res_support;
+    std::vector<ImageTypeInfos> memory_image_support_types;
 
     VkPhysicalDeviceFeatures features;
     VkPhysicalDeviceFeatures2KHR features2;
@@ -1374,108 +1429,60 @@ struct AppGpu {
         VkResult err = inst.dll.fp_vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
         if (err) THROW_VK_ERR("vkCreateDevice", err);
 
-        const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
+        const std::vector<VkImageTiling> tilings = {VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_TILING_LINEAR};
         const std::vector<VkFormat> formats = {
             color_format,      VK_FORMAT_D16_UNORM,         VK_FORMAT_X8_D24_UNORM_PACK32, VK_FORMAT_D32_SFLOAT,
             VK_FORMAT_S8_UINT, VK_FORMAT_D16_UNORM_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,   VK_FORMAT_D32_SFLOAT_S8_UINT};
-        assert(mem_type_res_support.image[0].size() == formats.size());
-        const std::array<VkImageUsageFlags, 2> usages = {0, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT};
-        const std::array<VkImageCreateFlags, 2> flagss = {0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT};
 
-        for (size_t fmt_i = 0; fmt_i < formats.size(); ++fmt_i) {
-            // only iterate over VK_IMAGE_TILING_OPTIMAL and VK_IMAGE_TILING_LINEAR (0 and 1)
-            for (size_t tiling = VK_IMAGE_TILING_OPTIMAL; tiling <= VK_IMAGE_TILING_LINEAR; ++tiling) {
-                mem_type_res_support.image[tiling][fmt_i].format = formats[fmt_i];
-                mem_type_res_support.image[tiling][fmt_i].regular_supported = true;
-                mem_type_res_support.image[tiling][fmt_i].sparse_supported = true;
-                mem_type_res_support.image[tiling][fmt_i].transient_supported = true;
+        for (VkImageTiling tiling : tilings) {
+            ImageTypeInfos image_type_infos;
+            image_type_infos.tiling = tiling;
+
+            for (VkFormat format : formats) {
+                ImageTypeFormatInfo image_type_format_info;
+                image_type_format_info.format = format;
 
                 VkFormatProperties fmt_props;
-                inst.dll.fp_vkGetPhysicalDeviceFormatProperties(phys_device, formats[fmt_i], &fmt_props);
+                inst.dll.fp_vkGetPhysicalDeviceFormatProperties(phys_device, format, &fmt_props);
                 if ((tiling == VK_IMAGE_TILING_OPTIMAL && fmt_props.optimalTilingFeatures == 0) ||
                     (tiling == VK_IMAGE_TILING_LINEAR && fmt_props.linearTilingFeatures == 0)) {
-                    mem_type_res_support.image[tiling][fmt_i].regular_supported = false;
-                    mem_type_res_support.image[tiling][fmt_i].sparse_supported = false;
-                    mem_type_res_support.image[tiling][fmt_i].transient_supported = false;
                     continue;
                 }
 
-                for (size_t u_i = 0; u_i < usages.size(); ++u_i) {
-                    for (size_t flg_i = 0; flg_i < flagss.size(); ++flg_i) {
-                        VkImageCreateInfo image_ci = {VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-                                                      nullptr,
-                                                      flagss[flg_i],
-                                                      VK_IMAGE_TYPE_2D,
-                                                      formats[fmt_i],
-                                                      {8, 8, 1},
-                                                      1,
-                                                      1,
-                                                      VK_SAMPLE_COUNT_1_BIT,
-                                                      static_cast<VkImageTiling>(tiling),
-                                                      usages[u_i],
-                                                      VK_SHARING_MODE_EXCLUSIVE,
-                                                      0,
-                                                      nullptr,
-                                                      VK_IMAGE_LAYOUT_UNDEFINED};
+                VkImageCreateInfo image_ci_regular = GetImageCreateInfo(format, tiling, 0, 0);
+                VkImageCreateInfo image_ci_transient =
+                    GetImageCreateInfo(format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, 0);
+                VkImageCreateInfo image_ci_sparse = GetImageCreateInfo(format, tiling, 0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
 
-                        if ((image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT) &&
-                            (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                            continue;
-                        }
+                if (format == color_format) {
+                    image_ci_regular.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                    image_ci_transient.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                } else {
+                    image_ci_regular.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                    image_ci_transient.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                }
 
-                        if (image_ci.usage == 0 || (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                            if (image_ci.format == color_format)
-                                image_ci.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-                            else
-                                image_ci.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-                        }
+                auto image_ts_regular =
+                    FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::regular, image_ci_regular);
+                if (image_ts_regular.supported) {
+                    image_type_format_info.type_support.push_back(image_ts_regular);
+                }
+                auto image_ts_transient =
+                    FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::transient, image_ci_transient);
+                if (image_ts_transient.supported) {
+                    image_type_format_info.type_support.push_back(image_ts_transient);
+                }
 
-                        if (!enabled_features.sparseBinding && (image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT)) {
-                            mem_type_res_support.image[tiling][fmt_i].sparse_supported = false;
-                            continue;
-                        }
-
-                        VkImageFormatProperties img_props;
-                        err = inst.dll.fp_vkGetPhysicalDeviceImageFormatProperties(phys_device, image_ci.format, image_ci.imageType,
-                                                                                   image_ci.tiling, image_ci.usage, image_ci.flags,
-                                                                                   &img_props);
-
-                        uint32_t *memtypes;
-                        bool *support;
-
-                        if (image_ci.flags == 0 && !(image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                            memtypes = &mem_type_res_support.image[tiling][fmt_i].regular_memtypes;
-                            support = &mem_type_res_support.image[tiling][fmt_i].regular_supported;
-                        } else if ((image_ci.flags & VK_IMAGE_CREATE_SPARSE_BINDING_BIT) &&
-                                   !(image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                            memtypes = &mem_type_res_support.image[tiling][fmt_i].sparse_memtypes;
-                            support = &mem_type_res_support.image[tiling][fmt_i].sparse_supported;
-                        } else if (image_ci.flags == 0 && (image_ci.usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT)) {
-                            memtypes = &mem_type_res_support.image[tiling][fmt_i].transient_memtypes;
-                            support = &mem_type_res_support.image[tiling][fmt_i].transient_supported;
-                        } else {
-                            assert(false);
-                            return;
-                        }
-
-                        if (err == VK_ERROR_FORMAT_NOT_SUPPORTED) {
-                            *support = false;
-                        } else {
-                            if (err != VK_SUCCESS) THROW_VK_ERR("vkGetPhysicalDeviceImageFormatProperties", err);
-
-                            VkImage dummy_img;
-                            err = inst.dll.fp_vkCreateImage(dev, &image_ci, nullptr, &dummy_img);
-                            if (err) THROW_VK_ERR("vkCreateImage", err);
-
-                            VkMemoryRequirements mem_req;
-                            inst.dll.fp_vkGetImageMemoryRequirements(dev, dummy_img, &mem_req);
-                            *memtypes = mem_req.memoryTypeBits;
-
-                            inst.dll.fp_vkDestroyImage(dev, dummy_img, nullptr);
-                        }
+                if (enabled_features.sparseBinding) {
+                    auto image_ts_sparse =
+                        FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::sparse, image_ci_sparse);
+                    if (image_ts_sparse.supported) {
+                        image_type_format_info.type_support.push_back(image_ts_sparse);
                     }
                 }
+                image_type_infos.formats.push_back(image_type_format_info);
             }
+            memory_image_support_types.push_back(image_type_infos);
         }
 
         // Memory //
@@ -1638,8 +1645,8 @@ struct hash<PropFlags> {
 }  // namespace std
 
 // Used to sort the formats into buckets by their properties.
-std::unordered_map<PropFlags, std::vector<VkFormat> > FormatPropMap(AppGpu &gpu) {
-    std::unordered_map<PropFlags, std::vector<VkFormat> > map;
+std::unordered_map<PropFlags, std::vector<VkFormat>> FormatPropMap(AppGpu &gpu) {
+    std::unordered_map<PropFlags, std::vector<VkFormat>> map;
     for (auto fmtRange : gpu.supported_format_ranges) {
         for (int32_t fmt = fmtRange.first_format; fmt <= fmtRange.last_format; ++fmt) {
             VkFormatProperties props;
