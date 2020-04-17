@@ -858,9 +858,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateImage(
 {
     unique_lock_t lock(global_lock);
     *pImage = (VkImage)global_unique_handle++;
-    // TODO: A texel size is 4 bytes for now whatever the format is. It could be changed to more accurate size if need be.
+    // TODO: A pixel size is 32 bytes. This accounts for the largest possible pixel size of any format. It could be changed to more accurate size if need be.
     image_memory_size_map[device][*pImage] = pCreateInfo->extent.width * pCreateInfo->extent.height * pCreateInfo->extent.depth *
-                                             4 * pCreateInfo->arrayLayers * (pCreateInfo->mipLevels > 1 ? 2 : 1);
+                                             32 * pCreateInfo->arrayLayers * (pCreateInfo->mipLevels > 1 ? 2 : 1);
     // plane count
     switch (pCreateInfo->format) {
         case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
