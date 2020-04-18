@@ -66,7 +66,7 @@ std::string VkVersionString(VulkanVersion v) {
 enum class OutputType { text, html, json, vkconfig_output };
 
 class Printer {
-   public:
+  public:
     Printer(OutputType output_type, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version)
         : output_type(output_type), out(out) {
         switch (output_type) {
@@ -654,7 +654,7 @@ class Printer {
             return input;
     }
 
-   protected:
+  protected:
     OutputType output_type;
     std::ostream &out;
     int indents = 0;
@@ -696,7 +696,7 @@ class Printer {
 // always desired, requiring a manual decrease of indention. This wrapper facilitates that while also
 // automatically re-indenting the output to the previous indent level on scope exit.
 class IndentWrapper {
-   public:
+  public:
     IndentWrapper(Printer &p) : p(p) {
         if (p.Type() == OutputType::text) p.IndentDecrease();
     }
@@ -704,29 +704,29 @@ class IndentWrapper {
         if (p.Type() == OutputType::text) p.IndentIncrease();
     }
 
-   private:
+  private:
     Printer &p;
 };
 
 class ObjectWrapper {
-   public:
+  public:
     ObjectWrapper(Printer &p, std::string object_name) : p(p) { p.ObjectStart(object_name); }
     ObjectWrapper(Printer &p, std::string object_name, size_t count_subobjects) : p(p) {
         p.ObjectStart(object_name, static_cast<int32_t>(count_subobjects));
     }
     ~ObjectWrapper() { p.ObjectEnd(); }
 
-   private:
+  private:
     Printer &p;
 };
 
 class ArrayWrapper {
-   public:
+  public:
     ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) {
         p.ArrayStart(array_name, static_cast<int32_t>(element_count));
     }
     ~ArrayWrapper() { p.ArrayEnd(); }
 
-   private:
+  private:
     Printer &p;
 };

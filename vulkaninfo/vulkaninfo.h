@@ -84,7 +84,7 @@ struct FileLineException : std::runtime_error {
     ~FileLineException() throw() {}
     const char *what() const throw() { return msg.c_str(); }
 
-   private:
+  private:
     std::string msg;
 };
 #define THROW_ERR(arg) throw FileLineException(arg, __FILE__, __LINE__);
@@ -97,7 +97,7 @@ struct VulkanException : std::runtime_error {
     ~VulkanException() throw() {}
     const char *what() const throw() { return msg.c_str(); }
 
-   private:
+  private:
     std::string msg;
 };
 #define THROW_VK_ERR(func_name, err) throw VulkanException(func_name, __FILE__, __LINE__, err);
@@ -424,7 +424,7 @@ struct VkDll {
 #endif  // VK_USE_PLATFORM_METAL_EXT
     }
 
-   private:
+  private:
     template <typename T>
     void Load(T &func_dest, const char *func_name) {
 #if defined(__linux__)
@@ -478,7 +478,7 @@ struct ExtensionFunctions {
         Load(vkGetPhysicalDeviceToolPropertiesEXT, "vkGetPhysicalDeviceToolPropertiesEXT");
     }
 
-   private:
+  private:
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
     VkInstance instance;
     template <typename T>
@@ -1108,7 +1108,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 // ---------- Surfaces -------------- //
 
 class AppSurface {
-   public:
+  public:
     AppInstance &inst;
     VkPhysicalDevice phys_device;
     SurfaceExtension surface_extension;
