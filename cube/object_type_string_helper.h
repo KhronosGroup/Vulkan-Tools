@@ -20,18 +20,15 @@
  *
  ****************************************************************************/
 
-
 #pragma once
 #ifdef _WIN32
-#pragma warning( disable : 4065 )
+#pragma warning(disable : 4065)
 #endif
 
 #include <vulkan/vulkan.h>
 
-static inline const char* string_VkObjectType(VkObjectType input_value)
-{
-    switch ((VkObjectType)input_value)
-    {
+static inline const char* string_VkObjectType(VkObjectType input_value) {
+    switch ((VkObjectType)input_value) {
         case VK_OBJECT_TYPE_QUERY_POOL:
             return "VK_OBJECT_TYPE_QUERY_POOL";
         case VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION:
