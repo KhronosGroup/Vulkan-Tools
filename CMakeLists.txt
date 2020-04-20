@@ -21,7 +21,9 @@
 cmake_minimum_required(VERSION 3.10.2)
 
 # Apple: Must be set before enable_language() or project() as it may influence configuration of the toolchain and flags.
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "Minimum OS X deployment version")
+set(CMAKE_OSX_DEPLOYMENT_TARGET
+    "10.12"
+    CACHE STRING "Minimum OS X deployment version")
 
 project(Vulkan-Tools)
 
@@ -69,8 +71,12 @@ endif()
 #   Env vars MOLTENVK_REPO_ROOT
 #  Fallback to FindVulkan operation using SDK install or system installed components.
 # ~~~
-set(VULKAN_HEADERS_INSTALL_DIR "HEADERS-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Headers install directory")
-set(VULKAN_LOADER_INSTALL_DIR "LOADER-NOTFOUND" CACHE PATH "Absolute path to a Vulkan-Loader install directory")
+set(VULKAN_HEADERS_INSTALL_DIR
+    "HEADERS-NOTFOUND"
+    CACHE PATH "Absolute path to a Vulkan-Headers install directory")
+set(VULKAN_LOADER_INSTALL_DIR
+    "LOADER-NOTFOUND"
+    CACHE PATH "Absolute path to a Vulkan-Loader install directory")
 if(WIN32 AND "${VULKAN_LOADER_INSTALL_DIR}" STREQUAL "LOADER-NOTFOUND")
     if(CMAKE_CL_64)
         set(VULKAN_LOADER_INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/x64")
@@ -79,10 +85,12 @@ if(WIN32 AND "${VULKAN_LOADER_INSTALL_DIR}" STREQUAL "LOADER-NOTFOUND")
     endif()
 endif()
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};${VULKAN_HEADERS_INSTALL_DIR};${VULKAN_LOADER_INSTALL_DIR};
-    $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
+                      $ENV{VULKAN_HEADERS_INSTALL_DIR};$ENV{VULKAN_LOADER_INSTALL_DIR})
 
 if(APPLE)
-    set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
+    set(MOLTENVK_REPO_ROOT
+        "MOLTENVK-NOTFOUND"
+        CACHE PATH "Absolute path to a MoltenVK repo directory")
     if(NOT MOLTENVK_REPO_ROOT AND NOT DEFINED ENV{MOLTENVK_REPO_ROOT})
         message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
     endif()
@@ -106,15 +114,15 @@ include(GNUInstallDirs)
 
 if(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     # Windows: if install locations not set by user, set install prefix to "<build_dir>\install".
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE)
+    set(CMAKE_INSTALL_PREFIX
+        "${CMAKE_BINARY_DIR}/install"
+        CACHE PATH "default install path" FORCE)
 endif()
 
 # uninstall target
 if(NOT TARGET uninstall)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-                   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-                   IMMEDIATE
-                   @ONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+                   IMMEDIATE @ONLY)
 
     add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
     set_target_properties(uninstall PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
@@ -149,10 +157,8 @@ endif()
 
 # Optional codegen target
 if(PYTHONINTERP_FOUND)
-    add_custom_target(VulkanTools_generated_source
-                      COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
-                              ${VulkanRegistry_DIR} --incremental
-                      )
+    add_custom_target(VulkanTools_generated_source COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
+                                                           ${VulkanRegistry_DIR} --incremental)
 else()
     message("WARNING: VulkanTools_generated_source target requires python 3")
 endif()

@@ -6,12 +6,28 @@ The source code for The Vulkan-Tools components is sponsored by Khronos and Luna
 * [Khronos Vulkan-Tools](https://github.com/KhronosGroup/Vulkan-Tools)
 
 
+### **The Vulkan Ecosystem Needs Your Help**
+
+There are a couple of methods to identify areas of need:
+* Examine the [issues list](https://github.com/KhronosGroup/Vulkan-Tools/issues)
+in this repository and look for issues that are of interest
+* If you have your own work in mind, please open an issue to describe
+  it and assign it to yourself.
+
+Finally, please feel free to contact any of the developers that are actively contributing should you
+wish to coordinate further.
+Please see the [section about Validation Layers](#special-considerations-for-vulkan-tools)
+later on this page.
+
 Repository Issue labels:
 
 * _Bug_:          These issues refer to invalid or broken functionality and are the highest priority.
-* _Enhancement_:  These issues refer to ideas for extending or improving tools and utilities
+* _Incomplete_:   These issues refer to missing functionality that is high priority. E.g. missing
+support for a feature in mock ICD, or vulkaninfo not reporting newly available information
+* _Enhancement_:  These issues refer to ideas for extending or improving the tools and utilities.
+* _Triaged_:      These issues have been assessed and/or reviewed
 
-It is the maintainers goal for all issues to be assigned within one business day of their submission. If you choose
+It is the maintainers goal for all issues to be assigned or triaged within one business day of their submission. If you choose
 to work on an issue that is assigned, simply coordinate with the current assignee.
 
 ### **How to Submit Fixes**
@@ -31,7 +47,9 @@ to work on an issue that is assigned, simply coordinate with the current assigne
 #### **Coding Conventions and Formatting**
 * Use the **[Google style guide](https://google.github.io/styleguide/cppguide.html)** for source code with the following exceptions:
     * The column limit is 132 (as opposed to the default value 80). The clang-format tool will handle this. See below.
-    * The indent is 4 spaces instead of the default 2 spaces. Again, the clang-format tool will handle this.
+    * The indent is 4 spaces instead of the default 2 spaces. Access modifier (e.g. `public:`) is indented 2 spaces instead of the
+      default 1 space. Again, the clang-format tool will handle this.
+    * The C++ file extension is `*.cpp` instead of the default `*.cc`.
     * If you can justify a reason for violating a rule in the guidelines, then you are free to do so. Be prepared to defend your
 decision during code review. This should be used responsibly. An example of a bad reason is "I don't like that rule." An example of
 a good reason is "This violates the style guide, but it improves type safety."
@@ -52,8 +70,8 @@ a good reason is "This violates the style guide, but it improves type safety."
 >        $ git commit
 
 * **Commit Messages**
-    * Limit the subject line to 50 characters -- this allows the information to display correctly in git/Github logs
-    * Begin subject line with a one-word component description followed by a colon (e.g. loader, layers, tests, etc.)
+    * Limit the subject line to 64 characters -- this allows the information to display correctly in git/GitHub logs
+    * Begin subject line with a one-word component description followed by a colon (e.g. build, docs, icd, vulkaninfo, cube, etc.)
     * Separate subject from body with a blank line
     * Wrap the body at 72 characters
     * Capitalize the subject line
@@ -66,15 +84,6 @@ That said, please ensure that the repository compiles and passes tests without e
 that to be accepted into the repository, the pull request must [pass all tests](#testing your changes) on all supported platforms
 -- the automatic Github Travis and AppVeyor continuous integration features will assist in enforcing this requirement.
 
-#### Generated Source Code
-
-The `icd/generated` directory contains source code that is created by several
-generator scripts in the `scripts` directory. All changes to these scripts _must_ be submitted with the
-corresponding generated output to keep the repository self-consistent. This requirement is enforced by both
-Travis CI and AppVeyor test configurations. Regenerate source files after modifying any of the generator
-scripts and before building and testing your changes. More details can be found in
-[BUILD.md](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/BUILD.md#generated-source-code).
-
 #### **Testing Your Changes**
 * Run the repository components with the Vulkan Validation Layers before and after each of your commits to check for any regressions.
 
@@ -86,9 +95,22 @@ scripts and before building and testing your changes. More details can be found 
 >        vulkaninfo
 * If you are adding or changing JSON output, please read
   [Validating vulkaninfo JSON output](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/vulkaninfo/json_validation_process.md).
-  **Note:** When adding new output to vulkaninfo, do NOT add JSON output unless the formmatting is defined by a schema.
 * Run tests that explicitly exercise your changes.
 * Feel free to subject your code changes to other tests as well!
+
+#### **GitHub Cloud CI Testing**
+Pull Requests to GitHub are tested in the cloud on Linux and Windows VMs. The Linux VMs use [Travis CI](https://travis-ci.org/KhronosGroup/Vulkan-Tools) with the sequence of commands driven by the [.travis.yml](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/.travis.yml) file. The Windows VMs use [AppVeyor](https://ci.appveyor.com/project/Khronoswebmaster/vulkan-tools/branch/master) with the sequence of commands driven by the [.appveyor.yml](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/.appveyor.yml) file.
+
+The Linux testing includes running `vulkaninfo`.
+
+#### **Special Considerations for Vulkan Tools**
+* **Vulkaninfo:**  When adding new output to `vulkaninfo`, do **not** add JSON output unless the formmatting is defined by a schema.
+* **Generated Source Code:**  The `icd/generated` directory contains source code that is created by several
+generator scripts in the `scripts` directory. All changes to these scripts _must_ be submitted with the
+corresponding generated output to keep the repository self-consistent. This requirement is enforced by both
+Travis CI and AppVeyor test configurations. Regenerate source files after modifying any of the generator
+scripts and before building and testing your changes. More details can be found in
+[BUILD.md](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/BUILD.md#generated-source-code).
 
 #### Coding Conventions for [CMake](http://cmake.org) files
 
@@ -99,7 +121,7 @@ scripts and before building and testing your changes. More details can be found 
   * Variable and keyword names are upper-case.
 * The format is defined by
   [cmake-format](https://github.com/cheshirekow/cmake_format)
-  using the `.cmake-format.py` file in the repository to define the settings.
+  using the `cmake-format.py` file in the repository to define the settings.
   See the cmake-format page for information about its simple markup for comments.
 * Disable reformatting of a block of comment lines by inserting
   a `# ~~~` comment line before and after that block.

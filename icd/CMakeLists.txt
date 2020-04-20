@@ -46,14 +46,20 @@ if(WIN32)
             foreach(config_file ${ICD_JSON_FILES})
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json src_json)
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${config_file}.json dst_json)
-                add_custom_target(${config_file}-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
+                add_custom_target(
+                    ${config_file}-json ALL
+                    COMMAND copy ${src_json} ${dst_json}
+                    VERBATIM)
                 set_target_properties(${config_file}-json PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${config_file}.json src_json)
                 file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${config_file}.json dst_json)
-                add_custom_target(${config_file}-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
+                add_custom_target(
+                    ${config_file}-json ALL
+                    COMMAND copy ${src_json} ${dst_json}
+                    VERBATIM)
             endforeach(config_file)
         endif()
     endif()
@@ -61,21 +67,23 @@ elseif(APPLE)
     # extra setup for out-of-tree builds
     if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         if(CMAKE_GENERATOR MATCHES "^Xcode.*")
-            add_custom_target(mk_icd_config_dir ALL
-                              COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
+            add_custom_target(mk_icd_config_dir ALL COMMAND ${CMAKE_COMMAND} -E make_directory
+                                                            ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
             foreach(config_file ${ICD_JSON_FILES})
-                add_custom_target(${config_file}-json ALL
-                                  DEPENDS mk_icd_config_dir
-                                  COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
-                                          $<CONFIG> ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${config_file}.json
-                                  VERBATIM)
+                add_custom_target(
+                    ${config_file}-json ALL
+                    DEPENDS mk_icd_config_dir
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json $<CONFIG>
+                            ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${config_file}.json
+                    VERBATIM)
             endforeach(config_file)
         else()
             foreach(config_file ${ICD_JSON_FILES})
-                add_custom_target(${config_file}-json ALL
-                                  COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
-                                          ${config_file}.json
-                                  VERBATIM)
+                add_custom_target(
+                    ${config_file}-json ALL
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${config_file}.json
+                            ${config_file}.json
+                    VERBATIM)
             endforeach(config_file)
         endif()
     endif()
@@ -83,10 +91,10 @@ else()
     # extra setup for out-of-tree builds
     if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         foreach(config_file ${ICD_JSON_FILES})
-            add_custom_target(${config_file}-json ALL
-                              COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json
-                                      ${config_file}.json
-                              VERBATIM)
+            add_custom_target(
+                ${config_file}-json ALL
+                COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json ${config_file}.json
+                VERBATIM)
         endforeach(config_file)
     endif()
 endif()
@@ -103,9 +111,10 @@ set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER
 if(WIN32)
     macro(add_vk_icd target)
         file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/VkICD_${target}.def DEF_FILE)
-        add_custom_target(copy-${target}-def-file ALL
-                          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} VkICD_${target}.def
-                          VERBATIM)
+        add_custom_target(
+            copy-${target}-def-file ALL
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} VkICD_${target}.def
+            VERBATIM)
         set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
         add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
         if(INSTALL_ICD)
@@ -130,12 +139,8 @@ else()
     endmacro()
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${VulkanHeaders_INCLUDE_DIR}
-                    ${WAYLAND_CLIENT_INCLUDE_DIR}
-                    ${CMAKE_CURRENT_BINARY_DIR}
-                    ${PROJECT_BINARY_DIR}
-                    ${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${VulkanHeaders_INCLUDE_DIR} ${WAYLAND_CLIENT_INCLUDE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR} ${PROJECT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
 if(WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
@@ -157,13 +162,14 @@ add_vk_icd(mock_icd generated/mock_icd.cpp generated/mock_icd.h)
 # JSON file(s) install targets. For Linux, need to remove the "./" from the library path before installing to system directories.
 if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
     foreach(config_file ${ICD_JSON_FILES})
-        add_custom_target(${config_file}-staging-json ALL
-                          COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                          COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                          COMMAND sed -i -e "/\"library_path\":/s$./libVkICD$libVkICD$"
-                                  ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
-                          VERBATIM
-                          DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json)
+        add_custom_target(
+            ${config_file}-staging-json ALL
+            COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
+            COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json ${CMAKE_CURRENT_BINARY_DIR}/staging-json
+            COMMAND sed -i -e "/\"library_path\":/s$./libVkICD$libVkICD$"
+                    ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
+            VERBATIM
+            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${config_file}.json)
         install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${config_file}.json
                 DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d)
     endforeach(config_file)
