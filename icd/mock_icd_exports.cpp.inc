@@ -22,6 +22,8 @@ extern "C" {
 #define EXPORT __attribute__((visibility("default")))
 #elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
 #define EXPORT __attribute__((visibility("default")))
+#elif defined(_WIN32)
+#define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
 #endif
@@ -54,6 +56,8 @@ EXPORT PFN_vkVoidFunction vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, c
 // opt out of Loader version 0 by not exporting
 // vkGetInstanceProcAddr, vkEnumerateInstanceExtensionProperties, and vkCreateInstance
 
-// opt out of WSI handling by not exporting any vkCreate*SurfaceKHR and vkDestroySurfaceKHR
+// opt in to WSI handling by exporting all VkSurfaceKHR commands (loader version 3)
+// TODO(krOoze): Needs some VK_USE_PLATFORM_* in cmake to work really everywhere
+#include "generated/mock_icd_wsi_exports.cpp.inc"
 
 }  // extern "C"

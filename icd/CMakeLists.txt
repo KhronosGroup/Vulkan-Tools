@@ -102,12 +102,7 @@ set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER
 
 if(WIN32)
     macro(add_vk_icd target)
-        file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/VkICD_${target}.def DEF_FILE)
-        add_custom_target(copy-${target}-def-file ALL
-                          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} VkICD_${target}.def
-                          VERBATIM)
-        set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
-        add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
+        add_library(VkICD_${target} SHARED ${ARGN})
         if(INSTALL_ICD)
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
@@ -158,6 +153,7 @@ add_vk_icd(
     mock_icd_custom_commands.cpp.inc
     mock_icd_exports.cpp.inc
     generated/mock_icd_commands.cpp.inc
+    generated/mock_icd_wsi_exports.cpp.inc
     mock_icd.h
     generated/mock_icd_commands.h
     generated/mock_icd_extension_list.h

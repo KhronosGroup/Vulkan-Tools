@@ -569,6 +569,7 @@ class MockICDOutputGenerator(OutputGenerator):
         self.namespace = 'mock_icd'
         self.extension_blacklist = ['VK_EXT_validation_cache']
         # Internal state - accumulators for different inner block text
+        self.genNoVkPrefix = False
         self.current_feature = ''
         self.sections = {'command': []}
         self.intercepts = []
@@ -707,7 +708,9 @@ class MockICDOutputGenerator(OutputGenerator):
     def endFeature(self):
         if self.genOpts.helper_file_type == 'ext_list':
             pass
-        elif self.genOpts.helper_file_type == 'commands_header' or self.genOpts.helper_file_type == 'mock_icd_source':
+        elif self.genOpts.helper_file_type == 'commands_header' \
+          or self.genOpts.helper_file_type == 'mock_icd_source' \
+          or self.genOpts.helper_file_type == 'wsi_exports':
             if self.emit and self.featureName not in self.extension_blacklist \
             and len(self.sections['command']) != 0:
                 if self.genOpts.protectFeature:
@@ -730,10 +733,14 @@ class MockICDOutputGenerator(OutputGenerator):
 
     # Command generation
     def genCmd(self, cmdinfo, name, alias):
+        OutputGenerator.genCmd(self, cmdinfo, name, alias)
+
         if self.current_feature in self.extension_blacklist:
             return
 
-        # TODO(krOoze): lot of mess in below I do not want to detangle rn
+        self.genNoVkPrefix = False
+        vkdecls = self.makeCDecls(cmdinfo.elem)
+        self.genNoVkPrefix = True
         decls = self.makeCDecls(cmdinfo.elem)
 
         if self.genOpts.helper_file_type == 'ext_list':
@@ -746,7 +753,18 @@ class MockICDOutputGenerator(OutputGenerator):
             if (self.featureExtraProtect != None):
                 self.intercepts += [ '#endif' ]
             return
+        elif self.genOpts.helper_file_type == 'wsi_exports':
+            # if command takes VkSurfaceKHR, then export it
+            if any( param_t.text == 'VkSurfaceKHR' for param_t in cmdinfo.elem.findall('param/type')):
+                result_type = cmdinfo.elem.find('proto/type')
+                if result_type != None: return_string = 'return '
+                else: return_string = ''
+                param_list = ', '.join( param.text for param in cmdinfo.elem.findall('param/name'))
 
+                self.appendSection('command', 'EXPORT %s{\n    %s%s(%s);\n}' % (vkdecls[0][:-1], return_string, name[2:], param_list))
+            return
+
+        # TODO(krOoze): lot of mess in below I do not want to detangle rn
         if name in MANUAL_COMMANDS:
             self.appendSection('command', '')
             if name not in CUSTOM_C_INTERCEPTS:
@@ -762,8 +780,6 @@ class MockICDOutputGenerator(OutputGenerator):
         self.intercepts += [ '    {"%s", (void*)%s},' % (name,name[2:]) ]
         if (self.featureExtraProtect != None):
             self.intercepts += [ '#endif' ]
-
-        OutputGenerator.genCmd(self, cmdinfo, name, alias)
         #
         self.appendSection('command', '')
         self.appendSection('command', 'static %s' % (decls[0][:-1]))
@@ -848,4 +864,7 @@ class MockICDOutputGenerator(OutputGenerator):
     #
     # override makeProtoName to drop the "vk" prefix
     def makeProtoName(self, name, tail):
-        return self.genOpts.apientry + name[2:] + tail
+        if self.genNoVkPrefix:
+            return self.genOpts.apientry + name[2:] + tail
+        else:
+            return self.genOpts.apientry + name + tail

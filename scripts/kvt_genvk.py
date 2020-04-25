@@ -226,6 +226,31 @@ def makeGenOpts(args):
             helper_file_type='mock_icd_source')
     ]
 
+    # Options for mock ICD cpp
+    genOpts['mock_icd_wsi_exports.cpp.inc'] = [
+        MockICDOutputGenerator,
+        MockICDGeneratorOptions(
+            conventions=conventions,
+            filename='mock_icd_wsi_exports.cpp.inc',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False,
+            helper_file_type='wsi_exports')
+    ]
+
     # Options for vulkaninfo.hpp
     genOpts['vulkaninfo.hpp'] = [
         VulkanInfoGenerator,

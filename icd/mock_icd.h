@@ -19,6 +19,7 @@
 
 #include <mutex>
 
+#define VK_NO_PROTOTYPES
 #include "vulkan/vk_icd.h"
 
 #include "generated/mock_icd_extension_list.h"

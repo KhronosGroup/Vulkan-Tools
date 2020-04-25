@@ -45,7 +45,8 @@ def main(argv):
                  filename] for filename in ['vk_typemap_helper.h',
                                             'mock_icd_extension_list.h',
                                             'mock_icd_commands.h',
-                                            'mock_icd_commands.cpp.inc']]
+                                            'mock_icd_commands.cpp.inc',
+                                            'mock_icd_wsi_exports.cpp.inc']]
 
     repo_dir = common_codegen.repo_relative('icd/generated')
 

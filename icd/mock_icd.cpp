@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#define VK_NO_PROTOTYPES
 #include "vulkan/vk_icd.h"
 
 #include "generated/vk_typemap_helper.h"
