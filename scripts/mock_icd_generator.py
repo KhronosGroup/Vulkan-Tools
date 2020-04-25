@@ -28,525 +28,31 @@ import os,re,sys
 from generator import *
 from common_codegen import *
 
+MANUAL_COMMANDS = [
+    # Include functions here to be interecpted w/ manually implemented function bodies
+    'vkGetInstanceProcAddr',
+    'vkEnumerateInstanceVersion',
+    'vkEnumerateInstanceExtensionProperties',
+    'vkEnumerateInstanceLayerProperties',
+    'vkCreateInstance',
+    'vkDestroyInstance',
+    'vkEnumeratePhysicalDevices',
+    'vkEnumerateDeviceExtensionProperties',
+    'vkEnumerateDeviceLayerProperties',
+    'vkGetPhysicalDeviceQueueFamilyProperties',
+    'vkGetPhysicalDeviceQueueFamilyProperties2',
+    'vkCreateDevice',
+    'vkDestroyDevice',
+    'vkGetDeviceProcAddr',
+    'vkGetDeviceQueue',
+    'vkGetDeviceQueue2',
+]
 
-# Mock header code
-HEADER_C_CODE = '''
-using mutex_t = std::mutex;
-using lock_guard_t = std::lock_guard<mutex_t>;
-using unique_lock_t = std::unique_lock<mutex_t>;
-
-static mutex_t global_lock;
-static uint64_t global_unique_handle = 1;
-static const uint32_t SUPPORTED_LOADER_ICD_INTERFACE_VERSION = 5;
-static uint32_t loader_interface_version = 0;
-static bool negotiate_loader_icd_interface_called = false;
-static void* CreateDispObjHandle() {
-    auto handle = new VK_LOADER_DATA;
-    set_loader_magic_value(handle);
-    return handle;
+ALIAS_COMMANDS = {
+    'vkGetPhysicalDeviceQueueFamilyProperties2KHR': 'vkGetPhysicalDeviceQueueFamilyProperties2'
 }
-static void DestroyDispObjHandle(void* handle) {
-    delete reinterpret_cast<VK_LOADER_DATA*>(handle);
-}
-'''
-
-# Manual code at the top of the cpp source file
-SOURCE_CPP_PREFIX = '''
-using std::unordered_map;
-
-static constexpr uint32_t icd_physical_device_count = 1;
-static unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_device_count>> physical_device_map;
-
-// Map device memory handle to any mapped allocations that we'll need to free on unmap
-static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
-
-// Map device memory allocation handle to the size
-static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
-
-static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
-static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
-static unordered_map<VkDevice, unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
-
-static constexpr uint32_t icd_swapchain_image_count = 1;
-static unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
-
-// TODO: Would like to codegen this but limits aren't in XML
-static VkPhysicalDeviceLimits SetLimits(VkPhysicalDeviceLimits *limits) {
-    limits->maxImageDimension1D = 4096;
-    limits->maxImageDimension2D = 4096;
-    limits->maxImageDimension3D = 256;
-    limits->maxImageDimensionCube = 4096;
-    limits->maxImageArrayLayers = 256;
-    limits->maxTexelBufferElements = 65536;
-    limits->maxUniformBufferRange = 16384;
-    limits->maxStorageBufferRange = 134217728;
-    limits->maxPushConstantsSize = 128;
-    limits->maxMemoryAllocationCount = 4096;
-    limits->maxSamplerAllocationCount = 4000;
-    limits->bufferImageGranularity = 1;
-    limits->sparseAddressSpaceSize = 2147483648;
-    limits->maxBoundDescriptorSets = 4;
-    limits->maxPerStageDescriptorSamplers = 16;
-    limits->maxPerStageDescriptorUniformBuffers = 12;
-    limits->maxPerStageDescriptorStorageBuffers = 4;
-    limits->maxPerStageDescriptorSampledImages = 16;
-    limits->maxPerStageDescriptorStorageImages = 4;
-    limits->maxPerStageDescriptorInputAttachments = 4;
-    limits->maxPerStageResources = 128;
-    limits->maxDescriptorSetSamplers = 96;
-    limits->maxDescriptorSetUniformBuffers = 72;
-    limits->maxDescriptorSetUniformBuffersDynamic = 8;
-    limits->maxDescriptorSetStorageBuffers = 24;
-    limits->maxDescriptorSetStorageBuffersDynamic = 4;
-    limits->maxDescriptorSetSampledImages = 96;
-    limits->maxDescriptorSetStorageImages = 24;
-    limits->maxDescriptorSetInputAttachments = 4;
-    limits->maxVertexInputAttributes = 16;
-    limits->maxVertexInputBindings = 16;
-    limits->maxVertexInputAttributeOffset = 2047;
-    limits->maxVertexInputBindingStride = 2048;
-    limits->maxVertexOutputComponents = 64;
-    limits->maxTessellationGenerationLevel = 64;
-    limits->maxTessellationPatchSize = 32;
-    limits->maxTessellationControlPerVertexInputComponents = 64;
-    limits->maxTessellationControlPerVertexOutputComponents = 64;
-    limits->maxTessellationControlPerPatchOutputComponents = 120;
-    limits->maxTessellationControlTotalOutputComponents = 2048;
-    limits->maxTessellationEvaluationInputComponents = 64;
-    limits->maxTessellationEvaluationOutputComponents = 64;
-    limits->maxGeometryShaderInvocations = 32;
-    limits->maxGeometryInputComponents = 64;
-    limits->maxGeometryOutputComponents = 64;
-    limits->maxGeometryOutputVertices = 256;
-    limits->maxGeometryTotalOutputComponents = 1024;
-    limits->maxFragmentInputComponents = 64;
-    limits->maxFragmentOutputAttachments = 4;
-    limits->maxFragmentDualSrcAttachments = 1;
-    limits->maxFragmentCombinedOutputResources = 4;
-    limits->maxComputeSharedMemorySize = 16384;
-    limits->maxComputeWorkGroupCount[0] = 65535;
-    limits->maxComputeWorkGroupCount[1] = 65535;
-    limits->maxComputeWorkGroupCount[2] = 65535;
-    limits->maxComputeWorkGroupInvocations = 128;
-    limits->maxComputeWorkGroupSize[0] = 128;
-    limits->maxComputeWorkGroupSize[1] = 128;
-    limits->maxComputeWorkGroupSize[2] = 64;
-    limits->subPixelPrecisionBits = 4;
-    limits->subTexelPrecisionBits = 4;
-    limits->mipmapPrecisionBits = 4;
-    limits->maxDrawIndexedIndexValue = UINT32_MAX;
-    limits->maxDrawIndirectCount = UINT16_MAX;
-    limits->maxSamplerLodBias = 2.0f;
-    limits->maxSamplerAnisotropy = 16;
-    limits->maxViewports = 16;
-    limits->maxViewportDimensions[0] = 4096;
-    limits->maxViewportDimensions[1] = 4096;
-    limits->viewportBoundsRange[0] = -8192;
-    limits->viewportBoundsRange[1] = 8191;
-    limits->viewportSubPixelBits = 0;
-    limits->minMemoryMapAlignment = 64;
-    limits->minTexelBufferOffsetAlignment = 16;
-    limits->minUniformBufferOffsetAlignment = 16;
-    limits->minStorageBufferOffsetAlignment = 16;
-    limits->minTexelOffset = -8;
-    limits->maxTexelOffset = 7;
-    limits->minTexelGatherOffset = -8;
-    limits->maxTexelGatherOffset = 7;
-    limits->minInterpolationOffset = 0.0f;
-    limits->maxInterpolationOffset = 0.5f;
-    limits->subPixelInterpolationOffsetBits = 4;
-    limits->maxFramebufferWidth = 4096;
-    limits->maxFramebufferHeight = 4096;
-    limits->maxFramebufferLayers = 256;
-    limits->framebufferColorSampleCounts = 0x7F;
-    limits->framebufferDepthSampleCounts = 0x7F;
-    limits->framebufferStencilSampleCounts = 0x7F;
-    limits->framebufferNoAttachmentsSampleCounts = 0x7F;
-    limits->maxColorAttachments = 4;
-    limits->sampledImageColorSampleCounts = 0x7F;
-    limits->sampledImageIntegerSampleCounts = 0x7F;
-    limits->sampledImageDepthSampleCounts = 0x7F;
-    limits->sampledImageStencilSampleCounts = 0x7F;
-    limits->storageImageSampleCounts = 0x7F;
-    limits->maxSampleMaskWords = 1;
-    limits->timestampComputeAndGraphics = VK_TRUE;
-    limits->timestampPeriod = 1;
-    limits->maxClipDistances = 8;
-    limits->maxCullDistances = 8;
-    limits->maxCombinedClipAndCullDistances = 8;
-    limits->discreteQueuePriorities = 2;
-    limits->pointSizeRange[0] = 1.0f;
-    limits->pointSizeRange[1] = 64.0f;
-    limits->lineWidthRange[0] = 1.0f;
-    limits->lineWidthRange[1] = 8.0f;
-    limits->pointSizeGranularity = 1.0f;
-    limits->lineWidthGranularity = 1.0f;
-    limits->strictLines = VK_TRUE;
-    limits->standardSampleLocations = VK_TRUE;
-    limits->optimalBufferCopyOffsetAlignment = 1;
-    limits->optimalBufferCopyRowPitchAlignment = 1;
-    limits->nonCoherentAtomSize = 256;
-
-    return *limits;
-}
-
-void SetBoolArrayTrue(VkBool32* bool_array, uint32_t num_bools)
-{
-    for (uint32_t i = 0; i < num_bools; ++i) {
-        bool_array[i] = VK_TRUE;
-    }
-}
-'''
-
-# Manual code at the end of the cpp source file
-SOURCE_CPP_POSTFIX = '''
-
-static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetPhysicalDeviceProcAddr(VkInstance instance, const char *funcName) {
-    // TODO: This function should only care about physical device functions and return nullptr for other functions
-    const auto &item = name_to_funcptr_map.find(funcName);
-    if (item != name_to_funcptr_map.end()) {
-        return reinterpret_cast<PFN_vkVoidFunction>(item->second);
-    }
-    // Mock should intercept all functions so if we get here just return null
-    return nullptr;
-}
-
-} // namespace vkmock
-
-#if defined(__GNUC__) && __GNUC__ >= 4
-#define EXPORT __attribute__((visibility("default")))
-#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
-#define EXPORT __attribute__((visibility("default")))
-#else
-#define EXPORT
-#endif
-
-extern "C" {
-
-EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetInstanceProcAddr(VkInstance instance, const char* pName) {
-    if (!vkmock::negotiate_loader_icd_interface_called) {
-        vkmock::loader_interface_version = 1;
-    }
-    return vkmock::GetInstanceProcAddr(instance, pName);
-}
-
-EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, const char* pName) {
-    return vkmock::GetPhysicalDeviceProcAddr(instance, pName);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vk_icdNegotiateLoaderICDInterfaceVersion(uint32_t* pSupportedVersion) {
-    vkmock::negotiate_loader_icd_interface_called = true;
-    vkmock::loader_interface_version = *pSupportedVersion;
-    if (*pSupportedVersion > vkmock::SUPPORTED_LOADER_ICD_INTERFACE_VERSION) {
-        *pSupportedVersion = vkmock::SUPPORTED_LOADER_ICD_INTERFACE_VERSION;
-    }
-    return VK_SUCCESS;
-}
-
-
-EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(
-    VkInstance                                  instance,
-    VkSurfaceKHR                                surface,
-    const VkAllocationCallbacks*                pAllocator)
-{
-    vkmock::DestroySurfaceKHR(instance, surface, pAllocator);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t                                    queueFamilyIndex,
-    VkSurfaceKHR                                surface,
-    VkBool32*                                   pSupported)
-{
-    return vkmock::GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    VkSurfaceCapabilitiesKHR*                   pSurfaceCapabilities)
-{
-    return vkmock::GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pSurfaceFormatCount,
-    VkSurfaceFormatKHR*                         pSurfaceFormats)
-{
-    return vkmock::GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pPresentModeCount,
-    VkPresentModeKHR*                           pPresentModes)
-{
-    return vkmock::GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayPlaneSurfaceKHR(
-    VkInstance                                  instance,
-    const VkDisplaySurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-
-#ifdef VK_USE_PLATFORM_XLIB_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(
-    VkInstance                                  instance,
-    const VkXlibSurfaceCreateInfoKHR*           pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_XLIB_KHR */
-
-#ifdef VK_USE_PLATFORM_XCB_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(
-    VkInstance                                  instance,
-    const VkXcbSurfaceCreateInfoKHR*            pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_XCB_KHR */
-
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(
-    VkInstance                                  instance,
-    const VkWaylandSurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_WAYLAND_KHR */
-
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(
-    VkInstance                                  instance,
-    const VkAndroidSurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_ANDROID_KHR */
-
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(
-    VkInstance                                  instance,
-    const VkWin32SurfaceCreateInfoKHR*          pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_WIN32_KHR */
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModesKHR(
-    VkDevice                                    device,
-    VkSurfaceKHR                                surface,
-    VkDeviceGroupPresentModeFlagsKHR*           pModes)
-{
-    return vkmock::GetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pRectCount,
-    VkRect2D*                                   pRects)
-{
-    return vkmock::GetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
-}
-
-#ifdef VK_USE_PLATFORM_VI_NN
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(
-    VkInstance                                  instance,
-    const VkViSurfaceCreateInfoNN*              pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_VI_NN */
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    VkSurfaceCapabilities2EXT*                  pSurfaceCapabilities)
-{
-    return vkmock::GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
-}
-
-#ifdef VK_USE_PLATFORM_IOS_MVK
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(
-    VkInstance                                  instance,
-    const VkIOSSurfaceCreateInfoMVK*            pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_IOS_MVK */
-
-#ifdef VK_USE_PLATFORM_MACOS_MVK
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(
-    VkInstance                                  instance,
-    const VkMacOSSurfaceCreateInfoMVK*          pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_MACOS_MVK */
-
-} // end extern "C"
-
-'''
 
 CUSTOM_C_INTERCEPTS = {
-'vkCreateInstance': '''
-    // TODO: If loader ver <=4 ICD must fail with VK_ERROR_INCOMPATIBLE_DRIVER for all vkCreateInstance calls with
-    //  apiVersion set to > Vulkan 1.0 because the loader is still at interface version <= 4. Otherwise, the
-    //  ICD should behave as normal.
-    if (loader_interface_version <= 4) {
-        return VK_ERROR_INCOMPATIBLE_DRIVER;
-    }
-    *pInstance = (VkInstance)CreateDispObjHandle();
-    for (auto& physical_device : physical_device_map[*pInstance])
-        physical_device = (VkPhysicalDevice)CreateDispObjHandle();
-    // TODO: If emulating specific device caps, will need to add intelligence here
-    return VK_SUCCESS;
-''',
-'vkDestroyInstance': '''
-    if (instance) {
-        for (const auto physical_device : physical_device_map.at(instance))
-            DestroyDispObjHandle((void*)physical_device);
-        physical_device_map.erase(instance);
-        DestroyDispObjHandle((void*)instance);
-    }
-''',
-'vkEnumeratePhysicalDevices': '''
-    VkResult result_code = VK_SUCCESS;
-    if (pPhysicalDevices) {
-        const auto return_count = (std::min)(*pPhysicalDeviceCount, icd_physical_device_count);
-        for (uint32_t i = 0; i < return_count; ++i) pPhysicalDevices[i] = physical_device_map.at(instance)[i];
-        if (return_count < icd_physical_device_count) result_code = VK_INCOMPLETE;
-        *pPhysicalDeviceCount = return_count;
-    } else {
-        *pPhysicalDeviceCount = icd_physical_device_count;
-    }
-    return result_code;
-''',
-'vkCreateDevice': '''
-    *pDevice = (VkDevice)CreateDispObjHandle();
-    // TODO: If emulating specific device caps, will need to add intelligence here
-    return VK_SUCCESS;
-''',
-'vkDestroyDevice': '''
-    unique_lock_t lock(global_lock);
-    // First destroy sub-device objects
-    // Destroy Queues
-    for (auto dev_queue_map_pair : queue_map) {
-        for (auto queue_family_map_pair : queue_map[dev_queue_map_pair.first]) {
-            for (auto index_queue_pair : queue_map[dev_queue_map_pair.first][queue_family_map_pair.first]) {
-                DestroyDispObjHandle((void*)index_queue_pair.second);
-            }
-        }
-    }
-    queue_map.clear();
-    buffer_map.erase(device);
-    image_memory_size_map.erase(device);
-    // Now destroy device
-    DestroyDispObjHandle((void*)device);
-    // TODO: If emulating specific device caps, will need to add intelligence here
-''',
-'vkGetDeviceQueue': '''
-    unique_lock_t lock(global_lock);
-    auto queue = queue_map[device][queueFamilyIndex][queueIndex];
-    if (queue) {
-        *pQueue = queue;
-    } else {
-        *pQueue = queue_map[device][queueFamilyIndex][queueIndex] = (VkQueue)CreateDispObjHandle();
-    }
-    // TODO: If emulating specific device caps, will need to add intelligence here
-    return;
-''',
-'vkGetDeviceQueue2': '''
-    GetDeviceQueue(device, pQueueInfo->queueFamilyIndex, pQueueInfo->queueIndex, pQueue);
-    // TODO: Add further support for GetDeviceQueue2 features
-''',
-'vkEnumerateInstanceLayerProperties': '''
-    return VK_SUCCESS;
-''',
-'vkEnumerateDeviceLayerProperties': '''
-    return VK_SUCCESS;
-''',
-'vkEnumerateInstanceExtensionProperties': '''
-    // If requesting number of extensions, return that
-    if (!pLayerName) {
-        if (!pProperties) {
-            *pPropertyCount = (uint32_t)instance_extension_map.size();
-        } else {
-            uint32_t i = 0;
-            for (const auto &name_ver_pair : instance_extension_map) {
-                if (i == *pPropertyCount) {
-                    break;
-                }
-                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(), sizeof(pProperties[i].extensionName));
-                pProperties[i].extensionName[sizeof(pProperties[i].extensionName) - 1] = 0;
-                pProperties[i].specVersion = name_ver_pair.second;
-                ++i;
-            }
-            if (i != instance_extension_map.size()) {
-                return VK_INCOMPLETE;
-            }
-        }
-    }
-    // If requesting extension properties, fill in data struct for number of extensions
-    return VK_SUCCESS;
-''',
-'vkEnumerateDeviceExtensionProperties': '''
-    // If requesting number of extensions, return that
-    if (!pLayerName) {
-        if (!pProperties) {
-            *pPropertyCount = (uint32_t)device_extension_map.size();
-        } else {
-            uint32_t i = 0;
-            for (const auto &name_ver_pair : device_extension_map) {
-                if (i == *pPropertyCount) {
-                    break;
-                }
-                std::strncpy(pProperties[i].extensionName, name_ver_pair.first.c_str(), sizeof(pProperties[i].extensionName));
-                pProperties[i].extensionName[sizeof(pProperties[i].extensionName) - 1] = 0;
-                pProperties[i].specVersion = name_ver_pair.second;
-                ++i;
-            }
-            if (i != device_extension_map.size()) {
-                return VK_INCOMPLETE;
-            }
-        }
-    }
-    // If requesting extension properties, fill in data struct for number of extensions
-    return VK_SUCCESS;
-''',
 'vkGetPhysicalDeviceSurfacePresentModesKHR': '''
     // Currently always say that all present modes are supported
     if (!pPresentModes) {
@@ -660,20 +166,6 @@ CUSTOM_C_INTERCEPTS = {
     GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, pSurfaceInfo->surface, &pSurfaceCapabilities->surfaceCapabilities);
     return VK_SUCCESS;
 ''',
-'vkGetInstanceProcAddr': '''
-    if (!negotiate_loader_icd_interface_called) {
-        loader_interface_version = 0;
-    }
-    const auto &item = name_to_funcptr_map.find(pName);
-    if (item != name_to_funcptr_map.end()) {
-        return reinterpret_cast<PFN_vkVoidFunction>(item->second);
-    }
-    // Mock should intercept all functions so if we get here just return null
-    return nullptr;
-''',
-'vkGetDeviceProcAddr': '''
-    return GetInstanceProcAddr(nullptr, pName);
-''',
 'vkGetPhysicalDeviceMemoryProperties': '''
     pMemoryProperties->memoryTypeCount = 2;
     pMemoryProperties->memoryTypes[0].propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
@@ -688,25 +180,6 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetPhysicalDeviceMemoryProperties2KHR': '''
     GetPhysicalDeviceMemoryProperties(physicalDevice, &pMemoryProperties->memoryProperties);
-''',
-'vkGetPhysicalDeviceQueueFamilyProperties': '''
-    if (!pQueueFamilyProperties) {
-        *pQueueFamilyPropertyCount = 1;
-    } else {
-        if (*pQueueFamilyPropertyCount) {
-            pQueueFamilyProperties[0].queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
-            pQueueFamilyProperties[0].queueCount = 1;
-            pQueueFamilyProperties[0].timestampValidBits = 0;
-            pQueueFamilyProperties[0].minImageTransferGranularity = {1,1,1};
-        }
-    }
-''',
-'vkGetPhysicalDeviceQueueFamilyProperties2KHR': '''
-    if (pQueueFamilyPropertyCount && pQueueFamilyProperties) {
-        GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, &pQueueFamilyProperties->queueFamilyProperties);
-    } else {
-        GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, nullptr);
-    }
 ''',
 'vkGetPhysicalDeviceFeatures': '''
     uint32_t num_bools = sizeof(VkPhysicalDeviceFeatures) / sizeof(VkBool32);
@@ -771,7 +244,7 @@ CUSTOM_C_INTERCEPTS = {
     pProperties->deviceID = 0xf005ba11;
     pProperties->deviceType = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
     //std::string devName = "Vulkan Mock Device";
-    strcpy(pProperties->deviceName, "Vulkan Mock Device");
+    std::strcpy(pProperties->deviceName, "Vulkan Mock Device");
     pProperties->pipelineCacheUUID[0] = 18;
     pProperties->limits = SetLimits(&pProperties->limits);
     pProperties->sparseProperties = { VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE };
@@ -1067,6 +540,7 @@ class MockICDGeneratorOptions(GeneratorOptions):
         self.indentFuncProto = indentFuncProto
         self.indentFuncPointer = indentFuncPointer
         self.alignFuncParam  = alignFuncParam
+        self.helper_file_type = helper_file_type
 
 # MockICDOutputGenerator - subclass of OutputGenerator.
 # Generates a mock vulkan ICD.
@@ -1087,19 +561,19 @@ class MockICDGeneratorOptions(GeneratorOptions):
 # genEnum(enuminfo, name)
 # genCmd(cmdinfo)
 class MockICDOutputGenerator(OutputGenerator):
-    """Generate specified API interfaces in a specific style, such as a C header"""
-    # This is an ordered list of sections in the header file.
-    TYPE_SECTIONS = ['include', 'define', 'basetype', 'handle', 'enum',
-                     'group', 'bitmask', 'funcpointer', 'struct']
-    ALL_SECTIONS = TYPE_SECTIONS + ['command']
     def __init__(self,
                  errFile = sys.stderr,
                  warnFile = sys.stderr,
                  diagFile = sys.stdout):
         OutputGenerator.__init__(self, errFile, warnFile, diagFile)
+        self.namespace = 'mock_icd'
+        self.extension_blacklist = ['VK_EXT_validation_cache']
         # Internal state - accumulators for different inner block text
-        self.sections = dict([(section, []) for section in self.ALL_SECTIONS])
+        self.current_feature = ''
+        self.sections = {'command': []}
         self.intercepts = []
+        self.device_extensions = []
+        self.instance_extensions = []
 
     # Check if the parameter passed in is a pointer to an array
     def paramIsArray(self, param):
@@ -1129,170 +603,142 @@ class MockICDOutputGenerator(OutputGenerator):
         else:
             return False
 
+    def genHeaderIncludeGuard(self):
+        if self.genOpts.protectFile:
+            self.include_guard = 'VULKAN_TOOLS_' + re.sub(r'\.h', '_H_', os.path.basename(self.genOpts.filename)).upper()
+            write('#ifndef', self.include_guard, file=self.outFile)
+            write('#define', self.include_guard, '1', file=self.outFile)
+            self.newline()
+
+    def beginExtensionListFile(self):
+        self.genHeaderIncludeGuard()
+        write('#include <array>', file=self.outFile)
+        self.newline()
+        write('#include "vulkan/vk_icd.h"', file=self.outFile)
+        self.newline()
+        write('namespace', self.namespace, '{', file=self.outFile)
+        self.newline()
+
+    def beginCommandsHeaderFile(self):
+        self.genHeaderIncludeGuard()
+        write('#include <string>', file=self.outFile)
+        write('#include <unordered_map>', file=self.outFile)
+        self.newline()
+        write('#include "vulkan/vk_icd.h"', file=self.outFile)
+        self.newline()
+        write('namespace', self.namespace, '{', file=self.outFile)
+        self.newline()
+
+    def beginCommandsSourceFile(self):
+        write('namespace', self.namespace, '{', file=self.outFile)
+        self.newline()
+
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
-        # C-specific
-        #
-        # Multiple inclusion protection & C++ namespace.
-        self.header = False
-        if (genOpts.protectFile and self.genOpts.filename and 'h' == self.genOpts.filename[-1]):
-            self.header = True
-            headerSym = '__' + re.sub(r'\.h', '_h_', os.path.basename(self.genOpts.filename))
-            write('#ifndef', headerSym, file=self.outFile)
-            write('#define', headerSym, '1', file=self.outFile)
-            self.newline()
-        #
-        # User-supplied prefix text, if any (list of strings)
-        if (genOpts.prefixText):
+
+        if genOpts.prefixText:
             for s in genOpts.prefixText:
                 write(s, file=self.outFile)
-        if self.header:
-            write('#include <unordered_map>', file=self.outFile)
-            write('#include <mutex>', file=self.outFile)
-            write('#include <string>', file=self.outFile)
-            write('#include <cstring>', file=self.outFile)
-            write('#include "vulkan/vk_icd.h"', file=self.outFile)
-        else:
-            write('#include "mock_icd.h"', file=self.outFile)
-            write('#include <stdlib.h>', file=self.outFile)
-            write('#include <algorithm>', file=self.outFile)
-            write('#include <array>', file=self.outFile)
-            write('#include <vector>', file=self.outFile)
-            write('#include "vk_typemap_helper.h"', file=self.outFile)
 
-        write('namespace vkmock {', file=self.outFile)
-        if self.header:
-            self.newline()
-            write(HEADER_C_CODE, file=self.outFile)
-            # Include all of the extensions in ICD except specific ignored ones
-            device_exts = []
-            instance_exts = []
-            # Ignore extensions that ICDs should not implement or are not safe to report
-            ignore_exts = ['VK_EXT_validation_cache']
-            for ext in self.registry.tree.findall("extensions/extension"):
-                if ext.attrib['supported'] != 'disabled': # Only include enabled extensions
-                    if (ext.attrib['name'] in ignore_exts):
-                        pass
-                    elif (ext.attrib.get('type') and 'instance' == ext.attrib['type']):
-                        instance_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext[0][0].attrib['value']))
-                    else:
-                        device_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext[0][0].attrib['value']))
-            write('// Map of instance extension name to version', file=self.outFile)
-            write('static const std::unordered_map<std::string, uint32_t> instance_extension_map = {', file=self.outFile)
-            write('\n'.join(instance_exts), file=self.outFile)
-            write('};', file=self.outFile)
-            write('// Map of device extension name to version', file=self.outFile)
-            write('static const std::unordered_map<std::string, uint32_t> device_extension_map = {', file=self.outFile)
-            write('\n'.join(device_exts), file=self.outFile)
-            write('};', file=self.outFile)
+        if self.genOpts.helper_file_type == 'ext_list':
+            self.beginExtensionListFile()
+        elif self.genOpts.helper_file_type == 'commands_header':
+            self.beginCommandsHeaderFile()
+        elif self.genOpts.helper_file_type == 'mock_icd_source':
+            self.beginCommandsSourceFile()
 
-        else:
-            self.newline()
-            write(SOURCE_CPP_PREFIX, file=self.outFile)
+    def genHeaderFooter(self):
+        self.newline()
+        write('} // namespace', self.namespace, file=self.outFile)
+        if self.include_guard is not None:
+            write('#endif', '//', self.include_guard, file=self.outFile)
+
+    def endExtensionListFile(self):
+        write('constexpr std::array<VkExtensionProperties, %d> kInstanceExtensions = {{' % len(self.instance_extensions), file=self.outFile)
+        write(',\n'.join('    {"' + e['name'] + '", ' + e['revision'] + '}' for e in self.instance_extensions), file=self.outFile)
+        write('}};', file=self.outFile)
+        self.newline()
+        write('constexpr std::array<VkExtensionProperties, %d>  kDeviceExtensions = {{'  % len(self.device_extensions), file=self.outFile)
+        write(',\n'.join('    {"' + e['name'] + '", ' + e['revision'] + '}' for e in self.device_extensions), file=self.outFile)
+        write('}};', file=self.outFile)
+        self.genHeaderFooter()
+
+    def endCommandsHeaderFile(self):
+        self.newline()
+        write('// Map of all APIs to be intercepted by this layer', file=self.outFile)
+        write('static const std::unordered_map<std::string, void*> name_to_funcptr_map = { // TODO(krOoze): technically violates styleguide', file=self.outFile)
+        write('\n'.join(self.intercepts), file=self.outFile)
+        write('};\n', file=self.outFile)
+        self.genHeaderFooter()
+
+    def endCommandsSourceFile(self):
+        self.newline()
+        write('} // namespace', self.namespace, file=self.outFile)
 
     def endFile(self):
-        # C-specific
-        # Finish C++ namespace and multiple inclusion protection
-        self.newline()
-        if self.header:
-            # record intercepted procedures
-            write('// Map of all APIs to be intercepted by this layer', file=self.outFile)
-            write('static const std::unordered_map<std::string, void*> name_to_funcptr_map = {', file=self.outFile)
-            write('\n'.join(self.intercepts), file=self.outFile)
-            write('};\n', file=self.outFile)
-            self.newline()
-            write('} // namespace vkmock', file=self.outFile)
-            self.newline()
-            write('#endif', file=self.outFile)
-        else: # Loader-layer-interface, need to implement global interface functions
-            write(SOURCE_CPP_POSTFIX, file=self.outFile)
-        # Finish processing in superclass
+        if self.genOpts.helper_file_type == 'ext_list':
+            self.endExtensionListFile()
+        elif self.genOpts.helper_file_type == 'commands_header':
+            self.endCommandsHeaderFile()
+        elif self.genOpts.helper_file_type == 'mock_icd_source': # Loader-layer-interface, need to implement global interface functions
+            self.endCommandsSourceFile()
         OutputGenerator.endFile(self)
+
     def beginFeature(self, interface, emit):
-        #write('// starting beginFeature', file=self.outFile)
-        # Start processing in superclass
         OutputGenerator.beginFeature(self, interface, emit)
+
         self.featureExtraProtect = GetFeatureProtect(interface)
-        # C-specific
-        # Accumulate includes, defines, types, enums, function pointer typedefs,
-        # end function prototypes separately for this feature. They're only
-        # printed in endFeature().
-        self.sections = dict([(section, []) for section in self.ALL_SECTIONS])
-        #write('// ending beginFeature', file=self.outFile)
+
+        self.sections = {'command': []}
+
+        name = self.featureName
+        self.current_feature = name
+
+        if interface.tag == 'extension':
+            ext_type = interface.attrib['type']
+            revision = interface[0][0].attrib['value']
+
+            if name not in self.extension_blacklist:
+                if ext_type == 'instance':
+                    self.instance_extensions.append({'name': name, 'revision': revision})
+                elif ext_type == 'device':
+                    self.device_extensions.append({'name': name, 'revision': revision})
+
     def endFeature(self):
-        # C-specific
-        # Actually write the interface to the output file.
-        #write('// starting endFeature', file=self.outFile)
-        if (self.emit):
-            self.newline()
-            if (self.genOpts.protectFeature):
-                write('#ifndef', self.featureName, file=self.outFile)
-            # If type declarations are needed by other features based on
-            # this one, it may be necessary to suppress the ExtraProtect,
-            # or move it below the 'for section...' loop.
-            #write('// endFeature looking at self.featureExtraProtect', file=self.outFile)
-            if (self.featureExtraProtect != None):
-                write('#ifdef', self.featureExtraProtect, file=self.outFile)
-            #write('#define', self.featureName, '1', file=self.outFile)
-            for section in self.TYPE_SECTIONS:
-                #write('// endFeature writing section'+section, file=self.outFile)
-                contents = self.sections[section]
-                if contents:
-                    write('\n'.join(contents), file=self.outFile)
-                    self.newline()
-            #write('// endFeature looking at self.sections[command]', file=self.outFile)
-            if (self.sections['command']):
-                write('\n'.join(self.sections['command']), end=u'', file=self.outFile)
+        if self.genOpts.helper_file_type == 'ext_list':
+            pass
+        elif self.genOpts.helper_file_type == 'commands_header' or self.genOpts.helper_file_type == 'mock_icd_source':
+            if self.emit and self.featureName not in self.extension_blacklist \
+            and len(self.sections['command']) != 0:
+                if self.genOpts.protectFeature:
+                    write('#ifndef', self.featureName, file=self.outFile)
+                if self.featureExtraProtect:
+                    write('#ifdef', self.featureExtraProtect, file=self.outFile)
+                if (self.sections['command']):
+                    write('\n\n'.join(self.sections['command']), file=self.outFile)
+                if self.featureExtraProtect:
+                    write('#endif //', self.featureExtraProtect, file=self.outFile)
+                if self.genOpts.protectFeature:
+                    write('#endif //', self.featureName, file=self.outFile)
                 self.newline()
-            if (self.featureExtraProtect != None):
-                write('#endif /*', self.featureExtraProtect, '*/', file=self.outFile)
-            if (self.genOpts.protectFeature):
-                write('#endif /*', self.featureName, '*/', file=self.outFile)
         # Finish processing in superclass
         OutputGenerator.endFeature(self)
-        #write('// ending endFeature', file=self.outFile)
     #
     # Append a definition to the specified section
     def appendSection(self, section, text):
-        # self.sections[section].append('SECTION: ' + section + '\n')
         self.sections[section].append(text)
-    #
-    # Type generation
-    def genType(self, typeinfo, name, alias):
-        pass
-    #
-    # Struct (e.g. C "struct" type) generation.
-    # This is a special case of the <type> tag where the contents are
-    # interpreted as a set of <member> tags instead of freeform C
-    # C type declarations. The <member> tags are just like <param>
-    # tags - they are a declaration of a struct or union member.
-    # Only simple member declarations are supported (no nested
-    # structs etc.)
-    def genStruct(self, typeinfo, typeName, alias):
-        OutputGenerator.genStruct(self, typeinfo, typeName, alias)
-        body = 'typedef ' + typeinfo.elem.get('category') + ' ' + typeName + ' {\n'
-        # paramdecl = self.makeCParamDecl(typeinfo.elem, self.genOpts.alignFuncParam)
-        for member in typeinfo.elem.findall('.//member'):
-            body += self.makeCParamDecl(member, self.genOpts.alignFuncParam)
-            body += ';\n'
-        body += '} ' + typeName + ';\n'
-        self.appendSection('struct', body)
-    #
-    # Group (e.g. C "enum" type) generation.
-    # These are concatenated together with other types.
-    def genGroup(self, groupinfo, groupName, alias):
-        pass
-    # Enumerant generation
-    # <enum> tags may specify their values in several ways, but are usually
-    # just integers.
-    def genEnum(self, enuminfo, name, alias):
-        pass
-    #
+
     # Command generation
     def genCmd(self, cmdinfo, name, alias):
+        if self.current_feature in self.extension_blacklist:
+            return
+
+        # TODO(krOoze): lot of mess in below I do not want to detangle rn
         decls = self.makeCDecls(cmdinfo.elem)
-        if self.header: # In the header declare all intercepts
-            self.appendSection('command', '')
+
+        if self.genOpts.helper_file_type == 'ext_list':
+            return
+        elif self.genOpts.helper_file_type == 'commands_header':
             self.appendSection('command', 'static %s' % (decls[0]))
             if (self.featureExtraProtect != None):
                 self.intercepts += [ '#ifdef %s' % self.featureExtraProtect ]
@@ -1301,27 +747,10 @@ class MockICDOutputGenerator(OutputGenerator):
                 self.intercepts += [ '#endif' ]
             return
 
-        manual_functions = [
-            # Include functions here to be interecpted w/ manually implemented function bodies
-            'vkGetDeviceProcAddr',
-            'vkGetInstanceProcAddr',
-            'vkCreateDevice',
-            'vkDestroyDevice',
-            'vkCreateInstance',
-            'vkDestroyInstance',
-            #'vkCreateDebugReportCallbackEXT',
-            #'vkDestroyDebugReportCallbackEXT',
-            'vkEnumerateInstanceLayerProperties',
-            'vkEnumerateInstanceExtensionProperties',
-            'vkEnumerateDeviceLayerProperties',
-            'vkEnumerateDeviceExtensionProperties',
-        ]
-        if name in manual_functions:
+        if name in MANUAL_COMMANDS:
             self.appendSection('command', '')
             if name not in CUSTOM_C_INTERCEPTS:
-                self.appendSection('command', '// declare only')
-                self.appendSection('command', 'static %s' % (decls[0]))
-                self.appendSection('command', '// TODO: Implement custom intercept body')
+                pass
             else:
                 self.appendSection('command', 'static %s' % (decls[0][:-1]))
                 self.appendSection('command', '{\n%s}' % (CUSTOM_C_INTERCEPTS[name]))
@@ -1359,6 +788,17 @@ class MockICDOutputGenerator(OutputGenerator):
                 param_names.append(param.text)
             self.appendSection('command', '{\n    %s%s(%s);\n}' % (return_string, khr_name[2:], ", ".join(param_names)))
             return
+        elif name in ALIAS_COMMANDS:
+            return_string = ''
+            if resulttype != None:
+                return_string = 'return '
+            params = cmdinfo.elem.findall('param/name')
+            param_names = []
+            for param in params:
+                param_names.append(param.text)
+            self.appendSection('command', '{\n    %s%s(%s);\n}' % (return_string, ALIAS_COMMANDS[name][2:], ", ".join(param_names)))
+            return
+
         self.appendSection('command', '{')
 
         api_function_name = cmdinfo.elem.attrib.get('name')

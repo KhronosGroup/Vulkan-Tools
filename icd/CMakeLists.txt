@@ -1,6 +1,6 @@
 # ~~~
-# Copyright (c) 2014-2018 Valve Corporation
-# Copyright (c) 2014-2018 LunarG, Inc.
+# Copyright (c) 2014-2020 Valve Corporation
+# Copyright (c) 2014-2020 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
         add_dependencies(${config_file}-json ${config_file})
     endforeach(config_file)
 endif()
-add_custom_target(generate_icd_files DEPENDS mock_icd.h mock_icd.cpp)
+add_custom_target(generate_icd_files DEPENDS mock_icd_commands.cpp.inc mock_icd_commands.h mock_icd_extension_list.h vk_typemap_helper.h)
 set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 
 if(WIN32)
@@ -152,7 +152,17 @@ else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-arith -Wno-unused-function -Wno-sign-compare")
 endif()
 
-add_vk_icd(mock_icd generated/mock_icd.cpp generated/mock_icd.h)
+add_vk_icd(
+    mock_icd
+    mock_icd.cpp
+    mock_icd_custom_commands.cpp.inc
+    mock_icd_exports.cpp.inc
+    generated/mock_icd_commands.cpp.inc
+    mock_icd.h
+    generated/mock_icd_commands.h
+    generated/mock_icd_extension_list.h
+    generated/vk_typemap_helper.h
+)
 
 # JSON file(s) install targets. For Linux, need to remove the "./" from the library path before installing to system directories.
 if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux

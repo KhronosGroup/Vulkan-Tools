@@ -94,7 +94,7 @@ def makeGenOpts(args):
     # Copyright text prefixing all headers (list of strings).
     prefixStrings = [
         '/*',
-        '** Copyright (c) 2015-2018 The Khronos Group Inc.',
+        '** Copyright (c) 2015-2020 The Khronos Group Inc.',
         '**',
         '** Licensed under the Apache License, Version 2.0 (the "License");',
         '** you may not use this file except in compliance with the License.',
@@ -114,7 +114,7 @@ def makeGenOpts(args):
     # Text specific to Vulkan headers
     vkPrefixStrings = [
         '/*',
-        '** This header is generated from the Khronos Vulkan XML API Registry.',
+        '** This file is generated from the Khronos Vulkan XML API Registry.',
         '**',
         '*/',
         ''
@@ -152,11 +152,11 @@ def makeGenOpts(args):
     ]
 
     # Options for mock ICD header
-    genOpts['mock_icd.h'] = [
+    genOpts['mock_icd_extension_list.h'] = [
         MockICDOutputGenerator,
         MockICDGeneratorOptions(
             conventions=conventions,
-            filename='mock_icd.h',
+            filename='mock_icd_extension_list.h',
             directory=directory,
             apiname='vulkan',
             profile=None,
@@ -173,15 +173,40 @@ def makeGenOpts(args):
             apientryp='VKAPI_PTR *',
             alignFuncParam=48,
             expandEnumerants=False,
-            helper_file_type='mock_icd_header')
+            helper_file_type='ext_list')
     ]
 
-    # Options for mock ICD cpp
-    genOpts['mock_icd.cpp'] = [
+    # Options for mock ICD header
+    genOpts['mock_icd_commands.h'] = [
         MockICDOutputGenerator,
         MockICDGeneratorOptions(
             conventions=conventions,
-            filename='mock_icd.cpp',
+            filename='mock_icd_commands.h',
+            directory=directory,
+            apiname='vulkan',
+            profile=None,
+            versions=featuresPat,
+            emitversions=featuresPat,
+            defaultExtensions='vulkan',
+            addExtensions=addExtensionsPat,
+            removeExtensions=removeExtensionsPat,
+            emitExtensions=emitExtensionsPat,
+            prefixText=prefixStrings + vkPrefixStrings,
+            protectFeature=False,
+            apicall='VKAPI_ATTR ',
+            apientry='VKAPI_CALL ',
+            apientryp='VKAPI_PTR *',
+            alignFuncParam=48,
+            expandEnumerants=False,
+            helper_file_type='commands_header')
+    ]
+
+    # Options for mock ICD cpp
+    genOpts['mock_icd_commands.cpp.inc'] = [
+        MockICDOutputGenerator,
+        MockICDGeneratorOptions(
+            conventions=conventions,
+            filename='mock_icd_commands.cpp.inc',
             directory=directory,
             apiname='vulkan',
             profile=None,

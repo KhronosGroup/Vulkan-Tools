@@ -58,8 +58,8 @@ if (!is_android) {
       ":vulkan_gen_icd_json_file",
     ]
     sources = [
-      "icd/generated/mock_icd.cpp",
-      "icd/generated/mock_icd.h",
+      "icd/mock_icd.cpp",
+      "icd/mock_icd.h",
     ]
     if (is_win) {
       sources += [ "icd/VkICD_mock_icd.def" ]
