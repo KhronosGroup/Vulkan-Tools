@@ -48,6 +48,7 @@ std::string to_hex_str(Printer &p, T i) {
     else
         return to_hex_str(i);
 }
+
 static const char *VkResultString(VkResult value) {
     switch (value) {
         case (0): return "SUCCESS";

@@ -17,4 +17,4 @@
 # Generated source files will always have LF (unix) line endings on checkout.
 icd/generated/*.cpp text eol=lf
 icd/generated/*.h text eol=lf
-
+vulkaninfo/generated/*.hpp text eol=lf

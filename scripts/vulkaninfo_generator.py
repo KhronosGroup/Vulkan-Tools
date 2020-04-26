@@ -80,6 +80,7 @@ std::string to_hex_str(Printer &p, T i) {
     else
         return to_hex_str(i);
 }
+
 '''
 
 
@@ -104,14 +105,12 @@ predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
                     'float', 'uint64_t', 'size_t', 'VkDeviceSize']
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
-EXTENSION_CATEGORIES = {'phys_device_props2': {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'},
-                        'phys_device_mem_props2': {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device'},
-                        'phys_device_features2': {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device'},
-                        'surface_capabilities2': {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both'},
-                        'format_properties2': {'extends': 'VkFormatProperties2', 'type': 'device'}
-                        }
-
-
+EXTENSION_CATEGORIES = OrderedDict((('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'}),
+                                   ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device'}),
+                                   ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device'}),
+                                   ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both'}),
+                                   ('format_properties2', {'extends': 'VkFormatProperties2', 'type': 'device'})
+                                   ))
 class VulkanInfoGeneratorOptions(GeneratorOptions):
     def __init__(self,
                  conventions=None,

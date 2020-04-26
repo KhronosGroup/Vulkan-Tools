@@ -275,6 +275,8 @@ if __name__ == '__main__':
     parser.add_argument('-defaultExtensions', action='store',
                         default='vulkan',
                         help='Specify a single class of extensions to add to targets')
+    parser.add_argument('-directory', action='store',
+                        help='Specify where the built file is place')
     parser.add_argument('-extension', action='append',
                         default=[],
                         help='Specify an extension or extensions to add to targets')
