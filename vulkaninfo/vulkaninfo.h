@@ -1454,12 +1454,23 @@ struct AppGpu {
                     GetImageCreateInfo(format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, 0);
                 VkImageCreateInfo image_ci_sparse = GetImageCreateInfo(format, tiling, 0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
 
-                if (format == color_format) {
-                    image_ci_regular.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-                    image_ci_transient.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                if (tiling == VK_IMAGE_TILING_LINEAR) {
+                    if (format == color_format) {
+                        image_ci_regular.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+                        image_ci_transient.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+                    } else {
+                        // linear tiling is only applicable to color image types
+                        continue;
+                    }
                 } else {
-                    image_ci_regular.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-                    image_ci_transient.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                    if (format == color_format) {
+                        image_ci_regular.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                        image_ci_transient.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+                    } else {
+                        image_ci_regular.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                        image_ci_transient.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                    }
                 }
 
                 auto image_ts_regular =
