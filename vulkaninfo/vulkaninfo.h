@@ -1603,9 +1603,8 @@ struct AppQueueFamilyProperties {
             const bool first = (surface_ext == gpu.inst.surface_extensions.at(0));
             if (!first && platforms_support_present != surface_ext.supports_present) {
                 is_present_platform_agnostic = false;
-
-                platforms_support_present = surface_ext.supports_present;
             }
+            platforms_support_present = surface_ext.supports_present;
         }
     }
 };
