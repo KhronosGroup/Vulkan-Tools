@@ -135,8 +135,6 @@ if(WIN32)
                            "${${configuration}}")
         endif()
     endforeach()
-
-    file(COPY cube.vcxproj.user DESTINATION ${CMAKE_BINARY_DIR}/cube)
 endif()
 
 add_custom_command(COMMENT "Compiling cube vertex shader"
