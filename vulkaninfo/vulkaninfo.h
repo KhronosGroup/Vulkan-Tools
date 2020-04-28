@@ -622,7 +622,7 @@ struct AppInstance {
                                                              DbgCallback};
 
         const VkApplicationInfo app_info = {
-            VK_STRUCTURE_TYPE_APPLICATION_INFO, nullptr, app_short_name, 1, nullptr, 0, VK_API_VERSION_1_0};
+            VK_STRUCTURE_TYPE_APPLICATION_INFO, nullptr, app_short_name, 1, nullptr, 0, instance_version};
 
         AppCompileInstanceExtensionsToEnable();
 
