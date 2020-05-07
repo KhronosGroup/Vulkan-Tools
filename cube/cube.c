@@ -1974,6 +1974,8 @@ static void demo_prepare_fs(struct demo *demo) {
 }
 
 static void demo_prepare_pipeline(struct demo *demo) {
+#define NUM_DYNAMIC_STATES 2 /*Viewport + Scissor*/
+
     VkGraphicsPipelineCreateInfo pipeline;
     VkPipelineCacheCreateInfo pipelineCache;
     VkPipelineVertexInputStateCreateInfo vi;
@@ -1983,7 +1985,7 @@ static void demo_prepare_pipeline(struct demo *demo) {
     VkPipelineDepthStencilStateCreateInfo ds;
     VkPipelineViewportStateCreateInfo vp;
     VkPipelineMultisampleStateCreateInfo ms;
-    VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+    VkDynamicState dynamicStateEnables[NUM_DYNAMIC_STATES];
     VkPipelineDynamicStateCreateInfo dynamicState;
     VkResult U_ASSERT_ONLY err;
 
