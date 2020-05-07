@@ -247,33 +247,23 @@ def genTarget(args):
 
         if not args.quiet:
             write('* Building', options.filename, file=sys.stderr)
-            write('* options.versions          =',
-                  options.versions, file=sys.stderr)
-            write('* options.emitversions      =',
-                  options.emitversions, file=sys.stderr)
-            write('* options.defaultExtensions =',
-                  options.defaultExtensions, file=sys.stderr)
-            write('* options.addExtensions     =',
-                  options.addExtensions, file=sys.stderr)
-            write('* options.removeExtensions  =',
-                  options.removeExtensions, file=sys.stderr)
-            write('* options.emitExtensions    =',
-                  options.emitExtensions, file=sys.stderr)
+            write('* options.versions          =', options.versions, file=sys.stderr)
+            write('* options.emitversions      =', options.emitversions, file=sys.stderr)
+            write('* options.defaultExtensions =', options.defaultExtensions, file=sys.stderr)
+            write('* options.addExtensions     =', options.addExtensions, file=sys.stderr)
+            write('* options.removeExtensions  =', options.removeExtensions, file=sys.stderr)
+            write('* options.emitExtensions    =', options.emitExtensions, file=sys.stderr)
 
-        startTimer(args.time)
         gen = createGenerator(errFile=errWarn,
                               warnFile=errWarn,
                               diagFile=diag)
-        reg.setGenerator(gen)
-        reg.apiGen(options)
-
         if not args.quiet:
             write('* Generated', options.filename, file=sys.stderr)
-        endTimer(args.time, '* Time to generate ' + options.filename + ' =')
+        return (gen, options)
     else:
         write('No generator options for unknown target:',
               args.target, file=sys.stderr)
-
+        return none
 
 # -feature name
 # -extension name
@@ -359,27 +349,6 @@ if __name__ == '__main__':
     args.feature = [name for arg in args.feature for name in arg.split()]
     args.extension = [name for arg in args.extension for name in arg.split()]
 
-    # Load & parse registry
-    reg = Registry()
-
-    startTimer(args.time)
-    tree = etree.parse(args.registry)
-    endTimer(args.time, '* Time to make ElementTree =')
-
-    if args.debug:
-        pdb.run('reg.loadElementTree(tree)')
-    else:
-        startTimer(args.time)
-        reg.loadElementTree(tree)
-        endTimer(args.time, '* Time to parse ElementTree =')
-
-    if (args.validate):
-        reg.validateGroups()
-
-    if (args.dump):
-        write('* Dumping registry to regdump.txt', file=sys.stderr)
-        reg.dumpReg(filehandle=open('regdump.txt', 'w', encoding='utf-8'))
-
     # create error/warning & diagnostic files
     if (args.errfile):
         errWarn = open(args.errfile, 'w', encoding='utf-8')
@@ -391,13 +360,35 @@ if __name__ == '__main__':
     else:
         diag = None
 
+    # Create the API generator & generator options
+    (gen, options) = genTarget(args)
+
+    # Create the registry object with the specified generator and generator
+    # options. The options are set before XML loading as they may affect it.
+    reg = Registry(gen, options)
+
+    # Parse the specified registry XML into an ElementTree object
+    startTimer(args.time)
+    tree = etree.parse(args.registry)
+    endTimer(args.time, '* Time to make ElementTree =')
+
+    # Load the XML tree into the registry object
+    startTimer(args.time)
+    reg.loadElementTree(tree)
+    endTimer(args.time, '* Time to parse ElementTree =')
+
+    if (args.validate):
+        reg.validateGroups()
+
+    if (args.dump):
+        write('* Dumping registry to regdump.txt', file=sys.stderr)
+        reg.dumpReg(filehandle = open('regdump.txt', 'w', encoding='utf-8'))
+
+    # Finally, use the output generator to create the requested target
     if (args.debug):
-        pdb.run('genTarget(args)')
-    elif (args.profile):
-        import cProfile
-        import pstats
-        cProfile.run('genTarget(args)', 'profile.txt')
-        p = pstats.Stats('profile.txt')
-        p.strip_dirs().sort_stats('time').print_stats(50)
+        pdb.run('reg.apiGen()')
     else:
+        startTimer(args.time)
+        reg.apiGen()
+        endTimer(args.time, '* Time to generate ' + options.filename + ' =')
         genTarget(args)

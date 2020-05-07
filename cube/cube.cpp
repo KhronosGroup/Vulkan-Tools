@@ -644,7 +644,7 @@ void Demo::cleanup() {
 
     for (uint32_t i = 0; i < swapchainImageCount; i++) {
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
-        device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
+        device.freeCommandBuffers(cmd_pool, {swapchain_image_resources[i].cmd});
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
         device.unmapMemory(swapchain_image_resources[i].uniform_memory);
         device.freeMemory(swapchain_image_resources[i].uniform_memory, nullptr);
@@ -719,7 +719,7 @@ void Demo::destroy_texture(texture_object *tex_objs) {
 void Demo::draw() {
     // Ensure no more than FRAME_LAG renderings are outstanding
     device.waitForFences(1, &fences[frame_index], VK_TRUE, UINT64_MAX);
-    device.resetFences(1, &fences[frame_index]);
+    device.resetFences({fences[frame_index]});
 
     vk::Result result;
     do {
@@ -2271,7 +2271,7 @@ void Demo::resize() {
 
     for (i = 0; i < swapchainImageCount; i++) {
         device.destroyImageView(swapchain_image_resources[i].view, nullptr);
-        device.freeCommandBuffers(cmd_pool, 1, &swapchain_image_resources[i].cmd);
+        device.freeCommandBuffers(cmd_pool, {swapchain_image_resources[i].cmd});
         device.destroyBuffer(swapchain_image_resources[i].uniform_buffer, nullptr);
         device.unmapMemory(swapchain_image_resources[i].uniform_memory);
         device.freeMemory(swapchain_image_resources[i].uniform_memory, nullptr);

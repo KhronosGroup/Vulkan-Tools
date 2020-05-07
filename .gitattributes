@@ -14,3 +14,7 @@
 # Text files to always have LF (unix) line endings on checkout.
 *.sh text eol=lf
 
+# Generated source files will always have LF (unix) line endings on checkout.
+icd/generated/*.cpp text eol=lf
+icd/generated/*.h text eol=lf
+
