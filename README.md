@@ -18,7 +18,7 @@ The following components are available in this repository:
 - [*Mock ICD*](icd/)
 - [*Vkcube and Vkcube++ Demo*](cube/)
 - [*VulkanInfo*](vulkaninfo/)
-- [*Windows Runtime*](winrt/)
+- [*Windows Runtime*](windows-runtime-installer/)
 
 ## Contact Information
 * [Tobin Ehlis](mailto:tobine@google.com)
