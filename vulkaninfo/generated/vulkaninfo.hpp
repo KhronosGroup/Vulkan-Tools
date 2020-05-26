@@ -413,6 +413,7 @@ static const char *VkDriverIdString(VkDriverId value) {
         case (10): return "DRIVER_ID_GOOGLE_SWIFTSHADER";
         case (11): return "DRIVER_ID_GGP_PROPRIETARY";
         case (12): return "DRIVER_ID_BROADCOM_PROPRIETARY";
+        case (13): return "DRIVER_ID_MESA_LLVMPIPE";
         default: return "UNKNOWN_VkDriverId";
     }
 }
