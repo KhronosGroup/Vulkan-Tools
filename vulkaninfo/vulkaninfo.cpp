@@ -377,7 +377,7 @@ void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQ
     p.PrintKeyValue("timestampValidBits", queue.props.timestampValidBits, 27);
 
     if (queue.is_present_platform_agnostic) {
-        p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false");
+        p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false", 27);
     } else {
         size_t width = 0;
         for (auto &surface : surfaces) {
