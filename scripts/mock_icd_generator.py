@@ -496,6 +496,10 @@ CUSTOM_C_INTERCEPTS = {
 'vkEnumerateInstanceLayerProperties': '''
     return VK_SUCCESS;
 ''',
+'vkEnumerateInstanceVersion': '''
+    *pApiVersion = VK_API_VERSION_1_1;
+    return VK_SUCCESS;
+''',
 'vkEnumerateDeviceLayerProperties': '''
     return VK_SUCCESS;
 ''',
@@ -765,7 +769,7 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetPhysicalDeviceProperties': '''
     // TODO: Just hard-coding some values for now
-    pProperties->apiVersion = VK_API_VERSION_1_0;
+    pProperties->apiVersion = VK_API_VERSION_1_1;
     pProperties->driverVersion = 1;
     pProperties->vendorID = 0xba5eba11;
     pProperties->deviceID = 0xf005ba11;
@@ -1302,7 +1306,7 @@ class MockICDOutputGenerator(OutputGenerator):
             return
 
         manual_functions = [
-            # Include functions here to be interecpted w/ manually implemented function bodies
+            # Include functions here to be intercepted w/ manually implemented function bodies
             'vkGetDeviceProcAddr',
             'vkGetInstanceProcAddr',
             'vkCreateDevice',
@@ -1312,6 +1316,7 @@ class MockICDOutputGenerator(OutputGenerator):
             #'vkCreateDebugReportCallbackEXT',
             #'vkDestroyDebugReportCallbackEXT',
             'vkEnumerateInstanceLayerProperties',
+            'vkEnumerateInstanceVersion',
             'vkEnumerateInstanceExtensionProperties',
             'vkEnumerateDeviceLayerProperties',
             'vkEnumerateDeviceExtensionProperties',

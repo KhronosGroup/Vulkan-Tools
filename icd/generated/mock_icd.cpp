@@ -276,7 +276,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties(
     VkPhysicalDeviceProperties*                 pProperties)
 {
     // TODO: Just hard-coding some values for now
-    pProperties->apiVersion = VK_API_VERSION_1_0;
+    pProperties->apiVersion = VK_API_VERSION_1_1;
     pProperties->driverVersion = 1;
     pProperties->vendorID = 0xba5eba11;
     pProperties->deviceID = 0xf005ba11;
@@ -1693,7 +1693,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdExecuteCommands(
 static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceVersion(
     uint32_t*                                   pApiVersion)
 {
-//Not a CREATE or DESTROY function
+
+    *pApiVersion = VK_API_VERSION_1_1;
     return VK_SUCCESS;
 }
 
