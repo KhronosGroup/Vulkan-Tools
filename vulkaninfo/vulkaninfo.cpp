@@ -459,13 +459,14 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             auto flags = gpu.memory_props.memoryTypes[i].propertyFlags;
             DumpVkMemoryPropertyFlags(p, "propertyFlags = " + to_hex_str(flags), flags);
 
-            ArrayWrapper arr(p, "usable for", -1);
+            ObjectWrapper usable_for(p, "usable for");
             const uint32_t memtype_bit = 1U << i;
 
             // only linear and optimal tiling considered
             std::vector<VkFormat> tiling_optimal_formats;
             std::vector<VkFormat> tiling_linear_formats;
             for (auto &image_tiling : gpu.memory_image_support_types) {
+                p.SetOpenDetails();
                 ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)), -1);
                 bool has_any_support_types = false;
                 bool regular = false;
