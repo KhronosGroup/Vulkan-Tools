@@ -430,6 +430,7 @@ class Printer {
                 }
                 out << std::string(static_cast<size_t>(indents), '\t') << "\"" << array_name << "\": "
                     << "[\n";
+                assert(is_array.top() == false && "Cant start an array object inside another array, must be enclosed in an object");
                 is_first_item.push(true);
                 is_array.push(true);
                 break;
