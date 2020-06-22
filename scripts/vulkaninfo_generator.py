@@ -221,32 +221,39 @@ class VulkanInfoGenerator(OutputGenerator):
         for f in flags_to_gen:
             types_to_gen.add(f)
 
-        types_to_gen = types_to_gen.union(
+        types_to_gen.update(
             GatherTypesToGen(self.all_structures, structures_to_gen))
         for key in EXTENSION_CATEGORIES.keys():
-            types_to_gen = types_to_gen.union(
+            types_to_gen.update(
                 GatherTypesToGen(self.all_structures, self.extension_sets[key]))
+        types_to_gen = sorted(types_to_gen)
 
         names_of_structures_to_gen = set()
         for s in self.all_structures:
             if s.name in types_to_gen:
                 names_of_structures_to_gen.add(s.name)
+        names_of_structures_to_gen = sorted(names_of_structures_to_gen)
 
         structs_to_comp = set()
         for s in struct_comparisons_to_gen:
             structs_to_comp.add(s)
-        structs_to_comp = structs_to_comp.union(
+        structs_to_comp.update(
             GatherTypesToGen(self.all_structures, struct_comparisons_to_gen))
 
         for key, value in self.extension_sets.items():
             self.extension_sets[key] = sorted(value)
 
-        alias_versions = {}
+        alias_versions = OrderedDict()
         for version in self.vulkan_versions:
             for aliased_type, aliases in self.aliases.items():
                 for alias in aliases:
                     if alias in version.names:
                         alias_versions[alias] = version.minorVersion
+
+        self.enums = sorted(self.enums, key=operator.attrgetter('name'))
+        self.flags = sorted(self.flags, key=operator.attrgetter('name'))
+        self.bitmasks = sorted(self.bitmasks, key=operator.attrgetter('name'))
+        self.all_structures = sorted(self.all_structures, key=operator.attrgetter('name'))
 
         # print the types gathered
         out = ''
@@ -282,6 +289,8 @@ class VulkanInfoGenerator(OutputGenerator):
             out += PrintChainIterator(key,
                                       self.extension_sets[key], self.all_structures, value.get('type'), self.extTypes, self.aliases, self.vulkan_versions)
 
+        for s in (x for x in self.all_structures if x.name in structs_to_comp):
+            out += PrintStructComparisonForwardDecl(s)
         for s in (x for x in self.all_structures if x.name in structs_to_comp):
             out += PrintStructComparison(s)
         for s in (x for x in self.all_structures if x.name in struct_short_versions_to_gen):
@@ -355,6 +364,7 @@ def GatherTypesToGen(structure_list, structures):
             for m in s.members:
                 if m.typeID not in predefined_types and m.name not in ['sType', 'pNext']:
                     types.add(m.typeID)
+    types = sorted(types)
     return types
 
 
@@ -630,7 +640,9 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
     out += "    while (place) {\n"
     out += "        struct VkStructureHeader *structure = (struct VkStructureHeader *)place;\n"
     out += "        p.SetSubHeader();\n"
-    for s in all_structures:
+    sorted_structures = sorted(
+        all_structures, key=operator.attrgetter('name'))
+    for s in sorted_structures:
         if s.sTypeName is None:
             continue
 
@@ -688,6 +700,12 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
     out += "        place = structure->pNext;\n"
     out += "    }\n"
     out += "}\n"
+    return out
+
+def PrintStructComparisonForwardDecl(structure):
+    out = ''
+    out += "bool operator==(const " + structure.name + \
+        " & a, const " + structure.name + " b);\n"
     return out
 
 
@@ -899,8 +917,8 @@ class VulkanExtension:
         self.extNameStr = None
         self.vktypes = []
         self.vkfuncs = []
-        self.constants = {}
-        self.enumValues = {}
+        self.constants = OrderedDict()
+        self.enumValues = OrderedDict()
         self.version = 0
         self.node = rootNode
 
@@ -957,3 +975,4 @@ class VulkanVersion:
                 self.names.add(func.get('name'))
             for enum in req.findall('enum'):
                 self.names.add(enum.get('name'))
+        self.names = sorted(self.names)
