@@ -14,7 +14,7 @@
       "sub_dir" : "MoltenVK",
       "build_dir" : "MoltenVK",
       "install_dir" : "MoltenVK",
-      "commit" : "v1.0.41",
+      "commit" : "v.1.0.43",
       "custom_build" : [
         "./fetchDependencies",
         "xcodebuild -project MoltenVKPackaging.xcodeproj GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS MVK_CONFIG_LOG_LEVEL=1' -scheme \"MoltenVK Package\" build"
