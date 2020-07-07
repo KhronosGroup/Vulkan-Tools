@@ -874,7 +874,6 @@ class VulkanVariable:
         if lengthString is not None:
             lengths = re.split(',', lengthString)
             lengths = list(filter(('null-terminated').__ne__, lengths))
-        assert(len(lengths) <= 1)
         if self.arrayLength is None and len(lengths) > 0:
             self.childType = '*'.join(self.type.split('*')[0:-1])
             self.arrayLength = lengths[0]
