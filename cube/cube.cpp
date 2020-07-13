@@ -2761,11 +2761,9 @@ void Demo::run_directfb() {
 
         if (pause) {
             event_buffer->WaitForEvent(event_buffer);
-            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event)))
-                handle_directfb_event(&event);
+            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event))) handle_directfb_event(&event);
         } else {
-            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event)))
-                handle_directfb_event(&event);
+            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event))) handle_directfb_event(&event);
 
             draw();
             curFrame++;
@@ -2796,7 +2794,7 @@ void Demo::create_directfb_window() {
     DFBSurfaceDescription desc;
     desc.flags = (DFBSurfaceDescriptionFlags)(DSDESC_CAPS | DSDESC_WIDTH | DSDESC_HEIGHT);
     desc.caps = DSCAPS_PRIMARY;
-    desc.width = -1; //width;
+    desc.width = width;
     desc.height = height;
     ret = dfb->CreateSurface(dfb, &desc, &window);
     if (ret) {

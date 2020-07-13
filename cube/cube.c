@@ -2840,11 +2840,9 @@ static void demo_run_directfb(struct demo *demo) {
 
         if (demo->pause) {
             demo->event_buffer->WaitForEvent(demo->event_buffer);
-            if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event)))
-                demo_handle_directfb_event(demo, &event);
+            if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event))) demo_handle_directfb_event(demo, &event);
         } else {
-            if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event)))
-                demo_handle_directfb_event(demo, &event);
+            if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event))) demo_handle_directfb_event(demo, &event);
 
             demo_draw(demo);
             demo->curFrame++;
