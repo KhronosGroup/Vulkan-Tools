@@ -40,6 +40,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
+    option(BUILD_WSI_DIRECTFB_SUPPORT "Build DirectFB WSI support" OFF)
 
     if(BUILD_WSI_XCB_SUPPORT)
         find_package(XCB REQUIRED)
@@ -60,6 +61,13 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         target_include_directories(vulkaninfo PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
         target_link_libraries(vulkaninfo ${WAYLAND_CLIENT_LIBRARIES})
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_NO_PROTOTYPES)
+    endif()
+
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        find_package(DirectFB REQUIRED)
+        target_include_directories(vulkaninfo PRIVATE ${DIRECTFB_INCLUDE_DIR})
+        target_link_libraries(vulkaninfo ${DIRECTFB_LIBRARIES})
+        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_DIRECTFB_EXT -DVK_NO_PROTOTYPES)
     endif()
 endif()
 

@@ -263,6 +263,10 @@ struct Demo {
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     void run();
     void create_window();
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    void handle_directfb_event(const DFBInputEvent *);
+    void run_directfb();
+    void create_directfb_window();
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
     void run();
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
@@ -294,6 +298,10 @@ struct Demo {
     wl_seat *seat;
     wl_pointer *pointer;
     wl_keyboard *keyboard;
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    IDirectFB *dfb;
+    IDirectFBSurface *window;
+    IDirectFBEventBuffer *event_buffer;
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
     void *caMetalLayer;
 #endif
@@ -530,6 +538,10 @@ Demo::Demo()
       seat{nullptr},
       pointer{nullptr},
       keyboard{nullptr},
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+      dfb{nullptr},
+      window{nullptr},
+      event_buffer{nullptr},
 #endif
       prepared{false},
       use_staging_buffer{false},
@@ -676,6 +688,10 @@ void Demo::cleanup() {
     wl_compositor_destroy(compositor);
     wl_registry_destroy(registry);
     wl_display_disconnect(display);
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    event_buffer->Release(event_buffer);
+    window->Release(window);
+    dfb->Release(dfb);
 #endif
 
     inst.destroy(nullptr);
@@ -1110,6 +1126,11 @@ void Demo::init_vk() {
                 platformSurfaceExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
             }
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+            if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                platformSurfaceExtFound = 1;
+                extension_names[enabled_extension_count++] = VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME;
+            }
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
             if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 platformSurfaceExtFound = 1;
@@ -1155,6 +1176,12 @@ void Demo::init_vk() {
                  "vkCreateInstance Failure");
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+                 " extension.\n\n"
+                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                 "Please look at the Getting Started guide for additional information.\n",
+                 "vkCreateInstance Failure");
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
                  " extension.\n\n"
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
@@ -1301,6 +1328,13 @@ void Demo::create_surface() {
         auto const createInfo = vk::XcbSurfaceCreateInfoKHR().setConnection(connection).setWindow(xcb_window);
 
         auto result = inst.createXcbSurfaceKHR(&createInfo, nullptr, &surface);
+        VERIFY(result == vk::Result::eSuccess);
+    }
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    {
+        auto const createInfo = vk::DirectFBSurfaceCreateInfoEXT().setDfb(dfb).setSurface(window);
+
+        auto result = inst.createDirectFBSurfaceEXT(&createInfo, nullptr, &surface);
         VERIFY(result == vk::Result::eSuccess);
     }
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
@@ -2699,6 +2733,85 @@ void Demo::create_window() {
     wl_shell_surface_set_toplevel(shell_surface);
     wl_shell_surface_set_title(shell_surface, APP_SHORT_NAME);
 }
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+
+void Demo::handle_directfb_event(const DFBInputEvent *event) {
+    if (event->type != DIET_KEYPRESS) return;
+    switch (event->key_symbol) {
+        case DIKS_ESCAPE:  // Escape
+            quit = true;
+            break;
+        case DIKS_CURSOR_LEFT:  // left arrow key
+            spin_angle -= spin_increment;
+            break;
+        case DIKS_CURSOR_RIGHT:  // right arrow key
+            spin_angle += spin_increment;
+            break;
+        case DIKS_SPACE:  // space bar
+            pause = !pause;
+            break;
+        default:
+            break;
+    }
+}
+
+void Demo::run_directfb() {
+    while (!quit) {
+        DFBInputEvent event;
+
+        if (pause) {
+            event_buffer->WaitForEvent(event_buffer);
+            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event)))
+                handle_directfb_event(&event);
+        } else {
+            if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event)))
+                handle_directfb_event(&event);
+
+            draw();
+            curFrame++;
+            if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                quit = true;
+            }
+        }
+    }
+}
+
+void Demo::create_directfb_window() {
+    DFBResult ret;
+
+    ret = DirectFBInit(NULL, NULL);
+    if (ret) {
+        printf("DirectFBInit failed to initialize DirectFB!\n");
+        fflush(stdout);
+        exit(1);
+    }
+
+    ret = DirectFBCreate(&dfb);
+    if (ret) {
+        printf("DirectFBCreate failed to create main interface of DirectFB!\n");
+        fflush(stdout);
+        exit(1);
+    }
+
+    DFBSurfaceDescription desc;
+    desc.flags = (DFBSurfaceDescriptionFlags)(DSDESC_CAPS | DSDESC_WIDTH | DSDESC_HEIGHT);
+    desc.caps = DSCAPS_PRIMARY;
+    desc.width = -1; //width;
+    desc.height = height;
+    ret = dfb->CreateSurface(dfb, &desc, &window);
+    if (ret) {
+        printf("CreateSurface failed to create DirectFB surface interface!\n");
+        fflush(stdout);
+        exit(1);
+    }
+
+    ret = dfb->CreateInputEventBuffer(dfb, DICAPS_KEYS, DFB_FALSE, &event_buffer);
+    if (ret) {
+        printf("CreateInputEventBuffer failed to create DirectFB event buffer interface!\n");
+        fflush(stdout);
+        exit(1);
+    }
+}
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
 void Demo::run() {
     draw();
@@ -3012,6 +3125,8 @@ int main(int argc, char **argv) {
     demo.create_xlib_window();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     demo.create_window();
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    demo.create_directfb_window();
 #endif
 
     demo.init_vk_swapchain();
@@ -3024,6 +3139,8 @@ int main(int argc, char **argv) {
     demo.run_xlib();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     demo.run();
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    demo.run_directfb();
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     demo.run_display();
 #endif

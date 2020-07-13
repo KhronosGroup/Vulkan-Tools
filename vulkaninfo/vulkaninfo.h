@@ -341,6 +341,13 @@ struct VkDll {
     PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR fp_vkGetPhysicalDeviceWaylandPresentationSupportKHR =
         APPLE_FP(vkGetPhysicalDeviceWaylandPresentationSupportKHR);
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+    PFN_vkCreateDirectFBSurfaceEXT fp_vkCreateDirectFBSurfaceEXT = APPLE_FP(vkCreateDirectFBSurfaceEXT);
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+    PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT fp_vkGetPhysicalDeviceDirectFBPresentationSupportEXT =
+        APPLE_FP(vkGetPhysicalDeviceDirectFBPresentationSupportEXT);
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     PFN_vkCreateAndroidSurfaceKHR fp_vkCreateAndroidSurfaceKHR = APPLE_FP(vkCreateAndroidSurfaceKHR);
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
@@ -407,6 +414,12 @@ struct VkDll {
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
         Load(fp_vkGetPhysicalDeviceWaylandPresentationSupportKHR, "vkGetPhysicalDeviceWaylandPresentationSupportKHR");
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+        Load(fp_vkCreateDirectFBSurfaceEXT, "vkCreateDirectFBSurfaceEXT");
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+        Load(fp_vkGetPhysicalDeviceDirectFBPresentationSupportEXT, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT");
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
         Load(fp_vkCreateAndroidSurfaceKHR, "vkCreateAndroidSurfaceKHR");
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
@@ -593,6 +606,10 @@ struct AppInstance {
     wl_display *wayland_display;
     wl_surface *wayland_surface;
 #endif
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+    IDirectFB *dfb;
+    IDirectFBSurface *directfb_surface;
+#endif
 #ifdef VK_USE_PLATFORM_ANDROID_KHR  // TODO
     ANativeWindow *window;
 #endif
@@ -772,7 +789,7 @@ static void AppDestroyWin32Window(AppInstance &inst) { CALL_PFN(DestroyWindow)(i
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_ANDROID_KHR)
+    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
     inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
 }
@@ -978,6 +995,53 @@ static void AppDestroyWaylandWindow(AppInstance &inst) { wl_display_disconnect(i
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
 //-----------------------------------------------------------
 
+//-------------------------DIRECTFB--------------------------
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+static void AppCreateDirectFBWindow(AppInstance &inst) {
+    DFBResult ret;
+
+    ret = DirectFBInit(NULL, NULL);
+    if (ret) {
+        THROW_ERR("DirectFBInit failed to initialize DirectFB.\nExiting...");
+    }
+
+    ret = DirectFBCreate(&inst.dfb);
+    if (ret) {
+        THROW_ERR("DirectFBCreate failed to create main interface of DirectFB.\nExiting...");
+    }
+
+    DFBSurfaceDescription desc;
+    desc.flags = (DFBSurfaceDescriptionFlags)(DSDESC_CAPS | DSDESC_WIDTH | DSDESC_HEIGHT);
+    desc.caps = DSCAPS_PRIMARY;
+    desc.width = inst.width;
+    desc.height = inst.height;
+    ret = inst.dfb->CreateSurface(inst.dfb, &desc, &inst.directfb_surface);
+    if (ret) {
+        THROW_ERR("CreateSurface failed to create DirectFB surface interface.\nExiting...");
+    }
+}
+
+static VkSurfaceKHR AppCreateDirectFBSurface(AppInstance &inst) {
+    VkDirectFBSurfaceCreateInfoEXT createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_DIRECTFB_SURFACE_CREATE_INFO_EXT;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+    createInfo.dfb = inst.dfb;
+    createInfo.surface = inst.directfb_surface;
+
+    VkSurfaceKHR surface;
+    VkResult err = inst.dll.fp_vkCreateDirectFBSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
+    if (err) THROW_VK_ERR("vkCreateDirectFBSurfaceEXT", err);
+    return surface;
+}
+
+static void AppDestroyDirectFBWindow(AppInstance &inst) {
+    inst.directfb_surface->Release(inst.directfb_surface);
+    inst.dfb->Release(inst.dfb);
+}
+#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
+//-----------------------------------------------------------
+
 //-------------------------ANDROID---------------------------
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 static void AppCreateAndroidWindow(AppInstance &inst) {}
@@ -1089,6 +1153,18 @@ void SetupWindowExtensions(AppInstance &inst) {
         if (has_wayland_display) {
             inst.AddSurfaceExtension(surface_ext_wayland);
         }
+    }
+#endif
+//--DIRECTFB--
+#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
+    SurfaceExtension surface_ext_directfb;
+    if (inst.CheckExtensionEnabled(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME)) {
+        surface_ext_directfb.name = VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME;
+        surface_ext_directfb.create_window = AppCreateDirectFBWindow;
+        surface_ext_directfb.create_surface = AppCreateDirectFBSurface;
+        surface_ext_directfb.destroy_window = AppDestroyDirectFBWindow;
+
+        inst.AddSurfaceExtension(surface_ext_directfb);
     }
 #endif
 //--ANDROID--
