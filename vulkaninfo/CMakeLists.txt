@@ -28,8 +28,8 @@ else()
     add_executable(vulkaninfo vulkaninfo.cpp)
 endif()
 
-target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo)
-target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo/generated)
+target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/generated)
 
 if (NOT WIN32)
     target_link_libraries(vulkaninfo ${CMAKE_DL_LIBS})
