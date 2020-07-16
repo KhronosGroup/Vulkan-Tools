@@ -337,6 +337,7 @@ struct demo {
     bool use_staging_buffer;
     bool separate_present_queue;
     bool is_minimized;
+    uint32_t gpu_number;
 
     bool VK_KHR_incremental_present_enabled;
 
@@ -3178,8 +3179,12 @@ static void demo_init_vk(struct demo *demo) {
         VkPhysicalDevice *physical_devices = malloc(sizeof(VkPhysicalDevice) * gpu_count);
         err = vkEnumeratePhysicalDevices(demo->inst, &gpu_count, physical_devices);
         assert(!err);
-        /* For cube demo we just grab the first physical device */
-        demo->gpu = physical_devices[0];
+        if (demo->gpu_number > gpu_count - 1) {
+            fprintf(stderr, "Gpu %u specified is not present, gpu count = %u\n", demo->gpu_number, gpu_count);
+            fprintf(stderr, "Continuing with gpu 0\n");
+            demo->gpu_number = 0;
+        }
+        demo->gpu = physical_devices[demo->gpu_number];
         free(physical_devices);
     } else {
         ERR_EXIT(
@@ -3701,6 +3706,8 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     memset(demo, 0, sizeof(*demo));
     demo->presentMode = VK_PRESENT_MODE_FIFO_KHR;
     demo->frameCount = INT32_MAX;
+    /* For cube demo we just grab the first physical device by default */
+    demo->gpu_number = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
@@ -3746,6 +3753,11 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             demo->VK_KHR_incremental_present_enabled = true;
             continue;
         }
+        if ((strcmp(argv[i], "--gpu_number") == 0) && (i < argc - 1)) {
+            demo->gpu_number = atoi(argv[i + 1]);
+            i++;
+            continue;
+        }
 
 #if defined(ANDROID)
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
@@ -3754,6 +3766,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled]\n"
             "\t[--break] [--c <framecount>] [--suppress_popups]\n"
             "\t[--incremental_present] [--display_timing]\n"
+            "\t[--gpu_number <index of physical device>]\n"
             "\t[--present_mode <present mode enum>]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
