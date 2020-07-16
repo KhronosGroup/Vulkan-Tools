@@ -303,6 +303,7 @@ struct Demo {
     bool use_staging_buffer;
     bool use_xlib;
     bool separate_present_queue;
+    uint32_t gpu_number;
 
     vk::Instance inst;
     vk::PhysicalDevice gpu;
@@ -923,6 +924,8 @@ void Demo::init(int argc, char **argv) {
     presentMode = vk::PresentModeKHR::eFifo;
     frameCount = UINT32_MAX;
     use_xlib = false;
+    /* For cube demo we just grab the first physical device by default */
+    gpu_number = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
@@ -955,10 +958,15 @@ void Demo::init(int argc, char **argv) {
             suppress_popups = true;
             continue;
         }
-
+        if ((strcmp(argv[i], "--gpu_number") == 0) && (i < argc - 1)) {
+            gpu_number = atoi(argv[i + 1]);
+            i++;
+            continue;
+        }
         std::stringstream usage;
         usage << "Usage:\n  " << APP_SHORT_NAME << "\t[--use_staging] [--validate]\n"
               << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
+              << "\t[--gpu_number <index of physical device>]\n"
               << "\t[--present_mode <present mode enum>]\n"
               << "\t<present_mode_enum>\n"
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
@@ -1215,8 +1223,12 @@ void Demo::init_vk() {
         std::unique_ptr<vk::PhysicalDevice[]> physical_devices(new vk::PhysicalDevice[gpu_count]);
         result = inst.enumeratePhysicalDevices(&gpu_count, physical_devices.get());
         VERIFY(result == vk::Result::eSuccess);
-        /* For cube demo we just grab the first physical device */
-        gpu = physical_devices[0];
+        if (gpu_number > gpu_count - 1) {
+            fprintf(stderr, "Gpu %u specified is not present, gpu count = %u\n", gpu_number, gpu_count);
+            fprintf(stderr, "Continuing with gpu 0\n");
+            gpu_number = 0;
+        }
+        gpu = physical_devices[gpu_number];
     } else {
         ERR_EXIT(
             "vkEnumeratePhysicalDevices reported zero accessible devices.\n\n"
