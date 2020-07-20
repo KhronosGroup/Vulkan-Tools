@@ -4432,6 +4432,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEXT(
 }
 
 
+
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -4636,6 +4637,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 

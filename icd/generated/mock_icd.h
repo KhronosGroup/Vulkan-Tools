@@ -241,6 +241,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_full_screen_exclusive", 4},
     {"VK_KHR_buffer_device_address", 1},
     {"VK_EXT_line_rasterization", 1},
+    {"VK_EXT_shader_atomic_float", 1},
     {"VK_EXT_host_query_reset", 1},
     {"VK_EXT_index_type_uint8", 1},
     {"VK_EXT_extended_dynamic_state", 1},
@@ -260,6 +261,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_EXT_fragment_density_map2", 1},
+    {"VK_EXT_image_robustness", 1},
 };
 
 
@@ -2690,6 +2692,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleEXT(
     uint16_t                                    lineStipplePattern);
 
 
+
 static VKAPI_ATTR void VKAPI_CALL ResetQueryPoolEXT(
     VkDevice                                    device,
     VkQueryPool                                 queryPool,
@@ -2820,6 +2823,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
     uint64_t                                    objectHandle,
     VkPrivateDataSlotEXT                        privateDataSlot,
     uint64_t*                                   pData);
+
 
 
 
