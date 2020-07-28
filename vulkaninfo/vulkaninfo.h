@@ -240,6 +240,7 @@ auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&... ts) -> std::ve
         if (err) THROW_VK_ERR(func_name, err);
         results.resize(count, init);
         err = f(ts..., &count, results.data());
+        results.resize(count);
     } while (err == VK_INCOMPLETE);
     if (err) THROW_VK_ERR(func_name, err);
     return results;
