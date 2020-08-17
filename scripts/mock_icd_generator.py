@@ -634,8 +634,8 @@ CUSTOM_C_INTERCEPTS = {
     pSurfaceCapabilities->currentExtent.height = 0xFFFFFFFF;
     pSurfaceCapabilities->minImageExtent.width = 1;
     pSurfaceCapabilities->minImageExtent.height = 1;
-    pSurfaceCapabilities->maxImageExtent.width = 3840;
-    pSurfaceCapabilities->maxImageExtent.height = 2160;
+    pSurfaceCapabilities->maxImageExtent.width = 0xFFFF;
+    pSurfaceCapabilities->maxImageExtent.height = 0xFFFF;
     pSurfaceCapabilities->maxImageArrayLayers = 128;
     pSurfaceCapabilities->supportedTransforms = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR |
                                                 VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR |
