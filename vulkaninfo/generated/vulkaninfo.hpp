@@ -346,6 +346,8 @@ static const char *VkFormatString(VkFormat value) {
         case (1000066011): return "FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT";
         case (1000066012): return "FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT";
         case (1000066013): return "FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT";
+        case (1000340000): return "FORMAT_A4R4G4B4_UNORM_PACK16_EXT";
+        case (1000340001): return "FORMAT_A4B4G4R4_UNORM_PACK16_EXT";
         default: return "UNKNOWN_VkFormat";
     }
 }
@@ -959,6 +961,11 @@ void DumpVkPhysicalDevice16BitStorageFeatures(Printer &p, std::string name, VkPh
     p.PrintKeyBool("uniformAndStorageBuffer16BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer16BitAccess), 34);
     p.PrintKeyBool("storagePushConstant16", static_cast<bool>(obj.storagePushConstant16), 34);
     p.PrintKeyBool("storageInputOutput16", static_cast<bool>(obj.storageInputOutput16), 34);
+}
+void DumpVkPhysicalDevice4444FormatsFeaturesEXT(Printer &p, std::string name, VkPhysicalDevice4444FormatsFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("formatA4R4G4B4", static_cast<bool>(obj.formatA4R4G4B4), 14);
+    p.PrintKeyBool("formatA4B4G4R4", static_cast<bool>(obj.formatA4B4G4R4), 14);
 }
 void DumpVkPhysicalDevice8BitStorageFeatures(Printer &p, std::string name, VkPhysicalDevice8BitStorageFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -1924,6 +1931,7 @@ pNextChainInfos get_chain_infos() {
     };
     infos.phys_device_features2 = {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES, sizeof(VkPhysicalDevice16BitStorageFeatures)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT, sizeof(VkPhysicalDevice4444FormatsFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES, sizeof(VkPhysicalDevice8BitStorageFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT, sizeof(VkPhysicalDeviceASTCDecodeFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT, sizeof(VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT)},
@@ -2228,6 +2236,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             version.minor >= 1)) {
             VkPhysicalDevice16BitStorageFeatures* props = (VkPhysicalDevice16BitStorageFeatures*)structure;
             DumpVkPhysicalDevice16BitStorageFeatures(p, version.minor >= 1 ?"VkPhysicalDevice16BitStorageFeatures":"VkPhysicalDevice16BitStorageFeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_4444_FORMATS_EXTENSION_NAME))) {
+            VkPhysicalDevice4444FormatsFeaturesEXT* props = (VkPhysicalDevice4444FormatsFeaturesEXT*)structure;
+            DumpVkPhysicalDevice4444FormatsFeaturesEXT(p, "VkPhysicalDevice4444FormatsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES && 
