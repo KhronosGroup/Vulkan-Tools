@@ -40,7 +40,9 @@
 #endif
 
 #ifdef _WIN32
+#ifdef _MSC_VER
 #pragma comment(linker, "/subsystem:windows")
+#endif // MSVC
 #define APP_NAME_STR_LEN 80
 #endif  // _WIN32
 
