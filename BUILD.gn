@@ -51,15 +51,12 @@ if (!is_android) {
   # ---------------
   shared_library("VkICD_mock_icd") {
     configs -= vulkan_undefine_configs
-    public_deps = [
-      "$vulkan_headers_dir:vulkan_headers",
-    ]
-    data_deps = [
-      ":vulkan_gen_icd_json_file",
-    ]
+    public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
+    data_deps = [ ":vulkan_gen_icd_json_file" ]
     sources = [
       "icd/generated/mock_icd.cpp",
       "icd/generated/mock_icd.h",
+      "icd/generated/vk_typemap_helper.h",
     ]
     if (is_win) {
       sources += [ "icd/VkICD_mock_icd.def" ]
@@ -70,9 +67,8 @@ if (!is_android) {
 
   action("vulkan_gen_icd_json_file") {
     script = "build-gn/generate_vulkan_layers_json.py"
-    sources = [
-      "$vulkan_headers_dir/include/vulkan/vulkan_core.h",
-    ]
+    public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
+    sources = [ "$vulkan_headers_dir/include/vulkan/vulkan_core.h" ]
     args = [ "--icd" ]
     if (is_win) {
       sources += [ "icd/windows/VkICD_mock_icd.json" ]
@@ -88,9 +84,7 @@ if (!is_android) {
     }
 
     # The layer JSON files are part of the necessary data deps.
-    outputs = [
-      "$vulkan_data_dir/VkICD_mock_icd.json",
-    ]
+    outputs = [ "$vulkan_data_dir/VkICD_mock_icd.json" ]
     data = outputs
     args += [ raw_vulkan_data_dir ] + rebase_path(sources, root_build_dir)
   }
