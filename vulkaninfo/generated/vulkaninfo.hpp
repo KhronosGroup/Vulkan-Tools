@@ -1484,6 +1484,32 @@ void DumpVkPhysicalDevicePointClippingProperties(Printer &p, std::string name, V
     ObjectWrapper object{p, name};
     DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior, 0);
 }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePortabilitySubsetFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("constantAlphaColorBlendFactors", static_cast<bool>(obj.constantAlphaColorBlendFactors), 38);
+    p.PrintKeyBool("events", static_cast<bool>(obj.events), 38);
+    p.PrintKeyBool("imageViewFormatReinterpretation", static_cast<bool>(obj.imageViewFormatReinterpretation), 38);
+    p.PrintKeyBool("imageViewFormatSwizzle", static_cast<bool>(obj.imageViewFormatSwizzle), 38);
+    p.PrintKeyBool("imageView2DOn3DImage", static_cast<bool>(obj.imageView2DOn3DImage), 38);
+    p.PrintKeyBool("multisampleArrayImage", static_cast<bool>(obj.multisampleArrayImage), 38);
+    p.PrintKeyBool("mutableComparisonSamplers", static_cast<bool>(obj.mutableComparisonSamplers), 38);
+    p.PrintKeyBool("pointPolygons", static_cast<bool>(obj.pointPolygons), 38);
+    p.PrintKeyBool("samplerMipLodBias", static_cast<bool>(obj.samplerMipLodBias), 38);
+    p.PrintKeyBool("separateStencilMaskRef", static_cast<bool>(obj.separateStencilMaskRef), 38);
+    p.PrintKeyBool("shaderSampleRateInterpolationFunctions", static_cast<bool>(obj.shaderSampleRateInterpolationFunctions), 38);
+    p.PrintKeyBool("tessellationIsolines", static_cast<bool>(obj.tessellationIsolines), 38);
+    p.PrintKeyBool("tessellationPointMode", static_cast<bool>(obj.tessellationPointMode), 38);
+    p.PrintKeyBool("triangleFans", static_cast<bool>(obj.triangleFans), 38);
+    p.PrintKeyBool("vertexAttributeAccessBeyondStride", static_cast<bool>(obj.vertexAttributeAccessBeyondStride), 38);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePortabilitySubsetPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyValue("minVertexInputBindingStrideAlignment", obj.minVertexInputBindingStrideAlignment, 36);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkPhysicalDevicePrivateDataFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePrivateDataFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData), 11);
@@ -1909,6 +1935,9 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT, sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR, sizeof(VkPhysicalDevicePerformanceQueryPropertiesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES, sizeof(VkPhysicalDevicePointClippingProperties)},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR, sizeof(VkPhysicalDevicePortabilitySubsetPropertiesKHR)},
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES, sizeof(VkPhysicalDeviceProtectedMemoryProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR, sizeof(VkPhysicalDevicePushDescriptorPropertiesKHR)},
 #ifdef VK_ENABLE_BETA_EXTENSIONS
@@ -1956,6 +1985,9 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR, sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT, sizeof(VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR, sizeof(VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR)},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR, sizeof(VkPhysicalDevicePortabilitySubsetFeaturesKHR)},
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT, sizeof(VkPhysicalDevicePrivateDataFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES, sizeof(VkPhysicalDeviceProtectedMemoryFeatures)},
 #ifdef VK_ENABLE_BETA_EXTENSIONS
@@ -2123,6 +2155,14 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDevicePointClippingProperties(p, version.minor >= 1 ?"VkPhysicalDevicePointClippingProperties":"VkPhysicalDevicePointClippingPropertiesKHR", *props);
             p.AddNewline();
         }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME))) {
+            VkPhysicalDevicePortabilitySubsetPropertiesKHR* props = (VkPhysicalDevicePortabilitySubsetPropertiesKHR*)structure;
+            DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(p, "VkPhysicalDevicePortabilitySubsetPropertiesKHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES && 
            (version.minor >= 1)) {
             VkPhysicalDeviceProtectedMemoryProperties* props = (VkPhysicalDeviceProtectedMemoryProperties*)structure;
@@ -2394,6 +2434,14 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(p, "VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR", *props);
             p.AddNewline();
         }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME))) {
+            VkPhysicalDevicePortabilitySubsetFeaturesKHR* props = (VkPhysicalDevicePortabilitySubsetFeaturesKHR*)structure;
+            DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(p, "VkPhysicalDevicePortabilitySubsetFeaturesKHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT && 
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME))) {
             VkPhysicalDevicePrivateDataFeaturesEXT* props = (VkPhysicalDevicePrivateDataFeaturesEXT*)structure;

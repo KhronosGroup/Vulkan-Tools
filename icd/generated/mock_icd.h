@@ -180,6 +180,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_drm_format_modifier", 1},
     {"VK_EXT_descriptor_indexing", 2},
     {"VK_EXT_shader_viewport_index_layer", 1},
+    {"VK_KHR_portability_subset", 1},
     {"VK_NV_shading_rate_image", 3},
     {"VK_NV_ray_tracing", 3},
     {"VK_NV_representative_fragment_test", 2},
@@ -262,6 +263,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_EXT_fragment_density_map2", 1},
     {"VK_EXT_image_robustness", 1},
+    {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
 };
 
@@ -1803,6 +1805,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL BindImageMemory2KHR(
     uint32_t                                    bindInfoCount,
     const VkBindImageMemoryInfo*                pBindInfos);
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupportKHR(
     VkDevice                                    device,
@@ -1916,6 +1921,31 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
 
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyBufferInfo2KHR*                 pCopyBufferInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyImageInfo2KHR*                  pCopyImageInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyBufferToImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyBufferToImageInfo2KHR*          pCopyBufferToImageInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyImageToBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyImageToBufferInfo2KHR*          pCopyImageToBufferInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBlitImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBlitImageInfo2KHR*                  pBlitImageInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkResolveImageInfo2KHR*               pResolveImageInfo);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
@@ -3276,6 +3306,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPipelineExecutablePropertiesKHR", (void*)GetPipelineExecutablePropertiesKHR},
     {"vkGetPipelineExecutableStatisticsKHR", (void*)GetPipelineExecutableStatisticsKHR},
     {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
+    {"vkCmdCopyBuffer2KHR", (void*)CmdCopyBuffer2KHR},
+    {"vkCmdCopyImage2KHR", (void*)CmdCopyImage2KHR},
+    {"vkCmdCopyBufferToImage2KHR", (void*)CmdCopyBufferToImage2KHR},
+    {"vkCmdCopyImageToBuffer2KHR", (void*)CmdCopyImageToBuffer2KHR},
+    {"vkCmdBlitImage2KHR", (void*)CmdBlitImage2KHR},
+    {"vkCmdResolveImage2KHR", (void*)CmdResolveImage2KHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
