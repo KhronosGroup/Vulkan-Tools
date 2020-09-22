@@ -53,20 +53,25 @@ vulkaninfo - Summarize Vulkan information in relation to the current environment
 USAGE: ./vulkaninfo [options]
 
 OPTIONS:
--h, --help            Print this help.
---html                Produce an html version of vulkaninfo output, saved as
-                      "vulkaninfo.html" in the directory in which the command is
-                      run.
--j, --json            Produce a json version of vulkaninfo output to standard
-                      output.
---json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by
-                      specifying the gpu-number associated with the gpu of
-                      interest. This number can be determined by running
-                      vulkaninfo without any options specified.
---show-formats        Display the format properties of each physical device.
-                      Note: This option does not affect html or json output;
-                      they will always print format properties.
---summary             Show a summary of the instance and GPU's on a system.
+-h, --help          Print this help.
+--html              Produce an html version of vulkaninfo output, saved as
+                    "vulkaninfo.html" in the directory in which the command is
+                    run.
+-j, --json          Produce a json version of vulkaninfo output to standard
+                    output.
+--json=<gpu-number> For a multi-gpu system, a single gpu can be targetted by
+                    specifying the gpu-number associated with the gpu of
+                    interest. This number can be determined by running
+                    vulkaninfo without any options specified.
+--portability       Produce a json version of vulkaninfo to standard output of the first
+                    gpu in the system conforming to the DevSim Portability Subset schema.
+--portability=<N>   Produce the json output conforming to the DevSim Portability
+                    Subset Schema for the GPU specified to standard output
+                    where N is the GPU desired.
+--show-formats      Display the format properties of each physical device.
+                    Note: This option does not affect html or json output;
+                    they will always print format properties.
+--summary           Show a summary of the instance and GPU's on a system.
 ```
 
 ### Windows

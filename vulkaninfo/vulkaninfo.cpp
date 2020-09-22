@@ -766,6 +766,38 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
     }
 }
 
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
+void DumpPortability(Printer &p, AppGpu &gpu) {
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)) {
+        if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
+            void *props_place = gpu.props2.pNext;
+            while (props_place) {
+                struct VkStructureHeader *structure = (struct VkStructureHeader *)props_place;
+                if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR) {
+                    VkPhysicalDevicePortabilitySubsetPropertiesKHR *props =
+                        (VkPhysicalDevicePortabilitySubsetPropertiesKHR *)structure;
+                    DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(p, "VkPhysicalDevicePortabilitySubsetPropertiesKHR", *props);
+                    break;
+                }
+                props_place = structure->pNext;
+            }
+
+            void *feats_place = gpu.features2.pNext;
+            while (feats_place) {
+                struct VkStructureHeader *structure = (struct VkStructureHeader *)feats_place;
+                if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR) {
+                    VkPhysicalDevicePortabilitySubsetFeaturesKHR *features =
+                        (VkPhysicalDevicePortabilitySubsetFeaturesKHR *)structure;
+                    DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(p, "VkPhysicalDevicePortabilitySubsetFeaturesKHR", *features);
+                    break;
+                }
+                feats_place = structure->pNext;
+            }
+        }
+    }
+}
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
+
 // ============ Printing Logic ============= //
 
 #ifdef _WIN32
@@ -797,20 +829,25 @@ void print_usage(const char *argv0) {
     std::cout << "\nvulkaninfo - Summarize Vulkan information in relation to the current environment.\n\n";
     std::cout << "USAGE: " << argv0 << " [options]\n\n";
     std::cout << "OPTIONS:\n";
-    std::cout << "-h, --help            Print this help.\n";
-    std::cout << "--html                Produce an html version of vulkaninfo output, saved as\n";
-    std::cout << "                      \"vulkaninfo.html\" in the directory in which the command is\n";
-    std::cout << "                      run.\n";
-    std::cout << "-j, --json            Produce a json version of vulkaninfo to standard output of the\n";
-    std::cout << "                      first gpu in the system conforming to the DevSim schema.\n";
-    std::cout << "--json=<gpu-number>   For a multi-gpu system, a single gpu can be targetted by\n";
-    std::cout << "                      specifying the gpu-number associated with the gpu of \n";
-    std::cout << "                      interest. This number can be determined by running\n";
-    std::cout << "                      vulkaninfo without any options specified.\n";
-    std::cout << "--show-formats        Display the format properties of each physical device.\n";
-    std::cout << "                      Note: This option does not affect html or json output;\n";
-    std::cout << "                      they will always print format properties.\n\n";
-    std::cout << "--summary             Show a summary of the instance and GPU's on a system.\n\n";
+    std::cout << "-h, --help          Print this help.\n";
+    std::cout << "--html              Produce an html version of vulkaninfo output, saved as\n";
+    std::cout << "                    \"vulkaninfo.html\" in the directory in which the command\n";
+    std::cout << "                    is run.\n";
+    std::cout << "-j, --json          Produce a json version of vulkaninfo to standard output of the\n";
+    std::cout << "                    first gpu in the system conforming to the DevSim schema.\n";
+    std::cout << "--json=<gpu-number> For a multi-gpu system, a single gpu can be targetted by\n";
+    std::cout << "                    specifying the gpu-number associated with the gpu of \n";
+    std::cout << "                    interest. This number can be determined by running\n";
+    std::cout << "                    vulkaninfo without any options specified.\n";
+    std::cout << "--portability       Produce a json version of vulkaninfo to standard output of the first\n";
+    std::cout << "                    gpu in the system conforming to the DevSim Portability Subset schema.\n";
+    std::cout << "--portability=<N>   Produce the json output conforming to the DevSim Portability\n";
+    std::cout << "                    Subset Schema for the GPU specified to standard output,\n";
+    std::cout << "                    where N is the GPU desired.\n";
+    std::cout << "--show-formats      Display the format properties of each physical device.\n";
+    std::cout << "                    Note: This option does not affect html or json output;\n";
+    std::cout << "                    they will always print format properties.\n\n";
+    std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
 }
 
 int main(int argc, char **argv) {
@@ -842,6 +879,14 @@ int main(int argc, char **argv) {
             }
             human_readable_output = false;
             json_output = true;
+            portability_json = false;
+        } else if (strncmp("--portability", argv[i], 13) == 0) {
+            if (strlen(argv[i]) > 14 && strncmp("--portability=", argv[i], 14) == 0) {
+                selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 14, nullptr, 10));
+            }
+            human_readable_output = false;
+            portability_json = true;
+            json_output = false;
         } else if (strcmp(argv[i], "--summary") == 0) {
             summary = true;
         } else if (strcmp(argv[i], "--html") == 0) {
@@ -893,7 +938,11 @@ int main(int argc, char **argv) {
         }
 
         if (selected_gpu >= gpus.size()) {
-            std::cout << "The selected gpu (" << selected_gpu << ") is not in the valid range of 0 to " << gpus.size() - 1 << ".\n";
+            std::cout << "The selected gpu (" << selected_gpu << ") is not a valid GPU index. ";
+            if (gpus.size() == 1)
+                std::cout << "The only available GPU selection is 0.\n";
+            else
+                std::cout << "The available GPUs are in the range of 0 to " << gpus.size() - 1 << ".\n";
             return 0;
         }
 
@@ -906,7 +955,30 @@ int main(int argc, char **argv) {
                 std::unique_ptr<Printer>(new Printer(OutputType::html, html_out, selected_gpu, instance.vk_version)));
         }
         if (json_output) {
-            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version)));
+            std::string start_string =
+                std::string("{\n\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n") +
+                "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
+                ". Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
+                VkVersionString(instance.vk_version) + "\"\n" + "\t}";
+            printers.push_back(
+                std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
+        }
+        if (portability_json) {
+            if (!gpus.at(selected_gpu)->CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)) {
+                std::cerr << "Cannot create a json because the current selected GPU (" << selected_gpu
+                          << ") does not support the VK_KHR_portability_subset extension.\n";
+            } else {
+                std::string start_string =
+                    std::string(
+                        "{\n\t\"$schema\": "
+                        "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
+                    "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
+                    "'s portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
+                    "\"" +
+                    VkVersionString(instance.vk_version) + "\"\n" + "\t}";
+                printers.push_back(
+                    std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
+            }
         }
         if (vkconfig_output) {
 #ifdef WIN32
@@ -914,8 +986,9 @@ int main(int argc, char **argv) {
 #else
             vkconfig_out = std::ofstream(std::string(output_path) + "/vulkaninfo.json");
 #endif
+            std::string start_string = "{\n\t\"Vulkan Instance Version\": \"" + VkVersionString(instance.vk_version) + "\"";
             printers.push_back(std::unique_ptr<Printer>(
-                new Printer(OutputType::vkconfig_output, vkconfig_out, selected_gpu, instance.vk_version)));
+                new Printer(OutputType::vkconfig_output, vkconfig_out, selected_gpu, instance.vk_version, start_string)));
         }
 
         for (auto &p : printers) {
@@ -928,10 +1001,14 @@ int main(int argc, char **argv) {
                     DumpSummaryGPU(*p.get(), *gpu.get());
                 }
             } else if (p->Type() == OutputType::json) {
-                DumpLayers(*p.get(), instance.global_layers, gpus);
-                DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
-
+                if (portability_json) {
+                    DumpPortability(*p.get(), *gpus.at(selected_gpu).get());
+                } else if (json_output) {
+                    DumpLayers(*p.get(), instance.global_layers, gpus);
+                    DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
+                }
             } else {
+                // text, html, vkconfig_output
                 p->SetHeader();
                 DumpExtensions(*p.get(), "Instance", instance.global_extensions);
                 p->AddNewline();
