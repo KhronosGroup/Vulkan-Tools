@@ -67,7 +67,8 @@ enum class OutputType { text, html, json, vkconfig_output };
 
 class Printer {
   public:
-    Printer(OutputType output_type, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version)
+    Printer(OutputType output_type, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version,
+            std::string start_string = "")
         : output_type(output_type), out(out) {
         switch (output_type) {
             case (OutputType::text):
@@ -75,7 +76,6 @@ class Printer {
                 out << "VULKANINFO\n";
                 out << "==========\n\n";
                 out << "Vulkan Instance Version: " << VkVersionString(vulkan_version) << "\n\n\n";
-
                 break;
             case (OutputType::html):
                 out << "<!doctype html>\n";
@@ -172,20 +172,9 @@ class Printer {
                 indents += 3;
                 break;
             case (OutputType::json):
-                out << "{\n";
-                out << "\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n";
-                out << "\t\"comments\": {\n";
-                out << "\t\t\"desc\": \"JSON configuration file describing GPU " << selected_gpu
-                    << ". Generated using the vulkaninfo program.\",\n";
-                out << "\t\t\"vulkanApiVersion\": \"" << VkVersionString(vulkan_version) << "\"\n";
-                out << "\t}";
-                indents++;
-                is_first_item.push(false);
-                is_array.push(false);
-                break;
+                /* fall through */
             case (OutputType::vkconfig_output):
-                out << "{\n";
-                out << "\t\"Vulkan Instance Version\": \"" << VkVersionString(vulkan_version) << "\"";
+                out << start_string;
                 indents++;
                 is_first_item.push(false);
                 is_array.push(false);

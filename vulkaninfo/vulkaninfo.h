@@ -113,6 +113,7 @@ bool human_readable_output = true;
 bool html_output = false;
 bool json_output = false;
 bool vkconfig_output = false;
+bool portability_json = false;
 bool summary = false;
 
 #ifdef _WIN32
