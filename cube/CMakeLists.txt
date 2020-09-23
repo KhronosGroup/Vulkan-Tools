@@ -38,7 +38,14 @@ else()
     elseif(UNIX AND NOT APPLE) # i.e. Linux
         execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-linux-Release.zip)
     endif()
-    find_program(GLSLANG_VALIDATOR NAMES ${GLSLANG_VALIDATOR_NAME} HINTS "${PROJECT_SOURCE_DIR}/glslang/bin")
+    if (WIN32)
+        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/windows/bin")
+    elseif(APPLE)
+        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/darwin/bin")
+    else()
+        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/linux/bin")
+    endif()
+    find_program(GLSLANG_VALIDATOR NAMES ${GLSLANG_VALIDATOR_NAME} HINTS ${PLATFORM_DIR})
 endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
