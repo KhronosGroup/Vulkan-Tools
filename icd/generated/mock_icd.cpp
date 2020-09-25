@@ -242,8 +242,22 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties(
     if (VK_FORMAT_UNDEFINED == format) {
         *pFormatProperties = { 0x0, 0x0, 0x0 };
     } else {
-        // TODO: Just returning full support for everything initially
-        *pFormatProperties = { 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF };
+        // Default to a color format, skip DS bit
+        *pFormatProperties = { 0x00FFFDFF, 0x00FFFDFF, 0x00FFFDFF };
+        switch (format) {
+            case VK_FORMAT_D16_UNORM:
+            case VK_FORMAT_X8_D24_UNORM_PACK32:
+            case VK_FORMAT_D32_SFLOAT:
+            case VK_FORMAT_S8_UINT:
+            case VK_FORMAT_D16_UNORM_S8_UINT:
+            case VK_FORMAT_D24_UNORM_S8_UINT:
+            case VK_FORMAT_D32_SFLOAT_S8_UINT:
+                // Don't set color bits for DS formats
+                *pFormatProperties = { 0x00FFFE7F, 0x00FFFE7F, 0x00FFFE7F };
+                break;
+            default:
+                break;
+        }
     }
 }
 
