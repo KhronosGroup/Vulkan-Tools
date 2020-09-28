@@ -51,12 +51,12 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
 # Xcode projects need some extra help with what would be install steps.
 if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
     add_custom_command(TARGET vulkaninfo-bundle POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/dynamic/libMoltenVK.dylib"
+                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
                                ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vulkaninfo.app/Contents/Frameworks/libMoltenVK.dylib
                        DEPENDS vulkan)
 else()
     add_custom_command(TARGET vulkaninfo-bundle POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/macOS/dynamic/libMoltenVK.dylib"
+                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
                                ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.app/Contents/Frameworks/libMoltenVK.dylib
                        DEPENDS vulkan)
 endif()
