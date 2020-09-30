@@ -839,11 +839,13 @@ void print_usage(const char *argv0) {
     std::cout << "                    specifying the gpu-number associated with the gpu of \n";
     std::cout << "                    interest. This number can be determined by running\n";
     std::cout << "                    vulkaninfo without any options specified.\n";
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
     std::cout << "--portability       Produce a json version of vulkaninfo to standard output of the first\n";
     std::cout << "                    gpu in the system conforming to the DevSim Portability Subset schema.\n";
     std::cout << "--portability=<N>   Produce the json output conforming to the DevSim Portability\n";
     std::cout << "                    Subset Schema for the GPU specified to standard output,\n";
     std::cout << "                    where N is the GPU desired.\n";
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
     std::cout << "--show-formats      Display the format properties of each physical device.\n";
     std::cout << "                    Note: This option does not affect html or json output;\n";
     std::cout << "                    they will always print format properties.\n\n";
@@ -880,6 +882,7 @@ int main(int argc, char **argv) {
             human_readable_output = false;
             json_output = true;
             portability_json = false;
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
         } else if (strncmp("--portability", argv[i], 13) == 0) {
             if (strlen(argv[i]) > 14 && strncmp("--portability=", argv[i], 14) == 0) {
                 selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 14, nullptr, 10));
@@ -887,6 +890,7 @@ int main(int argc, char **argv) {
             human_readable_output = false;
             portability_json = true;
             json_output = false;
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
         } else if (strcmp(argv[i], "--summary") == 0) {
             summary = true;
         } else if (strcmp(argv[i], "--html") == 0) {
@@ -963,6 +967,7 @@ int main(int argc, char **argv) {
             printers.push_back(
                 std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
         }
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
         if (portability_json) {
             if (!gpus.at(selected_gpu)->CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)) {
                 std::cerr << "Cannot create a json because the current selected GPU (" << selected_gpu
@@ -980,6 +985,7 @@ int main(int argc, char **argv) {
                     std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
             }
         }
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
         if (vkconfig_output) {
 #ifdef WIN32
             vkconfig_out = std::ofstream(std::string(output_path) + "\\vulkaninfo.json");
