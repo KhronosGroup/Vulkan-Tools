@@ -1008,7 +1008,9 @@ int main(int argc, char **argv) {
                 }
             } else if (p->Type() == OutputType::json) {
                 if (portability_json) {
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
                     DumpPortability(*p.get(), *gpus.at(selected_gpu).get());
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
                 } else if (json_output) {
                     DumpLayers(*p.get(), instance.global_layers, gpus);
                     DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
