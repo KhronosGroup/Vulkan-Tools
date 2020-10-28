@@ -3766,7 +3766,7 @@ static void demo_init_connection(struct demo *demo) {
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     const xcb_setup_t *setup;
     xcb_screen_iterator_t iter;
-    int scr;
+    int scr = 0;
 
     const char *display_envar = getenv("DISPLAY");
     if (display_envar == NULL || display_envar[0] == '\0') {
