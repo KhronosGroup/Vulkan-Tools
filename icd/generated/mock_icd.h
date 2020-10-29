@@ -219,11 +219,13 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_vulkan_memory_model", 3},
     {"VK_EXT_pci_bus_info", 2},
     {"VK_AMD_display_native_hdr", 1},
+    {"VK_KHR_shader_terminate_invocation", 1},
     {"VK_EXT_fragment_density_map", 1},
     {"VK_EXT_scalar_block_layout", 1},
     {"VK_GOOGLE_hlsl_functionality1", 1},
     {"VK_GOOGLE_decorate_string", 1},
     {"VK_EXT_subgroup_size_control", 2},
+    {"VK_KHR_fragment_shading_rate", 1},
     {"VK_AMD_shader_core_properties2", 1},
     {"VK_AMD_device_coherent_memory", 1},
     {"VK_EXT_shader_image_atomic_int64", 1},
@@ -1861,6 +1863,18 @@ static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceFragmentShadingRatesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pFragmentShadingRateCount,
+    VkPhysicalDeviceFragmentShadingRateKHR*     pFragmentShadingRates);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkExtent2D*                           pFragmentSize,
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+
+
+
 
 
 
@@ -3289,6 +3303,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetSemaphoreCounterValueKHR", (void*)GetSemaphoreCounterValueKHR},
     {"vkWaitSemaphoresKHR", (void*)WaitSemaphoresKHR},
     {"vkSignalSemaphoreKHR", (void*)SignalSemaphoreKHR},
+    {"vkGetPhysicalDeviceFragmentShadingRatesKHR", (void*)GetPhysicalDeviceFragmentShadingRatesKHR},
+    {"vkCmdSetFragmentShadingRateKHR", (void*)CmdSetFragmentShadingRateKHR},
     {"vkGetBufferDeviceAddressKHR", (void*)GetBufferDeviceAddressKHR},
     {"vkGetBufferOpaqueCaptureAddressKHR", (void*)GetBufferOpaqueCaptureAddressKHR},
     {"vkGetDeviceMemoryOpaqueCaptureAddressKHR", (void*)GetDeviceMemoryOpaqueCaptureAddressKHR},

@@ -3144,6 +3144,25 @@ static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceFragmentShadingRatesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pFragmentShadingRateCount,
+    VkPhysicalDeviceFragmentShadingRateKHR*     pFragmentShadingRates)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkExtent2D*                           pFragmentSize,
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2])
+{
+//Not a CREATE or DESTROY function
+}
+
+
+
 
 
 
