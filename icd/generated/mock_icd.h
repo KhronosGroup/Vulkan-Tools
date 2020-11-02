@@ -180,7 +180,6 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_drm_format_modifier", 1},
     {"VK_EXT_descriptor_indexing", 2},
     {"VK_EXT_shader_viewport_index_layer", 1},
-    {"VK_KHR_portability_subset", 1},
     {"VK_NV_shading_rate_image", 3},
     {"VK_NV_ray_tracing", 3},
     {"VK_NV_representative_fragment_test", 2},
