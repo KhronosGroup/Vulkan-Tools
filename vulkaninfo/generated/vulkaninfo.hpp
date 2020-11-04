@@ -838,7 +838,7 @@ void DumpVkSubgroupFeatureFlagBits(Printer &p, std::string name, VkSubgroupFeatu
 std::vector<const char *>VkSurfaceCounterFlagBitsEXTGetStrings(VkSurfaceCounterFlagBitsEXT value) {
     std::vector<const char *> strings;
     if (value == 0) strings.push_back("None");
-    if (0x1 & value) strings.push_back("SURFACE_COUNTER_VBLANK_EXT");
+    if (0x1 & value) strings.push_back("SURFACE_COUNTER_VBLANK_BIT_EXT");
     return strings;
 }
 void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounterFlagsEXT value, int width = 0) {

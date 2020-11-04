@@ -265,6 +265,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_EXT_fragment_density_map2", 1},
+    {"VK_QCOM_rotated_copy_commands", 0},
     {"VK_EXT_image_robustness", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
@@ -2871,6 +2872,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
     uint64_t                                    objectHandle,
     VkPrivateDataSlotEXT                        privateDataSlot,
     uint64_t*                                   pData);
+
 
 
 
