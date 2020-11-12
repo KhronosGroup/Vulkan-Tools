@@ -603,6 +603,10 @@ class Printer {
                     << DecorateAsValue(std::to_string(revision)) << "</summary></details>\n";
                 break;
             case (OutputType::json):
+                ObjectStart("");
+                PrintKeyString("extensionName", ext_name);
+                PrintKeyValue("specVersion", revision);
+                ObjectEnd();
                 break;
             case (OutputType::vkconfig_output):
                 ObjectStart(ext_name);
