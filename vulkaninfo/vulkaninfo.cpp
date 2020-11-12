@@ -698,6 +698,13 @@ void DumpGpuJson(Printer &p, AppGpu &gpu) {
             GpuDumpQueuePropsJson(p, gpu.inst.surface_extensions, queue_props);
         }
     }
+    {
+        ArrayWrapper arr(p, "ArrayOfVkExtensionProperties");
+        for (auto &ext : gpu.device_extensions) {
+            p.PrintExtension(ext.extensionName, ext.specVersion);
+        }
+    }
+
     GpuDumpMemoryPropsJson(p, gpu);
     DumpVkPhysicalDeviceFeatures(p, "VkPhysicalDeviceFeatures", gpu.features);
     GpuDevDumpJson(p, gpu);
