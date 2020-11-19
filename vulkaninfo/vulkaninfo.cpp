@@ -865,14 +865,7 @@ int main(int argc, char **argv) {
 // On iOS, we'll call this ourselves from a parent routine in the GUI
 int vulkanInfoMain(int argc, char **argv) {
 #endif
-    
-    bool human_readable_output = true;
-    bool html_output = false;
-    bool json_output = false;
-    bool vkconfig_output = false;
-    bool portability_json = false;
-    bool summary = false;
-    
+        
 #ifdef _WIN32
     if (ConsoleIsExclusive()) ConsoleEnlarge();
     if (!LoadUser32Dll()) {
