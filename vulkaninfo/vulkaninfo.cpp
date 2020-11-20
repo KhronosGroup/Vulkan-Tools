@@ -859,11 +859,11 @@ void print_usage(const char *argv0) {
     std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
 }
 
-#ifndef VK_USE_PLATFORM_IOS_MVK
-int main(int argc, char **argv) {
-#else
+#ifdef VK_USE_PLATFORM_IOS_MVK
 // On iOS, we'll call this ourselves from a parent routine in the GUI
 int vulkanInfoMain(int argc, char **argv) {
+#else
+int main(int argc, char **argv) {
 #endif
         
 #ifdef _WIN32
@@ -979,13 +979,13 @@ int vulkanInfoMain(int argc, char **argv) {
                 "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
                 ". Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
                 VkVersionString(instance.vk_version) + "\"\n" + "\t}";
-#ifndef VK_USE_PLATFORM_IOS_MVK
-            printers.push_back(
-                std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
-#else
+#ifdef VK_USE_PLATFORM_IOS_MVK
             json_out = std::ofstream("vulkaninfo.json");
             printers.push_back(
                 std::unique_ptr<Printer>(new Printer(OutputType::json, json_out, selected_gpu, instance.vk_version, start_string)));
+#else
+            printers.push_back(
+                std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
 #endif
         }
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
@@ -1002,13 +1002,13 @@ int vulkanInfoMain(int argc, char **argv) {
                     "'s portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
                     "\"" +
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";
-#ifndef VK_USE_PLATFORM_IOS_MVK
-                printers.push_back(
-                    std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
-#else
-                portability_out = std::ofstream("portabiliyt.json");
+#ifdef VK_USE_PLATFORM_IOS_MVK
+                portability_out = std::ofstream("portability.json");
                 printers.push_back(
                     std::unique_ptr<Printer>(new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
+#else
+                printers.push_back(
+                    std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
 #endif
             }
         }
@@ -1025,7 +1025,7 @@ int vulkanInfoMain(int argc, char **argv) {
         }
 
         for (auto &p : printers) {
-#if defined(VK_USE_PLATFORM_IOS_MVK)
+#ifdef VK_USE_PLATFORM_IOS_MVK
             p->SetAlwaysOpenDetails(true);
 #endif
             if (summary) {
