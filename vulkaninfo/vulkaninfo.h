@@ -108,6 +108,7 @@ struct VulkanException : std::runtime_error {
 };
 #define THROW_VK_ERR(func_name, err) throw VulkanException(func_name, __FILE__, __LINE__, err);
 
+// Global configuration (Used by Windows WAIT_FOR_CONSOLE_DESTROY MACRO)
 bool human_readable_output = true;
 bool html_output = false;
 bool json_output = false;
