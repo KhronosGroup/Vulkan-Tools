@@ -116,7 +116,6 @@ bool vkconfig_output = false;
 bool portability_json = false;
 bool summary = false;
 
-
 #ifdef _WIN32
 
 #define strdup _strdup
