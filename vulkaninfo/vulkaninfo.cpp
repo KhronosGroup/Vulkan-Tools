@@ -865,7 +865,7 @@ int vulkanInfoMain(int argc, char **argv) {
 #else
 int main(int argc, char **argv) {
 #endif
-        
+
 #ifdef _WIN32
     if (ConsoleIsExclusive()) ConsoleEnlarge();
     if (!LoadUser32Dll()) {
@@ -1004,8 +1004,8 @@ int main(int argc, char **argv) {
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
                 portability_out = std::ofstream("portability.json");
-                printers.push_back(
-                    std::unique_ptr<Printer>(new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
+                printers.push_back(std::unique_ptr<Printer>(
+                    new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
 #else
                 printers.push_back(
                     std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
