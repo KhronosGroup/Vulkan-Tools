@@ -180,7 +180,6 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_drm_format_modifier", 1},
     {"VK_EXT_descriptor_indexing", 2},
     {"VK_EXT_shader_viewport_index_layer", 1},
-    {"VK_KHR_portability_subset", 1},
     {"VK_NV_shading_rate_image", 3},
     {"VK_NV_ray_tracing", 3},
     {"VK_NV_representative_fragment_test", 2},
@@ -219,13 +218,16 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_vulkan_memory_model", 3},
     {"VK_EXT_pci_bus_info", 2},
     {"VK_AMD_display_native_hdr", 1},
+    {"VK_KHR_shader_terminate_invocation", 1},
     {"VK_EXT_fragment_density_map", 1},
     {"VK_EXT_scalar_block_layout", 1},
     {"VK_GOOGLE_hlsl_functionality1", 1},
     {"VK_GOOGLE_decorate_string", 1},
     {"VK_EXT_subgroup_size_control", 2},
+    {"VK_KHR_fragment_shading_rate", 1},
     {"VK_AMD_shader_core_properties2", 1},
     {"VK_AMD_device_coherent_memory", 1},
+    {"VK_EXT_shader_image_atomic_int64", 1},
     {"VK_KHR_spirv_1_4", 1},
     {"VK_EXT_memory_budget", 1},
     {"VK_EXT_memory_priority", 1},
@@ -252,6 +254,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_device_generated_commands", 3},
     {"VK_EXT_texel_buffer_alignment", 1},
     {"VK_QCOM_render_pass_transform", 1},
+    {"VK_EXT_device_memory_report", 1},
     {"VK_EXT_robustness2", 1},
     {"VK_EXT_custom_border_color", 12},
     {"VK_GOOGLE_user_type", 1},
@@ -261,7 +264,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pipeline_creation_cache_control", 3},
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
+    {"VK_NV_fragment_shading_rate_enums", 1},
     {"VK_EXT_fragment_density_map2", 1},
+    {"VK_QCOM_rotated_copy_commands", 0},
     {"VK_EXT_image_robustness", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
@@ -1859,6 +1864,18 @@ static VKAPI_ATTR VkResult VKAPI_CALL SignalSemaphoreKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceFragmentShadingRatesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pFragmentShadingRateCount,
+    VkPhysicalDeviceFragmentShadingRateKHR*     pFragmentShadingRates);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkExtent2D*                           pFragmentSize,
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
+
+
+
 
 
 
@@ -2661,6 +2678,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateMetalSurfaceEXT(
 
 
 
+
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetBufferDeviceAddressEXT(
     VkDevice                                    device,
     const VkBufferDeviceAddressInfo*            pInfo);
@@ -2830,6 +2848,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyIndirectCommandsLayoutNV(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreatePrivateDataSlotEXT(
     VkDevice                                    device,
     const VkPrivateDataSlotCreateInfoEXT*       pCreateInfo,
@@ -2856,6 +2875,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
     uint64_t*                                   pData);
 
 
+
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
+    VkCommandBuffer                             commandBuffer,
+    VkFragmentShadingRateNV                     shadingRate,
+    const VkFragmentShadingRateCombinerOpKHR    combinerOps[2]);
 
 
 
@@ -3285,6 +3311,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetSemaphoreCounterValueKHR", (void*)GetSemaphoreCounterValueKHR},
     {"vkWaitSemaphoresKHR", (void*)WaitSemaphoresKHR},
     {"vkSignalSemaphoreKHR", (void*)SignalSemaphoreKHR},
+    {"vkGetPhysicalDeviceFragmentShadingRatesKHR", (void*)GetPhysicalDeviceFragmentShadingRatesKHR},
+    {"vkCmdSetFragmentShadingRateKHR", (void*)CmdSetFragmentShadingRateKHR},
     {"vkGetBufferDeviceAddressKHR", (void*)GetBufferDeviceAddressKHR},
     {"vkGetBufferOpaqueCaptureAddressKHR", (void*)GetBufferOpaqueCaptureAddressKHR},
     {"vkGetDeviceMemoryOpaqueCaptureAddressKHR", (void*)GetDeviceMemoryOpaqueCaptureAddressKHR},
@@ -3476,6 +3504,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyPrivateDataSlotEXT", (void*)DestroyPrivateDataSlotEXT},
     {"vkSetPrivateDataEXT", (void*)SetPrivateDataEXT},
     {"vkGetPrivateDataEXT", (void*)GetPrivateDataEXT},
+    {"vkCmdSetFragmentShadingRateEnumNV", (void*)CmdSetFragmentShadingRateEnumNV},
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
     {"vkCreateDirectFBSurfaceEXT", (void*)CreateDirectFBSurfaceEXT},
 #endif

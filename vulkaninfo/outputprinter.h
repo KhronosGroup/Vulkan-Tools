@@ -257,6 +257,11 @@ class Printer {
         return *this;
     }
 
+    Printer &SetAlwaysOpenDetails(bool value = true) {
+        should_always_open = value;
+        return *this;
+    }
+
     Printer &SetTitleAsType() {
         set_object_name_as_type = true;
         return *this;
@@ -298,7 +303,7 @@ class Printer {
             }
             case (OutputType::html):
                 out << std::string(static_cast<size_t>(indents), '\t');
-                if (set_details_open) {
+                if (set_details_open || should_always_open) {
                     out << "<details open>";
                     set_details_open = false;
                 } else {
@@ -398,7 +403,7 @@ class Printer {
             }
             case (OutputType::html):
                 out << std::string(static_cast<size_t>(indents), '\t');
-                if (set_details_open) {
+                if (set_details_open || should_always_open) {
                     out << "<details open>";
                     set_details_open = false;
                 } else {
@@ -603,6 +608,10 @@ class Printer {
                     << DecorateAsValue(std::to_string(revision)) << "</summary></details>\n";
                 break;
             case (OutputType::json):
+                ObjectStart("");
+                PrintKeyString("extensionName", ext_name);
+                PrintKeyValue("specVersion", revision);
+                ObjectEnd();
                 break;
             case (OutputType::vkconfig_output):
                 ObjectStart(ext_name);
@@ -658,6 +667,9 @@ class Printer {
 
     // open <details>
     bool set_details_open = false;
+
+    // always open <details>
+    bool should_always_open = false;
 
     // make object titles the color of types
     bool set_object_name_as_type = false;

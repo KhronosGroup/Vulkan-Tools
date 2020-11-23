@@ -32,10 +32,13 @@ import ssl
 import subprocess
 import urllib.request
 import zipfile
+import platform
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_DIR = os.path.join(SCRIPTS_DIR, '..')
 GLSLANG_URL = "https://github.com/KhronosGroup/glslang/releases/download/7.9.2888"
+
+def platformDir(): return platform.system().lower()
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
@@ -45,19 +48,18 @@ if __name__ == '__main__':
     GLSLANG_FILENAME = sys.argv[1]
     GLSLANG_COMPLETE_URL = GLSLANG_URL + "/" + GLSLANG_FILENAME
     GLSLANG_OUTFILENAME = os.path.join(REPO_DIR, "glslang", GLSLANG_FILENAME)
-    GLSLANG_VALIDATOR_PATH = os.path.join(REPO_DIR, "glslang", "bin")
-    GLSLANG_VALIDATOR_FULL_PATH = os.path.join(REPO_DIR, "glslang", "bin", "glslangValidator")
-    GLSLANG_DIR = os.path.join(REPO_DIR, "glslang")
+    GLSLANG_DIR = os.path.join(REPO_DIR, "glslang", platformDir())
+    GLSLANG_VALIDATOR_PATH = os.path.join(GLSLANG_DIR, "bin")
+    GLSLANG_VALIDATOR_FULL_PATH = os.path.join(GLSLANG_VALIDATOR_PATH, "glslangValidator")
+    if platform.system() == 'Windows':
+        GLSLANG_VALIDATOR_FULL_PATH = GLSLANG_VALIDATOR_FULL_PATH + '.exe'
 
     if os.path.isdir(GLSLANG_DIR):
-        if os.path.isdir(GLSLANG_VALIDATOR_PATH):
-            dir_contents = os.listdir(GLSLANG_VALIDATOR_PATH)
-            for afile in dir_contents:
-                if "glslangValidator" in afile:
-                    print("   Using glslangValidator at %s" % GLSLANG_VALIDATOR_PATH)
-                    sys.exit();
+        if os.path.exists(GLSLANG_VALIDATOR_FULL_PATH):
+            print("   Using glslangValidator at %s" % GLSLANG_VALIDATOR_PATH)
+            sys.exit()
     else:
-        os.mkdir(GLSLANG_DIR)
+        os.makedirs(GLSLANG_DIR)
     print("   Downloading glslangValidator binary from glslang releases dir")
     sys.stdout.flush()
 
