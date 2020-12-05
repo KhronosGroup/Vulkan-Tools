@@ -37,6 +37,9 @@
 #endif
 
 uint64_t getTimeInNanoseconds(void) {
+    const uint64_t ns_in_us = 1000;
+    const uint64_t ns_in_ms = 1000 * ns_in_us;
+    const uint64_t ns_in_s = 1000 * ns_in_ms;
 #if defined(_WIN32)
     LARGE_INTEGER freq;
     LARGE_INTEGER count;
@@ -44,31 +47,31 @@ uint64_t getTimeInNanoseconds(void) {
     QueryPerformanceFrequency(&freq);
     assert(freq.LowPart != 0 || freq.HighPart != 0);
 
-    if (count.QuadPart < MAXLONGLONG / 1000000) {
+    if (count.QuadPart < MAXLONGLONG / ns_in_s) {
         assert(freq.QuadPart != 0);
-        return count.QuadPart * 1000000 / freq.QuadPart;
+        return count.QuadPart * ns_in_s / freq.QuadPart;
     } else {
-        assert(freq.QuadPart >= 1000000);
-        return count.QuadPart / (freq.QuadPart / 1000000);
+        assert(freq.QuadPart >= ns_in_s);
+        return count.QuadPart / (freq.QuadPart / ns_in_s);
     }
 
 #elif defined(__unix__) || defined(__linux) || defined(__linux__) || defined(__ANDROID__) || defined(__QNX__)
     struct timespec currTime;
     clock_gettime(CLOCK_MONOTONIC, &currTime);
-    return (uint64_t)currTime.tv_sec * 1000000 + ((uint64_t)currTime.tv_nsec / 1000);
+    return (uint64_t)currTime.tv_sec * ns_in_s + (uint64_t)currTime.tv_nsec;
 
 #elif defined(__EPOC32__)
     struct timespec currTime;
     /* Symbian supports only realtime clock for clock_gettime. */
     clock_gettime(CLOCK_REALTIME, &currTime);
-    return (uint64_t)currTime.tv_sec * 1000000 + ((uint64_t)currTime.tv_nsec / 1000);
+    return (uint64_t)currTime.tv_sec * ns_in_s + (uint64_t)currTime.tv_nsec;
 
 #elif defined(__APPLE__)
     struct timeval currTime;
     gettimeofday(&currTime, NULL);
-    return (uint64_t)currTime.tv_sec * 1000000 + (uint64_t)currTime.tv_usec;
+    return (uint64_t)currTime.tv_sec * ns_in_s + (uint64_t)currTime.tv_usec * ns_in_us;
 
 #else
-#error "Not implemented for target OS"
+#error getTimeInNanoseconds Not implemented for target OS
 #endif
 }
