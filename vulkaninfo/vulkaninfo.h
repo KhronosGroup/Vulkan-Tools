@@ -1219,9 +1219,8 @@ class AppSurface {
                                                                surface_extension.surface};
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            VkSurfaceFormat2KHR init;
+            VkSurfaceFormat2KHR init{};
             init.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-            init.pNext = nullptr;
             surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>("vkGetPhysicalDeviceSurfaceFormats2KHR",
                                                                inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormats2KHR, init,
                                                                phys_device, &surface_info2);
@@ -1241,11 +1240,16 @@ class AppSurface {
             surface_capabilities2_khr.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
             buildpNextChain((VkStructureHeader *)&surface_capabilities2_khr, sur_extension_pNextChain);
 
-            VkPhysicalDeviceSurfaceInfo2KHR surface_info;
+            VkPhysicalDeviceSurfaceInfo2KHR surface_info{};
             surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
-            surface_info.pNext = nullptr;
             surface_info.surface = surface_extension.surface;
+#if defined(WIN32)
+            VkSurfaceFullScreenExclusiveWin32InfoEXT win32_fullscreen_exclusive_info{};
+            win32_fullscreen_exclusive_info.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+            win32_fullscreen_exclusive_info.hmonitor = MonitorFromWindow(inst.h_wnd, MONITOR_DEFAULTTOPRIMARY);
 
+            surface_info.pNext = reinterpret_cast<void *>(&win32_fullscreen_exclusive_info);
+#endif  // defined(WIN32)
             VkResult err =
                 inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2KHR", err);
