@@ -15,14 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authro: Richard Wright <richard@lunarg.com>
+ * Author: Richard Wright <richard@lunarg.com>
  */
-
 
 #import <UIKit/UIKit.h>
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-
 @end
-
