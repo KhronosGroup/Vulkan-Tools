@@ -1001,8 +1001,7 @@ int main(int argc, char **argv) {
                         "{\n\t\"$schema\": "
                         "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
                     "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
-                    "'s ("
-                    + gpus.at(selected_gpu)->props.deviceName +
+                    "'s (" + gpus.at(selected_gpu)->props.deviceName +
                     "( portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
                     "\"" +
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";

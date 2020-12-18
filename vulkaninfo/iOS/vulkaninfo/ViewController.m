@@ -15,9 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authro: Richard Wright <richard@lunarg.com>
+ * Author: Richard Wright <richard@lunarg.com>
  */
-
 
 #import "ViewController.h"
 
@@ -29,17 +28,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    
+
     // Get the HTML version of the output and display it in a web view.
     NSArray *docPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *myPath = [docPath objectAtIndex:0];
     NSString *filePath = [myPath stringByAppendingPathComponent:@"/vulkaninfo.html"];
-    
-    NSURL *url = [NSURL fileURLWithPath: filePath];
+
+    NSURL *url = [NSURL fileURLWithPath:filePath];
     [webView loadFileURL:url allowingReadAccessToURL:url.URLByDeletingLastPathComponent];
-    
-    
 }
 
 @synthesize webView;

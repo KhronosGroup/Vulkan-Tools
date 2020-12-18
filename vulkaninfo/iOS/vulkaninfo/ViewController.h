@@ -15,16 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authro: Richard Wright <richard@lunarg.com>
+ * Author: Richard Wright <richard@lunarg.com>
  */
-
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WKWebView.h>
 
 @interface ViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet WKWebView *webView;
+@property(weak, nonatomic) IBOutlet WKWebView *webView;
 
 @end
-

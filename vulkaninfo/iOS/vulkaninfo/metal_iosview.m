@@ -16,7 +16,7 @@
  * limitations under the License.
  *
  * Author: Jeremy Kniager <jeremyk@lunarg.com>
- * Authro: Richard Wright <richard@lunarg.com>
+ * Author: Richard Wright <richard@lunarg.com>
  */
 
 #import <UIKit/UIKit.h>
@@ -34,11 +34,10 @@
     return [CAMetalLayer class];
 }
 
-
 - (CALayer*)makeBackingLayer {
     CALayer* layer = [self.class.layerClass layer];
-    //CGSize viewScale = [self convertSizeToBacking:CGSizeMake(1.0, 1.0)];
-    //layer.contentsScale = MIN(viewScale.width, viewScale.height);
+    // CGSize viewScale = [self convertSizeToBacking:CGSizeMake(1.0, 1.0)];
+    // layer.contentsScale = MIN(viewScale.width, viewScale.height);
     return layer;
 }
 @end
@@ -47,6 +46,6 @@ NativeMetalView* CreateMetalView(uint32_t width, uint32_t height) {
     return [[NativeMetalView alloc] initWithFrame:CGRectMake(0, 0, width, height)];
 }
 
-//void DestroyMetalView(void* view) { [(NativeMetalView*)view dealloc]; }
+// void DestroyMetalView(void* view) { [(NativeMetalView*)view dealloc]; }
 
 CAMetalLayer* GetCAMetalLayerFromMetalView(NativeMetalView* view) { return (CAMetalLayer*)view.layer; }

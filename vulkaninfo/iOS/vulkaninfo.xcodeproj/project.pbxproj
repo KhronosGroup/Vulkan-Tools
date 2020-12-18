@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A06CCB40258D04F700B0A7DA /* vulkaninfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A06CCB3F258D04F700B0A7DA /* vulkaninfo.cpp */; };
+		A06CCB44258D0BE300B0A7DA /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A06CCB43258D0BE300B0A7DA /* MoltenVK.xcframework */; };
 		A07BD431255B45E000B79448 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A07BD430255B45E000B79448 /* AppDelegate.m */; };
 		A07BD434255B45E000B79448 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A07BD433255B45E000B79448 /* SceneDelegate.m */; };
 		A07BD437255B45E000B79448 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A07BD436255B45E000B79448 /* ViewController.m */; };
@@ -14,13 +16,13 @@
 		A07BD43C255B45E200B79448 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A07BD43B255B45E200B79448 /* Assets.xcassets */; };
 		A07BD43F255B45E200B79448 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A07BD43D255B45E200B79448 /* LaunchScreen.storyboard */; };
 		A07BD442255B45E200B79448 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A07BD441255B45E200B79448 /* main.mm */; };
-		A07BD47E255B49AB00B79448 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07BD47D255B49AB00B79448 /* MoltenVK.xcframework */; };
 		A07BD48D255B4DEE00B79448 /* metal_iosview.m in Sources */ = {isa = PBXBuildFile; fileRef = A07BD48C255B4DEE00B79448 /* metal_iosview.m */; };
 		A07BD4A5255C914A00B79448 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07BD4A4255C914A00B79448 /* WebKit.framework */; };
-		A0A4D8F6258CFDEF00725AFE /* vulkaninfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0A4D8F5258CFDEF00725AFE /* vulkaninfo.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A06CCB3F258D04F700B0A7DA /* vulkaninfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vulkaninfo.cpp; path = ../vulkaninfo.cpp; sourceTree = "<group>"; };
+		A06CCB43258D0BE300B0A7DA /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../../../VulkanSDK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 		A07BD42C255B45E000B79448 /* vulkaninfo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vulkaninfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A07BD42F255B45E000B79448 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A07BD430255B45E000B79448 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -33,11 +35,9 @@
 		A07BD43E255B45E200B79448 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A07BD440255B45E200B79448 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A07BD441255B45E200B79448 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
-		A07BD47D255B49AB00B79448 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../../../VulkanSDK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 		A07BD48C255B4DEE00B79448 /* metal_iosview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = metal_iosview.m; sourceTree = "<group>"; };
 		A07BD48F255B4DF900B79448 /* metal_iosview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metal_iosview.h; sourceTree = "<group>"; };
 		A07BD4A4255C914A00B79448 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		A0A4D8F5258CFDEF00725AFE /* vulkaninfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vulkaninfo.cpp; path = ../../vulkaninfo.cpp; sourceTree = "<group>"; };
 		A0F9358C2575C05A00CFA527 /* vulkaninfo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = vulkaninfo.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -46,18 +46,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A06CCB44258D0BE300B0A7DA /* MoltenVK.xcframework in Frameworks */,
 				A07BD4A5255C914A00B79448 /* WebKit.framework in Frameworks */,
-				A07BD47E255B49AB00B79448 /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A06CCB3E258D04E200B0A7DA /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A06CCB3F258D04F700B0A7DA /* vulkaninfo.cpp */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
 		A07BD423255B45E000B79448 = {
 			isa = PBXGroup;
 			children = (
-				A07BD480255B49EC00B79448 /* sharedsource */,
+				A06CCB3E258D04E200B0A7DA /* Shared */,
 				A07BD473255B48AB00B79448 /* Frameworks */,
 				A07BD42E255B45E000B79448 /* vulkaninfo */,
 				A07BD42D255B45E000B79448 /* Products */,
@@ -96,18 +104,10 @@
 		A07BD473255B48AB00B79448 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A06CCB43258D0BE300B0A7DA /* MoltenVK.xcframework */,
 				A07BD4A4255C914A00B79448 /* WebKit.framework */,
-				A07BD47D255B49AB00B79448 /* MoltenVK.xcframework */,
 			);
 			path = Frameworks;
-			sourceTree = "<group>";
-		};
-		A07BD480255B49EC00B79448 /* sharedsource */ = {
-			isa = PBXGroup;
-			children = (
-				A0A4D8F5258CFDEF00725AFE /* vulkaninfo.cpp */,
-			);
-			path = sharedsource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,7 +181,7 @@
 			files = (
 				A07BD437255B45E000B79448 /* ViewController.m in Sources */,
 				A07BD431255B45E000B79448 /* AppDelegate.m in Sources */,
-				A0A4D8F6258CFDEF00725AFE /* vulkaninfo.cpp in Sources */,
+				A06CCB40258D04F700B0A7DA /* vulkaninfo.cpp in Sources */,
 				A07BD442255B45E200B79448 /* main.mm in Sources */,
 				A07BD48D255B4DEE00B79448 /* metal_iosview.m in Sources */,
 				A07BD434255B45E000B79448 /* SceneDelegate.m in Sources */,
