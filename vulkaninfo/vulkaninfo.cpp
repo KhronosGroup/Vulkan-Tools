@@ -22,6 +22,7 @@
  * Author: Jeremy Kniager <jeremyk@lunarg.com>
  * Author: Shannon McPherson <shannon@lunarg.com>
  * Author: Bob Ellison <bob@lunarg.com>
+ * Author: Richard Wright <richard@lunarg.com>
  * Author: Charles Giessen <charles@lunarg.com>
  *
  */
@@ -976,8 +977,9 @@ int main(int argc, char **argv) {
         if (json_output) {
             std::string start_string =
                 std::string("{\n\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n") +
-                "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
-                ". Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
+                "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) + " (" +
+                gpus.at(selected_gpu)->props.deviceName +
+                "). Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
                 VkVersionString(instance.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
             json_out = std::ofstream("vulkaninfo.json");
@@ -999,7 +1001,8 @@ int main(int argc, char **argv) {
                         "{\n\t\"$schema\": "
                         "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
                     "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
-                    "'s portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
+                    "'s (" + gpus.at(selected_gpu)->props.deviceName +
+                    "( portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
                     "\"" +
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
