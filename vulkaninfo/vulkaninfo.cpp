@@ -859,7 +859,13 @@ void print_usage(const char *argv0) {
     std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
 }
 
+#ifdef VK_USE_PLATFORM_IOS_MVK
+// On iOS, we'll call this ourselves from a parent routine in the GUI
+int vulkanInfoMain(int argc, char **argv) {
+#else
 int main(int argc, char **argv) {
+#endif
+
 #ifdef _WIN32
     if (ConsoleIsExclusive()) ConsoleEnlarge();
     if (!LoadUser32Dll()) {
@@ -915,6 +921,8 @@ int main(int argc, char **argv) {
     }
     std::vector<std::unique_ptr<Printer>> printers;
     std::ostream out(std::cout.rdbuf());
+    std::ofstream json_out;
+    std::ofstream portability_out;
     std::ofstream html_out;
     std::ofstream vkconfig_out;
 
@@ -971,8 +979,14 @@ int main(int argc, char **argv) {
                 "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
                 ". Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
                 VkVersionString(instance.vk_version) + "\"\n" + "\t}";
+#ifdef VK_USE_PLATFORM_IOS_MVK
+            json_out = std::ofstream("vulkaninfo.json");
+            printers.push_back(
+                std::unique_ptr<Printer>(new Printer(OutputType::json, json_out, selected_gpu, instance.vk_version, start_string)));
+#else
             printers.push_back(
                 std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
+#endif
         }
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
         if (portability_json) {
@@ -988,8 +1002,14 @@ int main(int argc, char **argv) {
                     "'s portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
                     "\"" +
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";
+#ifdef VK_USE_PLATFORM_IOS_MVK
+                portability_out = std::ofstream("portability.json");
+                printers.push_back(std::unique_ptr<Printer>(
+                    new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
+#else
                 printers.push_back(
                     std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
+#endif
             }
         }
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
@@ -1005,6 +1025,9 @@ int main(int argc, char **argv) {
         }
 
         for (auto &p : printers) {
+#ifdef VK_USE_PLATFORM_IOS_MVK
+            p->SetAlwaysOpenDetails(true);
+#endif
             if (summary) {
                 DumpSummaryInstance(*p.get(), instance);
                 p->SetHeader();
