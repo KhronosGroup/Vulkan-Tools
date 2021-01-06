@@ -25,7 +25,6 @@
  * Author: Bill Hollings <bill.hollings@brenwill.com>
  */
 
-#define VK_ENABLE_BETA_EXTENSIONS
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdarg.h>
@@ -3312,8 +3311,8 @@ static void demo_init_vk(struct demo *demo) {
                 swapchainExtFound = 1;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
             }
-            if (!strcmp(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME, device_extensions[i].extensionName)) {
-                demo->extension_names[demo->enabled_extension_count++] = VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME;
+            if (!strcmp("VK_KHR_portability_subset", device_extensions[i].extensionName)) {
+                demo->extension_names[demo->enabled_extension_count++] = "VK_KHR_portability_subset";
             }
             assert(demo->enabled_extension_count < 64);
         }
