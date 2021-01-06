@@ -17,7 +17,7 @@
  *
  * Author: Jeremy Hayes <jeremy@lunarg.com>
  */
-#define VK_ENABLE_BETA_EXTENSIONS
+
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
@@ -1286,8 +1286,8 @@ void Demo::init_vk() {
                 swapchainExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
             }
-            if (!strcmp(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME, device_extensions[i].extensionName)) {
-                extension_names[enabled_extension_count++] = VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME;
+            if (!strcmp("VK_KHR_portability_subset", device_extensions[i].extensionName)) {
+                extension_names[enabled_extension_count++] = "VK_KHR_portability_subset";
             }
             assert(enabled_extension_count < 64);
         }
