@@ -17,7 +17,7 @@
  *
  * Author: Jeremy Hayes <jeremy@lunarg.com>
  */
-
+#define VK_ENABLE_BETA_EXTENSIONS
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
