@@ -25,6 +25,7 @@
  * Author: Bill Hollings <bill.hollings@brenwill.com>
  */
 
+#define VK_ENABLE_BETA_EXTENSIONS
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdarg.h>
