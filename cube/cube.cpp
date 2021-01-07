@@ -311,7 +311,7 @@ struct Demo {
     bool use_staging_buffer;
     bool use_xlib;
     bool separate_present_queue;
-    uint32_t gpu_number;
+    int32_t gpu_number;
 
     vk::Instance inst;
     vk::PhysicalDevice gpu;
@@ -940,8 +940,8 @@ void Demo::init(int argc, char **argv) {
     presentMode = vk::PresentModeKHR::eFifo;
     frameCount = UINT32_MAX;
     use_xlib = false;
-    /* For cube demo we just grab the first physical device by default */
-    gpu_number = 0;
+    /* Autodetect suitable / best GPU by default */
+    gpu_number = -1;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
@@ -976,6 +976,7 @@ void Demo::init(int argc, char **argv) {
         }
         if ((strcmp(argv[i], "--gpu_number") == 0) && (i < argc - 1)) {
             gpu_number = atoi(argv[i + 1]);
+            assert(gpu_number >= 0);
             i++;
             continue;
         }
@@ -988,7 +989,7 @@ void Demo::init(int argc, char **argv) {
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
               << "\t\tVK_PRESENT_MODE_MAILBOX_KHR = " << VK_PRESENT_MODE_MAILBOX_KHR << "\n"
               << "\t\tVK_PRESENT_MODE_FIFO_KHR = " << VK_PRESENT_MODE_FIFO_KHR << "\n"
-              << "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = " << VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+              << "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = " << VK_PRESENT_MODE_FIFO_RELAXED_KHR << "\n";
 
 #if defined(_WIN32)
         if (!suppress_popups) MessageBox(NULL, usage.str().c_str(), "Usage Error", MB_OK);
@@ -1243,28 +1244,66 @@ void Demo::init_vk() {
             "vkCreateInstance Failure");
     }
 
-    /* Make initial call to query gpu_count, then second call for gpu info*/
-    uint32_t gpu_count;
+    /* Make initial call to query gpu_count, then second call for gpu info */
+    uint32_t gpu_count = 0;
     result = inst.enumeratePhysicalDevices(&gpu_count, static_cast<vk::PhysicalDevice *>(nullptr));
     VERIFY(result == vk::Result::eSuccess);
 
-    if (gpu_count > 0) {
-        std::unique_ptr<vk::PhysicalDevice[]> physical_devices(new vk::PhysicalDevice[gpu_count]);
-        result = inst.enumeratePhysicalDevices(&gpu_count, physical_devices.get());
-        VERIFY(result == vk::Result::eSuccess);
-        if (gpu_number > gpu_count - 1) {
-            fprintf(stderr, "Gpu %u specified is not present, gpu count = %u\n", gpu_number, gpu_count);
-            fprintf(stderr, "Continuing with gpu 0\n");
-            gpu_number = 0;
-        }
-        gpu = physical_devices[gpu_number];
-    } else {
+    if (gpu_count <= 0) {
         ERR_EXIT(
             "vkEnumeratePhysicalDevices reported zero accessible devices.\n\n"
             "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
             "Please look at the Getting Started guide for additional information.\n",
             "vkEnumeratePhysicalDevices Failure");
     }
+
+    std::unique_ptr<vk::PhysicalDevice[]> physical_devices(new vk::PhysicalDevice[gpu_count]);
+    result = inst.enumeratePhysicalDevices(&gpu_count, physical_devices.get());
+    VERIFY(result == vk::Result::eSuccess);
+
+    if (gpu_number >= 0 && !((uint32_t)gpu_number < gpu_count)) {
+        fprintf(stderr, "GPU %d specified is not present, GPU count = %u\n", gpu_number, gpu_count);
+        ERR_EXIT("Specified GPU number is not present", "User Error");
+    }
+
+    /* Try to auto select most suitable device */
+    if (gpu_number == -1) {
+        uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
+        memset(count_device_type, 0, sizeof(count_device_type));
+
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            const auto physicalDeviceProperties = physical_devices[i].getProperties();
+            assert(static_cast<int>(physicalDeviceProperties.deviceType) <= VK_PHYSICAL_DEVICE_TYPE_CPU);
+            count_device_type[static_cast<int>(physicalDeviceProperties.deviceType)]++;
+        }
+
+        const vk::PhysicalDeviceType device_type_preference[] = {
+            vk::PhysicalDeviceType::eDiscreteGpu, vk::PhysicalDeviceType::eIntegratedGpu, vk::PhysicalDeviceType::eVirtualGpu,
+            vk::PhysicalDeviceType::eCpu, vk::PhysicalDeviceType::eOther};
+        vk::PhysicalDeviceType search_for_device_type = vk::PhysicalDeviceType::eDiscreteGpu;
+        for (uint32_t i = 0; i < sizeof(device_type_preference) / sizeof(vk::PhysicalDeviceType); i++) {
+            if (count_device_type[static_cast<int>(device_type_preference[i])]) {
+                search_for_device_type = device_type_preference[i];
+                break;
+            }
+        }
+
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            const auto physicalDeviceProperties = physical_devices[i].getProperties();
+            if (physicalDeviceProperties.deviceType == search_for_device_type) {
+                gpu_number = i;
+                break;
+            }
+        }
+    }
+    assert(gpu_number >= 0);
+    gpu = physical_devices[gpu_number];
+    {
+        auto physicalDeviceProperties = gpu.getProperties();
+        fprintf(stderr, "Selected GPU %d: %s, type: %s\n", gpu_number, physicalDeviceProperties.deviceName.data(),
+                to_string(physicalDeviceProperties.deviceType).c_str());
+    }
+    physical_devices.reset();
 
     /* Look for device extensions */
     uint32_t device_extension_count = 0;
