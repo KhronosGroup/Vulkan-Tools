@@ -939,6 +939,8 @@ void Demo::init(int argc, char **argv) {
 
     presentMode = vk::PresentModeKHR::eFifo;
     frameCount = UINT32_MAX;
+    width = 500;
+    height = 500;
     use_xlib = false;
     /* Autodetect suitable / best GPU by default */
     gpu_number = -1;
@@ -970,6 +972,14 @@ void Demo::init(int argc, char **argv) {
             i++;
             continue;
         }
+        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &width) == 1 && width > 0) {
+            i++;
+            continue;
+        }
+        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &height) == 1 && height > 0) {
+            i++;
+            continue;
+        }
         if (strcmp(argv[i], "--suppress_popups") == 0) {
             suppress_popups = true;
             continue;
@@ -985,6 +995,7 @@ void Demo::init(int argc, char **argv) {
               << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
               << "\t[--gpu_number <index of physical device>]\n"
               << "\t[--present_mode <present mode enum>]\n"
+              << "\t[--width <width>] [--height <height>]\n"
               << "\t<present_mode_enum>\n"
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
               << "\t\tVK_PRESENT_MODE_MAILBOX_KHR = " << VK_PRESENT_MODE_MAILBOX_KHR << "\n"
@@ -1005,9 +1016,6 @@ void Demo::init(int argc, char **argv) {
     }
 
     init_vk();
-
-    width = 500;
-    height = 500;
 
     spin_angle = 4.0f;
     spin_increment = 0.2f;
