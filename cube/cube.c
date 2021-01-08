@@ -3816,6 +3816,8 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     memset(demo, 0, sizeof(*demo));
     demo->presentMode = VK_PRESENT_MODE_FIFO_KHR;
     demo->frameCount = INT32_MAX;
+    demo->width = 500;
+    demo->height = 500;
     /* For cube demo we just grab the first physical device by default */
     demo->gpu_number = 0;
 
@@ -3851,6 +3853,16 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             i++;
             continue;
         }
+        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 &&
+            sscanf(argv[i + 1], "%d", &demo->width) == 1 && demo->width > 0) {
+            i++;
+            continue;
+        }
+        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 &&
+            sscanf(argv[i + 1], "%d", &demo->height) == 1 && demo->height > 0) {
+            i++;
+            continue;
+        }
         if (strcmp(argv[i], "--suppress_popups") == 0) {
             demo->suppress_popups = true;
             continue;
@@ -3878,6 +3890,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "\t[--incremental_present] [--display_timing]\n"
             "\t[--gpu_number <index of physical device>]\n"
             "\t[--present_mode <present mode enum>]\n"
+            "\t[--width <width>] [--height <height>]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
@@ -3905,9 +3918,6 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     demo_init_connection(demo);
 
     demo_init_vk(demo);
-
-    demo->width = 500;
-    demo->height = 500;
 
     demo->spin_angle = 4.0f;
     demo->spin_increment = 0.2f;
