@@ -1364,10 +1364,10 @@ static void demo_prepare_buffers(struct demo *demo) {
             .format = demo->format,
             .components =
                 {
-                    .r = VK_COMPONENT_SWIZZLE_R,
-                    .g = VK_COMPONENT_SWIZZLE_G,
-                    .b = VK_COMPONENT_SWIZZLE_B,
-                    .a = VK_COMPONENT_SWIZZLE_A,
+                    .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .a = VK_COMPONENT_SWIZZLE_IDENTITY,
                 },
             .subresourceRange =
                 {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .baseMipLevel = 0, .levelCount = 1, .baseArrayLayer = 0, .layerCount = 1},
@@ -1729,10 +1729,10 @@ static void demo_prepare_textures(struct demo *demo) {
             .format = tex_format,
             .components =
                 {
-                    VK_COMPONENT_SWIZZLE_R,
-                    VK_COMPONENT_SWIZZLE_G,
-                    VK_COMPONENT_SWIZZLE_B,
-                    VK_COMPONENT_SWIZZLE_A,
+                    VK_COMPONENT_SWIZZLE_IDENTITY,
+                    VK_COMPONENT_SWIZZLE_IDENTITY,
+                    VK_COMPONENT_SWIZZLE_IDENTITY,
+                    VK_COMPONENT_SWIZZLE_IDENTITY,
                 },
             .subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
             .flags = 0,
@@ -3136,6 +3136,9 @@ static void demo_init_vk(struct demo *demo) {
                 demo->extension_names[demo->enabled_extension_count++] = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
             }
 #endif
+            if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                demo->extension_names[demo->enabled_extension_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
+            }
             if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 if (demo->validate) {
                     demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
@@ -3307,6 +3310,9 @@ static void demo_init_vk(struct demo *demo) {
             if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, device_extensions[i].extensionName)) {
                 swapchainExtFound = 1;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+            }
+            if (!strcmp("VK_KHR_portability_subset", device_extensions[i].extensionName)) {
+                demo->extension_names[demo->enabled_extension_count++] = "VK_KHR_portability_subset";
             }
             assert(demo->enabled_extension_count < 64);
         }

@@ -1110,6 +1110,9 @@ void Demo::init_vk() {
         VERIFY(result == vk::Result::eSuccess);
 
         for (uint32_t i = 0; i < instance_extension_count; i++) {
+            if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                extension_names[enabled_extension_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
+            }
             if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 surfaceExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_KHR_SURFACE_EXTENSION_NAME;
@@ -1149,7 +1152,6 @@ void Demo::init_vk() {
                 platformSurfaceExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
             }
-
 #endif
             assert(enabled_extension_count < 64);
         }
@@ -1283,6 +1285,9 @@ void Demo::init_vk() {
             if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, device_extensions[i].extensionName)) {
                 swapchainExtFound = 1;
                 extension_names[enabled_extension_count++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+            }
+            if (!strcmp("VK_KHR_portability_subset", device_extensions[i].extensionName)) {
+                extension_names[enabled_extension_count++] = "VK_KHR_portability_subset";
             }
             assert(enabled_extension_count < 64);
         }

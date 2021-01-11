@@ -272,6 +272,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_robustness", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
+    {"VK_NV_acquire_winrt_display", 1},
+    {"VK_VALVE_mutable_descriptor_type", 1},
 };
 
 
@@ -2867,6 +2869,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+
+static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
+    VkPhysicalDevice                            physicalDevice,
+    VkDisplayKHR                                display);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetWinrtDisplayNV(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    deviceRelativeId,
+    VkDisplayKHR*                               pDisplay);
+#endif /* VK_USE_PLATFORM_WIN32_KHR */
+
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDirectFBSurfaceEXT(
@@ -2880,6 +2894,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
     uint32_t                                    queueFamilyIndex,
     IDirectFB*                                  dfb);
 #endif /* VK_USE_PLATFORM_DIRECTFB_EXT */
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
@@ -3503,6 +3518,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkSetPrivateDataEXT", (void*)SetPrivateDataEXT},
     {"vkGetPrivateDataEXT", (void*)GetPrivateDataEXT},
     {"vkCmdSetFragmentShadingRateEnumNV", (void*)CmdSetFragmentShadingRateEnumNV},
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+    {"vkAcquireWinrtDisplayNV", (void*)AcquireWinrtDisplayNV},
+#endif
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+    {"vkGetWinrtDisplayNV", (void*)GetWinrtDisplayNV},
+#endif
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
     {"vkCreateDirectFBSurfaceEXT", (void*)CreateDirectFBSurfaceEXT},
 #endif
