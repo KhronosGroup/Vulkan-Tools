@@ -719,7 +719,7 @@ struct AppInstance {
     }
 
     std::vector<VkPhysicalDevice> FindPhysicalDevices() {
-        return GetVector<VkPhysicalDevice>("vkEnumerateInstanceExtensionProperties", dll.fp_vkEnumeratePhysicalDevices, instance);
+        return GetVector<VkPhysicalDevice>("vkEnumeratePhysicalDevices", dll.fp_vkEnumeratePhysicalDevices, instance);
     }
 };
 

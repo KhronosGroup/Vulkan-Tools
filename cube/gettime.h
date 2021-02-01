@@ -37,9 +37,9 @@
 #endif
 
 uint64_t getTimeInNanoseconds(void) {
-    const uint64_t ns_in_us = 1000;
-    const uint64_t ns_in_ms = 1000 * ns_in_us;
-    const uint64_t ns_in_s = 1000 * ns_in_ms;
+    const long long ns_in_us = 1000;
+    const long long ns_in_ms = 1000 * ns_in_us;
+    const long long ns_in_s = 1000 * ns_in_ms;
 #if defined(_WIN32)
     LARGE_INTEGER freq;
     LARGE_INTEGER count;

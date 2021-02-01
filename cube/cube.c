@@ -343,7 +343,7 @@ struct demo {
     bool use_staging_buffer;
     bool separate_present_queue;
     bool is_minimized;
-    uint32_t gpu_number;
+    int32_t gpu_number;
 
     bool VK_KHR_incremental_present_enabled;
 
@@ -3248,8 +3248,6 @@ static void demo_init_vk(struct demo *demo) {
         inst_info.pNext = &dbg_messenger_create_info;
     }
 
-    uint32_t gpu_count;
-
     err = vkCreateInstance(&inst_info, NULL, &demo->inst);
     if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
         ERR_EXIT(
@@ -3269,28 +3267,69 @@ static void demo_init_vk(struct demo *demo) {
             "vkCreateInstance Failure");
     }
 
-    /* Make initial call to query gpu_count, then second call for gpu info*/
+    /* Make initial call to query gpu_count, then second call for gpu info */
+    uint32_t gpu_count = 0;
     err = vkEnumeratePhysicalDevices(demo->inst, &gpu_count, NULL);
     assert(!err);
 
-    if (gpu_count > 0) {
-        VkPhysicalDevice *physical_devices = malloc(sizeof(VkPhysicalDevice) * gpu_count);
-        err = vkEnumeratePhysicalDevices(demo->inst, &gpu_count, physical_devices);
-        assert(!err);
-        if (demo->gpu_number > gpu_count - 1) {
-            fprintf(stderr, "Gpu %u specified is not present, gpu count = %u\n", demo->gpu_number, gpu_count);
-            fprintf(stderr, "Continuing with gpu 0\n");
-            demo->gpu_number = 0;
-        }
-        demo->gpu = physical_devices[demo->gpu_number];
-        free(physical_devices);
-    } else {
+    if (gpu_count <= 0) {
         ERR_EXIT(
             "vkEnumeratePhysicalDevices reported zero accessible devices.\n\n"
             "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
             "Please look at the Getting Started guide for additional information.\n",
             "vkEnumeratePhysicalDevices Failure");
     }
+
+    VkPhysicalDevice *physical_devices = malloc(sizeof(VkPhysicalDevice) * gpu_count);
+    err = vkEnumeratePhysicalDevices(demo->inst, &gpu_count, physical_devices);
+    assert(!err);
+    if (demo->gpu_number >= 0 && !((uint32_t)demo->gpu_number < gpu_count)) {
+        fprintf(stderr, "GPU %d specified is not present, GPU count = %u\n", demo->gpu_number, gpu_count);
+        ERR_EXIT("Specified GPU number is not present", "User Error");
+    }
+
+    /* Try to auto select most suitable device */
+    if (demo->gpu_number == -1) {
+        uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
+        memset(count_device_type, 0, sizeof(count_device_type));
+
+        VkPhysicalDeviceProperties physicalDeviceProperties;
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
+            assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
+            count_device_type[physicalDeviceProperties.deviceType]++;
+        }
+
+        VkPhysicalDeviceType search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+        if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU]) {
+            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU]) {
+            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU]) {
+            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
+        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU]) {
+            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_CPU;
+        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_OTHER]) {
+            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_OTHER;
+        }
+
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
+            if (physicalDeviceProperties.deviceType == search_for_device_type) {
+                demo->gpu_number = i;
+                break;
+            }
+        }
+    }
+    assert(demo->gpu_number >= 0);
+    demo->gpu = physical_devices[demo->gpu_number];
+    {
+        VkPhysicalDeviceProperties physicalDeviceProperties;
+        vkGetPhysicalDeviceProperties(demo->gpu, &physicalDeviceProperties);
+        fprintf(stderr, "Selected GPU %d: %s, type: %u\n", demo->gpu_number, physicalDeviceProperties.deviceName,
+                physicalDeviceProperties.deviceType);
+    }
+    free(physical_devices);
 
     /* Look for device extensions */
     uint32_t device_extension_count = 0;
@@ -3816,8 +3855,10 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     memset(demo, 0, sizeof(*demo));
     demo->presentMode = VK_PRESENT_MODE_FIFO_KHR;
     demo->frameCount = INT32_MAX;
-    /* For cube demo we just grab the first physical device by default */
-    demo->gpu_number = 0;
+    /* Autodetect suitable / best GPU by default */
+    demo->gpu_number = -1;
+    demo->width = 500;
+    demo->height = 500;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use_staging") == 0) {
@@ -3851,6 +3892,14 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             i++;
             continue;
         }
+        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->width) == 1 && demo->width > 0) {
+            i++;
+            continue;
+        }
+        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->height) == 1 && demo->height > 0) {
+            i++;
+            continue;
+        }
         if (strcmp(argv[i], "--suppress_popups") == 0) {
             demo->suppress_popups = true;
             continue;
@@ -3865,6 +3914,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
         }
         if ((strcmp(argv[i], "--gpu_number") == 0) && (i < argc - 1)) {
             demo->gpu_number = atoi(argv[i + 1]);
+            assert(demo->gpu_number >= 0);
             i++;
             continue;
         }
@@ -3878,6 +3928,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "\t[--incremental_present] [--display_timing]\n"
             "\t[--gpu_number <index of physical device>]\n"
             "\t[--present_mode <present mode enum>]\n"
+            "\t[--width <width>] [--height <height>]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
@@ -3905,9 +3956,6 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
     demo_init_connection(demo);
 
     demo_init_vk(demo);
-
-    demo->width = 500;
-    demo->height = 500;
 
     demo->spin_angle = 4.0f;
     demo->spin_increment = 0.2f;
