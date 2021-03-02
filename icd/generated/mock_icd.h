@@ -82,6 +82,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_EXT_validation_features", 4},
     {"VK_EXT_headless_surface", 1},
     {"VK_EXT_directfb_surface", 1},
+    {"VK_QNX_screen_surface", 1},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -2946,6 +2947,20 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
 #endif /* VK_USE_PLATFORM_DIRECTFB_EXT */
 
 
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateScreenSurfaceQNX(
+    VkInstance                                  instance,
+    const VkScreenSurfaceCreateInfoQNX*         pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSurfaceKHR*                               pSurface);
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceScreenPresentationSupportQNX(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    struct _screen_window*                      window);
+#endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
@@ -3587,6 +3602,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
     {"vkGetPhysicalDeviceDirectFBPresentationSupportEXT", (void*)GetPhysicalDeviceDirectFBPresentationSupportEXT},
+#endif
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    {"vkCreateScreenSurfaceQNX", (void*)CreateScreenSurfaceQNX},
+#endif
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    {"vkGetPhysicalDeviceScreenPresentationSupportQNX", (void*)GetPhysicalDeviceScreenPresentationSupportQNX},
 #endif
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},

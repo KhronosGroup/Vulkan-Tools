@@ -4805,6 +4805,29 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
 #endif /* VK_USE_PLATFORM_DIRECTFB_EXT */
 
 
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateScreenSurfaceQNX(
+    VkInstance                                  instance,
+    const VkScreenSurfaceCreateInfoQNX*         pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSurfaceKHR*                               pSurface)
+{
+    unique_lock_t lock(global_lock);
+    *pSurface = (VkSurfaceKHR)global_unique_handle++;
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceScreenPresentationSupportQNX(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    struct _screen_window*                      window)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+#endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
