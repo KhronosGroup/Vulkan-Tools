@@ -1069,7 +1069,30 @@ void Demo::init_connection() {
     wl_display_dispatch(display);
 #endif
 }
-
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+int find_display_gpu(int gpu_number, uint32_t gpu_count, std::unique_ptr<vk::PhysicalDevice[]> &physical_devices) {
+    uint32_t display_count = 0;
+    vk::Result result;
+    int gpu_return = gpu_number;
+    if (gpu_number >= 0) {
+        result = physical_devices[gpu_number].getDisplayPropertiesKHR(&display_count, nullptr);
+        VERIFY(result == vk::Result::eSuccess);
+    } else {
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            result = physical_devices[i].getDisplayPropertiesKHR(&display_count, nullptr);
+            VERIFY(result == vk::Result::eSuccess);
+            if (display_count) {
+                gpu_return = i;
+                break;
+            }
+        }
+    }
+    if (display_count > 0)
+        return gpu_return;
+    else
+        return -1;
+}
+#endif
 void Demo::init_vk() {
     uint32_t instance_extension_count = 0;
     uint32_t instance_layer_count = 0;
@@ -1273,7 +1296,14 @@ void Demo::init_vk() {
         fprintf(stderr, "GPU %d specified is not present, GPU count = %u\n", gpu_number, gpu_count);
         ERR_EXIT("Specified GPU number is not present", "User Error");
     }
-
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    gpu_number = find_display_gpu(gpu_number, gpu_count, physical_devices);
+    if (gpu_number < 0) {
+        printf("Cannot find any display!\n");
+        fflush(stdout);
+        exit(1);
+    }
+#else
     /* Try to auto select most suitable device */
     if (gpu_number == -1) {
         uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
@@ -1304,6 +1334,7 @@ void Demo::init_vk() {
             }
         }
     }
+#endif
     assert(gpu_number >= 0);
     gpu = physical_devices[gpu_number];
     {
@@ -2896,16 +2927,6 @@ vk::Result Demo::create_display_surface() {
     vk::Bool32 found_plane = VK_FALSE;
     uint32_t plane_index;
     vk::Extent2D image_extent;
-
-    // Get the first display
-    result = gpu.getDisplayPropertiesKHR(&display_count, nullptr);
-    VERIFY(result == vk::Result::eSuccess);
-
-    if (display_count == 0) {
-        printf("Cannot find any display!\n");
-        fflush(stdout);
-        exit(1);
-    }
 
     display_count = 1;
     result = gpu.getDisplayPropertiesKHR(&display_count, &display_props);
