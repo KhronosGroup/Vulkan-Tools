@@ -2884,15 +2884,6 @@ static VkResult demo_create_display_surface(struct demo *demo) {
     VkDisplaySurfaceCreateInfoKHR create_info;
 
     // Get the first display
-    err = vkGetPhysicalDeviceDisplayPropertiesKHR(demo->gpu, &display_count, NULL);
-    assert(!err);
-
-    if (display_count == 0) {
-        printf("Cannot find any display!\n");
-        fflush(stdout);
-        exit(1);
-    }
-
     display_count = 1;
     err = vkGetPhysicalDeviceDisplayPropertiesKHR(demo->gpu, &display_count, &display_props);
     assert(!err || (err == VK_INCOMPLETE));
@@ -3039,7 +3030,30 @@ static VkBool32 demo_check_layers(uint32_t check_count, char **check_names, uint
     }
     return 1;
 }
-
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+int find_display_gpu(int gpu_number, uint32_t gpu_count, VkPhysicalDevice *physical_devices) {
+    uint32_t display_count = 0;
+    VkResult result;
+    int gpu_return = gpu_number;
+    if (gpu_number >= 0) {
+        result = vkGetPhysicalDeviceDisplayPropertiesKHR(physical_devices[gpu_number], &display_count, NULL);
+        assert(!result);
+    } else {
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            result = vkGetPhysicalDeviceDisplayPropertiesKHR(physical_devices[i], &display_count, NULL);
+            assert(!result);
+            if (display_count) {
+                gpu_return = i;
+                break;
+            }
+        }
+    }
+    if (display_count > 0)
+        return gpu_return;
+    else
+        return -1;
+}
+#endif
 static void demo_init_vk(struct demo *demo) {
     VkResult err;
     uint32_t instance_extension_count = 0;
@@ -3288,6 +3302,14 @@ static void demo_init_vk(struct demo *demo) {
         ERR_EXIT("Specified GPU number is not present", "User Error");
     }
 
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    demo->gpu_number = find_display_gpu(demo->gpu_number, gpu_count, physical_devices);
+    if (demo->gpu_number < 0) {
+        printf("Cannot find any display!\n");
+        fflush(stdout);
+        exit(1);
+    }
+#else
     /* Try to auto select most suitable device */
     if (demo->gpu_number == -1) {
         uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
@@ -3321,6 +3343,7 @@ static void demo_init_vk(struct demo *demo) {
             }
         }
     }
+#endif
     assert(demo->gpu_number >= 0);
     demo->gpu = physical_devices[demo->gpu_number];
     {
