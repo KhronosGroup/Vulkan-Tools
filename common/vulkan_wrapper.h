@@ -429,6 +429,20 @@ extern PFN_vkGetPipelineExecutableInternalRepresentationsKHR vkGetPipelineExecut
 
 // VK_KHR_shader_non_semantic_info
 
+// VK_KHR_synchronization2
+extern PFN_vkCmdSetEvent2KHR vkCmdSetEvent2KHR;
+extern PFN_vkCmdResetEvent2KHR vkCmdResetEvent2KHR;
+extern PFN_vkCmdWaitEvents2KHR vkCmdWaitEvents2KHR;
+extern PFN_vkCmdPipelineBarrier2KHR vkCmdPipelineBarrier2KHR;
+extern PFN_vkCmdWriteTimestamp2KHR vkCmdWriteTimestamp2KHR;
+extern PFN_vkQueueSubmit2KHR vkQueueSubmit2KHR;
+extern PFN_vkCmdWriteBufferMarker2AMD vkCmdWriteBufferMarker2AMD;
+extern PFN_vkGetQueueCheckpointData2NV vkGetQueueCheckpointData2NV;
+
+// VK_KHR_zero_initialize_workgroup_memory
+
+// VK_KHR_workgroup_memory_explicit_layout
+
 // VK_KHR_copy_commands2
 extern PFN_vkCmdCopyBuffer2KHR vkCmdCopyBuffer2KHR;
 extern PFN_vkCmdCopyImage2KHR vkCmdCopyImage2KHR;
@@ -516,7 +530,7 @@ extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
 extern PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR vkGetPhysicalDeviceXlibPresentationSupportKHR;
 #endif
 
-#ifdef VK_USE_PLATFORM_GGP
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
 // VK_KHR_portability_subset
 #endif
 
