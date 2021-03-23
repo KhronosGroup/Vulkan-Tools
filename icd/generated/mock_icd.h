@@ -278,6 +278,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_4444_formats", 1},
     {"VK_NV_acquire_winrt_display", 1},
     {"VK_VALVE_mutable_descriptor_type", 1},
+    {"VK_FUCHSIA_external_memory", 1},
+    {"VK_FUCHSIA_external_semaphore", 1},
 };
 
 
@@ -2947,6 +2949,32 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
 #endif /* VK_USE_PLATFORM_DIRECTFB_EXT */
 
 
+#ifdef VK_USE_PLATFORM_FUCHSIA
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryZirconHandleFUCHSIA(
+    VkDevice                                    device,
+    const VkMemoryGetZirconHandleInfoFUCHSIA*   pGetZirconHandleInfo,
+    zx_handle_t*                                pZirconHandle);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryZirconHandlePropertiesFUCHSIA(
+    VkDevice                                    device,
+    VkExternalMemoryHandleTypeFlagBits          handleType,
+    zx_handle_t                                 zirconHandle,
+    VkMemoryZirconHandlePropertiesFUCHSIA*      pMemoryZirconHandleProperties);
+#endif /* VK_USE_PLATFORM_FUCHSIA */
+
+#ifdef VK_USE_PLATFORM_FUCHSIA
+
+static VKAPI_ATTR VkResult VKAPI_CALL ImportSemaphoreZirconHandleFUCHSIA(
+    VkDevice                                    device,
+    const VkImportSemaphoreZirconHandleInfoFUCHSIA* pImportSemaphoreZirconHandleInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreZirconHandleFUCHSIA(
+    VkDevice                                    device,
+    const VkSemaphoreGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo,
+    zx_handle_t*                                pZirconHandle);
+#endif /* VK_USE_PLATFORM_FUCHSIA */
+
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateScreenSurfaceQNX(
@@ -3602,6 +3630,18 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
     {"vkGetPhysicalDeviceDirectFBPresentationSupportEXT", (void*)GetPhysicalDeviceDirectFBPresentationSupportEXT},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkGetMemoryZirconHandleFUCHSIA", (void*)GetMemoryZirconHandleFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkGetMemoryZirconHandlePropertiesFUCHSIA", (void*)GetMemoryZirconHandlePropertiesFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkImportSemaphoreZirconHandleFUCHSIA", (void*)ImportSemaphoreZirconHandleFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkGetSemaphoreZirconHandleFUCHSIA", (void*)GetSemaphoreZirconHandleFUCHSIA},
 #endif
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkCreateScreenSurfaceQNX", (void*)CreateScreenSurfaceQNX},

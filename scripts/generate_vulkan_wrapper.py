@@ -561,6 +561,23 @@ VK_KHR_pipeline_library = Extension(name='VK_KHR_pipeline_library', version=1, g
 VK_KHR_shader_non_semantic_info = Extension(name='VK_KHR_shader_non_semantic_info', version=1, guard=None, commands=[
 ])
 
+VK_KHR_synchronization2 = Extension(name='VK_KHR_synchronization2', version=1, guard=None, commands=[
+    Command(name='vkCmdSetEvent2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdResetEvent2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdWaitEvents2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdPipelineBarrier2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdWriteTimestamp2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkQueueSubmit2KHR', dispatch='VkQueue'),
+    Command(name='vkCmdWriteBufferMarker2AMD', dispatch='VkCommandBuffer'),
+    Command(name='vkGetQueueCheckpointData2NV', dispatch='VkQueue'),
+])
+
+VK_KHR_zero_initialize_workgroup_memory = Extension(name='VK_KHR_zero_initialize_workgroup_memory', version=1, guard=None, commands=[
+])
+
+VK_KHR_workgroup_memory_explicit_layout = Extension(name='VK_KHR_workgroup_memory_explicit_layout', version=1, guard=None, commands=[
+])
+
 VK_KHR_copy_commands2 = Extension(name='VK_KHR_copy_commands2', version=1, guard=None, commands=[
     Command(name='vkCmdCopyBuffer2KHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdCopyImage2KHR', dispatch='VkCommandBuffer'),
@@ -1036,7 +1053,7 @@ VK_EXT_texel_buffer_alignment = Extension(name='VK_EXT_texel_buffer_alignment', 
 VK_QCOM_render_pass_transform = Extension(name='VK_QCOM_render_pass_transform', version=1, guard=None, commands=[
 ])
 
-VK_EXT_device_memory_report = Extension(name='VK_EXT_device_memory_report', version=1, guard=None, commands=[
+VK_EXT_device_memory_report = Extension(name='VK_EXT_device_memory_report', version=2, guard=None, commands=[
 ])
 
 VK_EXT_robustness2 = Extension(name='VK_EXT_robustness2', version=1, guard=None, commands=[
@@ -1078,6 +1095,14 @@ VK_EXT_image_robustness = Extension(name='VK_EXT_image_robustness', version=1, g
 ])
 
 VK_EXT_4444_formats = Extension(name='VK_EXT_4444_formats', version=1, guard=None, commands=[
+])
+
+VK_NV_acquire_winrt_display = Extension(name='VK_NV_acquire_winrt_display', version=1, guard=None, commands=[
+    Command(name='vkAcquireWinrtDisplayNV', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetWinrtDisplayNV', dispatch='VkPhysicalDevice'),
+])
+
+VK_VALVE_mutable_descriptor_type = Extension(name='VK_VALVE_mutable_descriptor_type', version=1, guard=None, commands=[
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=11, guard=None, commands=[
@@ -1122,6 +1147,16 @@ VK_ANDROID_external_memory_android_hardware_buffer = Extension(name='VK_ANDROID_
 
 VK_FUCHSIA_imagepipe_surface = Extension(name='VK_FUCHSIA_imagepipe_surface', version=1, guard='VK_USE_PLATFORM_FUCHSIA', commands=[
     Command(name='vkCreateImagePipeSurfaceFUCHSIA', dispatch='VkInstance'),
+])
+
+VK_FUCHSIA_external_memory = Extension(name='VK_FUCHSIA_external_memory', version=1, guard='VK_USE_PLATFORM_FUCHSIA', commands=[
+    Command(name='vkGetMemoryZirconHandleFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkGetMemoryZirconHandlePropertiesFUCHSIA', dispatch='VkDevice'),
+])
+
+VK_FUCHSIA_external_semaphore = Extension(name='VK_FUCHSIA_external_semaphore', version=1, guard='VK_USE_PLATFORM_FUCHSIA', commands=[
+    Command(name='vkImportSemaphoreZirconHandleFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkGetSemaphoreZirconHandleFUCHSIA', dispatch='VkDevice'),
 ])
 
 VK_MVK_ios_surface = Extension(name='VK_MVK_ios_surface', version=3, guard='VK_USE_PLATFORM_IOS_MVK', commands=[
@@ -1209,7 +1244,12 @@ VK_GGP_stream_descriptor_surface = Extension(name='VK_GGP_stream_descriptor_surf
 VK_GGP_frame_token = Extension(name='VK_GGP_frame_token', version=1, guard='VK_USE_PLATFORM_GGP', commands=[
 ])
 
-VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_USE_PLATFORM_GGP', commands=[
+VK_QNX_screen_surface = Extension(name='VK_QNX_screen_surface', version=1, guard='VK_USE_PLATFORM_SCREEN_QNX', commands=[
+    Command(name='vkCreateScreenSurfaceQNX', dispatch='VkInstance'),
+    Command(name='vkGetPhysicalDeviceScreenPresentationSupportQNX', dispatch='VkPhysicalDevice'),
+])
+
+VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_USE_PLATFORM_SCREEN_QNX', commands=[
 ])
 
 extensions = [
@@ -1279,6 +1319,9 @@ extensions = [
     VK_KHR_pipeline_executable_properties,
     VK_KHR_pipeline_library,
     VK_KHR_shader_non_semantic_info,
+    VK_KHR_synchronization2,
+    VK_KHR_zero_initialize_workgroup_memory,
+    VK_KHR_workgroup_memory_explicit_layout,
     VK_KHR_copy_commands2,
     VK_EXT_debug_report,
     VK_NV_glsl_shader,
@@ -1411,12 +1454,16 @@ extensions = [
     VK_QCOM_rotated_copy_commands,
     VK_EXT_image_robustness,
     VK_EXT_4444_formats,
+    VK_NV_acquire_winrt_display,
+    VK_VALVE_mutable_descriptor_type,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
     VK_KHR_android_surface,
     VK_ANDROID_external_memory_android_hardware_buffer,
     VK_FUCHSIA_imagepipe_surface,
+    VK_FUCHSIA_external_memory,
+    VK_FUCHSIA_external_semaphore,
     VK_MVK_ios_surface,
     VK_MVK_macos_surface,
     VK_EXT_metal_surface,
@@ -1436,6 +1483,7 @@ extensions = [
     VK_EXT_acquire_xlib_display,
     VK_GGP_stream_descriptor_surface,
     VK_GGP_frame_token,
+    VK_QNX_screen_surface,
     VK_KHR_portability_subset,
 ]
 # end of generated code
