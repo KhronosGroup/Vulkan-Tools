@@ -57,7 +57,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_KHR_wayland_surface", 6},
     {"VK_KHR_android_surface", 6},
     {"VK_KHR_win32_surface", 6},
-    {"VK_EXT_debug_report", 9},
+    {"VK_EXT_debug_report", 10},
     {"VK_GGP_stream_descriptor_surface", 1},
     {"VK_NV_external_memory_capabilities", 1},
     {"VK_KHR_get_physical_device_properties2", 2},
@@ -96,6 +96,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_trinary_minmax", 1},
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
+    {"VK_KHR_video_queue", 1},
+    {"VK_KHR_video_decode_queue", 1},
+    {"VK_KHR_video_encode_queue", 2},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
@@ -104,6 +107,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
+    {"VK_EXT_video_encode_h264", 1},
+    {"VK_EXT_video_decode_h264", 1},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
     {"VK_AMD_shader_image_load_store_lod", 1},
@@ -131,7 +136,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_conditional_rendering", 2},
     {"VK_KHR_shader_float16_int8", 1},
     {"VK_KHR_16bit_storage", 1},
-    {"VK_KHR_incremental_present", 1},
+    {"VK_KHR_incremental_present", 2},
     {"VK_KHR_descriptor_update_template", 1},
     {"VK_NV_clip_space_w_scaling", 1},
     {"VK_EXT_display_control", 1},
@@ -198,8 +203,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_atomic_int64", 1},
     {"VK_KHR_shader_clock", 1},
     {"VK_AMD_pipeline_compiler_control", 1},
-    {"VK_EXT_calibrated_timestamps", 1},
+    {"VK_EXT_calibrated_timestamps", 2},
     {"VK_AMD_shader_core_properties", 2},
+    {"VK_EXT_video_decode_h265", 1},
     {"VK_AMD_memory_overallocation_behavior", 1},
     {"VK_EXT_vertex_attribute_divisor", 3},
     {"VK_GGP_frame_token", 1},
@@ -255,8 +261,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_pipeline_executable_properties", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_NV_device_generated_commands", 3},
+    {"VK_NV_inherited_viewport_scissor", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
-    {"VK_QCOM_render_pass_transform", 1},
+    {"VK_QCOM_render_pass_transform", 2},
     {"VK_EXT_device_memory_report", 2},
     {"VK_EXT_robustness2", 1},
     {"VK_EXT_custom_border_color", 12},
@@ -270,16 +277,20 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_synchronization2", 1},
     {"VK_KHR_zero_initialize_workgroup_memory", 1},
     {"VK_NV_fragment_shading_rate_enums", 1},
+    {"VK_EXT_ycbcr_2plane_444_formats", 1},
     {"VK_EXT_fragment_density_map2", 1},
-    {"VK_QCOM_rotated_copy_commands", 0},
+    {"VK_QCOM_rotated_copy_commands", 1},
     {"VK_EXT_image_robustness", 1},
     {"VK_KHR_workgroup_memory_explicit_layout", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
     {"VK_NV_acquire_winrt_display", 1},
     {"VK_VALVE_mutable_descriptor_type", 1},
+    {"VK_EXT_vertex_input_dynamic_state", 2},
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
+    {"VK_EXT_extended_dynamic_state2", 1},
+    {"VK_EXT_color_write_enable", 1},
 };
 
 
@@ -1493,6 +1504,78 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceWin32PresentationSupportK
 #endif /* VK_USE_PLATFORM_WIN32_KHR */
 
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkVideoProfileKHR*                    pVideoProfile,
+    VkVideoCapabilitiesKHR*                     pCapabilities);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceVideoFormatInfoKHR*   pVideoFormatInfo,
+    uint32_t*                                   pVideoFormatPropertyCount,
+    VkVideoFormatPropertiesKHR*                 pVideoFormatProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateVideoSessionKHR(
+    VkDevice                                    device,
+    const VkVideoSessionCreateInfoKHR*          pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkVideoSessionKHR*                          pVideoSession);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyVideoSessionKHR(
+    VkDevice                                    device,
+    VkVideoSessionKHR                           videoSession,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetVideoSessionMemoryRequirementsKHR(
+    VkDevice                                    device,
+    VkVideoSessionKHR                           videoSession,
+    uint32_t*                                   pVideoSessionMemoryRequirementsCount,
+    VkVideoGetMemoryPropertiesKHR*              pVideoSessionMemoryRequirements);
+
+static VKAPI_ATTR VkResult VKAPI_CALL BindVideoSessionMemoryKHR(
+    VkDevice                                    device,
+    VkVideoSessionKHR                           videoSession,
+    uint32_t                                    videoSessionBindMemoryCount,
+    const VkVideoBindMemoryKHR*                 pVideoSessionBindMemories);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateVideoSessionParametersKHR(
+    VkDevice                                    device,
+    const VkVideoSessionParametersCreateInfoKHR* pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkVideoSessionParametersKHR*                pVideoSessionParameters);
+
+static VKAPI_ATTR VkResult VKAPI_CALL UpdateVideoSessionParametersKHR(
+    VkDevice                                    device,
+    VkVideoSessionParametersKHR                 videoSessionParameters,
+    const VkVideoSessionParametersUpdateInfoKHR* pUpdateInfo);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyVideoSessionParametersKHR(
+    VkDevice                                    device,
+    VkVideoSessionParametersKHR                 videoSessionParameters,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBeginVideoCodingKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoBeginCodingInfoKHR*            pBeginInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdEndVideoCodingKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoEndCodingInfoKHR*              pEndCodingInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdControlVideoCodingKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoCodingControlInfoKHR*          pCodingControlInfo);
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+
+static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoDecodeInfoKHR*                 pFrameInfo);
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2KHR(
@@ -1945,6 +2028,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
 
 
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+
+static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkVideoEncodeInfoKHR*                 pEncodeInfo);
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetEvent2KHR(
     VkCommandBuffer                             commandBuffer,
@@ -2143,6 +2233,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountAMD(
 
 
 
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 
@@ -2589,6 +2685,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsEXT(
     uint64_t*                                   pMaxDeviation);
 
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 
 #ifdef VK_USE_PLATFORM_GGP
@@ -2884,6 +2983,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyIndirectCommandsLayoutNV(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreatePrivateDataSlotEXT(
     VkDevice                                    device,
     const VkPrivateDataSlotCreateInfoEXT*       pCreateInfo,
@@ -2922,6 +3022,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -2949,6 +3050,14 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceDirectFBPresentationSuppo
 #endif /* VK_USE_PLATFORM_DIRECTFB_EXT */
 
 
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    vertexBindingDescriptionCount,
+    const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
+    uint32_t                                    vertexAttributeDescriptionCount,
+    const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+
 #ifdef VK_USE_PLATFORM_FUCHSIA
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryZirconHandleFUCHSIA(
@@ -2975,6 +3084,27 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreZirconHandleFUCHSIA(
     zx_handle_t*                                pZirconHandle);
 #endif /* VK_USE_PLATFORM_FUCHSIA */
 
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetPatchControlPointsEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    patchControlPoints);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetRasterizerDiscardEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBool32                                    rasterizerDiscardEnable);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetDepthBiasEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBool32                                    depthBiasEnable);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetLogicOpEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkLogicOp                                   logicOp);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveRestartEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBool32                                    primitiveRestartEnable);
+
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateScreenSurfaceQNX(
@@ -2988,6 +3118,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceScreenPresentationSupport
     uint32_t                                    queueFamilyIndex,
     struct _screen_window*                      window);
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
+
+static VKAPI_ATTR void                                    VKAPI_CALL CmdSetColorWriteEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    attachmentCount,
+    const VkBool32*                             pColorWriteEnables);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
@@ -3358,6 +3494,45 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     {"vkGetPhysicalDeviceWin32PresentationSupportKHR", (void*)GetPhysicalDeviceWin32PresentationSupportKHR},
 #endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkGetPhysicalDeviceVideoCapabilitiesKHR", (void*)GetPhysicalDeviceVideoCapabilitiesKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkGetPhysicalDeviceVideoFormatPropertiesKHR", (void*)GetPhysicalDeviceVideoFormatPropertiesKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCreateVideoSessionKHR", (void*)CreateVideoSessionKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkDestroyVideoSessionKHR", (void*)DestroyVideoSessionKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkGetVideoSessionMemoryRequirementsKHR", (void*)GetVideoSessionMemoryRequirementsKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkBindVideoSessionMemoryKHR", (void*)BindVideoSessionMemoryKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCreateVideoSessionParametersKHR", (void*)CreateVideoSessionParametersKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkUpdateVideoSessionParametersKHR", (void*)UpdateVideoSessionParametersKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkDestroyVideoSessionParametersKHR", (void*)DestroyVideoSessionParametersKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdBeginVideoCodingKHR", (void*)CmdBeginVideoCodingKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdEndVideoCodingKHR", (void*)CmdEndVideoCodingKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdControlVideoCodingKHR", (void*)CmdControlVideoCodingKHR},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdDecodeVideoKHR", (void*)CmdDecodeVideoKHR},
+#endif
     {"vkGetPhysicalDeviceFeatures2KHR", (void*)GetPhysicalDeviceFeatures2KHR},
     {"vkGetPhysicalDeviceProperties2KHR", (void*)GetPhysicalDeviceProperties2KHR},
     {"vkGetPhysicalDeviceFormatProperties2KHR", (void*)GetPhysicalDeviceFormatProperties2KHR},
@@ -3443,6 +3618,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPipelineExecutablePropertiesKHR", (void*)GetPipelineExecutablePropertiesKHR},
     {"vkGetPipelineExecutableStatisticsKHR", (void*)GetPipelineExecutableStatisticsKHR},
     {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdEncodeVideoKHR", (void*)CmdEncodeVideoKHR},
+#endif
     {"vkCmdSetEvent2KHR", (void*)CmdSetEvent2KHR},
     {"vkCmdResetEvent2KHR", (void*)CmdResetEvent2KHR},
     {"vkCmdWaitEvents2KHR", (void*)CmdWaitEvents2KHR},
@@ -3631,6 +3809,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
     {"vkGetPhysicalDeviceDirectFBPresentationSupportEXT", (void*)GetPhysicalDeviceDirectFBPresentationSupportEXT},
 #endif
+    {"vkCmdSetVertexInputEXT", (void*)CmdSetVertexInputEXT},
 #ifdef VK_USE_PLATFORM_FUCHSIA
     {"vkGetMemoryZirconHandleFUCHSIA", (void*)GetMemoryZirconHandleFUCHSIA},
 #endif
@@ -3643,12 +3822,18 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_FUCHSIA
     {"vkGetSemaphoreZirconHandleFUCHSIA", (void*)GetSemaphoreZirconHandleFUCHSIA},
 #endif
+    {"vkCmdSetPatchControlPointsEXT", (void*)CmdSetPatchControlPointsEXT},
+    {"vkCmdSetRasterizerDiscardEnableEXT", (void*)CmdSetRasterizerDiscardEnableEXT},
+    {"vkCmdSetDepthBiasEnableEXT", (void*)CmdSetDepthBiasEnableEXT},
+    {"vkCmdSetLogicOpEXT", (void*)CmdSetLogicOpEXT},
+    {"vkCmdSetPrimitiveRestartEnableEXT", (void*)CmdSetPrimitiveRestartEnableEXT},
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkCreateScreenSurfaceQNX", (void*)CreateScreenSurfaceQNX},
 #endif
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetPhysicalDeviceScreenPresentationSupportQNX", (void*)GetPhysicalDeviceScreenPresentationSupportQNX},
 #endif
+    {"vkCmdSetColorWriteEnableEXT", (void*)CmdSetColorWriteEnableEXT},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},
