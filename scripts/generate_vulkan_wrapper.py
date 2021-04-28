@@ -1002,6 +1002,9 @@ VK_EXT_fragment_shader_interlock = Extension(name='VK_EXT_fragment_shader_interl
 VK_EXT_ycbcr_image_arrays = Extension(name='VK_EXT_ycbcr_image_arrays', version=1, guard=None, commands=[
 ])
 
+VK_EXT_provoking_vertex = Extension(name='VK_EXT_provoking_vertex', version=1, guard=None, commands=[
+])
+
 VK_EXT_headless_surface = Extension(name='VK_EXT_headless_surface', version=1, guard=None, commands=[
     Command(name='vkCreateHeadlessSurfaceEXT', dispatch='VkInstance'),
 ])
@@ -1485,6 +1488,7 @@ extensions = [
     VK_NV_coverage_reduction_mode,
     VK_EXT_fragment_shader_interlock,
     VK_EXT_ycbcr_image_arrays,
+    VK_EXT_provoking_vertex,
     VK_EXT_headless_surface,
     VK_EXT_line_rasterization,
     VK_EXT_shader_atomic_float,
