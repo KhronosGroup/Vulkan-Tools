@@ -250,6 +250,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_fragment_shader_interlock", 1},
     {"VK_EXT_ycbcr_image_arrays", 1},
     {"VK_KHR_uniform_buffer_standard_layout", 1},
+    {"VK_EXT_provoking_vertex", 1},
     {"VK_EXT_full_screen_exclusive", 4},
     {"VK_KHR_buffer_device_address", 1},
     {"VK_EXT_line_rasterization", 1},
@@ -2836,6 +2837,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSupportedFramebufferMixed
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pCombinationCount,
     VkFramebufferMixedSamplesCombinationNV*     pCombinations);
+
 
 
 
