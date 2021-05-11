@@ -3653,6 +3653,52 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectByteCountEXT(
 }
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCuModuleNVX(
+    VkDevice                                    device,
+    const VkCuModuleCreateInfoNVX*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCuModuleNVX*                              pModule)
+{
+    unique_lock_t lock(global_lock);
+    *pModule = (VkCuModuleNVX)global_unique_handle++;
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCuFunctionNVX(
+    VkDevice                                    device,
+    const VkCuFunctionCreateInfoNVX*            pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCuFunctionNVX*                            pFunction)
+{
+    unique_lock_t lock(global_lock);
+    *pFunction = (VkCuFunctionNVX)global_unique_handle++;
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCuModuleNVX(
+    VkDevice                                    device,
+    VkCuModuleNVX                               module,
+    const VkAllocationCallbacks*                pAllocator)
+{
+//Destroy object
+}
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCuFunctionNVX(
+    VkDevice                                    device,
+    VkCuFunctionNVX                             function,
+    const VkAllocationCallbacks*                pAllocator)
+{
+//Destroy object
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdCuLaunchKernelNVX(
+    VkCommandBuffer                             commandBuffer,
+    const VkCuLaunchInfoNVX*                    pLaunchInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 static VKAPI_ATTR uint32_t VKAPI_CALL GetImageViewHandleNVX(
     VkDevice                                    device,
     const VkImageViewHandleInfoNVX*             pInfo)

@@ -634,6 +634,14 @@ VK_EXT_transform_feedback = Extension(name='VK_EXT_transform_feedback', version=
     Command(name='vkCmdDrawIndirectByteCountEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_NVX_binary_import = Extension(name='VK_NVX_binary_import', version=1, guard=None, commands=[
+    Command(name='vkCreateCuModuleNVX', dispatch='VkDevice'),
+    Command(name='vkCreateCuFunctionNVX', dispatch='VkDevice'),
+    Command(name='vkDestroyCuModuleNVX', dispatch='VkDevice'),
+    Command(name='vkDestroyCuFunctionNVX', dispatch='VkDevice'),
+    Command(name='vkCmdCuLaunchKernelNVX', dispatch='VkCommandBuffer'),
+])
+
 VK_NVX_image_view_handle = Extension(name='VK_NVX_image_view_handle', version=2, guard=None, commands=[
     Command(name='vkGetImageViewHandleNVX', dispatch='VkDevice'),
     Command(name='vkGetImageViewAddressNVX', dispatch='VkDevice'),
@@ -1391,6 +1399,7 @@ extensions = [
     VK_AMD_gcn_shader,
     VK_NV_dedicated_allocation,
     VK_EXT_transform_feedback,
+    VK_NVX_binary_import,
     VK_NVX_image_view_handle,
     VK_AMD_draw_indirect_count,
     VK_AMD_negative_viewport_height,
