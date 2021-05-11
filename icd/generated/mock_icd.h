@@ -98,10 +98,10 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_debug_marker", 4},
     {"VK_KHR_video_queue", 1},
     {"VK_KHR_video_decode_queue", 1},
-    {"VK_KHR_video_encode_queue", 2},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
+    {"VK_NVX_binary_import", 1},
     {"VK_NVX_image_view_handle", 2},
     {"VK_AMD_draw_indirect_count", 2},
     {"VK_AMD_negative_viewport_height", 1},
@@ -273,6 +273,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_non_semantic_info", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
+    {"VK_KHR_video_encode_queue", 2},
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_KHR_synchronization2", 1},
@@ -2204,6 +2205,33 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectByteCountEXT(
     uint32_t                                    vertexStride);
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCuModuleNVX(
+    VkDevice                                    device,
+    const VkCuModuleCreateInfoNVX*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCuModuleNVX*                              pModule);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCuFunctionNVX(
+    VkDevice                                    device,
+    const VkCuFunctionCreateInfoNVX*            pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCuFunctionNVX*                            pFunction);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCuModuleNVX(
+    VkDevice                                    device,
+    VkCuModuleNVX                               module,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCuFunctionNVX(
+    VkDevice                                    device,
+    VkCuFunctionNVX                             function,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCuLaunchKernelNVX(
+    VkCommandBuffer                             commandBuffer,
+    const VkCuLaunchInfoNVX*                    pLaunchInfo);
+
+
 static VKAPI_ATTR uint32_t VKAPI_CALL GetImageViewHandleNVX(
     VkDevice                                    device,
     const VkImageViewHandleInfoNVX*             pInfo);
@@ -3651,6 +3679,11 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdBeginQueryIndexedEXT", (void*)CmdBeginQueryIndexedEXT},
     {"vkCmdEndQueryIndexedEXT", (void*)CmdEndQueryIndexedEXT},
     {"vkCmdDrawIndirectByteCountEXT", (void*)CmdDrawIndirectByteCountEXT},
+    {"vkCreateCuModuleNVX", (void*)CreateCuModuleNVX},
+    {"vkCreateCuFunctionNVX", (void*)CreateCuFunctionNVX},
+    {"vkDestroyCuModuleNVX", (void*)DestroyCuModuleNVX},
+    {"vkDestroyCuFunctionNVX", (void*)DestroyCuFunctionNVX},
+    {"vkCmdCuLaunchKernelNVX", (void*)CmdCuLaunchKernelNVX},
     {"vkGetImageViewHandleNVX", (void*)GetImageViewHandleNVX},
     {"vkGetImageViewAddressNVX", (void*)GetImageViewAddressNVX},
     {"vkCmdDrawIndirectCountAMD", (void*)CmdDrawIndirectCountAMD},
