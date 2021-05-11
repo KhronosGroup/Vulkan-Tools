@@ -596,7 +596,7 @@ class Printer {
                 break;
         }
     }
-    void PrintExtension(std::string ext_name, uint32_t revision, int min_width = 0) {
+    void PrintExtension(std::string ext_name, uint32_t revision, size_t min_width = 0) {
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(indents), '\t') << ext_name << std::string(min_width - ext_name.size(), ' ')
