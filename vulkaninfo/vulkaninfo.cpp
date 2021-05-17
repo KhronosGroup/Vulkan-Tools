@@ -437,8 +437,11 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             ObjectWrapper obj(p, "memoryHeaps");
 
             p.PrintKeyString("size", append_human_readible(gpu.memory_props.memoryHeaps[i].size), 6);
-            p.PrintKeyString("budget", append_human_readible(gpu.heapBudget[i]), 6);
-            p.PrintKeyString("usage", append_human_readible(gpu.heapUsage[i]), 6);
+            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
+            {
+                p.PrintKeyString("budget", append_human_readible(gpu.heapBudget[i]), 6);
+                p.PrintKeyString("usage", append_human_readible(gpu.heapUsage[i]), 6);
+            }
             DumpVkMemoryHeapFlags(p, "flags", gpu.memory_props.memoryHeaps[i].flags, 6);
         }
     }
