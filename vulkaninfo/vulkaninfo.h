@@ -545,6 +545,43 @@ void freepNextChain(VkStructureHeader *first) {
     }
 }
 
+/* An ptional contains either a value or nothing. The trivial_optional asserts if a value is trying to be gotten but none exist.
+ * The interface is taken from C++17's <optional> with many aspects removed.
+ * This class assumes the template type is 'trivial'
+ */
+namespace util {
+template <typename T>
+struct trivial_optional {
+    using value_type = T;
+
+    bool _contains_value = false;
+    T _value;
+
+    void check_type_properties() {
+        static_assert(std::is_trivially_constructible<T>::value, "Type must be trivially constructable");
+        static_assert(std::is_trivially_copyable<T>::value, "Type must be trivially copyable");
+    }
+
+    trivial_optional() noexcept : _contains_value(false), _value({}) { check_type_properties(); }
+    trivial_optional(T value) noexcept : _contains_value(true), _value(value) { check_type_properties(); }
+
+    explicit operator bool() const noexcept { return _contains_value; }
+    bool has_value() const noexcept { return _contains_value; }
+
+    T value() const noexcept {
+        assert(_contains_value);
+        return _value;
+    }
+    // clang-format off
+    const T* operator->() const { assert(_contains_value); return _value;}
+    T* operator->() { assert(_contains_value); return &_value;}
+    const T& operator*() const& { assert(_contains_value); return _value;}
+    T& operator*() & { assert(_contains_value); return _value;}
+    const T&& operator*() const&& { assert(_contains_value); return _value;}
+    T&& operator*() && { assert(_contains_value); return _value;}
+    // clang-format on
+};  // namespace util
+}  // namespace util
 struct LayerExtensionList {
     VkLayerProperties layer_properties{};
     std::vector<VkExtensionProperties> extension_properties;
@@ -1294,9 +1331,8 @@ std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance &inst, VkPhysi
     return props;
 }
 
-// The bool of the pair returns true if the extension VK_KHR_device_group is present
-std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
-                                                                          VkPhysicalDeviceGroupProperties group) {
+util::trivial_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
+                                                                                 VkPhysicalDeviceGroupProperties group) {
     // Build create info for logical device made from all physical devices in this group.
     std::vector<std::string> extensions_list = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DEVICE_GROUP_EXTENSION_NAME};
     VkDeviceGroupDeviceCreateInfoKHR dg_ci = {VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR, nullptr,
@@ -1316,9 +1352,8 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
     if (err != VK_SUCCESS && err != VK_ERROR_EXTENSION_NOT_PRESENT) THROW_VK_ERR("vkCreateDevice", err);
 
     if (err == VK_ERROR_EXTENSION_NOT_PRESENT) {
-        VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR, nullptr};
         inst.dll.fp_vkDestroyDevice(logical_device, nullptr);
-        return std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR>(false, group_capabilities);
+        return {};
     }
 
     VkDeviceGroupPresentCapabilitiesKHR group_capabilities = {VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR, nullptr};
@@ -1330,7 +1365,7 @@ std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppIns
 
     inst.dll.fp_vkDestroyDevice(logical_device, nullptr);
 
-    return std::pair<bool, VkDeviceGroupPresentCapabilitiesKHR>(true, group_capabilities);
+    return {group_capabilities};
 }
 
 // -------------------- Device Setup ------------------- //

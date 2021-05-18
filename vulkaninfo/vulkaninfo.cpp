@@ -275,7 +275,7 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.AddNewline();
 
             auto group_capabilities = GetGroupCapabilities(inst, group);
-            if (group_capabilities.first == false) {
+            if (!group_capabilities) {
                 p.PrintKeyString("Present Capabilities",
                                  "Group does not support VK_KHR_device_group, skipping printing present capabilities");
             } else {
@@ -287,13 +287,13 @@ void DumpGroups(Printer &p, AppInstance &inst) {
 
                     for (uint32_t j = 0; j < group.physicalDeviceCount; j++) {
                         uint32_t mask = 1 << j;
-                        if (group_capabilities.second.presentMask[i] & mask) {
+                        if (group_capabilities->presentMask[i] & mask) {
                             p.PrintString(std::string(group_props[j].deviceName) + " (ID: " + p.DecorateAsValue(std::to_string(j)) +
                                           ")");
                         }
                     }
                 }
-                DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities.second.modes);
+                DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities->modes);
             }
             p.AddNewline();
             group_id++;
