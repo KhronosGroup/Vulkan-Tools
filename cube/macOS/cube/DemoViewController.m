@@ -33,9 +33,13 @@
 }
 
 - (void)dealloc {
-    demo_cleanup(&demo);
-    CVDisplayLinkRelease(_displayLink);
+    [self quit];
     [super dealloc];
+}
+
+- (void)quit {
+    CVDisplayLinkRelease(_displayLink);
+    demo_cleanup(&demo);
 }
 
 /** Since this is a single-view app, initialize Vulkan during view loading. */
