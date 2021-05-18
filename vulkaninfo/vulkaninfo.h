@@ -464,21 +464,21 @@ struct VkDll {
 
 struct ExtensionFunctions {
     // Extension pointers, loaded after instance is created
-    PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
-    PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
-    PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
-    PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
-    PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR;
-    PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR;
-    PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR;
-    PFN_vkGetPhysicalDeviceFormatProperties2KHR vkGetPhysicalDeviceFormatProperties2KHR;
-    PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR vkGetPhysicalDeviceQueueFamilyProperties2KHR;
-    PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR;
-    PFN_vkGetPhysicalDeviceMemoryProperties2KHR vkGetPhysicalDeviceMemoryProperties2KHR;
-    PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR;
-    PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT;
-    PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR;
-    PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT;
+    PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR{};
+    PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR{};
+    PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR{};
+    PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR{};
+    PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR{};
+    PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR{};
+    PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR{};
+    PFN_vkGetPhysicalDeviceFormatProperties2KHR vkGetPhysicalDeviceFormatProperties2KHR{};
+    PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR vkGetPhysicalDeviceQueueFamilyProperties2KHR{};
+    PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR{};
+    PFN_vkGetPhysicalDeviceMemoryProperties2KHR vkGetPhysicalDeviceMemoryProperties2KHR{};
+    PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR{};
+    PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT{};
+    PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR{};
+    PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT{};
 
     void LoadInstanceExtensionDispatchPointers(PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr, VkInstance instance) {
         this->instance = instance;
@@ -583,7 +583,7 @@ struct trivial_optional {
 };  // namespace util
 }  // namespace util
 struct LayerExtensionList {
-    VkLayerProperties layer_properties{};
+    VkLayerProperties layer_properties;
     std::vector<VkExtensionProperties> extension_properties;
 };
 
@@ -613,7 +613,7 @@ struct AppInstance {
 
     VkInstance instance;
     uint32_t instance_version;
-    VulkanVersion vk_version;
+    VulkanVersion vk_version{};
 
     ExtensionFunctions ext_funcs;
 
@@ -690,7 +690,7 @@ struct AppInstance {
         AppCompileInstanceExtensionsToEnable();
 
         std::vector<const char *> inst_exts;
-        for (auto &ext : inst_extensions) inst_exts.push_back(ext.c_str());
+        for (const auto &ext : inst_extensions) inst_exts.push_back(ext.c_str());
 
         const VkInstanceCreateInfo inst_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,  &dbg_info,       0, &app_info, 0, nullptr,
                                                 static_cast<uint32_t>(inst_exts.size()), inst_exts.data()};
@@ -716,12 +716,8 @@ struct AppInstance {
     const AppInstance &operator=(const AppInstance &) = delete;
 
     bool CheckExtensionEnabled(std::string extension_to_check) {
-        for (auto &extension : inst_extensions) {
-            if (extension_to_check == extension) {
-                return true;
-            }
-        }
-        return false;
+        return std::any_of(inst_extensions.begin(), inst_extensions.end(),
+                           [extension_to_check](std::string str) { return str == extension_to_check; });
     }
 
     /* Gets a list of layer and instance extensions */
@@ -729,12 +725,9 @@ struct AppInstance {
         /* Scan layers */
         auto global_layer_properties =
             GetVector<VkLayerProperties>("vkEnumerateInstanceLayerProperties", dll.fp_vkEnumerateInstanceLayerProperties);
-        global_layers.resize(global_layer_properties.size());
 
-        for (size_t i = 0; i < global_layer_properties.size(); i++) {
-            global_layers[i].layer_properties = global_layer_properties[i];
-
-            global_layers[i].extension_properties = AppGetGlobalLayerExtensions(global_layer_properties[i].layerName);
+        for (const auto &layer : global_layer_properties) {
+            global_layers.push_back(LayerExtensionList{layer, AppGetGlobalLayerExtensions(layer.layerName)});
         }
 
         // Collect global extensions
@@ -743,14 +736,14 @@ struct AppInstance {
     }
     void AppCompileInstanceExtensionsToEnable() {
         // Get all supported Instance extensions (excl. layer-provided ones)
-        for (auto &ext : global_extensions) {
+        for (const auto &ext : global_extensions) {
             inst_extensions.push_back(ext.extensionName);
         }
     }
 
     void AddSurfaceExtension(SurfaceExtension ext) { surface_extensions.push_back(ext); }
 
-    std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(char *layer_name) {
+    std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(const char *layer_name) {
         return GetVector<VkExtensionProperties>("vkEnumerateInstanceExtensionProperties",
                                                 dll.fp_vkEnumerateInstanceExtensionProperties, layer_name);
     }
@@ -1390,7 +1383,7 @@ struct ImageTypeInfos {
     std::vector<ImageTypeFormatInfo> formats;
 };
 
-VkImageCreateInfo GetImageCreateInfo(VkFormat format, VkImageTiling tiling, VkImageCreateFlags flags, VkImageUsageFlags usages) {
+VkImageCreateInfo GetImageCreateInfo(VkImageCreateFlags flags, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usages) {
     return {VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             nullptr,
             flags,
@@ -1459,30 +1452,30 @@ struct FormatRange {
 
 struct AppGpu {
     AppInstance &inst;
-    uint32_t id;
-    VkPhysicalDevice phys_device;
-    VulkanVersion api_version;
+    uint32_t id{};
+    VkPhysicalDevice phys_device = VK_NULL_HANDLE;
+    VulkanVersion api_version{};
 
-    VkPhysicalDeviceProperties props;
-    VkPhysicalDeviceProperties2KHR props2;
+    VkPhysicalDeviceProperties props{};
+    VkPhysicalDeviceProperties2KHR props2{};
 
-    uint32_t queue_count;
+    uint32_t queue_count{};
     std::vector<VkQueueFamilyProperties> queue_props;
     std::vector<VkQueueFamilyProperties2KHR> queue_props2;
 
-    VkPhysicalDeviceMemoryProperties memory_props;
-    VkPhysicalDeviceMemoryProperties2KHR memory_props2;
+    VkPhysicalDeviceMemoryProperties memory_props{};
+    VkPhysicalDeviceMemoryProperties2KHR memory_props2{};
 
     std::vector<ImageTypeInfos> memory_image_support_types;
 
-    VkPhysicalDeviceFeatures features;
-    VkPhysicalDeviceFeatures2KHR features2;
-    VkPhysicalDevice limits;
+    VkPhysicalDeviceFeatures features{};
+    VkPhysicalDeviceFeatures2KHR features2{};
+    VkPhysicalDevice limits{};
 
     std::vector<VkExtensionProperties> device_extensions;
 
     VkDevice dev;
-    VkPhysicalDeviceFeatures enabled_features;
+    VkPhysicalDeviceFeatures enabled_features{};
 
     std::array<VkDeviceSize, VK_MAX_MEMORY_HEAPS> heapBudget;
     std::array<VkDeviceSize, VK_MAX_MEMORY_HEAPS> heapUsage;
@@ -1540,13 +1533,8 @@ struct AppGpu {
         device_extensions = AppGetPhysicalDeviceLayerExtensions(nullptr);
 
         const float queue_priority = 1.0f;
-        const VkDeviceQueueCreateInfo q_ci = {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-                                              nullptr,
-                                              0,
-                                              0,  // just pick the first one and hope for the best
-                                              1,
-                                              &queue_priority};
-        enabled_features = VkPhysicalDeviceFeatures{0};
+        // pick the first queue index and hope for the best
+        const VkDeviceQueueCreateInfo q_ci = {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, nullptr, 0, 0, 1, &queue_priority};
         const VkDeviceCreateInfo device_ci = {
             VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, nullptr, 0, 1, &q_ci, 0, nullptr, 0, nullptr, &enabled_features};
 
@@ -1573,10 +1561,10 @@ struct AppGpu {
                     continue;
                 }
 
-                VkImageCreateInfo image_ci_regular = GetImageCreateInfo(format, tiling, 0, 0);
+                VkImageCreateInfo image_ci_regular = GetImageCreateInfo(0, format, tiling, 0);
                 VkImageCreateInfo image_ci_transient =
-                    GetImageCreateInfo(format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, 0);
-                VkImageCreateInfo image_ci_sparse = GetImageCreateInfo(format, tiling, 0, VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
+                    GetImageCreateInfo(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, format, tiling, 0);
+                VkImageCreateInfo image_ci_sparse = GetImageCreateInfo(0, format, tiling, VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
 
                 if (tiling == VK_IMAGE_TILING_LINEAR) {
                     if (format == color_format) {
