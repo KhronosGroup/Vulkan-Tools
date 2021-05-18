@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2020 The Khronos Group Inc.
- * Copyright (c) 2015-2020 Valve Corporation
- * Copyright (c) 2015-2020 LunarG, Inc.
+ * Copyright (c) 2015-2021 The Khronos Group Inc.
+ * Copyright (c) 2015-2021 Valve Corporation
+ * Copyright (c) 2015-2021 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -316,15 +316,9 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
         p.PrintKeyString("pipelineCacheUUID", to_string_16(props.pipelineCacheUUID), 17);
     }
     p.AddNewline();
-    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits",
-                               gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                   ? gpu.props2.properties.limits
-                                   : gpu.props.limits);
+    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
     p.AddNewline();
-    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties",
-                                         gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                             ? gpu.props2.properties.sparseProperties
-                                             : gpu.props.sparseProperties);
+    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties", gpu.props.sparseProperties);
     p.AddNewline();
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.props2.pNext;
@@ -348,27 +342,22 @@ void GpuDumpPropsJson(Printer &p, AppGpu &gpu) {
         }
     }
 
-    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits",
-                               gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                   ? gpu.props2.properties.limits
-                                   : gpu.props.limits);
-    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties",
-                                         gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                             ? gpu.props2.properties.sparseProperties
-                                             : gpu.props.sparseProperties);
+    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
+    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties", gpu.props.sparseProperties);
 }
 
-void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQueueFamilyProperties &queue) {
+void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, const AppQueueFamilyProperties &queue) {
+    VkQueueFamilyProperties props = queue.props;
     p.SetSubHeader().SetElementIndex(static_cast<int>(queue.queue_index));
     ObjectWrapper obj(p, "queueProperties");
     if (p.Type() == OutputType::vkconfig_output) {
-        DumpVkExtent3D(p, "minImageTransferGranularity", queue.props.minImageTransferGranularity);
+        DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
     } else {
-        p.PrintKeyValue("minImageTransferGranularity", queue.props.minImageTransferGranularity, 27);
+        p.PrintKeyValue("minImageTransferGranularity", props.minImageTransferGranularity, 27);
     }
-    p.PrintKeyValue("queueCount", queue.props.queueCount, 27);
-    p.PrintKeyString("queueFlags", VkQueueFlagsString(queue.props.queueFlags), 27);
-    p.PrintKeyValue("timestampValidBits", queue.props.timestampValidBits, 27);
+    p.PrintKeyValue("queueCount", props.queueCount, 27);
+    p.PrintKeyString("queueFlags", VkQueueFlagsString(props.queueFlags), 27);
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
 
     if (queue.is_present_platform_agnostic) {
         p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false", 27);
@@ -386,12 +375,12 @@ void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQ
     p.AddNewline();
 }
 
-void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQueueFamilyProperties &queue) {
+void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, VkQueueFamilyProperties props) {
     ObjectWrapper obj(p, "");
-    DumpVkExtent3D(p, "minImageTransferGranularity", queue.props.minImageTransferGranularity);
-    p.PrintKeyValue("queueCount", queue.props.queueCount, 27);
-    p.PrintKeyValue("queueFlags", queue.props.queueFlags, 27);
-    p.PrintKeyValue("timestampValidBits", queue.props.timestampValidBits, 27);
+    DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
+    p.PrintKeyValue("queueCount", props.queueCount, 27);
+    p.PrintKeyValue("queueFlags", props.queueFlags, 27);
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
 }
 
 // This prints a number of bytes in a human-readable format according to prefixes of the International System of Quantities (ISQ),
@@ -459,8 +448,6 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             const uint32_t memtype_bit = 1U << i;
 
             // only linear and optimal tiling considered
-            std::vector<VkFormat> tiling_optimal_formats;
-            std::vector<VkFormat> tiling_linear_formats;
             for (auto &image_tiling : gpu.memory_image_support_types) {
                 p.SetOpenDetails();
                 ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)), -1);
@@ -670,9 +657,8 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     {
         p.SetHeader();
         ObjectWrapper obj(p, "VkQueueFamilyProperties");
-        for (uint32_t i = 0; i < gpu.queue_count; i++) {
-            AppQueueFamilyProperties queue_props = AppQueueFamilyProperties(gpu, i);
-            GpuDumpQueueProps(p, gpu.inst.surface_extensions, queue_props);
+        for (const auto &queue_prop : gpu.extended_queue_props) {
+            GpuDumpQueueProps(p, gpu.inst.surface_extensions, queue_prop);
         }
     }
     GpuDumpMemoryProps(p, gpu);
@@ -691,9 +677,8 @@ void DumpGpuJson(Printer &p, AppGpu &gpu) {
     GpuDumpPropsJson(p, gpu);
     {
         ArrayWrapper arr(p, "ArrayOfVkQueueFamilyProperties");
-        for (uint32_t i = 0; i < gpu.queue_count; i++) {
-            AppQueueFamilyProperties queue_props = AppQueueFamilyProperties(gpu, i);
-            GpuDumpQueuePropsJson(p, gpu.inst.surface_extensions, queue_props);
+        for (const auto &queue_prop : gpu.queue_props) {
+            GpuDumpQueuePropsJson(p, gpu.inst.surface_extensions, queue_prop);
         }
     }
     {

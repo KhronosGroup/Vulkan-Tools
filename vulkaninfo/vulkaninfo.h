@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2020 The Khronos Group Inc.
- * Copyright (c) 2015-2020 Valve Corporation
- * Copyright (c) 2015-2020 LunarG, Inc.
+ * Copyright (c) 2015-2021 The Khronos Group Inc.
+ * Copyright (c) 2015-2021 Valve Corporation
+ * Copyright (c) 2015-2021 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -588,6 +588,10 @@ struct VulkanVersion {
     uint32_t patch;
 };
 
+VulkanVersion make_vulkan_version(uint32_t version) {
+    return {VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version)};
+}
+
 struct AppInstance {
     VkDll dll;
 
@@ -656,7 +660,7 @@ struct AppInstance {
         // fallback to baked header version if loader returns 0 for the patch version
         uint32_t patch_version = VK_VERSION_PATCH(instance_version);
         if (patch_version == 0) patch_version = VK_VERSION_PATCH(VK_HEADER_VERSION);
-        vk_version = {VK_VERSION_MAJOR(instance_version), VK_VERSION_MINOR(instance_version), patch_version};
+        vk_version = make_vulkan_version(instance_version);
 
         AppGetInstanceExtensions();
 
@@ -1430,6 +1434,29 @@ struct FormatRange {
     VkFormat last_format;
 };
 
+struct AppQueueFamilyProperties {
+    VkQueueFamilyProperties props;
+    uint32_t queue_index;
+    bool is_present_platform_agnostic = true;
+    VkBool32 platforms_support_present = VK_FALSE;
+
+    AppQueueFamilyProperties(AppInstance &inst, VkPhysicalDevice physical_device, VkQueueFamilyProperties family_properties,
+                             uint32_t queue_index)
+        : props(family_properties), queue_index(queue_index) {
+        for (auto &surface_ext : inst.surface_extensions) {
+            VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_index, surface_ext.surface,
+                                                                               &surface_ext.supports_present);
+            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceSupportKHR", err);
+
+            const bool first = (surface_ext == inst.surface_extensions.at(0));
+            if (!first && platforms_support_present != surface_ext.supports_present) {
+                is_present_platform_agnostic = false;
+            }
+            platforms_support_present = surface_ext.supports_present;
+        }
+    }
+};
+
 struct AppGpu {
     AppInstance &inst;
     uint32_t id{};
@@ -1439,9 +1466,8 @@ struct AppGpu {
     VkPhysicalDeviceProperties props{};
     VkPhysicalDeviceProperties2KHR props2{};
 
-    uint32_t queue_count{};
     std::vector<VkQueueFamilyProperties> queue_props;
-    std::vector<VkQueueFamilyProperties2KHR> queue_props2;
+    std::vector<AppQueueFamilyProperties> extended_queue_props;
 
     VkPhysicalDeviceMemoryProperties memory_props{};
     VkPhysicalDeviceMemoryProperties2KHR memory_props2{};
@@ -1450,11 +1476,10 @@ struct AppGpu {
 
     VkPhysicalDeviceFeatures features{};
     VkPhysicalDeviceFeatures2KHR features2{};
-    VkPhysicalDevice limits{};
 
     std::vector<VkExtensionProperties> device_extensions;
 
-    VkDevice dev;
+    VkDevice dev = VK_NULL_HANDLE;
     VkPhysicalDeviceFeatures enabled_features{};
 
     std::array<VkDeviceSize, VK_MAX_MEMORY_HEAPS> heapBudget;
@@ -1464,46 +1489,40 @@ struct AppGpu {
 
     AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, pNextChainInfos chainInfos)
         : inst(inst), id(id), phys_device(phys_device) {
-        inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
-
         // needs to find the minimum of the instance and device version, and use that to print the device info
         uint32_t gpu_version = props.apiVersion < inst.instance_version ? props.apiVersion : inst.instance_version;
-        api_version = {VK_VERSION_MAJOR(gpu_version), VK_VERSION_MINOR(gpu_version), VK_VERSION_PATCH(gpu_version)};
+        api_version = make_vulkan_version(gpu_version);
 
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&props2, chainInfos.phys_device_props2);
-
-            inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
-        }
-        /* get queue count */
-        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
-
-        queue_props.resize(queue_count);
-
-        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, queue_props.data());
-
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            queue_props2.resize(queue_count);
-
-            for (size_t i = 0; i < queue_count; ++i) {
-                queue_props2[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
-                queue_props2[i].pNext = nullptr;
-            }
-
-            inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_count, queue_props2.data());
-        }
+        inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
 
         inst.dll.fp_vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
 
         inst.dll.fp_vkGetPhysicalDeviceFeatures(phys_device, &features);
 
+        uint32_t queue_count = 0;
+        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
+        queue_props.resize(queue_count);
+        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, queue_props.data());
+
+        int queue_index = 0;
+        for (auto &queue_prop : queue_props) {
+            extended_queue_props.push_back(AppQueueFamilyProperties(inst, phys_device, queue_prop, queue_index++));
+        }
+
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
+            // VkPhysicalDeviceProperties2
+            props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
+            buildpNextChain((VkStructureHeader *)&props2, chainInfos.phys_device_props2);
+
+            inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
+
+            // VkPhysicalDeviceMemoryProperties2
             memory_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
             buildpNextChain((VkStructureHeader *)&memory_props2, chainInfos.phys_device_mem_props2);
 
             inst.ext_funcs.vkGetPhysicalDeviceMemoryProperties2KHR(phys_device, &memory_props2);
 
+            // VkPhysicalDeviceFeatures2
             features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
             buildpNextChain((VkStructureHeader *)&features2, chainInfos.phys_device_features2);
 
@@ -1511,6 +1530,10 @@ struct AppGpu {
         }
 
         device_extensions = AppGetPhysicalDeviceLayerExtensions(nullptr);
+
+        if (features.sparseBinding) {
+            enabled_features.sparseBinding = VK_TRUE;
+        }
 
         const float queue_priority = 1.0f;
         // pick the first queue index and hope for the best
@@ -1521,16 +1544,16 @@ struct AppGpu {
         VkResult err = inst.dll.fp_vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
         if (err) THROW_VK_ERR("vkCreateDevice", err);
 
-        const std::vector<VkImageTiling> tilings = {VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_TILING_LINEAR};
-        const std::vector<VkFormat> formats = {
+        const std::array<VkImageTiling, 2> tilings = {VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_TILING_LINEAR};
+        const std::array<VkFormat, 8> formats = {
             color_format,      VK_FORMAT_D16_UNORM,         VK_FORMAT_X8_D24_UNORM_PACK32, VK_FORMAT_D32_SFLOAT,
             VK_FORMAT_S8_UINT, VK_FORMAT_D16_UNORM_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,   VK_FORMAT_D32_SFLOAT_S8_UINT};
 
-        for (VkImageTiling tiling : tilings) {
+        for (const VkImageTiling tiling : tilings) {
             ImageTypeInfos image_type_infos;
             image_type_infos.tiling = tiling;
 
-            for (VkFormat format : formats) {
+            for (const VkFormat format : formats) {
                 ImageTypeFormatInfo image_type_format_info;
                 image_type_format_info.format = format;
 
@@ -1654,15 +1677,11 @@ struct AppGpu {
     const AppGpu &operator=(const AppGpu &) = delete;
 
     bool CheckPhysicalDeviceExtensionIncluded(std::string extension_to_check) {
-        for (auto &extension : device_extensions) {
-            if (extension_to_check == std::string(extension.extensionName)) {
-                return true;
-            }
-        }
-        return false;
+        return std::any_of(device_extensions.begin(), device_extensions.end(),
+                           [extension_to_check](VkExtensionProperties &prop) { return prop.extensionName == extension_to_check; });
     }
 
-    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(char *layer_name) {
+    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(const char *layer_name) {
         return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties",
                                                 inst.dll.fp_vkEnumerateDeviceExtensionProperties, phys_device, layer_name);
     }
@@ -1689,32 +1708,6 @@ struct AppGpu {
             return props2.properties;
         } else {
             return props;
-        }
-    }
-};
-struct AppQueueFamilyProperties {
-    VkQueueFamilyProperties props;
-    uint32_t queue_index;
-    bool is_present_platform_agnostic = true;
-    VkBool32 platforms_support_present = VK_FALSE;
-
-    AppQueueFamilyProperties(AppGpu &gpu, uint32_t queue_index) : queue_index(queue_index) {
-        if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            props = gpu.queue_props2[queue_index].queueFamilyProperties;
-        } else {
-            props = gpu.queue_props[queue_index];
-        }
-
-        for (auto &surface_ext : gpu.inst.surface_extensions) {
-            VkResult err = gpu.inst.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(
-                gpu.phys_device, queue_index, surface_ext.surface, &surface_ext.supports_present);
-            if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceSupportKHR", err);
-
-            const bool first = (surface_ext == gpu.inst.surface_extensions.at(0));
-            if (!first && platforms_support_present != surface_ext.supports_present) {
-                is_present_platform_agnostic = false;
-            }
-            platforms_support_present = surface_ext.supports_present;
         }
     }
 };
@@ -1761,12 +1754,4 @@ std::unordered_map<PropFlags, std::vector<VkFormat>> FormatPropMap(AppGpu &gpu) 
         }
     }
     return map;
-}
-
-VkFormatProperties2 GetFormatProperties2(AppGpu &gpu, VkFormat format, pNextChainInfos &chainInfos) {
-    VkFormatProperties2 props;
-    props.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
-    buildpNextChain((VkStructureHeader *)&props, chainInfos.format_properties2);
-    gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, format, &props);
-    return props;
 }
