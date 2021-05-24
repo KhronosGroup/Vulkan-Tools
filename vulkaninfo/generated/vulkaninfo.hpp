@@ -615,8 +615,8 @@ std::vector<const char *>VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits val
     if (0x400 & value) strings.push_back("IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR");
     if (0x800 & value) strings.push_back("IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR");
     if (0x1000 & value) strings.push_back("IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR");
-    if (0x100 & value) strings.push_back("IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV");
     if (0x200 & value) strings.push_back("IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT");
+    if (0x100 & value) strings.push_back("IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR");
     if (0x2000 & value) strings.push_back("IMAGE_USAGE_VIDEO_ENCODE_DST_BIT_KHR");
     if (0x4000 & value) strings.push_back("IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR");
     if (0x8000 & value) strings.push_back("IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR");
