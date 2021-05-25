@@ -91,13 +91,6 @@ static char const *const tex_files[] = {"lunarg.ppm"};
 
 static int validation_error = 0;
 
-struct vkcube_vs_uniform {
-    // Must start with MVP
-    float mvp[4][4];
-    float position[12 * 3][4];
-    float color[12 * 3][4];
-};
-
 struct vktexcube_vs_uniform {
     // Must start with MVP
     float mvp[4][4];
@@ -2472,7 +2465,8 @@ void Demo::update_data_buffer() {
     // Rotate around the Y axis
     mat4x4 Model;
     mat4x4_dup(Model, model_matrix);
-    mat4x4_rotate(model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(spin_angle));
+    mat4x4_rotate_Y(model_matrix, Model, (float)degreesToRadians(spin_angle));
+    mat4x4_orthonormalize(model_matrix, model_matrix);
 
     mat4x4 MVP;
     mat4x4_mul(MVP, VP, model_matrix);
