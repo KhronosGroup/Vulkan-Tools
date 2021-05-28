@@ -44,7 +44,9 @@ jobs:
             - uses: actions/setup-python@v2
               with:
                 python-version: '3.7'
-            - run: sudo apt install libxkbcommon-dev libwayland-dev libmirclient-dev libxrandr-dev libx11-xcb-dev
+            - run: |
+                sudo apt-get -qq update
+                sudo apt install libxkbcommon-dev libwayland-dev libmirclient-dev libxrandr-dev libx11-xcb-dev
 
             - name: Fetch and install headers
               run: python scripts/update_deps.py --dir external
