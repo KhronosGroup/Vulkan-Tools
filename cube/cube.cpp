@@ -807,8 +807,13 @@ void Demo::draw() {
         // must be recreated:
         resize();
     } else if (result == vk::Result::eSuboptimalKHR) {
-        // swapchain is not as optimal as it could be, but the platform's
-        // presentation engine will still present the image correctly.
+        // SUBOPTIMAL could be due to resize
+        vk::SurfaceCapabilitiesKHR surfCapabilities;
+        auto result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
+        VERIFY(result == vk::Result::eSuccess);
+        if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
+            resize();
+        }
     } else if (result == vk::Result::eErrorSurfaceLostKHR) {
         inst.destroySurfaceKHR(surface, nullptr);
         create_surface();
