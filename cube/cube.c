@@ -1170,8 +1170,13 @@ static void demo_draw(struct demo *demo) {
         // must be recreated:
         demo_resize(demo);
     } else if (err == VK_SUBOPTIMAL_KHR) {
-        // demo->swapchain is not as optimal as it could be, but the platform's
-        // presentation engine will still present the image correctly.
+        // SUBOPTIMAL could be due to a resize
+        VkSurfaceCapabilitiesKHR surfCapabilities;
+        err = demo->fpGetPhysicalDeviceSurfaceCapabilitiesKHR(demo->gpu, demo->surface, &surfCapabilities);
+        assert(!err);
+        if (surfCapabilities.currentExtent.width != demo->width || surfCapabilities.currentExtent.height != demo->height) {
+            demo_resize(demo);
+        }
     } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
         vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
         demo_create_surface(demo);
