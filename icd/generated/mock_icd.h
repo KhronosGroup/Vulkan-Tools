@@ -79,7 +79,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_FUCHSIA_imagepipe_surface", 1},
     {"VK_EXT_metal_surface", 1},
     {"VK_KHR_surface_protected_capabilities", 1},
-    {"VK_EXT_validation_features", 4},
+    {"VK_EXT_validation_features", 5},
     {"VK_EXT_headless_surface", 1},
     {"VK_EXT_directfb_surface", 1},
     {"VK_QNX_screen_surface", 1},
@@ -277,6 +277,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_KHR_synchronization2", 1},
+    {"VK_KHR_shader_subgroup_uniform_control_flow", 1},
     {"VK_KHR_zero_initialize_workgroup_memory", 1},
     {"VK_NV_fragment_shading_rate_enums", 1},
     {"VK_EXT_ycbcr_2plane_444_formats", 1},
@@ -293,6 +294,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_FUCHSIA_external_semaphore", 1},
     {"VK_EXT_extended_dynamic_state2", 1},
     {"VK_EXT_color_write_enable", 1},
+    {"VK_EXT_global_priority_query", 1},
 };
 
 
@@ -2085,6 +2087,7 @@ static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkCopyBufferInfo2KHR*                 pCopyBufferInfo);
@@ -3154,6 +3157,7 @@ static VKAPI_ATTR void                                    VKAPI_CALL CmdSetColor
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
