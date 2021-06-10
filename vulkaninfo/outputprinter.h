@@ -388,12 +388,12 @@ class Printer {
                 break;
         }
     }
-    void ArrayStart(std::string array_name, int32_t element_count = 0) {
+    void ArrayStart(std::string array_name, size_t element_count = 0) {
         switch (output_type) {
             case (OutputType::text): {
                 out << std::string(static_cast<size_t>(indents), '\t') << array_name << ":";
                 size_t underline_count = array_name.size() + 1;
-                if (element_count >= 0) {
+                if (element_count > 0) {
                     out << " count = " << element_count;
                     underline_count += 9 + std::to_string(element_count).size();
                 }
@@ -410,7 +410,7 @@ class Printer {
                     out << "<details>";
                 }
                 out << "<summary>" << array_name;
-                if (element_count >= 0) {
+                if (element_count > 0) {
                     out << ": count = <span class='val'>" << element_count << "</span>";
                 }
                 out << "</summary>\n";
@@ -725,7 +725,7 @@ class ObjectWrapper {
 class ArrayWrapper {
   public:
     ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) {
-        p.ArrayStart(array_name, static_cast<int32_t>(element_count));
+        p.ArrayStart(array_name, element_count);
     }
     ~ArrayWrapper() { p.ArrayEnd(); }
 
