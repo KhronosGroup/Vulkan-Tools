@@ -161,13 +161,7 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
     if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
         p.SetSubHeader();
         ObjectWrapper obj(p, "VkSurfaceCapabilities2EXT");
-        {
-            ArrayWrapper arr(p, "supportedSurfaceCounters");
-            if (surface.surface_capabilities2_ext.supportedSurfaceCounters == 0) p.PrintString("None");
-            if (surface.surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
-                p.SetAsType().PrintString("VK_SURFACE_COUNTER_VBLANK_EXT");
-            }
-        }
+        DumpVkSurfaceCounterFlagsEXT(p, "supportedSurfaceCounters", surface.surface_capabilities2_ext.supportedSurfaceCounters);
     }
     if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
         chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext, inst.vk_version);
@@ -450,7 +444,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             // only linear and optimal tiling considered
             for (auto &image_tiling : gpu.memory_image_support_types) {
                 p.SetOpenDetails();
-                ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)), 0);
+                ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)));
                 bool has_any_support_types = false;
                 bool regular = false;
                 bool transient = false;
