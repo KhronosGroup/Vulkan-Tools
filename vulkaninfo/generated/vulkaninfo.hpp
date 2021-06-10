@@ -495,7 +495,7 @@ void DumpVkShaderFloatControlsIndependence(Printer &p, std::string name, VkShade
 }
 std::vector<const char *>VkCompositeAlphaFlagBitsKHRGetStrings(VkCompositeAlphaFlagBitsKHR value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("COMPOSITE_ALPHA_OPAQUE_BIT_KHR");
     if (0x2 & value) strings.push_back("COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR");
     if (0x4 & value) strings.push_back("COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR");
@@ -504,12 +504,12 @@ std::vector<const char *>VkCompositeAlphaFlagBitsKHRGetStrings(VkCompositeAlphaF
 }
 void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlphaFlagsKHR value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkCompositeAlphaFlagBitsKHRGetStrings(static_cast<VkCompositeAlphaFlagBitsKHR>(value));
     if (static_cast<VkCompositeAlphaFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkCompositeAlphaFlagBitsKHRGetStrings(static_cast<VkCompositeAlphaFlagBitsKHR>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -522,7 +522,7 @@ void DumpVkCompositeAlphaFlagBitsKHR(Printer &p, std::string name, VkCompositeAl
 
 std::vector<const char *>VkDeviceGroupPresentModeFlagBitsKHRGetStrings(VkDeviceGroupPresentModeFlagBitsKHR value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR");
     if (0x2 & value) strings.push_back("DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR");
     if (0x4 & value) strings.push_back("DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR");
@@ -531,12 +531,12 @@ std::vector<const char *>VkDeviceGroupPresentModeFlagBitsKHRGetStrings(VkDeviceG
 }
 void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagsKHR value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkDeviceGroupPresentModeFlagBitsKHRGetStrings(static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value));
     if (static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkDeviceGroupPresentModeFlagBitsKHRGetStrings(static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -549,7 +549,7 @@ void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDev
 
 std::vector<const char *>VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_BIT");
     if (0x2 & value) strings.push_back("FORMAT_FEATURE_STORAGE_IMAGE_BIT");
     if (0x4 & value) strings.push_back("FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT");
@@ -585,12 +585,12 @@ std::vector<const char *>VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBi
 }
 void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkFormatFeatureFlagBitsGetStrings(static_cast<VkFormatFeatureFlagBits>(value));
     if (static_cast<VkFormatFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkFormatFeatureFlagBitsGetStrings(static_cast<VkFormatFeatureFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -603,7 +603,7 @@ void DumpVkFormatFeatureFlagBits(Printer &p, std::string name, VkFormatFeatureFl
 
 std::vector<const char *>VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("IMAGE_USAGE_TRANSFER_SRC_BIT");
     if (0x2 & value) strings.push_back("IMAGE_USAGE_TRANSFER_DST_BIT");
     if (0x4 & value) strings.push_back("IMAGE_USAGE_SAMPLED_BIT");
@@ -624,12 +624,12 @@ std::vector<const char *>VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits val
 }
 void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkImageUsageFlagBitsGetStrings(static_cast<VkImageUsageFlagBits>(value));
     if (static_cast<VkImageUsageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkImageUsageFlagBitsGetStrings(static_cast<VkImageUsageFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -642,19 +642,19 @@ void DumpVkImageUsageFlagBits(Printer &p, std::string name, VkImageUsageFlagBits
 
 std::vector<const char *>VkMemoryHeapFlagBitsGetStrings(VkMemoryHeapFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("MEMORY_HEAP_DEVICE_LOCAL_BIT");
     if (0x2 & value) strings.push_back("MEMORY_HEAP_MULTI_INSTANCE_BIT");
     return strings;
 }
 void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkMemoryHeapFlagBitsGetStrings(static_cast<VkMemoryHeapFlagBits>(value));
     if (static_cast<VkMemoryHeapFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkMemoryHeapFlagBitsGetStrings(static_cast<VkMemoryHeapFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -667,7 +667,7 @@ void DumpVkMemoryHeapFlagBits(Printer &p, std::string name, VkMemoryHeapFlagBits
 
 std::vector<const char *>VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("MEMORY_PROPERTY_DEVICE_LOCAL_BIT");
     if (0x2 & value) strings.push_back("MEMORY_PROPERTY_HOST_VISIBLE_BIT");
     if (0x4 & value) strings.push_back("MEMORY_PROPERTY_HOST_COHERENT_BIT");
@@ -680,12 +680,12 @@ std::vector<const char *>VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlag
 }
 void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkMemoryPropertyFlagBitsGetStrings(static_cast<VkMemoryPropertyFlagBits>(value));
     if (static_cast<VkMemoryPropertyFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkMemoryPropertyFlagBitsGetStrings(static_cast<VkMemoryPropertyFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -731,7 +731,7 @@ std::string VkQueueFlagsString(VkQueueFlags value, int width = 0) {
 }
 std::vector<const char *>VkResolveModeFlagBitsGetStrings(VkResolveModeFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0 & value) strings.push_back("RESOLVE_MODE_NONE");
     if (0x1 & value) strings.push_back("RESOLVE_MODE_SAMPLE_ZERO_BIT");
     if (0x2 & value) strings.push_back("RESOLVE_MODE_AVERAGE_BIT");
@@ -741,12 +741,12 @@ std::vector<const char *>VkResolveModeFlagBitsGetStrings(VkResolveModeFlagBits v
 }
 void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkResolveModeFlagBitsGetStrings(static_cast<VkResolveModeFlagBits>(value));
     if (static_cast<VkResolveModeFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkResolveModeFlagBitsGetStrings(static_cast<VkResolveModeFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -759,7 +759,7 @@ void DumpVkResolveModeFlagBits(Printer &p, std::string name, VkResolveModeFlagBi
 
 std::vector<const char *>VkSampleCountFlagBitsGetStrings(VkSampleCountFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("SAMPLE_COUNT_1_BIT");
     if (0x2 & value) strings.push_back("SAMPLE_COUNT_2_BIT");
     if (0x4 & value) strings.push_back("SAMPLE_COUNT_4_BIT");
@@ -771,12 +771,12 @@ std::vector<const char *>VkSampleCountFlagBitsGetStrings(VkSampleCountFlagBits v
 }
 void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkSampleCountFlagBitsGetStrings(static_cast<VkSampleCountFlagBits>(value));
     if (static_cast<VkSampleCountFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkSampleCountFlagBitsGetStrings(static_cast<VkSampleCountFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -789,7 +789,7 @@ void DumpVkSampleCountFlagBits(Printer &p, std::string name, VkSampleCountFlagBi
 
 std::vector<const char *>VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("SHADER_STAGE_VERTEX_BIT");
     if (0x2 & value) strings.push_back("SHADER_STAGE_TESSELLATION_CONTROL_BIT");
     if (0x4 & value) strings.push_back("SHADER_STAGE_TESSELLATION_EVALUATION_BIT");
@@ -810,12 +810,12 @@ std::vector<const char *>VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits v
 }
 void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkShaderStageFlagBitsGetStrings(static_cast<VkShaderStageFlagBits>(value));
     if (static_cast<VkShaderStageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkShaderStageFlagBitsGetStrings(static_cast<VkShaderStageFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -828,7 +828,7 @@ void DumpVkShaderStageFlagBits(Printer &p, std::string name, VkShaderStageFlagBi
 
 std::vector<const char *>VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureFlagBits value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("SUBGROUP_FEATURE_BASIC_BIT");
     if (0x2 & value) strings.push_back("SUBGROUP_FEATURE_VOTE_BIT");
     if (0x4 & value) strings.push_back("SUBGROUP_FEATURE_ARITHMETIC_BIT");
@@ -842,12 +842,12 @@ std::vector<const char *>VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureFl
 }
 void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureFlags value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkSubgroupFeatureFlagBitsGetStrings(static_cast<VkSubgroupFeatureFlagBits>(value));
     if (static_cast<VkSubgroupFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkSubgroupFeatureFlagBitsGetStrings(static_cast<VkSubgroupFeatureFlagBits>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -860,18 +860,18 @@ void DumpVkSubgroupFeatureFlagBits(Printer &p, std::string name, VkSubgroupFeatu
 
 std::vector<const char *>VkSurfaceCounterFlagBitsEXTGetStrings(VkSurfaceCounterFlagBitsEXT value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("SURFACE_COUNTER_VBLANK_BIT_EXT");
     return strings;
 }
 void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounterFlagsEXT value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkSurfaceCounterFlagBitsEXTGetStrings(static_cast<VkSurfaceCounterFlagBitsEXT>(value));
     if (static_cast<VkSurfaceCounterFlagBitsEXT>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkSurfaceCounterFlagBitsEXTGetStrings(static_cast<VkSurfaceCounterFlagBitsEXT>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -884,7 +884,7 @@ void DumpVkSurfaceCounterFlagBitsEXT(Printer &p, std::string name, VkSurfaceCoun
 
 std::vector<const char *>VkSurfaceTransformFlagBitsKHRGetStrings(VkSurfaceTransformFlagBitsKHR value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("SURFACE_TRANSFORM_IDENTITY_BIT_KHR");
     if (0x2 & value) strings.push_back("SURFACE_TRANSFORM_ROTATE_90_BIT_KHR");
     if (0x4 & value) strings.push_back("SURFACE_TRANSFORM_ROTATE_180_BIT_KHR");
@@ -898,12 +898,12 @@ std::vector<const char *>VkSurfaceTransformFlagBitsKHRGetStrings(VkSurfaceTransf
 }
 void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTransformFlagsKHR value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkSurfaceTransformFlagBitsKHRGetStrings(static_cast<VkSurfaceTransformFlagBitsKHR>(value));
     if (static_cast<VkSurfaceTransformFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkSurfaceTransformFlagBitsKHRGetStrings(static_cast<VkSurfaceTransformFlagBitsKHR>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
@@ -916,7 +916,7 @@ void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTr
 
 std::vector<const char *>VkToolPurposeFlagBitsEXTGetStrings(VkToolPurposeFlagBitsEXT value) {
     std::vector<const char *> strings;
-    if (value == 0) strings.push_back("None");
+    if (value == 0) { strings.push_back("None"); return strings; }
     if (0x1 & value) strings.push_back("TOOL_PURPOSE_VALIDATION_BIT_EXT");
     if (0x2 & value) strings.push_back("TOOL_PURPOSE_PROFILING_BIT_EXT");
     if (0x4 & value) strings.push_back("TOOL_PURPOSE_TRACING_BIT_EXT");
@@ -928,12 +928,12 @@ std::vector<const char *>VkToolPurposeFlagBitsEXTGetStrings(VkToolPurposeFlagBit
 }
 void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagsEXT value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    auto strings = VkToolPurposeFlagBitsEXTGetStrings(static_cast<VkToolPurposeFlagBitsEXT>(value));
     if (static_cast<VkToolPurposeFlagBitsEXT>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         p.SetAsType().PrintString("None");
         return;
     }
+    auto strings = VkToolPurposeFlagBitsEXTGetStrings(static_cast<VkToolPurposeFlagBitsEXT>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);

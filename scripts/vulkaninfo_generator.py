@@ -441,7 +441,7 @@ def PrintGetFlagStrings(name, bitmask):
         "GetStrings(" + name + " value) {\n"
 
     out += "    std::vector<const char *> strings;\n"
-    out += "    if (value == 0) strings.push_back(\"None\");\n"
+    out += "    if (value == 0) { strings.push_back(\"None\"); return strings; }\n"
     for v in bitmask.options:
         val = v.value if isinstance(v.value, str) else str(hex(v.value))
         out += "    if (" + val + " & value) strings.push_back(\"" + \
@@ -454,13 +454,13 @@ def PrintFlags(bitmask, name):
     out = "void Dump" + name + \
         "(Printer &p, std::string name, " + name + " value, int width = 0) {\n"
     out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
-    out += "    auto strings = " + bitmask.name + \
-        "GetStrings(static_cast<" + bitmask.name + ">(value));\n"
     out += "    if (static_cast<" + bitmask.name + ">(value) == 0) {\n"
     out += "        ArrayWrapper arr(p, name, 0);\n"
     out += "        p.SetAsType().PrintString(\"None\");\n"
     out += "        return;\n"
     out += "    }\n"
+    out += "    auto strings = " + bitmask.name + \
+        "GetStrings(static_cast<" + bitmask.name + ">(value));\n"
     out += "    ArrayWrapper arr(p, name, strings.size());\n"
     out += "    for(auto& str : strings){\n"
     out += "        p.SetAsType().PrintString(str);\n"
