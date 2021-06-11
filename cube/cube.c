@@ -1174,7 +1174,8 @@ static void demo_draw(struct demo *demo) {
         VkSurfaceCapabilitiesKHR surfCapabilities;
         err = demo->fpGetPhysicalDeviceSurfaceCapabilitiesKHR(demo->gpu, demo->surface, &surfCapabilities);
         assert(!err);
-        if (surfCapabilities.currentExtent.width != demo->width || surfCapabilities.currentExtent.height != demo->height) {
+        if (surfCapabilities.currentExtent.width != (uint32_t)demo->width ||
+            surfCapabilities.currentExtent.height != (uint32_t)demo->height) {
             demo_resize(demo);
         }
     } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
