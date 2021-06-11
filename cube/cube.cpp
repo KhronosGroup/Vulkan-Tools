@@ -809,7 +809,7 @@ void Demo::draw() {
     } else if (result == vk::Result::eSuboptimalKHR) {
         // SUBOPTIMAL could be due to resize
         vk::SurfaceCapabilitiesKHR surfCapabilities;
-        auto result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
+        result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
         VERIFY(result == vk::Result::eSuccess);
         if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
             resize();
