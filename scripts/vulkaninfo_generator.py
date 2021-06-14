@@ -456,7 +456,8 @@ def PrintFlags(bitmask, name):
     out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
     out += "    if (static_cast<" + bitmask.name + ">(value) == 0) {\n"
     out += "        ArrayWrapper arr(p, name, 0);\n"
-    out += "        p.SetAsType().PrintString(\"None\");\n"
+    out += "        if (p.Type() != OutputType::vkconfig_output)\n"
+    out += "            p.SetAsType().PrintString(\"None\");\n"
     out += "        return;\n"
     out += "    }\n"
     out += "    auto strings = " + bitmask.name + \
