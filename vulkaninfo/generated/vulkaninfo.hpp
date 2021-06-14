@@ -506,7 +506,8 @@ void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlpha
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkCompositeAlphaFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkCompositeAlphaFlagBitsKHRGetStrings(static_cast<VkCompositeAlphaFlagBitsKHR>(value));
@@ -533,7 +534,8 @@ void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDevice
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkDeviceGroupPresentModeFlagBitsKHRGetStrings(static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value));
@@ -587,7 +589,8 @@ void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkFormatFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkFormatFeatureFlagBitsGetStrings(static_cast<VkFormatFeatureFlagBits>(value));
@@ -626,7 +629,8 @@ void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkImageUsageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkImageUsageFlagBitsGetStrings(static_cast<VkImageUsageFlagBits>(value));
@@ -651,7 +655,8 @@ void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkMemoryHeapFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkMemoryHeapFlagBitsGetStrings(static_cast<VkMemoryHeapFlagBits>(value));
@@ -682,7 +687,8 @@ void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFla
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkMemoryPropertyFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkMemoryPropertyFlagBitsGetStrings(static_cast<VkMemoryPropertyFlagBits>(value));
@@ -743,7 +749,8 @@ void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags val
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkResolveModeFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkResolveModeFlagBitsGetStrings(static_cast<VkResolveModeFlagBits>(value));
@@ -773,7 +780,8 @@ void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags val
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSampleCountFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkSampleCountFlagBitsGetStrings(static_cast<VkSampleCountFlagBits>(value));
@@ -812,7 +820,8 @@ void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags val
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkShaderStageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkShaderStageFlagBitsGetStrings(static_cast<VkShaderStageFlagBits>(value));
@@ -844,7 +853,8 @@ void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureF
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSubgroupFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkSubgroupFeatureFlagBitsGetStrings(static_cast<VkSubgroupFeatureFlagBits>(value));
@@ -868,7 +878,8 @@ void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounter
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSurfaceCounterFlagBitsEXT>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkSurfaceCounterFlagBitsEXTGetStrings(static_cast<VkSurfaceCounterFlagBitsEXT>(value));
@@ -900,7 +911,8 @@ void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTrans
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSurfaceTransformFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkSurfaceTransformFlagBitsKHRGetStrings(static_cast<VkSurfaceTransformFlagBitsKHR>(value));
@@ -930,7 +942,8 @@ void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagsE
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkToolPurposeFlagBitsEXT>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
-        p.SetAsType().PrintString("None");
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
         return;
     }
     auto strings = VkToolPurposeFlagBitsEXTGetStrings(static_cast<VkToolPurposeFlagBitsEXT>(value));
