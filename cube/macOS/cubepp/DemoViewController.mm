@@ -88,7 +88,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     demo->run();
     if (demo->quit) {
         CVDisplayLinkStop(displayLink);
-        CVDisplayLinkRelease(displayLink);
     }
     return kCVReturnSuccess;
 }
