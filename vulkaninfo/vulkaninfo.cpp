@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2020 The Khronos Group Inc.
- * Copyright (c) 2015-2020 Valve Corporation
- * Copyright (c) 2015-2020 LunarG, Inc.
+ * Copyright (c) 2015-2021 The Khronos Group Inc.
+ * Copyright (c) 2015-2021 Valve Corporation
+ * Copyright (c) 2015-2021 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
         case OutputType::text:
         case OutputType::html: {
             p.SetHeader();
-            ArrayWrapper arr(p, "Layers", layers.size());
+            ArrayWrapper arr_layers(p, "Layers", layers.size());
             IndentWrapper indent(p);
 
             for (auto &layer : layers) {
@@ -85,7 +85,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 ObjectWrapper obj(p, header);
                 DumpExtensions(p, "Layer", layer.extension_properties);
 
-                ArrayWrapper arr(p, "Devices", gpus.size());
+                ArrayWrapper arr_devices(p, "Devices", gpus.size());
                 for (auto &gpu : gpus) {
                     p.PrintKeyValue("GPU id", gpu->id, 0, gpu->props.deviceName);
                     auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(props.layerName);
@@ -116,7 +116,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 DumpExtensions(p, "Layer", layer.extension_properties);
                 ObjectWrapper obj_devices(p, "Devices");
                 for (auto &gpu : gpus) {
-                    ObjectWrapper obj(p, gpu->props.deviceName);
+                    ObjectWrapper obj_gpu(p, gpu->props.deviceName);
                     p.PrintKeyValue("GPU id", gpu->id, 0, gpu->props.deviceName);
                     auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(layer.layer_properties.layerName);
                     DumpExtensions(p, "Layer-Device", exts);
@@ -155,19 +155,14 @@ void DumpPresentModes(Printer &p, AppSurface &surface) {
 
 void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface) {
     auto &surf_cap = surface.surface_capabilities;
-    p.SetSubHeader();
+    p.SetSubHeader().SetIgnoreMinWidth();
     DumpVkSurfaceCapabilitiesKHR(p, "VkSurfaceCapabilitiesKHR", surf_cap);
+    p.UnsetIgnoreMinWidth();
 
     if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
         p.SetSubHeader();
         ObjectWrapper obj(p, "VkSurfaceCapabilities2EXT");
-        {
-            ArrayWrapper arr(p, "supportedSurfaceCounters");
-            if (surface.surface_capabilities2_ext.supportedSurfaceCounters == 0) p.PrintString("None");
-            if (surface.surface_capabilities2_ext.supportedSurfaceCounters & VK_SURFACE_COUNTER_VBLANK_EXT) {
-                p.SetAsType().PrintString("VK_SURFACE_COUNTER_VBLANK_EXT");
-            }
-        }
+        DumpVkSurfaceCounterFlagsEXT(p, "supportedSurfaceCounters", surface.surface_capabilities2_ext.supportedSurfaceCounters);
     }
     if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
         chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext, inst.vk_version);
@@ -254,15 +249,15 @@ void DumpGroups(Printer &p, AppInstance &inst) {
         }
 
         p.SetHeader();
-        ObjectWrapper obj(p, "Device Groups");
+        ObjectWrapper obj_device_groups(p, "Device Groups");
         IndentWrapper indent(p);
 
         int group_id = 0;
         for (auto &group : groups) {
-            ObjectWrapper obj(p, "Group " + std::to_string(group_id));
+            ObjectWrapper obj_group(p, "Group " + std::to_string(group_id));
             auto group_props = GetGroupProps(inst, group);
             {
-                ObjectWrapper obj(p, "Properties");
+                ObjectWrapper obj_properties(p, "Properties");
                 {
                     ArrayWrapper arr(p, "physicalDevices", group.physicalDeviceCount);
                     int id = 0;
@@ -275,25 +270,25 @@ void DumpGroups(Printer &p, AppInstance &inst) {
             p.AddNewline();
 
             auto group_capabilities = GetGroupCapabilities(inst, group);
-            if (group_capabilities.first == false) {
+            if (!group_capabilities) {
                 p.PrintKeyString("Present Capabilities",
                                  "Group does not support VK_KHR_device_group, skipping printing present capabilities");
             } else {
-                ObjectWrapper obj(p, "Present Capabilities");
+                ObjectWrapper obj_caps(p, "Present Capabilities");
                 for (uint32_t i = 0; i < group.physicalDeviceCount; i++) {
-                    ObjectWrapper obj(
+                    ObjectWrapper obj_device(
                         p, std::string(group_props[i].deviceName) + " (ID: " + p.DecorateAsValue(std::to_string(i)) + ")");
                     ArrayWrapper arr(p, "Can present images from the following devices", group.physicalDeviceCount);
 
                     for (uint32_t j = 0; j < group.physicalDeviceCount; j++) {
                         uint32_t mask = 1 << j;
-                        if (group_capabilities.second.presentMask[i] & mask) {
+                        if (group_capabilities->presentMask[i] & mask) {
                             p.PrintString(std::string(group_props[j].deviceName) + " (ID: " + p.DecorateAsValue(std::to_string(j)) +
                                           ")");
                         }
                     }
                 }
-                DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities.second.modes);
+                DumpVkDeviceGroupPresentModeFlagsKHR(p, "Present modes", group_capabilities->modes);
             }
             p.AddNewline();
             group_id++;
@@ -307,29 +302,18 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     p.SetSubHeader();
     {
         ObjectWrapper obj(p, "VkPhysicalDeviceProperties");
-        p.PrintKeyValue("apiVersion", props.apiVersion, 14, VkVersionString(props.apiVersion));
-        p.PrintKeyValue("driverVersion", props.driverVersion, 14, to_hex_str(props.driverVersion));
-        p.PrintKeyString("vendorID", to_hex_str(props.vendorID), 14);
-        p.PrintKeyString("deviceID", to_hex_str(props.deviceID), 14);
-        p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType), 14);
-        p.PrintKeyString("deviceName", props.deviceName, 14);
-        if (p.Type() == OutputType::vkconfig_output) {
-            ArrayWrapper arr(p, "pipelineCacheUUID", VK_UUID_SIZE);
-            for (uint32_t i = 0; i < VK_UUID_SIZE; ++i) {
-                p.PrintElement(static_cast<uint32_t>(props.pipelineCacheUUID[i]));
-            }
-        }
+        p.PrintKeyValue("apiVersion", props.apiVersion, 17, VkVersionString(props.apiVersion));
+        p.PrintKeyValue("driverVersion", props.driverVersion, 17, to_hex_str(props.driverVersion));
+        p.PrintKeyString("vendorID", to_hex_str(props.vendorID), 17);
+        p.PrintKeyString("deviceID", to_hex_str(props.deviceID), 17);
+        p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType), 17);
+        p.PrintKeyString("deviceName", props.deviceName, 17);
+        p.PrintKeyString("pipelineCacheUUID", to_string_16(props.pipelineCacheUUID), 17);
     }
     p.AddNewline();
-    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits",
-                               gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                   ? gpu.props2.properties.limits
-                                   : gpu.props.limits);
+    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
     p.AddNewline();
-    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties",
-                                         gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                             ? gpu.props2.properties.sparseProperties
-                                             : gpu.props.sparseProperties);
+    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties", gpu.props.sparseProperties);
     p.AddNewline();
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.props2.pNext;
@@ -353,27 +337,22 @@ void GpuDumpPropsJson(Printer &p, AppGpu &gpu) {
         }
     }
 
-    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits",
-                               gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                   ? gpu.props2.properties.limits
-                                   : gpu.props.limits);
-    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties",
-                                         gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)
-                                             ? gpu.props2.properties.sparseProperties
-                                             : gpu.props.sparseProperties);
+    DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
+    DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties", gpu.props.sparseProperties);
 }
 
-void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQueueFamilyProperties &queue) {
+void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, const AppQueueFamilyProperties &queue) {
+    VkQueueFamilyProperties props = queue.props;
     p.SetSubHeader().SetElementIndex(static_cast<int>(queue.queue_index));
-    ObjectWrapper obj(p, "queueProperties");
+    ObjectWrapper obj_queue_props(p, "queueProperties");
     if (p.Type() == OutputType::vkconfig_output) {
-        DumpVkExtent3D(p, "minImageTransferGranularity", queue.props.minImageTransferGranularity);
+        DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
     } else {
-        p.PrintKeyValue("minImageTransferGranularity", queue.props.minImageTransferGranularity, 27);
+        p.PrintKeyValue("minImageTransferGranularity", props.minImageTransferGranularity, 27);
     }
-    p.PrintKeyValue("queueCount", queue.props.queueCount, 27);
-    p.PrintKeyString("queueFlags", VkQueueFlagsString(queue.props.queueFlags), 27);
-    p.PrintKeyValue("timestampValidBits", queue.props.timestampValidBits, 27);
+    p.PrintKeyValue("queueCount", props.queueCount, 27);
+    p.PrintKeyString("queueFlags", VkQueueFlagsString(props.queueFlags), 27);
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
 
     if (queue.is_present_platform_agnostic) {
         p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false", 27);
@@ -382,7 +361,7 @@ void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQ
         for (auto &surface : surfaces) {
             if (surface.name.size() > width) width = surface.name.size();
         }
-        ObjectWrapper obj(p, "present support");
+        ObjectWrapper obj_present_support(p, "present support");
         for (auto &surface : surfaces) {
             p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false", width);
         }
@@ -391,12 +370,12 @@ void GpuDumpQueueProps(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQ
     p.AddNewline();
 }
 
-void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, AppQueueFamilyProperties &queue) {
+void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, VkQueueFamilyProperties props) {
     ObjectWrapper obj(p, "");
-    DumpVkExtent3D(p, "minImageTransferGranularity", queue.props.minImageTransferGranularity);
-    p.PrintKeyValue("queueCount", queue.props.queueCount, 27);
-    p.PrintKeyValue("queueFlags", queue.props.queueFlags, 27);
-    p.PrintKeyValue("timestampValidBits", queue.props.timestampValidBits, 27);
+    DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
+    p.PrintKeyValue("queueCount", props.queueCount, 27);
+    p.PrintKeyValue("queueFlags", props.queueFlags, 27);
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
 }
 
 // This prints a number of bytes in a human-readable format according to prefixes of the International System of Quantities (ISQ),
@@ -432,27 +411,29 @@ std::string append_human_readible(VkDeviceSize memory) {
 
 void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
     p.SetHeader();
-    ObjectWrapper obj(p, "VkPhysicalDeviceMemoryProperties");
+    ObjectWrapper obj_mem_props(p, "VkPhysicalDeviceMemoryProperties");
     IndentWrapper indent(p);
     {
-        ObjectWrapper obj(p, "memoryHeaps", gpu.memory_props.memoryHeapCount);
+        ObjectWrapper obj_mem_heaps(p, "memoryHeaps", gpu.memory_props.memoryHeapCount);
 
         for (uint32_t i = 0; i < gpu.memory_props.memoryHeapCount; ++i) {
             p.SetElementIndex(static_cast<int>(i));
-            ObjectWrapper obj(p, "memoryHeaps");
+            ObjectWrapper obj_mem_heap(p, "memoryHeaps");
 
             p.PrintKeyString("size", append_human_readible(gpu.memory_props.memoryHeaps[i].size), 6);
-            p.PrintKeyString("budget", append_human_readible(gpu.heapBudget[i]), 6);
-            p.PrintKeyString("usage", append_human_readible(gpu.heapUsage[i]), 6);
+            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
+                p.PrintKeyString("budget", append_human_readible(gpu.heapBudget[i]), 6);
+                p.PrintKeyString("usage", append_human_readible(gpu.heapUsage[i]), 6);
+            }
             DumpVkMemoryHeapFlags(p, "flags", gpu.memory_props.memoryHeaps[i].flags, 6);
         }
     }
     {
-        ObjectWrapper obj(p, "memoryTypes", gpu.memory_props.memoryTypeCount);
+        ObjectWrapper obj_mem_types(p, "memoryTypes", gpu.memory_props.memoryTypeCount);
 
         for (uint32_t i = 0; i < gpu.memory_props.memoryTypeCount; ++i) {
             p.SetElementIndex(static_cast<int>(i));
-            ObjectWrapper obj(p, "memoryTypes");
+            ObjectWrapper obj_mem_type(p, "memoryTypes");
             p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex, 13);
 
             auto flags = gpu.memory_props.memoryTypes[i].propertyFlags;
@@ -462,11 +443,9 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             const uint32_t memtype_bit = 1U << i;
 
             // only linear and optimal tiling considered
-            std::vector<VkFormat> tiling_optimal_formats;
-            std::vector<VkFormat> tiling_linear_formats;
             for (auto &image_tiling : gpu.memory_image_support_types) {
                 p.SetOpenDetails();
-                ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)), -1);
+                ArrayWrapper arr(p, VkImageTilingString(VkImageTiling(image_tiling.tiling)));
                 bool has_any_support_types = false;
                 bool regular = false;
                 bool transient = false;
@@ -509,7 +488,7 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
 }
 
 void GpuDumpMemoryPropsJson(Printer &p, AppGpu &gpu) {
-    ObjectWrapper obj(p, "VkPhysicalDeviceMemoryProperties");
+    ObjectWrapper obj_mem_props(p, "VkPhysicalDeviceMemoryProperties");
     {
         ArrayWrapper arr(p, "memoryHeaps", gpu.memory_props.memoryHeapCount);
         for (uint32_t i = 0; i < gpu.memory_props.memoryHeapCount; ++i) {
@@ -590,8 +569,8 @@ void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
 
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
-    ObjectWrapper obj(p, "Format Properties");
-    IndentWrapper indent(p);
+    ObjectWrapper obj_format_props(p, "Format Properties");
+    IndentWrapper indent_outer(p);
 
     if (p.Type() == OutputType::text) {
         auto fmtPropMap = FormatPropMap(gpu);
@@ -609,10 +588,10 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
             }
 
             p.SetElementIndex(counter++);
-            ObjectWrapper obj(p, "Common Format Group");
-            IndentWrapper indent(p);
+            ObjectWrapper obj_common_group(p, "Common Format Group");
+            IndentWrapper indent_inner(p);
             {
-                ArrayWrapper arr(p, "Formats", prop.second.size());
+                ArrayWrapper arr_formats(p, "Formats", prop.second.size());
                 for (auto &fmt : prop.second) {
                     p.SetAsType().PrintString(VkFormatString(fmt));
                 }
@@ -621,7 +600,7 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
             p.AddNewline();
         }
 
-        ArrayWrapper arr(p, "Unsupported Formats", unsupported_formats.size());
+        ArrayWrapper arr_unsupported_formats(p, "Unsupported Formats", unsupported_formats.size());
         for (auto &fmt : unsupported_formats) {
             p.SetAsType().PrintString(VkFormatString(fmt));
         }
@@ -664,7 +643,7 @@ void GpuDevDumpJson(Printer &p, AppGpu &gpu) {
 // Print gpu info for text, html, & vkconfig_output
 // Uses a seperate function than schema-json for clarity
 void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
-    ObjectWrapper obj(p, "GPU" + std::to_string(gpu.id));
+    ObjectWrapper obj_gpu(p, "GPU" + std::to_string(gpu.id));
     IndentWrapper indent(p);
 
     GpuDumpProps(p, gpu);
@@ -672,10 +651,9 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     p.AddNewline();
     {
         p.SetHeader();
-        ObjectWrapper obj(p, "VkQueueFamilyProperties");
-        for (uint32_t i = 0; i < gpu.queue_count; i++) {
-            AppQueueFamilyProperties queue_props = AppQueueFamilyProperties(gpu, i);
-            GpuDumpQueueProps(p, gpu.inst.surface_extensions, queue_props);
+        ObjectWrapper obj_family_props(p, "VkQueueFamilyProperties");
+        for (const auto &queue_prop : gpu.extended_queue_props) {
+            GpuDumpQueueProps(p, gpu.inst.surface_extensions, queue_prop);
         }
     }
     GpuDumpMemoryProps(p, gpu);
@@ -694,9 +672,8 @@ void DumpGpuJson(Printer &p, AppGpu &gpu) {
     GpuDumpPropsJson(p, gpu);
     {
         ArrayWrapper arr(p, "ArrayOfVkQueueFamilyProperties");
-        for (uint32_t i = 0; i < gpu.queue_count; i++) {
-            AppQueueFamilyProperties queue_props = AppQueueFamilyProperties(gpu, i);
-            GpuDumpQueuePropsJson(p, gpu.inst.surface_extensions, queue_props);
+        for (const auto &queue_prop : gpu.queue_props) {
+            GpuDumpQueuePropsJson(p, gpu.inst.surface_extensions, queue_prop);
         }
     }
     {
@@ -763,11 +740,11 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
         while (place) {
             struct VkStructureHeader *structure = (struct VkStructureHeader *)place;
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
-                VkPhysicalDeviceDriverProperties *props = (VkPhysicalDeviceDriverProperties *)structure;
-                DumpVkDriverId(p, "driverID", props->driverID, 18);
-                p.PrintKeyString("driverName", props->driverName, 18);
-                p.PrintKeyString("driverInfo", props->driverInfo, 18);
-                DumpVkConformanceVersion(p, "conformanceVersion", props->conformanceVersion, 18);
+                VkPhysicalDeviceDriverProperties *driver_props = (VkPhysicalDeviceDriverProperties *)structure;
+                DumpVkDriverId(p, "driverID", driver_props->driverID, 18);
+                p.PrintKeyString("driverName", driver_props->driverName, 18);
+                p.PrintKeyString("driverInfo", driver_props->driverInfo, 18);
+                DumpVkConformanceVersion(p, "conformanceVersion", driver_props->conformanceVersion, 18);
             }
             place = structure->pNext;
         }

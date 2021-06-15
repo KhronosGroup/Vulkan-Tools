@@ -272,6 +272,16 @@ class Printer {
         return *this;
     }
 
+    Printer &SetIgnoreMinWidth() {
+        ignore_min_width_parameter = true;
+        return *this;
+    }
+
+    Printer &UnsetIgnoreMinWidth() {
+        ignore_min_width_parameter = false;
+        return *this;
+    }
+
     Printer &SetElementIndex(int index) {
         assert(index >= 0 && "cannot set element index to a negative value");
         element_index = index;
@@ -388,12 +398,12 @@ class Printer {
                 break;
         }
     }
-    void ArrayStart(std::string array_name, int32_t element_count = 0) {
+    void ArrayStart(std::string array_name, size_t element_count = 0) {
         switch (output_type) {
             case (OutputType::text): {
                 out << std::string(static_cast<size_t>(indents), '\t') << array_name << ":";
                 size_t underline_count = array_name.size() + 1;
-                if (element_count >= 0) {
+                if (element_count > 0) {
                     out << " count = " << element_count;
                     underline_count += 9 + std::to_string(element_count).size();
                 }
@@ -410,7 +420,7 @@ class Printer {
                     out << "<details>";
                 }
                 out << "<summary>" << array_name;
-                if (element_count >= 0) {
+                if (element_count > 0) {
                     out << ": count = <span class='val'>" << element_count << "</span>";
                 }
                 out << "</summary>\n";
@@ -462,10 +472,9 @@ class Printer {
     void PrintKeyValue(std::string key, T value, size_t min_key_width = 0, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
-                if (min_key_width > key.size()) {
-                    out << std::string(static_cast<size_t>(indents), '\t') << key << std::string(min_key_width - key.size(), ' ');
-                } else {
-                    out << std::string(static_cast<size_t>(indents), '\t') << key;
+                out << std::string(static_cast<size_t>(indents), '\t') << key;
+                if (min_key_width > key.size() && !ignore_min_width_parameter) {
+                    out << std::string(min_key_width - key.size(), ' ');
                 }
                 out << " = " << value;
                 if (value_description != "") {
@@ -596,7 +605,7 @@ class Printer {
                 break;
         }
     }
-    void PrintExtension(std::string ext_name, uint32_t revision, int min_width = 0) {
+    void PrintExtension(std::string ext_name, uint32_t revision, size_t min_width = 0) {
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(indents), '\t') << ext_name << std::string(min_width - ext_name.size(), ' ')
@@ -674,6 +683,8 @@ class Printer {
     // make object titles the color of types
     bool set_object_name_as_type = false;
 
+    bool ignore_min_width_parameter = false;
+
     // objects which are in an array
     int element_index = -1;  // negative one is the sentinel value
 
@@ -725,7 +736,7 @@ class ObjectWrapper {
 class ArrayWrapper {
   public:
     ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) {
-        p.ArrayStart(array_name, static_cast<int32_t>(element_count));
+        p.ArrayStart(array_name, element_count);
     }
     ~ArrayWrapper() { p.ArrayEnd(); }
 

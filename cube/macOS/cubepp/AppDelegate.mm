@@ -17,6 +17,7 @@
  */
 
 #import "AppDelegate.h"
+#import "DemoViewController.h"
 
 @interface AppDelegate ()
 
@@ -29,7 +30,15 @@
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
+    NSApplication *app = aNotification.object;
+    NSArray<NSWindow *> *windows = app.windows;
+    for (NSUInteger i = 0; i < windows.count; ++i) {
+        NSViewController *viewController = windows[i].contentViewController;
+        if ([viewController isKindOfClass:[DemoViewController class]]) {
+            [(DemoViewController *)viewController quit];
+            break;
+        }
+    }
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {

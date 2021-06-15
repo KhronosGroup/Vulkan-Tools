@@ -66,6 +66,8 @@ if(UNIX AND NOT APPLE) # i.e. Linux
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
         find_package(Wayland REQUIRED)
+        find_package(WaylandScanner REQUIRED)
+        find_package(WaylandProtocols REQUIRED)
         include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
     endif()
 
@@ -114,6 +116,48 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${WAYLAND_CLIENT_LIBRARIES})
         add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR)
+        set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
+        add_custom_command(COMMENT "Generating xdg-shell protocol dispatch data"
+                           OUTPUT xdg-shell-code.c
+                           COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
+                                   private-code
+                                   ${XDG_SHELL_PROTOCOL}
+                                   ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
+                           MAIN_DEPENDENCY ${XDG_SHELL_PROTOCOL}
+                           DEPENDS ${XDG_SHELL_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+        add_custom_command(COMMENT "Generating xdg-shell protocol header"
+                           OUTPUT xdg-shell-client-header.h
+                           COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
+                                   client-header
+                                   ${XDG_SHELL_PROTOCOL}
+                                   ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
+                           MAIN_DEPENDENCY ${XDG_SHELL_PROTOCOL}
+                           DEPENDS ${XDG_SHELL_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+
+        set(XDG_DECORATION_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
+        add_custom_command(COMMENT "Generating xdg-decoration protocol dispatch data"
+                           OUTPUT xdg-decoration-code.c
+                           COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
+                                   private-code
+                                   ${XDG_DECORATION_PROTOCOL}
+                                   ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
+                           MAIN_DEPENDENCY ${XDG_DECORATION_PROTOCOL}
+                           DEPENDS ${XDG_DECORATION_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+        add_custom_command(COMMENT "Generating xdg-decoration protocol header"
+                           OUTPUT xdg-decoration-client-header.h
+                           COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
+                                   client-header
+                                   ${XDG_DECORATION_PROTOCOL}
+                                   ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h
+                           MAIN_DEPENDENCY ${XDG_DECORATION_PROTOCOL}
+                           DEPENDS ${XDG_DECORATION_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+
+        set(OPTIONAL_WAYLAND_DATA_FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
+        include_directories(${CMAKE_CURRENT_BINARY_DIR})
     elseif(CUBE_WSI_SELECTION STREQUAL "DIRECTFB")
         if(NOT BUILD_WSI_DIRECTFB_SUPPORT)
             message(FATAL_ERROR "Selected DIRECTFB for vkcube build but not building DirectFB support")
@@ -190,7 +234,8 @@ elseif(NOT WIN32)
                        ${PROJECT_SOURCE_DIR}/cube/cube.vert
                        ${PROJECT_SOURCE_DIR}/cube/cube.frag
                        cube.vert.inc
-                       cube.frag.inc)
+                       cube.frag.inc
+                       ${OPTIONAL_WAYLAND_DATA_FILES})
         target_link_libraries(vkcube Vulkan::Vulkan)
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
@@ -240,7 +285,8 @@ elseif(NOT WIN32)
                        ${PROJECT_SOURCE_DIR}/cube/cube.vert
                        ${PROJECT_SOURCE_DIR}/cube/cube.frag
                        cube.vert.inc
-                       cube.frag.inc)
+                       cube.frag.inc
+                       ${OPTIONAL_WAYLAND_DATA_FILES})
         target_link_libraries(vkcubepp Vulkan::Vulkan)
     endif()
 else()

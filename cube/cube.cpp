@@ -22,6 +22,8 @@
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
 #include <linux/input.h>
+#include "xdg-shell-client-header.h"
+#include "xdg-decoration-client-header.h"
 #endif
 
 #include <cassert>
@@ -90,13 +92,6 @@ struct texture_object {
 static char const *const tex_files[] = {"lunarg.ppm"};
 
 static int validation_error = 0;
-
-struct vkcube_vs_uniform {
-    // Must start with MVP
-    float mvp[4][4];
-    float position[12 * 3][4];
-    float color[12 * 3][4];
-};
 
 struct vktexcube_vs_uniform {
     // Must start with MVP
@@ -293,8 +288,12 @@ struct Demo {
     wl_registry *registry;
     wl_compositor *compositor;
     wl_surface *window;
-    wl_shell *shell;
-    wl_shell_surface *shell_surface;
+    xdg_wm_base *wm_base;
+    zxdg_decoration_manager_v1 *xdg_decoration_mgr;
+    zxdg_toplevel_decoration_v1 *toplevel_decoration;
+    xdg_surface *window_surface;
+    bool xdg_surface_has_been_configured;
+    xdg_toplevel *window_toplevel;
     wl_seat *seat;
     wl_pointer *pointer;
     wl_keyboard *keyboard;
@@ -427,7 +426,7 @@ static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uin
                                   uint32_t state) {
     Demo *demo = (Demo *)data;
     if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
-        wl_shell_surface_move(demo->shell_surface, demo->seat, serial);
+        xdg_toplevel_move(demo->window_toplevel, demo->seat, serial);
     }
 }
 
@@ -495,16 +494,24 @@ static const wl_seat_listener seat_listener = {
     seat_handle_capabilities,
 };
 
+static void wm_base_ping(void *data, xdg_wm_base *xdg_wm_base, uint32_t serial) { xdg_wm_base_pong(xdg_wm_base, serial); }
+
+static const struct xdg_wm_base_listener wm_base_listener = {wm_base_ping};
+
 static void registry_handle_global(void *data, wl_registry *registry, uint32_t id, const char *interface, uint32_t version) {
     Demo *demo = (Demo *)data;
     // pickup wayland objects when they appear
-    if (strcmp(interface, "wl_compositor") == 0) {
+    if (strcmp(interface, wl_compositor_interface.name) == 0) {
         demo->compositor = (wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
-    } else if (strcmp(interface, "wl_shell") == 0) {
-        demo->shell = (wl_shell *)wl_registry_bind(registry, id, &wl_shell_interface, 1);
-    } else if (strcmp(interface, "wl_seat") == 0) {
+    } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
+        demo->wm_base = (xdg_wm_base *)wl_registry_bind(registry, id, &xdg_wm_base_interface, 1);
+        xdg_wm_base_add_listener(demo->wm_base, &wm_base_listener, nullptr);
+    } else if (strcmp(interface, wl_seat_interface.name) == 0) {
         demo->seat = (wl_seat *)wl_registry_bind(registry, id, &wl_seat_interface, 1);
         wl_seat_add_listener(demo->seat, &seat_listener, demo);
+    } else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0) {
+        demo->xdg_decoration_mgr =
+            (zxdg_decoration_manager_v1 *)wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1);
     }
 }
 
@@ -534,8 +541,12 @@ Demo::Demo()
       registry{nullptr},
       compositor{nullptr},
       window{nullptr},
-      shell{nullptr},
-      shell_surface{nullptr},
+      wm_base{nullptr},
+      xdg_decoration_mgr{nullptr},
+      toplevel_decoration{nullptr},
+      window_surface{nullptr},
+      xdg_surface_has_been_configured{false},
+      window_toplevel{nullptr},
       seat{nullptr},
       pointer{nullptr},
       keyboard{nullptr},
@@ -683,9 +694,14 @@ void Demo::cleanup() {
     wl_keyboard_destroy(keyboard);
     wl_pointer_destroy(pointer);
     wl_seat_destroy(seat);
-    wl_shell_surface_destroy(shell_surface);
+    xdg_toplevel_destroy(window_toplevel);
+    xdg_surface_destroy(window_surface);
     wl_surface_destroy(window);
-    wl_shell_destroy(shell);
+    xdg_wm_base_destroy(wm_base);
+    if (xdg_decoration_mgr) {
+        zxdg_toplevel_decoration_v1_destroy(toplevel_decoration);
+        zxdg_decoration_manager_v1_destroy(xdg_decoration_mgr);
+    }
     wl_compositor_destroy(compositor);
     wl_registry_destroy(registry);
     wl_display_disconnect(display);
@@ -814,8 +830,13 @@ void Demo::draw() {
         // must be recreated:
         resize();
     } else if (result == vk::Result::eSuboptimalKHR) {
-        // swapchain is not as optimal as it could be, but the platform's
-        // presentation engine will still present the image correctly.
+        // SUBOPTIMAL could be due to resize
+        vk::SurfaceCapabilitiesKHR surfCapabilities;
+        result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
+        VERIFY(result == vk::Result::eSuccess);
+        if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
+            resize();
+        }
     } else if (result == vk::Result::eErrorSurfaceLostKHR) {
         inst.destroySurfaceKHR(surface, nullptr);
         create_surface();
@@ -1069,7 +1090,30 @@ void Demo::init_connection() {
     wl_display_dispatch(display);
 #endif
 }
-
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+int find_display_gpu(int gpu_number, uint32_t gpu_count, std::unique_ptr<vk::PhysicalDevice[]> &physical_devices) {
+    uint32_t display_count = 0;
+    vk::Result result;
+    int gpu_return = gpu_number;
+    if (gpu_number >= 0) {
+        result = physical_devices[gpu_number].getDisplayPropertiesKHR(&display_count, nullptr);
+        VERIFY(result == vk::Result::eSuccess);
+    } else {
+        for (uint32_t i = 0; i < gpu_count; i++) {
+            result = physical_devices[i].getDisplayPropertiesKHR(&display_count, nullptr);
+            VERIFY(result == vk::Result::eSuccess);
+            if (display_count) {
+                gpu_return = i;
+                break;
+            }
+        }
+    }
+    if (display_count > 0)
+        return gpu_return;
+    else
+        return -1;
+}
+#endif
 void Demo::init_vk() {
     uint32_t instance_extension_count = 0;
     uint32_t instance_layer_count = 0;
@@ -1273,7 +1317,14 @@ void Demo::init_vk() {
         fprintf(stderr, "GPU %d specified is not present, GPU count = %u\n", gpu_number, gpu_count);
         ERR_EXIT("Specified GPU number is not present", "User Error");
     }
-
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    gpu_number = find_display_gpu(gpu_number, gpu_count, physical_devices);
+    if (gpu_number < 0) {
+        printf("Cannot find any display!\n");
+        fflush(stdout);
+        exit(1);
+    }
+#else
     /* Try to auto select most suitable device */
     if (gpu_number == -1) {
         uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
@@ -1304,6 +1355,7 @@ void Demo::init_vk() {
             }
         }
     }
+#endif
     assert(gpu_number >= 0);
     gpu = physical_devices[gpu_number];
     {
@@ -2441,7 +2493,8 @@ void Demo::update_data_buffer() {
     // Rotate around the Y axis
     mat4x4 Model;
     mat4x4_dup(Model, model_matrix);
-    mat4x4_rotate(model_matrix, Model, 0.0f, 1.0f, 0.0f, (float)degreesToRadians(spin_angle));
+    mat4x4_rotate_Y(model_matrix, Model, (float)degreesToRadians(spin_angle));
+    mat4x4_orthonormalize(model_matrix, model_matrix);
 
     mat4x4 MVP;
     mat4x4_mul(MVP, VP, model_matrix);
@@ -2778,7 +2831,45 @@ void Demo::run() {
     }
 }
 
+static void handle_surface_configure(void *data, xdg_surface *xdg_surface, uint32_t serial) {
+    Demo *demo = (Demo *)data;
+    xdg_surface_ack_configure(xdg_surface, serial);
+    if (demo->xdg_surface_has_been_configured) {
+        demo->resize();
+    }
+    demo->xdg_surface_has_been_configured = true;
+}
+
+static const xdg_surface_listener surface_listener = {handle_surface_configure};
+
+static void handle_toplevel_configure(void *data, xdg_toplevel *xdg_toplevel, int32_t width, int32_t height,
+                                      struct wl_array *states) {
+    Demo *demo = (Demo *)data;
+    /* zero values imply the program may choose its own size, so in that case
+     * stay with the existing value (which on startup is the default) */
+    if (width > 0) {
+        demo->width = width;
+    }
+    if (height > 0) {
+        demo->height = height;
+    }
+    // This will be followed by a surface configure
+}
+
+static void handle_toplevel_close(void *data, xdg_toplevel *xdg_toplevel) {
+    Demo *demo = (Demo *)data;
+    demo->quit = true;
+}
+
+static const xdg_toplevel_listener toplevel_listener = {handle_toplevel_configure, handle_toplevel_close};
+
 void Demo::create_window() {
+    if (!wm_base) {
+        printf("Compositor did not provide the standard protocol xdg-wm-base\n");
+        fflush(stdout);
+        exit(1);
+    }
+
     window = wl_compositor_create_surface(compositor);
     if (!window) {
         printf("Can not create wayland_surface from compositor!\n");
@@ -2786,16 +2877,28 @@ void Demo::create_window() {
         exit(1);
     }
 
-    shell_surface = wl_shell_get_shell_surface(shell, window);
-    if (!shell_surface) {
-        printf("Can not get shell_surface from wayland_surface!\n");
+    window_surface = xdg_wm_base_get_xdg_surface(wm_base, window);
+    if (!window_surface) {
+        printf("Can not get xdg_surface from wayland_surface!\n");
         fflush(stdout);
         exit(1);
     }
+    window_toplevel = xdg_surface_get_toplevel(window_surface);
+    if (!window_toplevel) {
+        printf("Can not allocate xdg_toplevel for xdg_surface!\n");
+        fflush(stdout);
+        exit(1);
+    }
+    xdg_surface_add_listener(window_surface, &surface_listener, this);
+    xdg_toplevel_add_listener(window_toplevel, &toplevel_listener, this);
+    xdg_toplevel_set_title(window_toplevel, APP_SHORT_NAME);
+    if (xdg_decoration_mgr) {
+        // if supported, let the compositor render titlebars for us
+        toplevel_decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(xdg_decoration_mgr, window_toplevel);
+        zxdg_toplevel_decoration_v1_set_mode(toplevel_decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+    }
 
-    wl_shell_surface_add_listener(shell_surface, &shell_surface_listener, this);
-    wl_shell_surface_set_toplevel(shell_surface);
-    wl_shell_surface_set_title(shell_surface, APP_SHORT_NAME);
+    wl_surface_commit(window);
 }
 #elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
 
@@ -2896,16 +2999,6 @@ vk::Result Demo::create_display_surface() {
     vk::Bool32 found_plane = VK_FALSE;
     uint32_t plane_index;
     vk::Extent2D image_extent;
-
-    // Get the first display
-    result = gpu.getDisplayPropertiesKHR(&display_count, nullptr);
-    VERIFY(result == vk::Result::eSuccess);
-
-    if (display_count == 0) {
-        printf("Cannot find any display!\n");
-        fflush(stdout);
-        exit(1);
-    }
 
     display_count = 1;
     result = gpu.getDisplayPropertiesKHR(&display_count, &display_props);
