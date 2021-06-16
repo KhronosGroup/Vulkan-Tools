@@ -413,8 +413,6 @@ static void handle_configure(void *data, wl_shell_surface *shell_surface, uint32
 
 static void handle_popup_done(void *data, wl_shell_surface *shell_surface) {}
 
-static const wl_shell_surface_listener shell_surface_listener = {handle_ping, handle_configure, handle_popup_done};
-
 static void pointer_handle_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx,
                                  wl_fixed_t sy) {}
 
