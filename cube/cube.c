@@ -1237,7 +1237,7 @@ static void demo_prepare_buffers(struct demo *demo) {
         demo->height = surfCapabilities.currentExtent.height;
     }
 
-    if (demo->width == 0 || demo->height == 0) {
+    if (surfCapabilities.maxImageExtent.width == 0 || surfCapabilities.maxImageExtent.height == 0) {
         demo->is_minimized = true;
         return;
     } else {
