@@ -2208,6 +2208,13 @@ static void demo_prepare_framebuffers(struct demo *demo) {
 }
 
 static void demo_prepare(struct demo *demo) {
+    demo_prepare_buffers(demo);
+
+    if (demo->is_minimized) {
+        demo->prepared = false;
+        return;
+    }
+
     VkResult U_ASSERT_ONLY err;
     if (demo->cmd_pool == VK_NULL_HANDLE) {
         const VkCommandPoolCreateInfo cmd_pool_info = {
@@ -2237,13 +2244,6 @@ static void demo_prepare(struct demo *demo) {
     };
     err = vkBeginCommandBuffer(demo->cmd, &cmd_buf_info);
     assert(!err);
-
-    demo_prepare_buffers(demo);
-
-    if (demo->is_minimized) {
-        demo->prepared = false;
-        return;
-    }
 
     demo_prepare_depth(demo);
     demo_prepare_textures(demo);
