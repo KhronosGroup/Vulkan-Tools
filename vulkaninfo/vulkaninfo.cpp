@@ -29,19 +29,6 @@
 
 #include "vulkaninfo.hpp"
 
-#ifdef _WIN32
-// Initialize User32 pointers
-PFN_AdjustWindowRect User32Handles::pfnAdjustWindowRect = nullptr;
-PFN_CreateWindowExA User32Handles::pfnCreateWindowExA = nullptr;
-PFN_DefWindowProcA User32Handles::pfnDefWindowProcA = nullptr;
-PFN_DestroyWindow User32Handles::pfnDestroyWindow = nullptr;
-PFN_LoadIconA User32Handles::pfnLoadIconA = nullptr;
-PFN_RegisterClassExA User32Handles::pfnRegisterClassExA = nullptr;
-
-HMODULE User32Handles::user32DllHandle = nullptr;
-
-#endif
-
 // =========== Dump Functions ========= //
 
 void DumpExtensions(Printer &p, std::string layer_name, std::vector<VkExtensionProperties> extensions, bool do_indent) {
@@ -812,6 +799,18 @@ static void ConsoleEnlarge() {
 }
 #endif
 
+// Global configuration
+enum class OutputCategory {
+    text,
+    html,
+    devsim_json,
+    vkconfig_output,
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
+    portability_json,
+#endif
+    summary
+};
+
 void print_usage(const char *argv0) {
     std::cout << "\nvulkaninfo - Summarize Vulkan information in relation to the current environment.\n\n";
     std::cout << "USAGE: " << argv0 << " [options]\n\n";
@@ -846,51 +845,47 @@ int vulkanInfoMain(int argc, char **argv) {
 #else
 int main(int argc, char **argv) {
 #endif
-
-#ifdef _WIN32
-    if (ConsoleIsExclusive()) ConsoleEnlarge();
-    if (!LoadUser32Dll()) {
-        fprintf(stderr, "Failed to load user32.dll library!\n");
-        WAIT_FOR_CONSOLE_DESTROY;
-        exit(1);
-    }
-#endif
-
+    OutputCategory output_category = OutputCategory::text;
     uint32_t selected_gpu = 0;
     bool show_tool_props = false;
     bool show_formats = false;
     char *output_path = nullptr;
+
+#ifdef _WIN32
+    if (ConsoleIsExclusive()) ConsoleEnlarge();
+    User32Handles local_user32_handles;
+    user32_handles = &local_user32_handles;
+    if (local_user32_handles.load()) {
+        fprintf(stderr, "Failed to load user32.dll library!\n");
+        if (output_category == OutputCategory::text) wait_for_console_destroy();
+        exit(1);
+    }
+#endif
 
     // Combinations of output: html only, html AND json, json only, human readable only
     for (int i = 1; i < argc; ++i) {
         // A internal-use-only format for communication with the Vulkan Configurator tool
         // Usage "--vkconfig_output <path>"
         if (0 == strcmp("--vkconfig_output", argv[i]) && argc > (i + 1)) {
-            human_readable_output = false;
-            vkconfig_output = true;
+            output_category = OutputCategory::vkconfig_output;
             output_path = argv[i + 1];
             ++i;
         } else if (strncmp("--json", argv[i], 6) == 0 || strcmp(argv[i], "-j") == 0) {
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
                 selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 7, nullptr, 10));
             }
-            human_readable_output = false;
-            json_output = true;
-            portability_json = false;
+            output_category = OutputCategory::devsim_json;
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
         } else if (strncmp("--portability", argv[i], 13) == 0) {
             if (strlen(argv[i]) > 14 && strncmp("--portability=", argv[i], 14) == 0) {
                 selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 14, nullptr, 10));
             }
-            human_readable_output = false;
-            portability_json = true;
-            json_output = false;
+            output_category = OutputCategory::portability_json;
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
         } else if (strcmp(argv[i], "--summary") == 0) {
-            summary = true;
+            output_category = OutputCategory::summary;
         } else if (strcmp(argv[i], "--html") == 0) {
-            human_readable_output = false;
-            html_output = true;
+            output_category = OutputCategory::html;
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
             show_tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
@@ -905,10 +900,7 @@ int main(int argc, char **argv) {
     }
     std::vector<std::unique_ptr<Printer>> printers;
     std::ostream out(std::cout.rdbuf());
-    std::ofstream json_out;
-    std::ofstream portability_out;
-    std::ofstream html_out;
-    std::ofstream vkconfig_out;
+    std::ofstream file_out;
 
     // if any essential vulkan call fails, it throws an exception
     try {
@@ -950,73 +942,77 @@ int main(int argc, char **argv) {
                 std::cout << "The available GPUs are in the range of 0 to " << gpus.size() - 1 << ".\n";
             return 0;
         }
-
-        if (human_readable_output) {
-            printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, out, selected_gpu, instance.vk_version)));
-        }
-        if (html_output) {
-            html_out = std::ofstream("vulkaninfo.html");
-            printers.push_back(
-                std::unique_ptr<Printer>(new Printer(OutputType::html, html_out, selected_gpu, instance.vk_version)));
-        }
-        if (json_output) {
-            std::string start_string =
-                std::string("{\n\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n") +
-                "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) + " (" +
-                gpus.at(selected_gpu)->props.deviceName +
-                "). Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
-                VkVersionString(instance.vk_version) + "\"\n" + "\t}";
-#ifdef VK_USE_PLATFORM_IOS_MVK
-            json_out = std::ofstream("vulkaninfo.json");
-            printers.push_back(
-                std::unique_ptr<Printer>(new Printer(OutputType::json, json_out, selected_gpu, instance.vk_version, start_string)));
-#else
-            printers.push_back(
-                std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
-#endif
-        }
-#if defined(VK_ENABLE_BETA_EXTENSIONS)
-        if (portability_json) {
-            if (!gpus.at(selected_gpu)->CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)) {
-                std::cerr << "Cannot create a json because the current selected GPU (" << selected_gpu
-                          << ") does not support the VK_KHR_portability_subset extension.\n";
-            } else {
+        switch (output_category) {
+            default:
+            case (OutputCategory::text):
+                printers.push_back(std::unique_ptr<Printer>(new Printer(OutputType::text, out, selected_gpu, instance.vk_version)));
+                break;
+            case (OutputCategory::html):
+                file_out = std::ofstream("vulkaninfo.html");
+                printers.push_back(
+                    std::unique_ptr<Printer>(new Printer(OutputType::html, file_out, selected_gpu, instance.vk_version)));
+                break;
+            case (OutputCategory::devsim_json): {
                 std::string start_string =
-                    std::string(
-                        "{\n\t\"$schema\": "
-                        "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
+                    std::string("{\n\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n") +
                     "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " + std::to_string(selected_gpu) +
-                    "'s (" + gpus.at(selected_gpu)->props.deviceName +
-                    "( portability features and properties. Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": "
-                    "\"" +
+                    " (" + gpus.at(selected_gpu)->props.deviceName +
+                    "). Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
                     VkVersionString(instance.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
-                portability_out = std::ofstream("portability.json");
+                file_out = std::ofstream("vulkaninfo.json");
                 printers.push_back(std::unique_ptr<Printer>(
-                    new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
+                    new Printer(OutputType::json, file_out, selected_gpu, instance.vk_version, start_string)));
 #else
                 printers.push_back(
                     std::unique_ptr<Printer>(new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
 #endif
-            }
-        }
-#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
-        if (vkconfig_output) {
-#ifdef WIN32
-            vkconfig_out = std::ofstream(std::string(output_path) + "\\vulkaninfo.json");
+            } break;
+#if defined(VK_ENABLE_BETA_EXTENSIONS)
+            case (OutputCategory::portability_json):
+                if (!gpus.at(selected_gpu)->CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME)) {
+                    std::cerr << "Cannot create a json because the current selected GPU (" << selected_gpu
+                              << ") does not support the VK_KHR_portability_subset extension.\n";
+                } else {
+                    std::string start_string =
+                        std::string(
+                            "{\n\t\"$schema\": "
+                            "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
+                        "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " +
+                        std::to_string(selected_gpu) + "'s (" + gpus.at(selected_gpu)->props.deviceName +
+                        "( portability features and properties. Generated using the vulkaninfo "
+                        "program.\",\n\t\t\"vulkanApiVersion\": "
+                        "\"" +
+                        VkVersionString(instance.vk_version) + "\"\n" + "\t}";
+#ifdef VK_USE_PLATFORM_IOS_MVK
+                    portability_out = std::ofstream("portability.json");
+                    printers.push_back(std::unique_ptr<Printer>(
+                        new Printer(OutputType::json, portability_out, selected_gpu, instance.vk_version, start_string)));
 #else
-            vkconfig_out = std::ofstream(std::string(output_path) + "/vulkaninfo.json");
+                    printers.push_back(std::unique_ptr<Printer>(
+                        new Printer(OutputType::json, out, selected_gpu, instance.vk_version, start_string)));
 #endif
-            std::string start_string = "{\n\t\"Vulkan Instance Version\": \"" + VkVersionString(instance.vk_version) + "\"";
-            printers.push_back(std::unique_ptr<Printer>(
-                new Printer(OutputType::vkconfig_output, vkconfig_out, selected_gpu, instance.vk_version, start_string)));
+                }
+                break;
+#endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
+            case (OutputCategory::vkconfig_output): {
+#ifdef WIN32
+                file_out = std::ofstream(std::string(output_path) + "\\vulkaninfo.json");
+#else
+                file_out = std::ofstream(std::string(output_path) + "/vulkaninfo.json");
+#endif
+                std::string start_string = "{\n\t\"Vulkan Instance Version\": \"" + VkVersionString(instance.vk_version) + "\"";
+                printers.push_back(std::unique_ptr<Printer>(
+                    new Printer(OutputType::vkconfig_output, file_out, selected_gpu, instance.vk_version, start_string)));
+                break;
+            }
         }
 
         for (auto &p : printers) {
 #ifdef VK_USE_PLATFORM_IOS_MVK
             p->SetAlwaysOpenDetails(true);
 #endif
-            if (summary) {
+            if (output_category == OutputCategory::summary) {
                 DumpSummaryInstance(*p.get(), instance);
                 p->SetHeader();
                 ObjectWrapper obj(*p, "Devices");
@@ -1025,11 +1021,11 @@ int main(int argc, char **argv) {
                     DumpSummaryGPU(*p.get(), *gpu.get());
                 }
             } else if (p->Type() == OutputType::json) {
-                if (portability_json) {
+                if (output_category == OutputCategory::portability_json) {
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
                     DumpPortability(*p.get(), *gpus.at(selected_gpu).get());
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
-                } else if (json_output) {
+                } else if (output_category == OutputCategory::devsim_json) {
                     DumpLayers(*p.get(), instance.global_layers, gpus);
                     DumpGpuJson(*p.get(), *gpus.at(selected_gpu).get());
                 }
@@ -1081,9 +1077,8 @@ int main(int argc, char **argv) {
         p.reset(nullptr);
     }
 
-    WAIT_FOR_CONSOLE_DESTROY;
 #ifdef _WIN32
-    FreeUser32Dll();
+    if (output_category == OutputCategory::text) wait_for_console_destroy();
 #endif
 
     return 0;
