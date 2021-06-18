@@ -108,14 +108,6 @@ struct VulkanException : std::runtime_error {
 };
 #define THROW_VK_ERR(func_name, err) throw VulkanException(func_name, __FILE__, __LINE__, err);
 
-// Global configuration (Used by Windows WAIT_FOR_CONSOLE_DESTROY MACRO)
-bool human_readable_output = true;
-bool html_output = false;
-bool json_output = false;
-bool vkconfig_output = false;
-bool portability_json = false;
-bool summary = false;
-
 #ifdef _WIN32
 
 #define strdup _strdup
@@ -127,80 +119,70 @@ static int ConsoleIsExclusive(void) {
     DWORD num_pids = GetConsoleProcessList(pids, ARRAYSIZE(pids));
     return num_pids <= 1;
 }
-
-#define WAIT_FOR_CONSOLE_DESTROY                                            \
-    do {                                                                    \
-        if (ConsoleIsExclusive() && human_readable_output) Sleep(INFINITE); \
-    } while (0)
-#else
-#define WAIT_FOR_CONSOLE_DESTROY
-#endif
-
-#ifdef _WIN32
-
-#define _CALL_PFN(pfn, ...) (pfn)
-#define CALL_PFN(fncName) _CALL_PFN(User32Handles::pfn##fncName)
-
-#define _CHECK_PFN(pfn, fncName)                                              \
-    do {                                                                      \
-        if (pfn == nullptr) {                                                 \
-            fprintf(stderr, "Failed to get %s function address!\n", fncName); \
-            WAIT_FOR_CONSOLE_DESTROY;                                         \
-            exit(1);                                                          \
-        }                                                                     \
-    } while (false)
-
-#define _SET_PFN(dllHandle, pfnType, pfn, fncName)                           \
-    do {                                                                     \
-        pfn = reinterpret_cast<pfnType>(GetProcAddress(dllHandle, fncName)); \
-        _CHECK_PFN(pfn, fncName);                                            \
-    } while (false)
-
-#define SET_PFN(dllHandle, fncName) _SET_PFN(User32Handles::dllHandle, PFN_##fncName, User32Handles::pfn##fncName, #fncName)
+void wait_for_console_destroy() {
+    if (ConsoleIsExclusive()) Sleep(INFINITE);
+}
 
 // User32 function declarations
-typedef WINUSERAPI BOOL(WINAPI *PFN_AdjustWindowRect)(_Inout_ LPRECT, _In_ DWORD, _In_ BOOL);
-typedef WINUSERAPI HWND(WINAPI *PFN_CreateWindowExA)(_In_ DWORD, _In_opt_ LPCSTR, _In_opt_ LPCSTR, _In_ DWORD, _In_ int, _In_ int,
-                                                     _In_ int, _In_ int, _In_opt_ HWND, _In_opt_ HMENU, _In_opt_ HINSTANCE,
-                                                     _In_opt_ LPVOID);
-typedef WINUSERAPI LRESULT(WINAPI *PFN_DefWindowProcA)(_In_ HWND, _In_ UINT, _In_ WPARAM, _In_ LPARAM);
-typedef WINUSERAPI BOOL(WINAPI *PFN_DestroyWindow)(_In_ HWND);
-typedef WINUSERAPI HICON(WINAPI *PFN_LoadIconA)(_In_opt_ HINSTANCE, _In_ LPCSTR);
-typedef WINUSERAPI ATOM(WINAPI *PFN_RegisterClassExA)(_In_ CONST WNDCLASSEXA *);
+using PFN_AdjustWindowRect = WINUSERAPI BOOL(WINAPI *)(_Inout_ LPRECT, _In_ DWORD, _In_ BOOL);
+using PFN_CreateWindowExA = WINUSERAPI HWND(WINAPI *)(_In_ DWORD, _In_opt_ LPCSTR, _In_opt_ LPCSTR, _In_ DWORD, _In_ int, _In_ int,
+                                                      _In_ int, _In_ int, _In_opt_ HWND, _In_opt_ HMENU, _In_opt_ HINSTANCE,
+                                                      _In_opt_ LPVOID);
+using PFN_DefWindowProcA = WINUSERAPI LRESULT(WINAPI *)(_In_ HWND, _In_ UINT, _In_ WPARAM, _In_ LPARAM);
+using PFN_DestroyWindow = WINUSERAPI BOOL(WINAPI *)(_In_ HWND);
+using PFN_LoadIconA = WINUSERAPI HICON(WINAPI *)(_In_opt_ HINSTANCE, _In_ LPCSTR);
+using PFN_RegisterClassExA = WINUSERAPI ATOM(WINAPI *)(_In_ CONST WNDCLASSEXA *);
 
 struct User32Handles {
-    // User32 function pointers
-    static PFN_AdjustWindowRect pfnAdjustWindowRect;
-    static PFN_CreateWindowExA pfnCreateWindowExA;
-    static PFN_DefWindowProcA pfnDefWindowProcA;
-    static PFN_DestroyWindow pfnDestroyWindow;
-    static PFN_LoadIconA pfnLoadIconA;
-    static PFN_RegisterClassExA pfnRegisterClassExA;
-
     // User32 dll handle
-    static HMODULE user32DllHandle;
-};
+    HMODULE user32DllHandle = nullptr;
 
-bool LoadUser32Dll() {
-    User32Handles::user32DllHandle = LoadLibraryExA("user32.dll", nullptr, 0);
-    if (User32Handles::user32DllHandle != NULL) {
-        SET_PFN(user32DllHandle, AdjustWindowRect);
-        SET_PFN(user32DllHandle, CreateWindowExA);
-        SET_PFN(user32DllHandle, DefWindowProcA);
-        SET_PFN(user32DllHandle, DestroyWindow);
-        SET_PFN(user32DllHandle, LoadIconA);
-        SET_PFN(user32DllHandle, RegisterClassExA);
+    // User32 function pointers
+    PFN_AdjustWindowRect pfnAdjustWindowRect = nullptr;
+    PFN_CreateWindowExA pfnCreateWindowExA = nullptr;
+    PFN_DefWindowProcA pfnDefWindowProcA = nullptr;
+    PFN_DestroyWindow pfnDestroyWindow = nullptr;
+    PFN_LoadIconA pfnLoadIconA = nullptr;
+    PFN_RegisterClassExA pfnRegisterClassExA = nullptr;
+
+    User32Handles() noexcept {}
+    ~User32Handles() noexcept {
+        if (user32DllHandle != nullptr) {
+            FreeLibrary(user32DllHandle);
+        }
+    }
+    // Don't allow moving of this class
+    User32Handles(User32Handles const &) = delete;
+    User32Handles &operator=(User32Handles const &) = delete;
+    User32Handles(User32Handles &&) = delete;
+    User32Handles &operator=(User32Handles &&) = delete;
+
+    bool load() {
+        user32DllHandle = LoadLibraryExA("user32.dll", nullptr, 0);
+        if (user32DllHandle == nullptr) return false;
+        if (!load_function(pfnAdjustWindowRect, "AdjustWindowRect")) return false;
+        if (!load_function(pfnCreateWindowExA, "CreateWindowExA")) return false;
+        if (!load_function(pfnDefWindowProcA, "DefWindowProcA")) return false;
+        if (!load_function(pfnDestroyWindow, "DestroyWindow")) return false;
+        if (!load_function(pfnLoadIconA, "LoadIconA")) return false;
+        if (!load_function(pfnRegisterClassExA, "RegisterClassExA")) return false;
         return true;
     }
-    return false;
-}
 
-void FreeUser32Dll() {
-    if (User32Handles::user32DllHandle != nullptr) {
-        FreeLibrary(User32Handles::user32DllHandle);
-        User32Handles::user32DllHandle = nullptr;
+  private:
+    template <typename T>
+    bool load_function(T &function_pointer, const char *function_name) {
+        function_pointer = reinterpret_cast<T>(GetProcAddress(user32DllHandle, function_name));
+        if (function_pointer == nullptr) {
+            fprintf(stderr, "Failed to load function: %s\n", function_name);
+            return false;
+        }
+        return true;
     }
-}
+};
+
+// Global user handles function used in windows callback and code
+User32Handles *user32_handles;
 #endif  // _WIN32
 
 const char *app_short_name = "vulkaninfo";
@@ -756,7 +738,7 @@ struct AppInstance {
 
 // MS-Windows event handling function:
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    return (CALL_PFN(DefWindowProcA)(hWnd, uMsg, wParam, lParam));
+    return user32_handles->pfnDefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
 static void AppCreateWin32Window(AppInstance &inst) {
@@ -771,33 +753,33 @@ static void AppCreateWin32Window(AppInstance &inst) {
     win_class.cbClsExtra = 0;
     win_class.cbWndExtra = 0;
     win_class.hInstance = inst.h_instance;
-    win_class.hIcon = CALL_PFN(LoadIconA)(nullptr, IDI_APPLICATION);
+    win_class.hIcon = user32_handles->pfnLoadIconA(nullptr, IDI_APPLICATION);
     win_class.hCursor = LoadCursor(nullptr, IDC_ARROW);
     win_class.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     win_class.lpszMenuName = nullptr;
     win_class.lpszClassName = app_short_name;
     win_class.hInstance = inst.h_instance;
-    win_class.hIconSm = CALL_PFN(LoadIconA)(nullptr, IDI_WINLOGO);
+    win_class.hIconSm = user32_handles->pfnLoadIconA(nullptr, IDI_WINLOGO);
     // Register window class:
-    if (!CALL_PFN(RegisterClassExA)(&win_class)) {
+    if (!user32_handles->pfnRegisterClassExA(&win_class)) {
         // It didn't work, so try to give a useful error:
         THROW_ERR("Failed to register the window class!");
     }
     // Create window with the registered class:
     RECT wr = {0, 0, inst.width, inst.height};
-    CALL_PFN(AdjustWindowRect)(&wr, WS_OVERLAPPEDWINDOW, FALSE);
-    inst.h_wnd = CALL_PFN(CreateWindowExA)(0,
-                                           app_short_name,  // class name
-                                           app_short_name,  // app name
-                                           // WS_VISIBLE | WS_SYSMENU |
-                                           WS_OVERLAPPEDWINDOW,  // window style
-                                           100, 100,             // x/y coords
-                                           wr.right - wr.left,   // width
-                                           wr.bottom - wr.top,   // height
-                                           nullptr,              // handle to parent
-                                           nullptr,              // handle to menu
-                                           inst.h_instance,      // hInstance
-                                           nullptr);             // no extra parameters
+    user32_handles->pfnAdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+    inst.h_wnd = user32_handles->pfnCreateWindowExA(0,
+                                                    app_short_name,  // class name
+                                                    app_short_name,  // app name
+                                                    // WS_VISIBLE | WS_SYSMENU |
+                                                    WS_OVERLAPPEDWINDOW,  // window style
+                                                    100, 100,             // x/y coords
+                                                    wr.right - wr.left,   // width
+                                                    wr.bottom - wr.top,   // height
+                                                    nullptr,              // handle to parent
+                                                    nullptr,              // handle to menu
+                                                    inst.h_instance,      // hInstance
+                                                    nullptr);             // no extra parameters
     if (!inst.h_wnd) {
         // It didn't work, so try to give a useful error:
         THROW_ERR("Failed to create a window!");
