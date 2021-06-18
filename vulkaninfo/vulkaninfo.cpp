@@ -191,6 +191,8 @@ bool operator==(AppSurface const &a, AppSurface const &b) {
 
 void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<std::unique_ptr<AppGpu>> &gpus,
                              const std::vector<std::unique_ptr<AppSurface>> &surfaces) {
+    // Don't print anything if no surfaces are found
+    if (surfaces.size() == 0) return;
     p.SetHeader();
     ObjectWrapper obj(p, "Presentable Surfaces");
     IndentWrapper indent(p);
@@ -912,9 +914,6 @@ int main(int argc, char **argv) {
         auto phys_devices = instance.FindPhysicalDevices();
 
         std::vector<std::unique_ptr<AppSurface>> surfaces;
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT)
         for (auto &surface_extension : instance.surface_extensions) {
             surface_extension.create_window(instance);
             surface_extension.surface = surface_extension.create_surface(instance);
@@ -923,7 +922,6 @@ int main(int argc, char **argv) {
                     new AppSurface(instance, phys_device, surface_extension, pNext_chains.surface_capabilities2)));
             }
         }
-#endif
 
         std::vector<std::unique_ptr<AppGpu>> gpus;
 
@@ -1036,12 +1034,8 @@ int main(int argc, char **argv) {
                 p->AddNewline();
 
                 DumpLayers(*p.get(), instance.global_layers, gpus);
-
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+                // Doesn't print anything if no surfaces are available
                 DumpPresentableSurfaces(*p.get(), instance, gpus, surfaces);
-#endif
                 DumpGroups(*p.get(), instance);
 
                 p->SetHeader();
@@ -1054,15 +1048,10 @@ int main(int argc, char **argv) {
             }
         }
 
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-
         for (auto &surface_extension : instance.surface_extensions) {
             AppDestroySurface(instance, surface_extension.surface);
             surface_extension.destroy_window(instance);
         }
-#endif
     } catch (std::exception &e) {
         // Print the error to stderr and leave all outputs in a valid state (mainly for json)
         std::cerr << "ERROR at " << e.what() << "\n";

@@ -800,17 +800,13 @@ static VkSurfaceKHR AppCreateWin32Surface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyWin32Window(AppInstance &inst) { CALL_PFN(DestroyWindow)(inst.h_wnd); }
+static void AppDestroyWin32Window(AppInstance &inst) { user32_handles->pfnDestroyWindow(inst.h_wnd); }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
-#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
-    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
     inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
 }
-#endif
 
 //----------------------------XCB----------------------------
 
