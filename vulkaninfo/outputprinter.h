@@ -735,9 +735,7 @@ class ObjectWrapper {
 
 class ArrayWrapper {
   public:
-    ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) {
-        p.ArrayStart(array_name, element_count);
-    }
+    ArrayWrapper(Printer &p, std::string array_name, size_t element_count = 0) : p(p) { p.ArrayStart(array_name, element_count); }
     ~ArrayWrapper() { p.ArrayEnd(); }
 
   private:
