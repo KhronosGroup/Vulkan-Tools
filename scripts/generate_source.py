@@ -66,6 +66,7 @@ def main(argv):
 
             cmd = [common_codegen.repo_relative(os.path.join('scripts','kvt_genvk.py')),
                 '-registry', os.path.abspath(os.path.join(args.registry,  'vk.xml')),
+                 '-removeExtensions', 'VK_HUAWEI_subpass_shading',
                 '-quiet', '-directory', output_path, filename]
             print(' '.join(cmd))
             try:

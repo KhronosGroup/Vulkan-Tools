@@ -1073,6 +1073,11 @@ VK_QCOM_render_pass_transform = Extension(name='VK_QCOM_render_pass_transform', 
 VK_EXT_device_memory_report = Extension(name='VK_EXT_device_memory_report', version=2, guard=None, commands=[
 ])
 
+VK_EXT_acquire_drm_display = Extension(name='VK_EXT_acquire_drm_display', version=1, guard=None, commands=[
+    Command(name='vkAcquireDrmDisplayEXT', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetDrmDisplayEXT', dispatch='VkPhysicalDevice'),
+])
+
 VK_EXT_robustness2 = Extension(name='VK_EXT_robustness2', version=1, guard=None, commands=[
 ])
 
@@ -1102,6 +1107,9 @@ VK_NV_fragment_shading_rate_enums = Extension(name='VK_NV_fragment_shading_rate_
     Command(name='vkCmdSetFragmentShadingRateEnumNV', dispatch='VkCommandBuffer'),
 ])
 
+VK_NV_ray_tracing_motion_blur = Extension(name='VK_NV_ray_tracing_motion_blur', version=1, guard=None, commands=[
+])
+
 VK_EXT_ycbcr_2plane_444_formats = Extension(name='VK_EXT_ycbcr_2plane_444_formats', version=1, guard=None, commands=[
 ])
 
@@ -1129,6 +1137,14 @@ VK_EXT_vertex_input_dynamic_state = Extension(name='VK_EXT_vertex_input_dynamic_
     Command(name='vkCmdSetVertexInputEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_EXT_physical_device_drm = Extension(name='VK_EXT_physical_device_drm', version=1, guard=None, commands=[
+])
+
+VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=0, guard=None, commands=[
+    Command(name='vkGetSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkRenderPass'),
+    Command(name='vkCmdSubpassShadingHUAWEI', dispatch='VkCommandBuffer'),
+])
+
 VK_EXT_extended_dynamic_state2 = Extension(name='VK_EXT_extended_dynamic_state2', version=1, guard=None, commands=[
     Command(name='vkCmdSetPatchControlPointsEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdSetRasterizerDiscardEnableEXT', dispatch='VkCommandBuffer'),
@@ -1142,6 +1158,11 @@ VK_EXT_color_write_enable = Extension(name='VK_EXT_color_write_enable', version=
 ])
 
 VK_EXT_global_priority_query = Extension(name='VK_EXT_global_priority_query', version=1, guard=None, commands=[
+])
+
+VK_EXT_multi_draw = Extension(name='VK_EXT_multi_draw', version=1, guard=None, commands=[
+    Command(name='vkCmdDrawMultiEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDrawMultiIndexedEXT', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=11, guard=None, commands=[
@@ -1517,6 +1538,7 @@ extensions = [
     VK_EXT_texel_buffer_alignment,
     VK_QCOM_render_pass_transform,
     VK_EXT_device_memory_report,
+    VK_EXT_acquire_drm_display,
     VK_EXT_robustness2,
     VK_EXT_custom_border_color,
     VK_GOOGLE_user_type,
@@ -1525,6 +1547,7 @@ extensions = [
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
     VK_NV_fragment_shading_rate_enums,
+    VK_NV_ray_tracing_motion_blur,
     VK_EXT_ycbcr_2plane_444_formats,
     VK_EXT_fragment_density_map2,
     VK_QCOM_rotated_copy_commands,
@@ -1533,9 +1556,12 @@ extensions = [
     VK_NV_acquire_winrt_display,
     VK_VALVE_mutable_descriptor_type,
     VK_EXT_vertex_input_dynamic_state,
+    VK_EXT_physical_device_drm,
+    VK_HUAWEI_subpass_shading,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
     VK_EXT_global_priority_query,
+    VK_EXT_multi_draw,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,

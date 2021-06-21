@@ -102,7 +102,7 @@ struct_blacklist = ['VkConformanceVersion']
 
 # iostream or custom outputter handles these types
 predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
-                    'float', 'uint64_t', 'size_t', 'VkDeviceSize']
+                    'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'int64_t']
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
 EXTENSION_CATEGORIES = OrderedDict((('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'}),
