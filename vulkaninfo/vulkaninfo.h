@@ -1350,11 +1350,10 @@ util::trivial_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities
 const VkFormat color_format = VK_FORMAT_R8G8B8A8_UNORM;
 
 struct ImageTypeSupport {
-    enum class Type { regular, sparse, transient } type = Type::regular;
-    bool supported = false;
-    uint32_t memoryTypeBits = 0;
+    enum class Type { regular, sparse, transient } type;
+    uint32_t memoryTypeBits;
 
-    bool Compatible(uint32_t memtype_bit) { return supported && (memoryTypeBits & memtype_bit); }
+    bool Compatible(uint32_t memtype_bit) { return memoryTypeBits & memtype_bit; }
 };
 
 struct ImageTypeFormatInfo {
@@ -1385,8 +1384,8 @@ VkImageCreateInfo GetImageCreateInfo(VkImageCreateFlags flags, VkFormat format, 
             VK_IMAGE_LAYOUT_UNDEFINED};
 }
 
-ImageTypeSupport FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
-                                      ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
+util::trivial_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
+                                                              ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
     VkImageFormatProperties img_props;
     VkResult res = inst.dll.fp_vkGetPhysicalDeviceImageFormatProperties(
         phys_device, image_ci.format, image_ci.imageType, image_ci.tiling, image_ci.usage, image_ci.flags, &img_props);
@@ -1394,7 +1393,6 @@ ImageTypeSupport FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_d
     if (res == VK_SUCCESS) {
         ImageTypeSupport img_type_support{};
         img_type_support.type = img_type;
-        img_type_support.supported = true;
 
         VkImage dummy_img;
         res = inst.dll.fp_vkCreateImage(device, &image_ci, nullptr, &dummy_img);
@@ -1407,7 +1405,7 @@ ImageTypeSupport FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_d
         inst.dll.fp_vkDestroyImage(device, dummy_img, nullptr);
         return img_type_support;
     } else if (res == VK_ERROR_FORMAT_NOT_SUPPORTED) {
-        return {};  // default initialization has supported being false
+        return {};  // return empty optional
     }
     THROW_VK_ERR("vkGetPhysicalDeviceImageFormatProperties", res);
     return {};
@@ -1565,9 +1563,10 @@ struct AppGpu {
                 }
 
                 VkImageCreateInfo image_ci_regular = GetImageCreateInfo(0, format, tiling, 0);
-                VkImageCreateInfo image_ci_transient =
-                    GetImageCreateInfo(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, format, tiling, 0);
-                VkImageCreateInfo image_ci_sparse = GetImageCreateInfo(0, format, tiling, VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
+                VkImageCreateInfo image_ci_transient = GetImageCreateInfo(
+                    0, format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+                VkImageCreateInfo image_ci_sparse =
+                    GetImageCreateInfo(VK_IMAGE_CREATE_SPARSE_BINDING_BIT, format, tiling, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
                 if (tiling == VK_IMAGE_TILING_LINEAR) {
                     if (format == color_format) {
@@ -1588,22 +1587,22 @@ struct AppGpu {
                     }
                 }
 
-                auto image_ts_regular =
+                auto image_ts_regular_ret =
                     FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::regular, image_ci_regular);
-                if (image_ts_regular.supported) {
-                    image_type_format_info.type_support.push_back(image_ts_regular);
+                if (image_ts_regular_ret) {
+                    image_type_format_info.type_support.push_back(image_ts_regular_ret.value());
                 }
-                auto image_ts_transient =
+                auto image_ts_transient_ret =
                     FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::transient, image_ci_transient);
-                if (image_ts_transient.supported) {
-                    image_type_format_info.type_support.push_back(image_ts_transient);
+                if (image_ts_transient_ret) {
+                    image_type_format_info.type_support.push_back(image_ts_transient_ret.value());
                 }
 
                 if (enabled_features.sparseBinding) {
-                    auto image_ts_sparse =
+                    auto image_ts_sparse_ret =
                         FillImageTypeSupport(inst, phys_device, dev, ImageTypeSupport::Type::sparse, image_ci_sparse);
-                    if (image_ts_sparse.supported) {
-                        image_type_format_info.type_support.push_back(image_ts_sparse);
+                    if (image_ts_sparse_ret) {
+                        image_type_format_info.type_support.push_back(image_ts_sparse_ret.value());
                     }
                 }
                 image_type_infos.formats.push_back(image_type_format_info);
