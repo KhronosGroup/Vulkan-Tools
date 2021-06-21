@@ -838,6 +838,9 @@ void print_usage(const char *argv0) {
     std::cout << "--show-formats      Display the format properties of each physical device.\n";
     std::cout << "                    Note: This option does not affect html or json output;\n";
     std::cout << "                    they will always print format properties.\n\n";
+    std::cout << "-o <filename>, --output<filename>\n";
+    std::cout << "                    Print output to a new file whose name is specified by filename.\n";
+    std::cout << "                    File will be written to the current working directory.\n";
     std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
 }
 
@@ -847,7 +850,9 @@ struct ParsedResults {
     bool has_selected_gpu;  // differentiate between selecting the 0th gpu and using the default 0th value
     bool show_tool_props;
     bool show_formats;
+    bool use_custom_filename;
     char *output_path;
+    char *custom_filename;
 };
 
 util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
@@ -878,6 +883,12 @@ util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
             results.show_tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
+            results.show_formats = true;
+        } else if ((strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) && argc > (i + 1)) {
+            results.use_custom_filename = true;
+            results.custom_filename = argv[i + 1];
+            ++i;
+        } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             print_usage(argv[0]);
             return {};
         } else {
@@ -1075,10 +1086,15 @@ int main(int argc, char **argv) {
 #endif
 
         auto printer_data = get_printer_create_details(parse_data, instance, *gpus.at(parse_data.selected_gpu));
-        if (printer_data.use_file_output) {
-            file_out = std::ofstream(printer_data.file_name);
+        if (printer_data.use_file_output || (parse_data.use_custom_filename && parse_data.custom_filename)) {
+            if (parse_data.use_custom_filename) {
+                file_out = std::ofstream(parse_data.custom_filename);
+            } else {
+                file_out = std::ofstream(printer_data.file_name);
+            }
         }
-        printer = std::unique_ptr<Printer>(new Printer(printer_data.output_type, printer_data.use_file_output ? file_out : out,
+        bool use_file_out = parse_data.use_custom_filename || printer_data.use_file_output;
+        printer = std::unique_ptr<Printer>(new Printer(printer_data.output_type, use_file_out ? file_out : out,
                                                        parse_data.selected_gpu, instance.vk_version, printer_data.start_string));
 
         RunPrinter(*(printer.get()), parse_data, instance, gpus, surfaces);
@@ -1098,7 +1114,7 @@ int main(int argc, char **argv) {
     printer.reset(nullptr);
 
 #ifdef _WIN32
-    if (parse_data.output_category == OutputCategory::text) wait_for_console_destroy();
+    if (parse_data.output_category == OutputCategory::text && !parse_data.use_custom_filename) wait_for_console_destroy();
 #endif
 
     return 0;
