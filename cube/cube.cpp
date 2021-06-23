@@ -405,14 +405,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-static void handle_ping(void *data, wl_shell_surface *shell_surface, uint32_t serial) {
-    wl_shell_surface_pong(shell_surface, serial);
-}
-
-static void handle_configure(void *data, wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height) {}
-
-static void handle_popup_done(void *data, wl_shell_surface *shell_surface) {}
-
 static void pointer_handle_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx,
                                  wl_fixed_t sy) {}
 
