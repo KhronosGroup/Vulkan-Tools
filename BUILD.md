@@ -459,13 +459,13 @@ Note vulkaninfo currently only supports Xcb and Xlib WSI display servers. See
 the CMakeLists.txt file in `Vulkan-Tools/vulkaninfo` for more info.
 
 You can select which WSI subsystem is used to execute the vkcube applications
-using a CMake option called DEMOS_WSI_SELECTION. Supported options are XCB
+using a CMake option called CUBE_WSI_SELECTION. Supported options are XCB
 (default), XLIB, and WAYLAND. Note that you must build using the corresponding
 BUILD_WSI_*_SUPPORT enabled at the base repository level. For instance,
 creating a build that will use Xlib when running the vkcube demos, your CMake
 command line might look like:
 
-    cmake -DCMAKE_BUILD_TYPE=Debug -DDEMOS_WSI_SELECTION=XLIB ..
+    cmake -DCMAKE_BUILD_TYPE=Debug -DCUBE_WSI_SELECTION=XLIB ..
 
 #### Linux Install to System Directories
 
