@@ -123,3 +123,14 @@ else()
     install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()
 
+link_directories(/home/xl/.local/opt/android-sdk-linux/ndk/22.1.7171670/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/28/)
+add_executable(vulkaninfo-lite
+    vulkaninfo-lite.cc
+)
+target_link_libraries(vulkaninfo-lite
+    PRIVATE vulkan
+)
+target_include_directories(vulkaninfo-lite
+    PRIVATE ${VulkanHeaders_INCLUDE_DIR}
+)
+

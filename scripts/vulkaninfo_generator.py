@@ -411,7 +411,7 @@ def PrintEnumToString(enum, gen):
         "String(" + enum.name + " value) {\n"
     out += "    switch (value) {\n"
     for v in enum.options:
-        out += "        case (" + str(v.value) + \
+        out += "        case " + enum.name + "(" + str(v.value) + \
             "): return \"" + v.name[3:] + "\";\n"
     out += "        default: return \"UNKNOWN_" + enum.name + "\";\n"
     out += "    }\n}\n"
