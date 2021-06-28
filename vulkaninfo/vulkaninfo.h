@@ -444,6 +444,8 @@ struct VkDll {
 
 struct ExtensionFunctions {
     // Extension pointers, loaded after instance is created
+    PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+    PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR{};
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR{};
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR{};
@@ -463,6 +465,8 @@ struct ExtensionFunctions {
     void LoadInstanceExtensionDispatchPointers(PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr, VkInstance instance) {
         this->instance = instance;
         this->vkGetInstanceProcAddr = vkGetInstanceProcAddr;
+        Load(vkCreateDebugReportCallbackEXT, "vkCreateDebugReportCallbackEXT");
+        Load(vkDestroyDebugReportCallbackEXT, "vkDestroyDebugReportCallbackEXT");
         Load(vkGetPhysicalDeviceSurfaceSupportKHR, "vkGetPhysicalDeviceSurfaceSupportKHR");
         Load(vkGetPhysicalDeviceSurfaceCapabilitiesKHR, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
         Load(vkGetPhysicalDeviceSurfaceFormatsKHR, "vkGetPhysicalDeviceSurfaceFormatsKHR");
@@ -599,6 +603,8 @@ struct AppInstance {
     uint32_t instance_version;
     VulkanVersion vk_version{};
 
+    VkDebugReportCallbackEXT debug_callback = VK_NULL_HANDLE;
+
     ExtensionFunctions ext_funcs;
 
     std::vector<LayerExtensionList> global_layers;
@@ -689,9 +695,15 @@ struct AppInstance {
             THROW_VK_ERR("vkCreateInstance", err);
         }
         ext_funcs.LoadInstanceExtensionDispatchPointers(dll.fp_vkGetInstanceProcAddr, instance);
+
+        err = ext_funcs.vkCreateDebugReportCallbackEXT(instance, &dbg_info, nullptr, &debug_callback);
+        if (err != VK_SUCCESS) {
+            THROW_VK_ERR("vkCreateDebugReportCallbackEXT", err);
+        }
     }
 
     ~AppInstance() {
+        if (debug_callback) ext_funcs.vkDestroyDebugReportCallbackEXT(instance, debug_callback, nullptr);
         if (dll.fp_vkDestroyInstance) dll.fp_vkDestroyInstance(instance, nullptr);
         dll.Close();
     }
