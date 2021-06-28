@@ -35,7 +35,7 @@ if (NOT WIN32)
     target_link_libraries(vulkaninfo ${CMAKE_DL_LIBS})
 endif()
 
-if(UNIX AND NOT APPLE) # i.e. Linux
+if(UNIX AND NOT APPLE AND NOT ANDROID) # i.e. Linux
     include(FindPkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
