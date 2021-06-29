@@ -1,8 +1,8 @@
-Copyright (c) 2015-2020 The Khronos Group Inc.
-Copyright (c) 2015-2020 LunarG, Inc.
-Copyright (c) 2015-2020 Valve Corporation
+Copyright (c) 2015-2021 The Khronos Group Inc.
+Copyright (c) 2015-2021 LunarG, Inc.
+Copyright (c) 2015-2021 Valve Corporation
 
-The Vulkan Runtime is comprised of 100% open source components (MIT, and
+The Vulkan Runtime is comprised of 100% open-source components (MIT, and
 Apache 2.0). The text of such licenses is included below along with the
 copyrights.
 
@@ -30,9 +30,9 @@ under the License.
 ============================MIT============================
 
 Copyright (c) 2009 Dave Gamble
-Copyright (c) 2015-2016 The Khronos Group Inc.
-Copyright (c) 2015-2016 Valve Corporation
-Copyright (c) 2015-2016 LunarG, Inc.
+Copyright (c) 2015-2017 The Khronos Group Inc.
+Copyright (c) 2015-2017 Valve Corporation
+Copyright (c) 2015-2017 LunarG, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -55,9 +55,9 @@ THE SOFTWARE.
 ============================MIT============================
 
 Copyright (c) 2014 joseph werle <joseph.werle@gmail.com>
-Copyright (c) 2015-2016 The Khronos Group Inc.
-Copyright (c) 2015-2016 Valve Corporation
-Copyright (c) 2015-2016 LunarG, Inc.
+Copyright (c) 2015-2017 The Khronos Group Inc.
+Copyright (c) 2015-2017 Valve Corporation
+Copyright (c) 2015-2017 LunarG, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and/or associated documentation files (the "Materials"), to
