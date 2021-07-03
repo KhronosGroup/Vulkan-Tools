@@ -3256,7 +3256,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     return (int)msg.wParam;
 }
 
-#elif __linux__
+#elif defined(__linux__) || defined(__FreeBSD__)
 
 int main(int argc, char **argv) {
     Demo demo;
