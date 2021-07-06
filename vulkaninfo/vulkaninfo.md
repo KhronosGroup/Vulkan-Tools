@@ -71,6 +71,9 @@ OPTIONS:
 --show-formats      Display the format properties of each physical device.
                     Note: This option does not affect html or json output;
                     they will always print format properties.
+-o <filename>, --output<filename>
+                    Print output to a new file whose name is specified by filename.
+                    File will be written to the current working directory.
 --summary           Show a summary of the instance and GPU's on a system.
 ```
 
