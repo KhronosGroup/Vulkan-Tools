@@ -681,6 +681,7 @@ std::vector<const char *>VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlag
     if (0x20 & value) strings.push_back("MEMORY_PROPERTY_PROTECTED_BIT");
     if (0x40 & value) strings.push_back("MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD");
     if (0x80 & value) strings.push_back("MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD");
+    if (0x100 & value) strings.push_back("MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV");
     return strings;
 }
 void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFlags value, int width = 0) {

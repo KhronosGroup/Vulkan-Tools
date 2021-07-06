@@ -1140,9 +1140,13 @@ VK_EXT_vertex_input_dynamic_state = Extension(name='VK_EXT_vertex_input_dynamic_
 VK_EXT_physical_device_drm = Extension(name='VK_EXT_physical_device_drm', version=1, guard=None, commands=[
 ])
 
-VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=0, guard=None, commands=[
-    Command(name='vkGetSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkRenderPass'),
+VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=2, guard=None, commands=[
+    Command(name='vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkDevice'),
     Command(name='vkCmdSubpassShadingHUAWEI', dispatch='VkCommandBuffer'),
+])
+
+VK_NV_external_memory_rdma = Extension(name='VK_NV_external_memory_rdma', version=1, guard=None, commands=[
+    Command(name='vkGetMemoryRemoteAddressNV', dispatch='VkDevice'),
 ])
 
 VK_EXT_extended_dynamic_state2 = Extension(name='VK_EXT_extended_dynamic_state2', version=1, guard=None, commands=[
@@ -1558,6 +1562,7 @@ extensions = [
     VK_EXT_vertex_input_dynamic_state,
     VK_EXT_physical_device_drm,
     VK_HUAWEI_subpass_shading,
+    VK_NV_external_memory_rdma,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
     VK_EXT_global_priority_query,
