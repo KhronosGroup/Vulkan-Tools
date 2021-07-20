@@ -532,6 +532,10 @@ VK_KHR_surface_protected_capabilities = Extension(name='VK_KHR_surface_protected
 VK_KHR_separate_depth_stencil_layouts = Extension(name='VK_KHR_separate_depth_stencil_layouts', version=1, guard=None, commands=[
 ])
 
+VK_KHR_present_wait = Extension(name='VK_KHR_present_wait', version=1, guard=None, commands=[
+    Command(name='vkWaitForPresentKHR', dispatch='VkDevice'),
+])
+
 VK_KHR_uniform_buffer_standard_layout = Extension(name='VK_KHR_uniform_buffer_standard_layout', version=1, guard=None, commands=[
 ])
 
@@ -559,6 +563,9 @@ VK_KHR_pipeline_library = Extension(name='VK_KHR_pipeline_library', version=1, g
 ])
 
 VK_KHR_shader_non_semantic_info = Extension(name='VK_KHR_shader_non_semantic_info', version=1, guard=None, commands=[
+])
+
+VK_KHR_present_id = Extension(name='VK_KHR_present_id', version=1, guard=None, commands=[
 ])
 
 VK_KHR_synchronization2 = Extension(name='VK_KHR_synchronization2', version=1, guard=None, commands=[
@@ -1049,6 +1056,9 @@ VK_EXT_extended_dynamic_state = Extension(name='VK_EXT_extended_dynamic_state', 
     Command(name='vkCmdSetStencilOpEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_EXT_shader_atomic_float2 = Extension(name='VK_EXT_shader_atomic_float2', version=1, guard=None, commands=[
+])
+
 VK_EXT_shader_demote_to_helper_invocation = Extension(name='VK_EXT_shader_demote_to_helper_invocation', version=1, guard=None, commands=[
 ])
 
@@ -1143,6 +1153,10 @@ VK_EXT_physical_device_drm = Extension(name='VK_EXT_physical_device_drm', versio
 VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=2, guard=None, commands=[
     Command(name='vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkDevice'),
     Command(name='vkCmdSubpassShadingHUAWEI', dispatch='VkCommandBuffer'),
+])
+
+VK_HUAWEI_invocation_mask = Extension(name='VK_HUAWEI_invocation_mask', version=1, guard=None, commands=[
+    Command(name='vkCmdBindInvocationMaskHUAWEI', dispatch='VkCommandBuffer'),
 ])
 
 VK_NV_external_memory_rdma = Extension(name='VK_NV_external_memory_rdma', version=1, guard=None, commands=[
@@ -1409,12 +1423,14 @@ extensions = [
     VK_KHR_spirv_1_4,
     VK_KHR_surface_protected_capabilities,
     VK_KHR_separate_depth_stencil_layouts,
+    VK_KHR_present_wait,
     VK_KHR_uniform_buffer_standard_layout,
     VK_KHR_buffer_device_address,
     VK_KHR_deferred_host_operations,
     VK_KHR_pipeline_executable_properties,
     VK_KHR_pipeline_library,
     VK_KHR_shader_non_semantic_info,
+    VK_KHR_present_id,
     VK_KHR_synchronization2,
     VK_KHR_shader_subgroup_uniform_control_flow,
     VK_KHR_zero_initialize_workgroup_memory,
@@ -1536,6 +1552,7 @@ extensions = [
     VK_EXT_host_query_reset,
     VK_EXT_index_type_uint8,
     VK_EXT_extended_dynamic_state,
+    VK_EXT_shader_atomic_float2,
     VK_EXT_shader_demote_to_helper_invocation,
     VK_NV_device_generated_commands,
     VK_NV_inherited_viewport_scissor,
@@ -1562,6 +1579,7 @@ extensions = [
     VK_EXT_vertex_input_dynamic_state,
     VK_EXT_physical_device_drm,
     VK_HUAWEI_subpass_shading,
+    VK_HUAWEI_invocation_mask,
     VK_NV_external_memory_rdma,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
