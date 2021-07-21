@@ -3151,6 +3151,15 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreZirconHandleFUCHSIA(
 #endif /* VK_USE_PLATFORM_FUCHSIA */
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(
+    VkDevice                                    device,
+    VkRenderPass                                renderpass,
+    VkExtent2D*                                 pMaxWorkgroupSize);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSubpassShadingHUAWEI(
+    VkCommandBuffer                             commandBuffer);
+
+
 static VKAPI_ATTR void VKAPI_CALL CmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,
@@ -3927,6 +3936,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_FUCHSIA
     {"vkGetSemaphoreZirconHandleFUCHSIA", (void*)GetSemaphoreZirconHandleFUCHSIA},
 #endif
+    {"vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI", (void*)GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI},
+    {"vkCmdSubpassShadingHUAWEI", (void*)CmdSubpassShadingHUAWEI},
     {"vkCmdBindInvocationMaskHUAWEI", (void*)CmdBindInvocationMaskHUAWEI},
     {"vkGetMemoryRemoteAddressNV", (void*)GetMemoryRemoteAddressNV},
     {"vkCmdSetPatchControlPointsEXT", (void*)CmdSetPatchControlPointsEXT},
