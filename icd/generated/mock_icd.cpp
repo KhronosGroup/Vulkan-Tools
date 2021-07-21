@@ -5097,6 +5097,22 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreZirconHandleFUCHSIA(
 #endif /* VK_USE_PLATFORM_FUCHSIA */
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(
+    VkDevice                                    device,
+    VkRenderPass                                renderpass,
+    VkExtent2D*                                 pMaxWorkgroupSize)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdSubpassShadingHUAWEI(
+    VkCommandBuffer                             commandBuffer)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 static VKAPI_ATTR void VKAPI_CALL CmdBindInvocationMaskHUAWEI(
     VkCommandBuffer                             commandBuffer,
     VkImageView                                 imageView,

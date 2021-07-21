@@ -4992,6 +4992,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SEMAPHORE_GET_ZIRCON_HANDLE_INF
 };
 
 #endif // VK_USE_PLATFORM_FUCHSIA
+// Map type VkSubpassShadingPipelineCreateInfoHUAWEI to id VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI
+template <> struct LvlTypeMap<VkSubpassShadingPipelineCreateInfoHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI> {
+    typedef VkSubpassShadingPipelineCreateInfoHUAWEI Type;
+};
+
+// Map type VkPhysicalDeviceSubpassShadingFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI
+template <> struct LvlTypeMap<VkPhysicalDeviceSubpassShadingFeaturesHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI> {
+    typedef VkPhysicalDeviceSubpassShadingFeaturesHUAWEI Type;
+};
+
+// Map type VkPhysicalDeviceSubpassShadingPropertiesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI
+template <> struct LvlTypeMap<VkPhysicalDeviceSubpassShadingPropertiesHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI> {
+    typedef VkPhysicalDeviceSubpassShadingPropertiesHUAWEI Type;
+};
+
 // Map type VkPhysicalDeviceInvocationMaskFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INVOCATION_MASK_FEATURES_HUAWEI
 template <> struct LvlTypeMap<VkPhysicalDeviceInvocationMaskFeaturesHUAWEI> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INVOCATION_MASK_FEATURES_HUAWEI;
