@@ -1327,7 +1327,7 @@ VK_QNX_screen_surface = Extension(name='VK_QNX_screen_surface', version=1, guard
     Command(name='vkGetPhysicalDeviceScreenPresentationSupportQNX', dispatch='VkPhysicalDevice'),
 ])
 
-VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkGetPhysicalDeviceVideoCapabilitiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetPhysicalDeviceVideoFormatPropertiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkCreateVideoSessionKHR', dispatch='VkDevice'),
@@ -1353,10 +1353,10 @@ VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
