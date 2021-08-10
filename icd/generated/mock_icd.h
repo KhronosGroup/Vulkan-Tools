@@ -177,7 +177,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_image_format_list", 1},
     {"VK_EXT_blend_operation_advanced", 2},
     {"VK_NV_fragment_coverage_to_color", 1},
-    {"VK_KHR_acceleration_structure", 11},
+    {"VK_KHR_acceleration_structure", 12},
     {"VK_KHR_ray_tracing_pipeline", 1},
     {"VK_KHR_ray_query", 1},
     {"VK_NV_framebuffer_mixed_samples", 1},
@@ -305,6 +305,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_color_write_enable", 1},
     {"VK_EXT_global_priority_query", 1},
     {"VK_EXT_multi_draw", 1},
+    {"VK_EXT_load_store_op_none", 1},
 };
 
 
@@ -3230,6 +3231,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
     const int32_t*                              pVertexOffset);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
