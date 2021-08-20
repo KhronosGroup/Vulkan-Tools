@@ -1065,9 +1065,7 @@ void Demo::init_connection() {
 
     connection = xcb_connect(nullptr, &scr);
     if (xcb_connection_has_error(connection) > 0) {
-        printf(
-            "Cannot find a compatible Vulkan installable client driver "
-            "(ICD).\nExiting ...\n");
+        printf("Cannot connect to XCB.\nExiting ...\n");
         fflush(stdout);
         exit(1);
     }
@@ -1081,7 +1079,7 @@ void Demo::init_connection() {
     display = wl_display_connect(nullptr);
 
     if (display == nullptr) {
-        printf("Cannot find a compatible Vulkan installable client driver (ICD).\nExiting ...\n");
+        printf("Cannot connect to wayland.\nExiting ...\n");
         fflush(stdout);
         exit(1);
     }
