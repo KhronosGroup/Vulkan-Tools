@@ -266,6 +266,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_NV_device_generated_commands", 3},
     {"VK_NV_inherited_viewport_scissor", 1},
+    {"VK_KHR_shader_integer_dot_product", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
     {"VK_QCOM_render_pass_transform", 2},
     {"VK_EXT_device_memory_report", 2},
@@ -296,6 +297,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_VALVE_mutable_descriptor_type", 1},
     {"VK_EXT_vertex_input_dynamic_state", 2},
     {"VK_EXT_physical_device_drm", 1},
+    {"VK_EXT_primitive_topology_list_restart", 1},
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
     {"VK_HUAWEI_subpass_shading", 2},
@@ -2051,6 +2053,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
 
 
 
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(
@@ -3123,6 +3126,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+
 
 
 #ifdef VK_USE_PLATFORM_FUCHSIA

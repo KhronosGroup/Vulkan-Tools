@@ -3412,6 +3412,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
 
 
 
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(
@@ -5052,6 +5053,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 #ifdef VK_USE_PLATFORM_FUCHSIA
