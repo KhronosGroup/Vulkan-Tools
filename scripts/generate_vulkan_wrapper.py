@@ -559,6 +559,9 @@ VK_KHR_pipeline_executable_properties = Extension(name='VK_KHR_pipeline_executab
     Command(name='vkGetPipelineExecutableInternalRepresentationsKHR', dispatch='VkDevice'),
 ])
 
+VK_KHR_shader_integer_dot_product = Extension(name='VK_KHR_shader_integer_dot_product', version=1, guard=None, commands=[
+])
+
 VK_KHR_pipeline_library = Extension(name='VK_KHR_pipeline_library', version=1, guard=None, commands=[
 ])
 
@@ -1150,6 +1153,9 @@ VK_EXT_vertex_input_dynamic_state = Extension(name='VK_EXT_vertex_input_dynamic_
 VK_EXT_physical_device_drm = Extension(name='VK_EXT_physical_device_drm', version=1, guard=None, commands=[
 ])
 
+VK_EXT_primitive_topology_list_restart = Extension(name='VK_EXT_primitive_topology_list_restart', version=1, guard=None, commands=[
+])
+
 VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=2, guard=None, commands=[
     Command(name='vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkDevice'),
     Command(name='vkCmdSubpassShadingHUAWEI', dispatch='VkCommandBuffer'),
@@ -1431,6 +1437,7 @@ extensions = [
     VK_KHR_buffer_device_address,
     VK_KHR_deferred_host_operations,
     VK_KHR_pipeline_executable_properties,
+    VK_KHR_shader_integer_dot_product,
     VK_KHR_pipeline_library,
     VK_KHR_shader_non_semantic_info,
     VK_KHR_present_id,
@@ -1581,6 +1588,7 @@ extensions = [
     VK_VALVE_mutable_descriptor_type,
     VK_EXT_vertex_input_dynamic_state,
     VK_EXT_physical_device_drm,
+    VK_EXT_primitive_topology_list_restart,
     VK_HUAWEI_subpass_shading,
     VK_HUAWEI_invocation_mask,
     VK_NV_external_memory_rdma,
