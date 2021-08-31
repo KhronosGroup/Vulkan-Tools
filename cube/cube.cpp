@@ -331,8 +331,8 @@ struct Demo {
     char const *extension_names[64];
     char const *enabled_layers[64];
 
-    uint32_t width;
-    uint32_t height;
+    int32_t width;
+    int32_t height;
     vk::Format format;
     vk::ColorSpaceKHR color_space;
 
@@ -824,7 +824,7 @@ void Demo::draw() {
         vk::SurfaceCapabilitiesKHR surfCapabilities;
         result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
         VERIFY(result == vk::Result::eSuccess);
-        if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
+        if (surfCapabilities.currentExtent.width != static_cast<uint32_t>(width) || surfCapabilities.currentExtent.height != static_cast<uint32_t>(height)) {
             resize();
         }
     } else if (result == vk::Result::eErrorSurfaceLostKHR) {
@@ -983,11 +983,11 @@ void Demo::init(int argc, char **argv) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &width) == 1 && width > 0) {
+        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNi32, &width) == 1 && width > 0) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &height) == 1 && height > 0) {
+        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNi32, &height) == 1 && height > 0) {
             i++;
             continue;
         }
