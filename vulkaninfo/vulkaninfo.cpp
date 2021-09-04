@@ -936,7 +936,9 @@ int main(int argc, char **argv) {
 
         if (selected_gpu >= gpus.size()) {
             std::cout << "The selected gpu (" << selected_gpu << ") is not a valid GPU index. ";
-            if (gpus.size() == 1)
+            if (gpus.size() == 0)
+                std::cout << "There are no available GPUs.\n";
+            else if (gpus.size() == 1)
                 std::cout << "The only available GPU selection is 0.\n";
             else
                 std::cout << "The available GPUs are in the range of 0 to " << gpus.size() - 1 << ".\n";
