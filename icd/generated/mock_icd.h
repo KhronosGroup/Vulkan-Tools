@@ -308,6 +308,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_global_priority_query", 1},
     {"VK_EXT_multi_draw", 1},
     {"VK_EXT_load_store_op_none", 1},
+    {"VK_EXT_pageable_device_local_memory", 1},
 };
 
 
@@ -3238,6 +3239,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
 
 
 
+static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
+    VkDevice                                    device,
+    VkDeviceMemory                              memory,
+    float                                       priority);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -3960,6 +3967,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdSetColorWriteEnableEXT", (void*)CmdSetColorWriteEnableEXT},
     {"vkCmdDrawMultiEXT", (void*)CmdDrawMultiEXT},
     {"vkCmdDrawMultiIndexedEXT", (void*)CmdDrawMultiIndexedEXT},
+    {"vkSetDeviceMemoryPriorityEXT", (void*)SetDeviceMemoryPriorityEXT},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},

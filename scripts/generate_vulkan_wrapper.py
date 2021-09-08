@@ -1192,6 +1192,10 @@ VK_EXT_multi_draw = Extension(name='VK_EXT_multi_draw', version=1, guard=None, c
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
 ])
 
+VK_EXT_pageable_device_local_memory = Extension(name='VK_EXT_pageable_device_local_memory', version=1, guard=None, commands=[
+    Command(name='vkSetDeviceMemoryPriorityEXT', dispatch='VkDevice'),
+])
+
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=12, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
@@ -1597,6 +1601,7 @@ extensions = [
     VK_EXT_global_priority_query,
     VK_EXT_multi_draw,
     VK_EXT_load_store_op_none,
+    VK_EXT_pageable_device_local_memory,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
