@@ -1800,14 +1800,19 @@ def parse_subheader(filename, ext_guard):
                 current_ext.add_command(Command.from_c_typedef(line))
             elif line.startswith("#define") and "SPEC_VERSION " in line:
                 version_begin = line.rfind(" ") + 1
-                spec_version = int(line[version_begin:])
+                version_str = line[version_begin:]
+                # Non-numeric versions are used for backward compatibility and should be ignored
+                if version_str.isdigit():
+                    spec_version = int(version_str)
             elif line.startswith("#define") and "EXTENSION_NAME " in line:
                 name_end = line.rfind("\"")
-                name_begin = line.rfind("\"", 0, name_end) + 1
-                name = line[name_begin:name_end]
-                # add extension
-                current_ext = Extension(name, spec_version, ext_guard)
-                sub_extensions.append(current_ext)
+                name_begin = line.rfind("\"", 0, name_end)
+                # Unquoted names are used for backward compatibility and should be ignored
+                if name_begin != -1 and name_end != -1:
+                    name = line[name_begin + 1:name_end]
+                    # add extension
+                    current_ext = Extension(name, spec_version, ext_guard)
+                    sub_extensions.append(current_ext)
 
     return sub_extensions;
 
