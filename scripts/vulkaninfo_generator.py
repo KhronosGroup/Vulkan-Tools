@@ -407,14 +407,12 @@ def PrintEnumToString(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
 
-    out += "static const char *" + enum.name + \
-        "String(" + enum.name + " value) {\n"
-    out += "    switch (value) {\n"
+    out += f"static const char *{enum.name}String({enum.name} value) {{\n"
+    out += f"    switch (value) {{\n"
     for v in enum.options:
-        out += "        case (" + str(v.value) + \
-            "): return \"" + v.name[3:] + "\";\n"
-    out += "        default: return \"UNKNOWN_" + enum.name + "\";\n"
-    out += "    }\n}\n"
+        out += f"        case ({str(v.value)}): return \"{v.name[3:]}\";\n"
+    out += f"        default: return \"UNKNOWN_{enum.name}\";\n"
+    out += f"    }}\n}}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
@@ -422,61 +420,51 @@ def PrintEnumToString(enum, gen):
 def PrintEnum(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
-    out += "void Dump" + enum.name + \
-        "(Printer &p, std::string name, " + \
-        enum.name + " value, int width = 0) {\n"
-    out += "    if (p.Type() == OutputType::json) {\n"
-    out += "        p.PrintKeyValue(name, value, width);\n"
-    out += "    } else {\n"
-    out += "        p.PrintKeyString(name, " + \
-        enum.name + "String(value), width);\n    }\n"
-    out += "}\n"
+    out += f"void Dump{enum.name}(Printer &p, std::string name, {enum.name} value, int width = 0) {{\n"
+    out += f"    if (p.Type() == OutputType::json) {{\n"
+    out += f"        p.PrintKeyValue(name, value, width);\n"
+    out += f"    }} else {{\n"
+    out += f"        p.PrintKeyString(name, {enum.name}String(value), width);\n    }}\n"
+    out += f"}}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
 
 def PrintGetFlagStrings(name, bitmask):
     out = ''
-    out += "std::vector<const char *>" + name + \
-        "GetStrings(" + name + " value) {\n"
-
-    out += "    std::vector<const char *> strings;\n"
-    out += "    if (value == 0) { strings.push_back(\"None\"); return strings; }\n"
+    out += f"std::vector<const char *>{name}GetStrings({name} value) {{\n"
+    out += f"    std::vector<const char *> strings;\n"
+    out += f"    if (value == 0) {{ strings.push_back(\"None\"); return strings; }}\n"
     for v in bitmask.options:
         val = v.value if isinstance(v.value, str) else str(hex(v.value))
-        out += "    if (" + val + " & value) strings.push_back(\"" + \
-            str(v.name[3:]) + "\");\n"
-    out += "    return strings;\n}\n"
+        out += f"    if ({val} & value) strings.push_back(\"{str(v.name[3:])}\");\n"
+    out += f"    return strings;\n}}\n"
     return out
 
 
 def PrintFlags(bitmask, name):
-    out = "void Dump" + name + \
-        "(Printer &p, std::string name, " + name + " value, int width = 0) {\n"
-    out += "    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }\n"
-    out += "    if (static_cast<" + bitmask.name + ">(value) == 0) {\n"
-    out += "        ArrayWrapper arr(p, name, 0);\n"
-    out += "        if (p.Type() != OutputType::vkconfig_output)\n"
-    out += "            p.SetAsType().PrintString(\"None\");\n"
-    out += "        return;\n"
-    out += "    }\n"
-    out += "    auto strings = " + bitmask.name + \
-        "GetStrings(static_cast<" + bitmask.name + ">(value));\n"
-    out += "    ArrayWrapper arr(p, name, strings.size());\n"
-    out += "    for(auto& str : strings){\n"
-    out += "        p.SetAsType().PrintString(str);\n"
-    out += "    }\n"
-    out += "}\n"
+    out = f"void Dump{name}(Printer &p, std::string name, {name} value, int width = 0) {{\n"
+    out += f"    if (p.Type() == OutputType::json) {{ p.PrintKeyValue(name, value); return; }}\n"
+    out += f"    if (static_cast<{bitmask.name}>(value) == 0) {{\n"
+    out += f"        ArrayWrapper arr(p, name, 0);\n"
+    out += f"        if (p.Type() != OutputType::vkconfig_output)\n"
+    out += f"            p.SetAsType().PrintString(\"None\");\n"
+    out += f"        return;\n"
+    out += f"    }}\n"
+    out += f"    auto strings = {bitmask.name}GetStrings(static_cast<{bitmask.name}>(value));\n"
+    out += f"    ArrayWrapper arr(p, name, strings.size());\n"
+    out += f"    for(auto& str : strings){{\n"
+    out += f"        p.SetAsType().PrintString(str);\n"
+    out += f"    }}\n"
+    out += f"}}\n"
     return out
 
 
 def PrintFlagBits(bitmask):
-    out = "void Dump" + bitmask.name + \
-        "(Printer &p, std::string name, " + \
-        bitmask.name + " value, int width = 0) {\n"
-    out += "    auto strings = " + bitmask.name + "GetStrings(value);\n"
-    out += "    p.PrintKeyString(name, strings.at(0), width);\n"
-    out += "}\n"
+    out = f"void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value, int width = 0) {{\n"
+    out += f"    auto strings = {bitmask.name}GetStrings(value);\n"
+    out += f"    p.PrintKeyString(name, strings.at(0), width);\n"
+    out += f"}}\n"
     return out
 
 
@@ -492,18 +480,16 @@ def PrintBitMask(bitmask, name, gen):
 
 def PrintBitMaskToString(bitmask, name, gen):
     out = AddGuardHeader(GetExtension(bitmask.name, gen))
-    out += "std::string " + name + \
-        "String(" + name + " value, int width = 0) {\n"
-    out += "    std::string out;\n"
-    out += "    bool is_first = true;\n"
+    out += f"std::string {name}String({name} value, int width = 0) {{\n"
+    out += f"    std::string out;\n"
+    out += f"    bool is_first = true;\n"
     for v in bitmask.options:
-        out += "    if (" + str(v.value) + " & value) {\n"
-        out += "        if (is_first) { is_first = false; } else { out += \" | \"; }\n"
-        out += "        out += \"" + \
-            str(v.name).strip("VK_").strip("_BIT") + "\";\n"
-        out += "    }\n"
-    out += "    return out;\n"
-    out += "}\n"
+        out += f"    if ({str(v.value)} & value) {{\n"
+        out += f"        if (is_first) {{ is_first = false; }} else {{ out += \" | \"; }}\n"
+        out += f"        out += \"{str(v.name).strip('VK_').strip('_BIT')}\";\n"
+        out += f"    }}\n"
+    out += f"    return out;\n"
+    out += f"}}\n"
     out += AddGuardFooter(GetExtension(bitmask.name, gen))
     return out
 
@@ -522,69 +508,56 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
             if len(v.name) > max_key_len:
                 max_key_len = len(v.name)
 
-    out += "void Dump" + struct.name + \
-        "(Printer &p, std::string name, " + struct.name + " &obj) {\n"
+    out += f"void Dump{struct.name}(Printer &p, std::string name, {struct.name} &obj) {{\n"
     if struct.name == "VkPhysicalDeviceLimits":
-        out += "    if (p.Type() == OutputType::json)\n"
-        out += "        p.ObjectStart(\"limits\");\n"
-        out += "    else\n"
-        out += "        p.SetSubHeader().ObjectStart(name);\n"
+        out += f"    if (p.Type() == OutputType::json)\n"
+        out += f"        p.ObjectStart(\"limits\");\n"
+        out += f"    else\n"
+        out += f"        p.SetSubHeader().ObjectStart(name);\n"
     elif struct.name == "VkPhysicalDeviceSparseProperties":
-        out += "    if (p.Type() == OutputType::json)\n"
-        out += "        p.ObjectStart(\"sparseProperties\");\n"
-        out += "    else\n"
-        out += "        p.SetSubHeader().ObjectStart(name);\n"
+        out += f"    if (p.Type() == OutputType::json)\n"
+        out += f"        p.ObjectStart(\"sparseProperties\");\n"
+        out += f"    else\n"
+        out += f"        p.SetSubHeader().ObjectStart(name);\n"
     else:
-        out += "    ObjectWrapper object{p, name};\n"
+        out += f"    ObjectWrapper object{{p, name}};\n"
 
     for v in struct.members:
         # arrays
         if v.arrayLength is not None:
             # strings
             if v.typeID == "char":
-                out += "    p.PrintKeyString(\"" + v.name + "\", obj." + \
-                    v.name + ", " + str(max_key_len) + ");\n"
+                out += f"    p.PrintKeyString(\"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
             # uuid's
             elif (v.arrayLength == str(16) and v.typeID == "uint8_t"):  # VK_UUID_SIZE
-                out += "    p.PrintKeyString(\"" + v.name + "\", to_string_16(obj." + \
-                    v.name + "), " + str(max_key_len) + ");\n"
+                out += f"    p.PrintKeyString(\"{v.name}\", to_string_16(obj.{v.name}), {str(max_key_len)});\n"
             elif (v.arrayLength == str(8) and v.typeID == "uint8_t"):  # VK_LUID_SIZE
-                out += "    if (obj.deviceLUIDValid)"  # special case
-                out += " p.PrintKeyString(\"" + v.name + "\", to_string_8(obj." + \
-                    v.name + "), " + str(max_key_len) + ");\n"
+                out += f"    if (obj.deviceLUIDValid)"  # special case
+                out += f" p.PrintKeyString(\"{v.name}\", to_string_8(obj.{v.name}), {str(max_key_len)});\n"
             elif v.arrayLength.isdigit():
-                out += "    {   ArrayWrapper arr(p,\"" + v.name + \
-                    "\", "+v.arrayLength+");\n"
+                out += f"    {{   ArrayWrapper arr(p,\"{v.name}\", "+v.arrayLength+");\n"
                 for i in range(0, int(v.arrayLength)):
-                    out += "        p.PrintElement(obj." + \
-                        v.name + "[" + str(i) + "]);\n"
-                out += "    }\n"
+                    out += f"        p.PrintElement(obj.{v.name}[{str(i)}]);\n"
+                out += f"    }}\n"
             else:  # dynamic array length based on other member
-                out += "    ArrayWrapper arr(p,\"" + v.name + \
-                    "\", obj."+v.arrayLength+");\n"
-                out += "    for (uint32_t i = 0; i < obj." + \
-                    v.arrayLength+"; i++) {\n"
+                out += f"    ArrayWrapper arr(p,\"{v.name}\", obj."+v.arrayLength+");\n"
+                out += f"    for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n"
                 if v.typeID in types_to_gen:
-                    out += "        if (obj." + v.name + " != nullptr) {\n"
-                    out += "            p.SetElementIndex(i);\n"
-                    out += "            Dump" + v.typeID + \
-                        "(p, \"" + v.name + "\", obj." + v.name + "[i]);\n"
-                    out += "        }\n"
+                    out += f"        if (obj.{v.name} != nullptr) {{\n"
+                    out += f"            p.SetElementIndex(i);\n"
+                    out += f"            Dump{v.typeID}(p, \"{v.name}\", obj.{v.name}[i]);\n"
+                    out += f"        }}\n"
                 else:
-                    out += "        p.PrintElement(obj." + v.name + "[i]);\n"
-                out += "    }\n"
+                    out += f"        p.PrintElement(obj.{v.name}[i]);\n"
+                out += f"    }}\n"
         elif v.typeID == "VkBool32":
-            out += "    p.PrintKeyBool(\"" + v.name + "\", static_cast<bool>(obj." + \
-                v.name + "), " + str(max_key_len) + ");\n"
+            out += f"    p.PrintKeyBool(\"{v.name}\", static_cast<bool>(obj.{v.name}), {str(max_key_len)});\n"
         elif v.typeID == "VkConformanceVersion":
-            out += "    DumpVkConformanceVersion(p, \"conformanceVersion\", obj." + \
-                v.name + ", " + str(max_key_len) + ");\n"
+            out += f"    DumpVkConformanceVersion(p, \"conformanceVersion\", obj.{v.name}, {str(max_key_len)});\n"
         elif v.typeID == "VkDeviceSize":
-            out += "    p.PrintKeyValue(\"" + v.name + "\", to_hex_str(p, obj." + \
-                v.name + "), " + str(max_key_len) + ");\n"
+            out += f"    p.PrintKeyValue(\"{v.name}\", to_hex_str(p, obj.{v.name}), {str(max_key_len)});\n"
         elif v.typeID in predefined_types:
-            out += "    p.PrintKeyValue(\"" + v.name + "\", obj." + \
-                v.name + ", " + str(max_key_len) + ");\n"
+            out += f"    p.PrintKeyValue(\"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
         elif v.name not in ['sType', 'pNext']:
             # if it is an enum/flag/bitmask, add the calculated width
             type_name = v.typeID
@@ -592,15 +565,12 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
                 if type_name in value:
                     type_name = key
             if type_name not in structure_names:
-                out += "    Dump" + type_name + \
-                    "(p, \"" + v.name + "\", obj." + \
-                    v.name + ", " + str(max_key_len) + ");\n"
+                out += f"    Dump{type_name}(p, \"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
             else:
-                out += "    Dump" + type_name + \
-                    "(p, \"" + v.name + "\", obj." + v.name + ");\n"
+                out += f"    Dump{type_name}(p, \"{v.name}\", obj.{v.name});\n"
     if struct.name in ["VkPhysicalDeviceLimits", "VkPhysicalDeviceSparseProperties"]:
-        out += "    p.ObjectEnd();\n"
-    out += "}\n"
+        out += f"    p.ObjectEnd();\n"
+    out += f"}}\n"
 
     out += AddGuardFooter(struct)
     return out
@@ -609,19 +579,18 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
 def PrintStructShort(struct):
     out = ''
     out += AddGuardHeader(struct)
-    out += "std::ostream &operator<<(std::ostream &o, " + \
-        struct.name + " &obj) {\n"
-    out += "    return o << \"(\" << "
+    out += f"std::ostream &operator<<(std::ostream &o, {struct.name} &obj) {{\n"
+    out += f"    return o << \"(\" << "
 
     first = True
     for v in struct.members:
         if first:
             first = False
-            out += "obj." + v.name + " << "
+            out += f"obj.{v.name} << "
         else:
-            out += "\',\' << obj." + v.name + " << "
-    out += "\")\";\n"
-    out += "}\n"
+            out += f"\',\' << obj.{v.name} << "
+    out += f"\")\";\n"
+    out += f"}}\n"
     out += AddGuardFooter(struct)
     return out
 
@@ -631,32 +600,30 @@ def PrintChainBuilders(listName, structures, all_structures):
         all_structures, key=operator.attrgetter('name'))
 
     out = ''
-    out += "    infos." + listName + " = {\n"
+    out += f"    infos.{listName} = {{\n"
     for s in sorted_structures:
         if s.name in structures:
             out += AddGuardHeader(s)
             if s.sTypeName is not None:
-                out += "        {" + s.sTypeName + \
-                    ", sizeof(" + s.name + ")},\n"
+                out += f"        {{{s.sTypeName}, sizeof({s.name})}},\n"
             out += AddGuardFooter(s)
-    out += "    };\n"
+    out += f"    }};\n"
     return out
 
 
 def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, versions):
     out = ''
-    out += "void chain_iterator_" + listName + "(Printer &p, "
+    out += f"void chain_iterator_{listName}(Printer &p, "
     if checkExtLoc == "device":
-        out += "AppGpu &gpu"
+        out += f"AppGpu &gpu"
     elif checkExtLoc == "instance":
-        out += "AppInstance &inst"
+        out += f"AppInstance &inst"
     elif checkExtLoc == "both":
-        out += "AppInstance &inst, AppGpu &gpu"
-    out += ", void * place, VulkanVersion version) {\n"
-
-    out += "    while (place) {\n"
-    out += "        struct VkStructureHeader *structure = (struct VkStructureHeader *)place;\n"
-    out += "        p.SetSubHeader();\n"
+        out += f"AppInstance &inst, AppGpu &gpu"
+    out += f", void * place, VulkanVersion version) {{\n"
+    out += f"    while (place) {{\n"
+    out += f"        struct VkStructureHeader *structure = (struct VkStructureHeader *)place;\n"
+    out += f"        p.SetSubHeader();\n"
     sorted_structures = sorted(
         all_structures, key=operator.attrgetter('name'))
     for s in sorted_structures:
@@ -683,64 +650,58 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
 
         if s.name in structures:
             out += AddGuardHeader(s)
-            out += "        if (structure->sType == " + s.sTypeName
+            out += f"        if (structure->sType == {s.sTypeName}"
             has_version = version is not None
             has_extNameStr = extNameStr is not None or s.name in aliases.keys()
 
             if has_version or has_extNameStr:
-                out += " && \n           ("
+                out += f" && \n           ("
                 if has_extNameStr:
                     if extType == "device":
-                        out += "gpu.CheckPhysicalDeviceExtensionIncluded(" + \
-                            extNameStr + ")"
+                        out += f"gpu.CheckPhysicalDeviceExtensionIncluded({extNameStr})"
                     elif extType == "instance":
-                        out += "inst.CheckExtensionEnabled(" + extNameStr + ")"
+                        out += f"inst.CheckExtensionEnabled({extNameStr})"
                     if has_version and extType is not None:
-                        out += " ||\n            "
+                        out += f" ||\n            "
                 if has_version:
-                    out += "version.minor >= " + str(version)
-                out += ")"
-            out += ") {\n"
-            out += "            " + s.name + "* props = " + \
-                "("+s.name+"*)structure;\n"
-
-            out += "            Dump" + s.name + "(p, "
+                    out += f"version.minor >= {str(version)}"
+                out += f")"
+            out += f") {{\n"
+            out += f"            {s.name}* props = ({s.name}*)structure;\n"
+            out += f"            Dump{s.name}(p, "
             if s.name in aliases.keys() and version is not None:
-                out += "version.minor >= " + version + " ?\"" + \
-                    s.name + "\":\"" + oldVersionName + "\""
+                out += f"version.minor >= {version} ?\"{s.name}\":\"{oldVersionName}\""
             else:
-                out += "\"" + s.name + "\""
-            out += ", *props);\n"
-            out += "            p.AddNewline();\n"
-            out += "        }\n"
+                out += f"\"{s.name}\""
+            out += f", *props);\n"
+            out += f"            p.AddNewline();\n"
+            out += f"        }}\n"
             out += AddGuardFooter(s)
-    out += "        place = structure->pNext;\n"
-    out += "    }\n"
-    out += "}\n"
+    out += f"        place = structure->pNext;\n"
+    out += f"    }}\n"
+    out += f"}}\n"
     return out
 
 def PrintStructComparisonForwardDecl(structure):
     out = ''
-    out += "bool operator==(const " + structure.name + \
-        " & a, const " + structure.name + " b);\n"
+    out += f"bool operator==(const {structure.name} & a, const {structure.name} b);\n"
     return out
 
 
 def PrintStructComparison(structure):
     out = ''
-    out += "bool operator==(const " + structure.name + \
-        " & a, const " + structure.name + " b) {\n"
-    out += "    return "
+    out += f"bool operator==(const {structure.name} & a, const {structure.name} b) {{\n"
+    out += f"    return "
     is_first = True
     for m in structure.members:
         if m.name not in ['sType', 'pNext']:
             if not is_first:
-                out += "\n        && "
+                out += f"\n        && "
             else:
                 is_first = False
-            out += "a." + m.name + " == b." + m.name
-    out += ";\n"
-    out += "}\n"
+            out += f"a.{m.name} == b.{m.name}"
+    out += f";\n"
+    out += f"}}\n"
     return out
 
 
@@ -962,7 +923,7 @@ class VulkanExtension:
                 bitpos = enum.get('bitpos')
                 offset = enum.get('offset')
                 # gets the VK_XXX_EXTENSION_NAME string
-                if value == "\"" + self.name + "\"":
+                if value == f"\"{self.name}\"":
                     self.extNameStr = name
 
                 if value is None and bitpos is not None:
