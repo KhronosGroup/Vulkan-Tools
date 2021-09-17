@@ -288,7 +288,7 @@ class VulkanInfoGenerator(OutputGenerator):
                     out += PrintBitMaskToString(bitmask, flag.name, self)
 
         for s in (x for x in self.all_structures if x.name in types_to_gen and x.name not in struct_blacklist):
-            out += PrintStructure(s, types_to_gen, names_of_structures_to_gen)
+            out += PrintStructure(s, types_to_gen, names_of_structures_to_gen, self.aliases)
 
         out += "pNextChainInfos get_chain_infos() {\n"
         out += "    pNextChainInfos infos;\n"
@@ -508,7 +508,7 @@ def PrintBitMaskToString(bitmask, name, gen):
     return out
 
 
-def PrintStructure(struct, types_to_gen, structure_names):
+def PrintStructure(struct, types_to_gen, structure_names, aliases):
     if len(struct.members) == 0:
         return ""
     out = ''
@@ -587,12 +587,16 @@ def PrintStructure(struct, types_to_gen, structure_names):
                 v.name + ", " + str(max_key_len) + ");\n"
         elif v.name not in ['sType', 'pNext']:
             # if it is an enum/flag/bitmask, add the calculated width
-            if v.typeID not in structure_names:
-                out += "    Dump" + v.typeID + \
+            type_name = v.typeID
+            for key, value in aliases.items():
+                if type_name in value:
+                    type_name = key
+            if type_name not in structure_names:
+                out += "    Dump" + type_name + \
                     "(p, \"" + v.name + "\", obj." + \
                     v.name + ", " + str(max_key_len) + ");\n"
             else:
-                out += "    Dump" + v.typeID + \
+                out += "    Dump" + type_name + \
                     "(p, \"" + v.name + "\", obj." + v.name + ");\n"
     if struct.name in ["VkPhysicalDeviceLimits", "VkPhysicalDeviceSparseProperties"]:
         out += "    p.ObjectEnd();\n"
@@ -837,6 +841,9 @@ class VulkanFlags:
         self.name = rootNode.get('name')
         self.type = rootNode.get('type')
         self.enum = rootNode.get('requires')
+        # 64 bit flags use bitvalues, not requires
+        if self.enum == None:
+            self.enum = rootNode.get('bitvalues')
 
 
 class VulkanVariable:
