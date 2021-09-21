@@ -96,6 +96,9 @@ static const char *VkDriverIdString(VkDriverId value) {
         case (15): return "DRIVER_ID_COREAVI_PROPRIETARY";
         case (16): return "DRIVER_ID_JUICE_PROPRIETARY";
         case (17): return "DRIVER_ID_VERISILICON_PROPRIETARY";
+        case (18): return "DRIVER_ID_MESA_TURNIP";
+        case (19): return "DRIVER_ID_MESA_V3DV";
+        case (20): return "DRIVER_ID_MESA_PANVK";
         default: return "UNKNOWN_VkDriverId";
     }
 }
