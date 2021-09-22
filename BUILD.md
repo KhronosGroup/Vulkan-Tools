@@ -573,34 +573,36 @@ following.
   - SDK Platforms > Android 6.0 and newer
   - SDK Tools > Android SDK Build-Tools
   - SDK Tools > Android SDK Platform-Tools
-  - SDK Tools > Android SDK Tools
-  - SDK Tools > NDK
+  - SDK Tools > NDK (Side by side)
 
 #### Add Android specifics to environment
 
-For each of the below, you may need to specify a different build-tools
-version, as Android Studio will roll it forward fairly regularly.
+For each of the below, you may need to specify a different build-tools and ndk
+versions, as Android Studio will roll them forward fairly regularly.
 
 On Linux:
 
     export ANDROID_SDK_HOME=$HOME/Android/sdk
-    export ANDROID_NDK_HOME=$HOME/Android/sdk/ndk-bundle
-    export PATH=$ANDROID_SDK_HOME:$PATH
+    export ANDROID_NDK_HOME=$HOME/Android/sdk/ndk/23.0.7599858
     export PATH=$ANDROID_NDK_HOME:$PATH
-    export PATH=$ANDROID_SDK_HOME/build-tools/23.0.3:$PATH
+    export PATH=$ANDROID_SDK_HOME/platform-tools:$PATH
+    export PATH=$ANDROID_SDK_HOME/build-tools/31.0.0:$PATH
 
 On Windows:
 
     set ANDROID_SDK_HOME=%LOCALAPPDATA%\Android\sdk
-    set ANDROID_NDK_HOME=%LOCALAPPDATA%\Android\sdk\ndk-bundle
-    set PATH=%LOCALAPPDATA%\Android\sdk\ndk-bundle;%PATH%
+    set ANDROID_NDK_HOME=%LOCALAPPDATA%\Android\sdk\ndk\23.0.7599858
+    set PATH=%ANDROID_NDK_HOME%;%PATH%
+    set PATH=%ANDROID_SDK_HOME%\platform-tools;%PATH%
+    set PATH=%ANDROID_SDK_HOME%\build-tools\31.0.0;%PATH%
 
 On OSX:
 
     export ANDROID_SDK_HOME=$HOME/Library/Android/sdk
-    export ANDROID_NDK_HOME=$HOME/Library/Android/sdk/ndk-bundle
+    export ANDROID_NDK_HOME=$HOME/Library/Android/sdk/ndk/23.0.7599858
     export PATH=$ANDROID_NDK_PATH:$PATH
-    export PATH=$ANDROID_SDK_HOME/build-tools/23.0.3:$PATH
+    export PATH=$ANDROID_SDK_HOME/platform-tools:$PATH
+    export PATH=$ANDROID_SDK_HOME/build-tools/31.0.0:$PATH
 
 Note: If `jarsigner` is missing from your platform, you can find it in the
 Android Studio install or in your Java installation. If you do not have Java,
@@ -608,112 +610,25 @@ you can get it with something like the following:
 
   sudo apt-get install openjdk-8-jdk
 
-#### Additional OSX System Requirements
-
-Tested on OSX version 10.13.3
-
-Setup Homebrew and components
-
-- Follow instructions on [brew.sh](http://brew.sh) to get Homebrew installed.
-
-      /usr/bin/ruby -e "$(curl -fsSL \
-          https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-- Ensure Homebrew is at the beginning of your PATH:
-
-      export PATH=/usr/local/bin:$PATH
-
-- Add packages with the following:
-
-      brew install python
-
 ### Android Build
 
-There are two options for building the Android tools. Either using the SPIRV
-tools provided as part of the Android NDK, or using upstream sources. To build
-with SPIRV tools from the NDK, remove the build-android/third_party directory
-created by running update_external_sources_android.sh, (or avoid running
-update_external_sources_android.sh). Use the following script to build
-everything in the repository for Android, including validation layers, tests,
-demos, and APK packaging: This script does retrieve and use the upstream SPRIV
-tools.
+Use the following script to build the vkcube demo for Android:
 
     cd build-android
     ./build_all.sh
 
-Test and application APKs can be installed on production devices with:
+The APK can be installed on production devices with:
 
     ./install_all.sh [-s <serial number>]
 
 Note that there are no equivalent scripts on Windows yet, that work needs to
-be completed. The following per platform commands can be used for layer only
-builds:
+be completed.
 
-#### Linux and OSX
+### Run vkcube
 
-Follow the setup steps for Linux or OSX above, then from your terminal:
+Use the following command to run vkcube for Android:
 
-    cd build-android
-    ./update_external_sources_android.sh --no-build
-    ./android-generate.sh
-    ndk-build -j4
-
-#### Windows
-
-Follow the setup steps for Windows above, then from Developer Command Prompt
-for VS2013:
-
-    cd build-android
-    update_external_sources_android.bat
-    android-generate.bat
-    ndk-build
-
-### Android Tests and Demos
-
-After making any changes to the repository you should perform some quick
-sanity tests, including the layer validation tests and the vkcube 
-demo with validation enabled.
-
-#### Run Layer Validation Tests
-
-Use the following steps to build, install, and run the layer validation tests
-for Android:
-
-    cd build-android
-    ./build_all.sh
-    adb install -r bin/VulkanLayerValidationTests.apk
-    adb shell am start com.example.VulkanLayerValidationTests/android.app.NativeActivity
-
-Alternatively, you can use the test_APK script to install and run the layer
-validation tests:
-
-    test_APK.sh -s <serial number> -p <platform name> -f <gtest_filter>
-
-#### Run vkcube with Validation
-
-TODO: This must be reworked to pull in layers from the ValidationLayers repo
-
-Use the following steps to build, install, and run vkcube for Android:
-
-    cd build-android
-    ./build_all.sh
-    adb install -r ../demos/android/cube/bin/vkcube.apk
-    adb shell am start com.example.Cube/android.app.NativeActivity
-
-To build, install, and run Cube with validation layers,
-first build layers using steps above, then run:
-
-    cd build-android
-    ./build_all.sh
-    adb install -r ../demos/android/cube-with-layers/bin/cube-with-layers.apk
-
-##### Run without validation enabled
-
-    adb shell am start com.example.CubeWithLayers/android.app.NativeActivity
-
-##### Run with validation enabled
-
-    adb shell am start -a android.intent.action.MAIN -c android-intent.category.LAUNCH -n com.example.CubeWithLayers/android.app.NativeActivity --es args "--validate"
+    adb shell am start com.example.VkCube/android.app.NativeActivity
 
 ## Building on MacOS
 
