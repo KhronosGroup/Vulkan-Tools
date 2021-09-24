@@ -550,7 +550,7 @@ void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
         p.SetSubHeader();
         ObjectWrapper obj(p, "Tooling Info");
         for (auto tool : tools) {
-            DumpVkPhysicalDeviceToolPropertiesEXT(p, tool.name, tool);
+            DumpVkPhysicalDeviceToolProperties(p, tool.name, tool);
             p.AddNewline();
         }
     }

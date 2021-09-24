@@ -86,11 +86,11 @@ std::string to_hex_str(Printer &p, T i) {
 
 # used in the .cpp code
 structures_to_gen = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
-                     'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolPropertiesEXT']
+                     'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties']
 enums_to_gen = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling']
 flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT',
-                'VkDeviceGroupPresentModeFlagsKHR', 'VkFormatFeatureFlags', 'VkMemoryPropertyFlags', 'VkMemoryHeapFlags']
+                'VkDeviceGroupPresentModeFlagsKHR', 'VkFormatFeatureFlags', 'VkFormatFeatureFlags2', 'VkMemoryPropertyFlags', 'VkMemoryHeapFlags']
 flags_strings_to_gen = ['VkQueueFlags']
 
 struct_short_versions_to_gen = ['VkExtent3D']

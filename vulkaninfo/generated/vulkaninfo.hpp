@@ -994,6 +994,37 @@ void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTr
     p.PrintKeyString(name, strings.at(0), width);
 }
 
+std::vector<const char *>VkToolPurposeFlagBitsGetStrings(VkToolPurposeFlagBits value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (0x1 & value) strings.push_back("TOOL_PURPOSE_VALIDATION_BIT");
+    if (0x2 & value) strings.push_back("TOOL_PURPOSE_PROFILING_BIT");
+    if (0x4 & value) strings.push_back("TOOL_PURPOSE_TRACING_BIT");
+    if (0x8 & value) strings.push_back("TOOL_PURPOSE_ADDITIONAL_FEATURES_BIT");
+    if (0x10 & value) strings.push_back("TOOL_PURPOSE_MODIFYING_FEATURES_BIT");
+    if (0x20 & value) strings.push_back("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
+    if (0x40 & value) strings.push_back("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
+    return strings;
+}
+void DumpVkToolPurposeFlags(Printer &p, std::string name, VkToolPurposeFlags value, int width = 0) {
+    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
+    if (static_cast<VkToolPurposeFlagBits>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkToolPurposeFlagBitsGetStrings(static_cast<VkToolPurposeFlagBits>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBits value, int width = 0) {
+    auto strings = VkToolPurposeFlagBitsGetStrings(value);
+    p.PrintKeyString(name, strings.at(0), width);
+}
+
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier, 27);
@@ -1985,6 +2016,14 @@ void DumpVkPhysicalDeviceTimelineSemaphoreFeatures(Printer &p, std::string name,
 void DumpVkPhysicalDeviceTimelineSemaphoreProperties(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 35);
+}
+void DumpVkPhysicalDeviceToolProperties(Printer &p, std::string name, VkPhysicalDeviceToolProperties &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyString("name", obj.name, 16);
+    p.PrintKeyString("version", obj.version, 16);
+    DumpVkToolPurposeFlags(p, "purposes", obj.purposes, 16);
+    p.PrintKeyString("description", obj.description, 16);
+    p.PrintKeyString("layer", obj.layer, 16);
 }
 void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
