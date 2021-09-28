@@ -1250,6 +1250,14 @@ VK_FUCHSIA_external_semaphore = Extension(name='VK_FUCHSIA_external_semaphore', 
     Command(name='vkGetSemaphoreZirconHandleFUCHSIA', dispatch='VkDevice'),
 ])
 
+VK_FUCHSIA_buffer_collection = Extension(name='VK_FUCHSIA_buffer_collection', version=2, guard='VK_USE_PLATFORM_FUCHSIA', commands=[
+    Command(name='vkCreateBufferCollectionFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkSetBufferCollectionImageConstraintsFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkSetBufferCollectionBufferConstraintsFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkDestroyBufferCollectionFUCHSIA', dispatch='VkDevice'),
+    Command(name='vkGetBufferCollectionPropertiesFUCHSIA', dispatch='VkDevice'),
+])
+
 VK_MVK_ios_surface = Extension(name='VK_MVK_ios_surface', version=3, guard='VK_USE_PLATFORM_IOS_MVK', commands=[
     Command(name='vkCreateIOSSurfaceMVK', dispatch='VkInstance'),
 ])
@@ -1610,6 +1618,7 @@ extensions = [
     VK_FUCHSIA_imagepipe_surface,
     VK_FUCHSIA_external_memory,
     VK_FUCHSIA_external_semaphore,
+    VK_FUCHSIA_buffer_collection,
     VK_MVK_ios_surface,
     VK_MVK_macos_surface,
     VK_EXT_metal_surface,

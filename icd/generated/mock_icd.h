@@ -300,6 +300,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_primitive_topology_list_restart", 1},
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
+    {"VK_FUCHSIA_buffer_collection", 2},
     {"VK_HUAWEI_subpass_shading", 2},
     {"VK_HUAWEI_invocation_mask", 1},
     {"VK_NV_external_memory_rdma", 1},
@@ -3156,6 +3157,35 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreZirconHandleFUCHSIA(
     zx_handle_t*                                pZirconHandle);
 #endif /* VK_USE_PLATFORM_FUCHSIA */
 
+#ifdef VK_USE_PLATFORM_FUCHSIA
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateBufferCollectionFUCHSIA(
+    VkDevice                                    device,
+    const VkBufferCollectionCreateInfoFUCHSIA*  pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkBufferCollectionFUCHSIA*                  pCollection);
+
+static VKAPI_ATTR VkResult VKAPI_CALL SetBufferCollectionImageConstraintsFUCHSIA(
+    VkDevice                                    device,
+    VkBufferCollectionFUCHSIA                   collection,
+    const VkImageConstraintsInfoFUCHSIA*        pImageConstraintsInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL SetBufferCollectionBufferConstraintsFUCHSIA(
+    VkDevice                                    device,
+    VkBufferCollectionFUCHSIA                   collection,
+    const VkBufferConstraintsInfoFUCHSIA*       pBufferConstraintsInfo);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyBufferCollectionFUCHSIA(
+    VkDevice                                    device,
+    VkBufferCollectionFUCHSIA                   collection,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetBufferCollectionPropertiesFUCHSIA(
+    VkDevice                                    device,
+    VkBufferCollectionFUCHSIA                   collection,
+    VkBufferCollectionPropertiesFUCHSIA*        pProperties);
+#endif /* VK_USE_PLATFORM_FUCHSIA */
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(
     VkDevice                                    device,
@@ -3948,6 +3978,21 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
 #ifdef VK_USE_PLATFORM_FUCHSIA
     {"vkGetSemaphoreZirconHandleFUCHSIA", (void*)GetSemaphoreZirconHandleFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkCreateBufferCollectionFUCHSIA", (void*)CreateBufferCollectionFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkSetBufferCollectionImageConstraintsFUCHSIA", (void*)SetBufferCollectionImageConstraintsFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkSetBufferCollectionBufferConstraintsFUCHSIA", (void*)SetBufferCollectionBufferConstraintsFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkDestroyBufferCollectionFUCHSIA", (void*)DestroyBufferCollectionFUCHSIA},
+#endif
+#ifdef VK_USE_PLATFORM_FUCHSIA
+    {"vkGetBufferCollectionPropertiesFUCHSIA", (void*)GetBufferCollectionPropertiesFUCHSIA},
 #endif
     {"vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI", (void*)GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI},
     {"vkCmdSubpassShadingHUAWEI", (void*)CmdSubpassShadingHUAWEI},
