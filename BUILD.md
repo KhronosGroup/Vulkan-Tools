@@ -213,6 +213,7 @@ The following is a table of all string options currently supported by this repos
 | Option | Platform | Default | Description |
 | ------ | -------- | ------- | ----------- |
 | CMAKE_OSX_DEPLOYMENT_TARGET | MacOS | `10.12` | The minimum version of MacOS for loader deployment. |
+| VULKANINFO_BUILD_DLL_VERSIONINFO | Windows | `""` | Set the Windows specific version information for Vulkaninfo. Format is "major.minor.patch.build". |
 
 These variables should be set using the `-D` option when invoking CMake to
 generate the native platform files.

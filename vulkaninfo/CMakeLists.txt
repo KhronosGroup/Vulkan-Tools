@@ -18,7 +18,29 @@
 # CMakeLists.txt file for building Vulkaninfo
 
 if(WIN32)
-    add_executable(vulkaninfo vulkaninfo.cpp vulkaninfo.rc)
+    # ~~~
+    # Setup the vulkaninfo.rc file to contain the correct info
+    # Optionally uses the VULKANINFO_BUILD_DLL_VERSIONINFO build option to allow setting the exact build version
+    # When VULKANINFO_BUILD_DLL_VERSIONINFO is not provided, "Dev Build" is added to the version string
+    # ~~~
+    if ("$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}" STREQUAL "")
+        # Default version - for when no version is provided
+        set(VULKANINFO_RC_VERSION "1.0.1111.2222")
+        set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}.Dev Build\"")
+        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkan Loader - Dev Build\"")
+    else()
+        set(VULKANINFO_RC_VERSION "$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}")
+        set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}\"")
+        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkan Loader\"")
+    endif()
+
+    # RC file wants the value of FILEVERSION to separated by commas
+    string(REPLACE "." ", " VULKANINFO_VER_FILE_VERSION "${VULKANINFO_RC_VERSION}")
+
+    # Configure the file to include the versioning info
+    configure_file(vulkaninfo.rc.in ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
+
+    add_executable(vulkaninfo vulkaninfo.cpp ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
 elseif(APPLE)
     add_executable(vulkaninfo
                    vulkaninfo.cpp
