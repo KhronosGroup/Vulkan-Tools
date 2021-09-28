@@ -1,9 +1,9 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2015-2017 The Khronos Group Inc.
-# Copyright (c) 2015-2017 Valve Corporation
-# Copyright (c) 2015-2017 LunarG, Inc.
-# Copyright (c) 2015-2017 Google Inc.
+# Copyright (c) 2015-2021 The Khronos Group Inc.
+# Copyright (c) 2015-2021 Valve Corporation
+# Copyright (c) 2015-2021 LunarG, Inc.
+# Copyright (c) 2015-2021 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -176,10 +176,10 @@ class HelperFileOutputGenerator(OutputGenerator):
         if interface.tag != 'extension':
             return
         name = self.featureName
-        nameElem = interface[0][1]
-        name_define = nameElem.get('name')
-        if 'EXTENSION_NAME' not in name_define:
-            print("Error in vk.xml file -- extension name is not available")
+        for enum in interface.findall('require/enum'):
+            if enum.get('name', '').endswith('EXTENSION_NAME'):
+                name_define = enum.get('name')
+                break
         requires = interface.get('requires')
         if requires is not None:
             required_extensions = requires.split(',')
@@ -241,7 +241,7 @@ class HelperFileOutputGenerator(OutputGenerator):
     def paramIsPointer(self, param):
         ispointer = False
         for elem in param:
-            if ((elem.tag is not 'type') and (elem.tail is not None)) and '*' in elem.tail:
+            if ((elem.tag != 'type') and (elem.tail is not None)) and '*' in elem.tail:
                 ispointer = True
         return ispointer
     #

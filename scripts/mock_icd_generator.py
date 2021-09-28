@@ -1,9 +1,9 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2015-2017 The Khronos Group Inc.
-# Copyright (c) 2015-2017 Valve Corporation
-# Copyright (c) 2015-2017 LunarG, Inc.
-# Copyright (c) 2015-2017 Google Inc.
+# Copyright (c) 2015-2021 The Khronos Group Inc.
+# Copyright (c) 2015-2021 Valve Corporation
+# Copyright (c) 2015-2021 LunarG, Inc.
+# Copyright (c) 2015-2021 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1202,12 +1202,17 @@ class MockICDOutputGenerator(OutputGenerator):
             ignore_exts = ['VK_EXT_validation_cache', 'VK_KHR_portability_subset']
             for ext in self.registry.tree.findall("extensions/extension"):
                 if ext.attrib['supported'] != 'disabled': # Only include enabled extensions
-                    if (ext.attrib['name'] in ignore_exts):
-                        pass
-                    elif (ext.attrib.get('type') and 'instance' == ext.attrib['type']):
-                        instance_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext[0][0].attrib['value']))
-                    else:
-                        device_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext[0][0].attrib['value']))
+                    if (ext.attrib['name'] not in ignore_exts):
+                        # Search for extension version enum
+                        for enum in ext.findall('require/enum'):
+                            if enum.get('name', '').endswith('_SPEC_VERSION'):
+                                ext_version = enum.get('value')
+                                if (ext.attrib.get('type') == 'instance'):
+                                    instance_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext_version))
+                                else:
+                                    device_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext_version))
+                                break
+
             write('// Map of instance extension name to version', file=self.outFile)
             write('static const std::unordered_map<std::string, uint32_t> instance_extension_map = {', file=self.outFile)
             write('\n'.join(instance_exts), file=self.outFile)
