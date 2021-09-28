@@ -45,6 +45,12 @@ option(BUILD_ICD "Build icd" ON)
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
 
+if(WIN32)
+    # Optional: Allow specify the exact version used in the vulkaninfo executable
+    # Format is major.minor.patch.build
+    set(VULKANINFO_BUILD_DLL_VERSIONINFO "" CACHE STRING "Set the version to be used in the vulkaninfo.rc file. Default value is 1.0.1111.2222")
+endif()
+
 # Enable IDE GUI folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # "Helper" targets that don't have interesting source code should set their FOLDER property to this
