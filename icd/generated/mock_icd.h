@@ -98,7 +98,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
     {"VK_KHR_video_queue", 2},
-    {"VK_KHR_video_decode_queue", 1},
+    {"VK_KHR_video_decode_queue", 2},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
@@ -163,7 +163,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_dma_buf", 1},
     {"VK_EXT_queue_family_foreign", 1},
     {"VK_KHR_dedicated_allocation", 3},
-    {"VK_ANDROID_external_memory_android_hardware_buffer", 3},
+    {"VK_ANDROID_external_memory_android_hardware_buffer", 4},
     {"VK_EXT_sampler_filter_minmax", 2},
     {"VK_KHR_storage_buffer_storage_class", 1},
     {"VK_AMD_gpu_shader_int16", 2},
@@ -177,7 +177,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_image_format_list", 1},
     {"VK_EXT_blend_operation_advanced", 2},
     {"VK_NV_fragment_coverage_to_color", 1},
-    {"VK_KHR_acceleration_structure", 12},
+    {"VK_KHR_acceleration_structure", 13},
     {"VK_KHR_ray_tracing_pipeline", 1},
     {"VK_KHR_ray_query", 1},
     {"VK_NV_framebuffer_mixed_samples", 1},
@@ -186,7 +186,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_post_depth_coverage", 1},
     {"VK_KHR_sampler_ycbcr_conversion", 14},
     {"VK_KHR_bind_memory2", 1},
-    {"VK_EXT_image_drm_format_modifier", 1},
+    {"VK_EXT_image_drm_format_modifier", 2},
     {"VK_EXT_descriptor_indexing", 2},
     {"VK_EXT_shader_viewport_index_layer", 1},
     {"VK_NV_shading_rate_image", 3},
@@ -229,12 +229,12 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pci_bus_info", 2},
     {"VK_AMD_display_native_hdr", 1},
     {"VK_KHR_shader_terminate_invocation", 1},
-    {"VK_EXT_fragment_density_map", 1},
+    {"VK_EXT_fragment_density_map", 2},
     {"VK_EXT_scalar_block_layout", 1},
     {"VK_GOOGLE_hlsl_functionality1", 1},
     {"VK_GOOGLE_decorate_string", 1},
     {"VK_EXT_subgroup_size_control", 2},
-    {"VK_KHR_fragment_shading_rate", 1},
+    {"VK_KHR_fragment_shading_rate", 2},
     {"VK_AMD_shader_core_properties2", 1},
     {"VK_AMD_device_coherent_memory", 1},
     {"VK_EXT_shader_image_atomic_int64", 1},
@@ -278,7 +278,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_present_id", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
-    {"VK_KHR_video_encode_queue", 2},
+    {"VK_KHR_video_encode_queue", 3},
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_KHR_synchronization2", 1},
@@ -293,11 +293,13 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_workgroup_memory_explicit_layout", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
+    {"VK_EXT_rgba10x6_formats", 1},
     {"VK_NV_acquire_winrt_display", 1},
     {"VK_VALVE_mutable_descriptor_type", 1},
     {"VK_EXT_vertex_input_dynamic_state", 2},
     {"VK_EXT_physical_device_drm", 1},
     {"VK_EXT_primitive_topology_list_restart", 1},
+    {"VK_KHR_format_feature_flags2", 1},
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
     {"VK_FUCHSIA_buffer_collection", 2},
@@ -310,6 +312,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_multi_draw", 1},
     {"VK_EXT_load_store_op_none", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
+    {"VK_KHR_maintenance4", 1},
 };
 
 
@@ -2137,6 +2140,24 @@ static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2KHR(
     const VkResolveImageInfo2KHR*               pResolveImageInfo);
 
 
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceBufferMemoryRequirementsKHR*  pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceImageMemoryRequirementsKHR*   pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirementsKHR(
+    VkDevice                                    device,
+    const VkDeviceImageMemoryRequirementsKHR*   pInfo,
+    uint32_t*                                   pSparseMemoryRequirementCount,
+    VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
     VkInstance                                  instance,
     const VkDebugReportCallbackCreateInfoEXT*   pCreateInfo,
@@ -3094,6 +3115,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -3785,6 +3807,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdCopyImageToBuffer2KHR", (void*)CmdCopyImageToBuffer2KHR},
     {"vkCmdBlitImage2KHR", (void*)CmdBlitImage2KHR},
     {"vkCmdResolveImage2KHR", (void*)CmdResolveImage2KHR},
+    {"vkGetDeviceBufferMemoryRequirementsKHR", (void*)GetDeviceBufferMemoryRequirementsKHR},
+    {"vkGetDeviceImageMemoryRequirementsKHR", (void*)GetDeviceImageMemoryRequirementsKHR},
+    {"vkGetDeviceImageSparseMemoryRequirementsKHR", (void*)GetDeviceImageSparseMemoryRequirementsKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
