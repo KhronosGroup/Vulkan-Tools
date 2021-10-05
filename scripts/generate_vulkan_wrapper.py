@@ -518,7 +518,7 @@ VK_KHR_vulkan_memory_model = Extension(name='VK_KHR_vulkan_memory_model', versio
 VK_KHR_shader_terminate_invocation = Extension(name='VK_KHR_shader_terminate_invocation', version=1, guard=None, commands=[
 ])
 
-VK_KHR_fragment_shading_rate = Extension(name='VK_KHR_fragment_shading_rate', version=1, guard=None, commands=[
+VK_KHR_fragment_shading_rate = Extension(name='VK_KHR_fragment_shading_rate', version=2, guard=None, commands=[
     Command(name='vkGetPhysicalDeviceFragmentShadingRatesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkCmdSetFragmentShadingRateKHR', dispatch='VkCommandBuffer'),
 ])
@@ -598,6 +598,15 @@ VK_KHR_copy_commands2 = Extension(name='VK_KHR_copy_commands2', version=1, guard
     Command(name='vkCmdCopyImageToBuffer2KHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdBlitImage2KHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdResolveImage2KHR', dispatch='VkCommandBuffer'),
+])
+
+VK_KHR_format_feature_flags2 = Extension(name='VK_KHR_format_feature_flags2', version=1, guard=None, commands=[
+])
+
+VK_KHR_maintenance4 = Extension(name='VK_KHR_maintenance4', version=1, guard=None, commands=[
+    Command(name='vkGetDeviceBufferMemoryRequirementsKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeviceImageMemoryRequirementsKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeviceImageSparseMemoryRequirementsKHR', dispatch='VkDevice'),
 ])
 
 VK_EXT_debug_report = Extension(name='VK_EXT_debug_report', version=10, guard=None, commands=[
@@ -834,7 +843,7 @@ VK_NV_shader_sm_builtins = Extension(name='VK_NV_shader_sm_builtins', version=1,
 VK_EXT_post_depth_coverage = Extension(name='VK_EXT_post_depth_coverage', version=1, guard=None, commands=[
 ])
 
-VK_EXT_image_drm_format_modifier = Extension(name='VK_EXT_image_drm_format_modifier', version=1, guard=None, commands=[
+VK_EXT_image_drm_format_modifier = Extension(name='VK_EXT_image_drm_format_modifier', version=2, guard=None, commands=[
     Command(name='vkGetImageDrmFormatModifierPropertiesEXT', dispatch='VkDevice'),
 ])
 
@@ -962,7 +971,7 @@ VK_AMD_display_native_hdr = Extension(name='VK_AMD_display_native_hdr', version=
     Command(name='vkSetLocalDimmingAMD', dispatch='VkDevice'),
 ])
 
-VK_EXT_fragment_density_map = Extension(name='VK_EXT_fragment_density_map', version=1, guard=None, commands=[
+VK_EXT_fragment_density_map = Extension(name='VK_EXT_fragment_density_map', version=2, guard=None, commands=[
 ])
 
 VK_EXT_scalar_block_layout = Extension(name='VK_EXT_scalar_block_layout', version=1, guard=None, commands=[
@@ -1138,6 +1147,9 @@ VK_EXT_image_robustness = Extension(name='VK_EXT_image_robustness', version=1, g
 VK_EXT_4444_formats = Extension(name='VK_EXT_4444_formats', version=1, guard=None, commands=[
 ])
 
+VK_EXT_rgba10x6_formats = Extension(name='VK_EXT_rgba10x6_formats', version=1, guard=None, commands=[
+])
+
 VK_NV_acquire_winrt_display = Extension(name='VK_NV_acquire_winrt_display', version=1, guard=None, commands=[
     Command(name='vkAcquireWinrtDisplayNV', dispatch='VkPhysicalDevice'),
     Command(name='vkGetWinrtDisplayNV', dispatch='VkPhysicalDevice'),
@@ -1196,7 +1208,7 @@ VK_EXT_pageable_device_local_memory = Extension(name='VK_EXT_pageable_device_loc
     Command(name='vkSetDeviceMemoryPriorityEXT', dispatch='VkDevice'),
 ])
 
-VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=12, guard=None, commands=[
+VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkCmdBuildAccelerationStructuresKHR', dispatch='VkCommandBuffer'),
@@ -1231,7 +1243,7 @@ VK_KHR_android_surface = Extension(name='VK_KHR_android_surface', version=6, gua
     Command(name='vkCreateAndroidSurfaceKHR', dispatch='VkInstance'),
 ])
 
-VK_ANDROID_external_memory_android_hardware_buffer = Extension(name='VK_ANDROID_external_memory_android_hardware_buffer', version=3, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
+VK_ANDROID_external_memory_android_hardware_buffer = Extension(name='VK_ANDROID_external_memory_android_hardware_buffer', version=4, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
     Command(name='vkGetAndroidHardwareBufferPropertiesANDROID', dispatch='VkDevice'),
     Command(name='vkGetMemoryAndroidHardwareBufferANDROID', dispatch='VkDevice'),
 ])
@@ -1363,14 +1375,14 @@ VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=2, guard='VK_E
     Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
@@ -1458,6 +1470,8 @@ extensions = [
     VK_KHR_zero_initialize_workgroup_memory,
     VK_KHR_workgroup_memory_explicit_layout,
     VK_KHR_copy_commands2,
+    VK_KHR_format_feature_flags2,
+    VK_KHR_maintenance4,
     VK_EXT_debug_report,
     VK_NV_glsl_shader,
     VK_EXT_depth_range_unrestricted,
@@ -1596,6 +1610,7 @@ extensions = [
     VK_QCOM_rotated_copy_commands,
     VK_EXT_image_robustness,
     VK_EXT_4444_formats,
+    VK_EXT_rgba10x6_formats,
     VK_NV_acquire_winrt_display,
     VK_VALVE_mutable_descriptor_type,
     VK_EXT_vertex_input_dynamic_state,
