@@ -113,6 +113,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_video_decode_h264", 3},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
+    {"VK_KHR_dynamic_rendering", 1},
     {"VK_AMD_shader_image_load_store_lod", 1},
     {"VK_NV_corner_sampled_image", 2},
     {"VK_KHR_multiview", 1},
@@ -1599,6 +1600,14 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoDecodeInfoKHR*                 pFrameInfo);
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderingKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInfoKHR*                   pRenderingInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdEndRenderingKHR(
+    VkCommandBuffer                             commandBuffer);
 
 
 
@@ -3710,6 +3719,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCmdDecodeVideoKHR", (void*)CmdDecodeVideoKHR},
 #endif
+    {"vkCmdBeginRenderingKHR", (void*)CmdBeginRenderingKHR},
+    {"vkCmdEndRenderingKHR", (void*)CmdEndRenderingKHR},
     {"vkGetPhysicalDeviceFeatures2KHR", (void*)GetPhysicalDeviceFeatures2KHR},
     {"vkGetPhysicalDeviceProperties2KHR", (void*)GetPhysicalDeviceProperties2KHR},
     {"vkGetPhysicalDeviceFormatProperties2KHR", (void*)GetPhysicalDeviceFormatProperties2KHR},

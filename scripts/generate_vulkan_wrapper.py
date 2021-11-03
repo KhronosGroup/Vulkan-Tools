@@ -320,6 +320,11 @@ VK_KHR_display_swapchain = Extension(name='VK_KHR_display_swapchain', version=10
 VK_KHR_sampler_mirror_clamp_to_edge = Extension(name='VK_KHR_sampler_mirror_clamp_to_edge', version=3, guard=None, commands=[
 ])
 
+VK_KHR_dynamic_rendering = Extension(name='VK_KHR_dynamic_rendering', version=1, guard=None, commands=[
+    Command(name='vkCmdBeginRenderingKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdEndRenderingKHR', dispatch='VkCommandBuffer'),
+])
+
 VK_KHR_multiview = Extension(name='VK_KHR_multiview', version=1, guard=None, commands=[
 ])
 
@@ -1410,6 +1415,7 @@ extensions = [
     VK_KHR_display,
     VK_KHR_display_swapchain,
     VK_KHR_sampler_mirror_clamp_to_edge,
+    VK_KHR_dynamic_rendering,
     VK_KHR_multiview,
     VK_KHR_get_physical_device_properties2,
     VK_KHR_device_group,
