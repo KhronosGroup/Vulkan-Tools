@@ -481,13 +481,15 @@ struct phys_device_mem_props2_chain;
 struct phys_device_features2_chain;
 struct surface_capabilities2_chain;
 struct format_properties2_chain;
+struct queue_properties2_chain;
 
-void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2& start, std::unique_ptr<phys_device_props2_chain>& chain);
-void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2& start, std::unique_ptr<phys_device_mem_props2_chain>& chain);
-void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2& start, std::unique_ptr<phys_device_features2_chain>& chain);
-void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR& start, std::unique_ptr<surface_capabilities2_chain>& chain);
-void setup_format_properties2_chain(VkFormatProperties2& start, std::unique_ptr<format_properties2_chain>& chain);
-
+void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain);
+void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2 &start,
+                                        std::unique_ptr<phys_device_mem_props2_chain> &chain);
+void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2 &start, std::unique_ptr<phys_device_features2_chain> &chain);
+void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::unique_ptr<surface_capabilities2_chain> &chain);
+void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain);
+void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain);
 
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
@@ -1369,14 +1371,6 @@ util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &in
     return {};
 }
 
-// struct pNextChainInfos {
-//     std::vector<pNextChainBuildingBlockInfo> phys_device_props2;
-//     std::vector<pNextChainBuildingBlockInfo> phys_device_mem_props2;
-//     std::vector<pNextChainBuildingBlockInfo> phys_device_features2;
-//     std::vector<pNextChainBuildingBlockInfo> surface_capabilities2;
-//     std::vector<pNextChainBuildingBlockInfo> format_properties2;
-// };
-
 struct FormatRange {
     // the Vulkan standard version that supports this format range, or 0 if non-standard
     uint32_t minimum_instance_version;
@@ -1393,12 +1387,12 @@ struct FormatRange {
 struct AppQueueFamilyProperties {
     VkQueueFamilyProperties props;
     uint32_t queue_index;
+    void *pNext = nullptr;  // assumes the lifetime of the pNext chain outlives this object, eg parent object must keep both alive
     bool is_present_platform_agnostic = true;
     VkBool32 platforms_support_present = VK_FALSE;
-
     AppQueueFamilyProperties(AppInstance &inst, VkPhysicalDevice physical_device, VkQueueFamilyProperties family_properties,
-                             uint32_t queue_index)
-        : props(family_properties), queue_index(queue_index) {
+                             uint32_t queue_index, void *pNext = nullptr)
+        : props(family_properties), queue_index(queue_index), pNext(pNext) {
         for (auto &surface_ext : inst.surface_extensions) {
             VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_index, surface_ext.surface,
                                                                                &surface_ext.supports_present);
@@ -1423,6 +1417,7 @@ struct AppGpu {
     VkPhysicalDeviceProperties2KHR props2{};
 
     std::vector<VkQueueFamilyProperties> queue_props;
+    std::vector<VkQueueFamilyProperties2KHR> queue_props2;
     std::vector<AppQueueFamilyProperties> extended_queue_props;
 
     VkPhysicalDeviceMemoryProperties memory_props{};
@@ -1446,9 +1441,9 @@ struct AppGpu {
     std::unique_ptr<phys_device_props2_chain> chain_for_phys_device_props2;
     std::unique_ptr<phys_device_mem_props2_chain> chain_for_phys_device_mem_props2;
     std::unique_ptr<phys_device_features2_chain> chain_for_phys_device_features2;
+    std::vector<std::unique_ptr<queue_properties2_chain>> chain_for_queue_props2;
 
-    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device)
-        : inst(inst), id(id), phys_device(phys_device) {
+    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device) : inst(inst), id(id), phys_device(phys_device) {
         inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
 
         // needs to find the minimum of the instance and device version, and use that to print the device info
@@ -1463,11 +1458,6 @@ struct AppGpu {
         inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
         queue_props.resize(queue_count);
         inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, queue_props.data());
-
-        int queue_index = 0;
-        for (auto &queue_prop : queue_props) {
-            extended_queue_props.push_back(AppQueueFamilyProperties(inst, phys_device, queue_prop, queue_index++));
-        }
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             // VkPhysicalDeviceProperties2
@@ -1487,6 +1477,30 @@ struct AppGpu {
             setup_phys_device_features2_chain(features2, chain_for_phys_device_features2);
 
             inst.ext_funcs.vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
+
+            // std::vector<VkPhysicalDeviceQueueFamilyProperties2>
+            uint32_t queue_prop2_count = 0;
+            inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, nullptr);
+            queue_props2.resize(queue_prop2_count);
+            chain_for_queue_props2.resize(queue_prop2_count);
+            for (size_t i = 0; i < queue_props2.size(); i++) {
+                queue_props2[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
+                setup_queue_properties2_chain(queue_props2[i], chain_for_queue_props2[i]);
+            }
+            inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, queue_props2.data());
+        }
+
+        // Use the queue_props2 if they exist, else fallback on vulkan 1.0 queue_props
+        int queue_index = 0;
+        if (queue_props2.size() > 0) {
+            for (auto &queue_prop : queue_props2) {
+                extended_queue_props.push_back(
+                    AppQueueFamilyProperties(inst, phys_device, queue_prop.queueFamilyProperties, queue_index++, queue_prop.pNext));
+            }
+        } else {
+            for (auto &queue_prop : queue_props) {
+                extended_queue_props.push_back(AppQueueFamilyProperties(inst, phys_device, queue_prop, queue_index++, nullptr));
+            }
         }
 
         device_extensions = AppGetPhysicalDeviceLayerExtensions(nullptr);
@@ -1623,9 +1637,7 @@ struct AppGpu {
             },
         };
     }
-    ~AppGpu() {
-        inst.dll.fp_vkDestroyDevice(dev, nullptr);
-    }
+    ~AppGpu() { inst.dll.fp_vkDestroyDevice(dev, nullptr); }
 
     AppGpu(const AppGpu &) = delete;
     const AppGpu &operator=(const AppGpu &) = delete;
