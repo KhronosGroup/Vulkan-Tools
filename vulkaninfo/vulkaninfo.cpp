@@ -729,13 +729,18 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
         (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || gpu.api_version.minor >= 2)) {
         void *place = gpu.props2.pNext;
         while (place) {
-            VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(place);
+            VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
                 VkPhysicalDeviceDriverProperties *driver_props = reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
                 DumpVkDriverId(p, "driverID", driver_props->driverID, 18);
                 p.PrintKeyString("driverName", driver_props->driverName, 18);
                 p.PrintKeyString("driverInfo", driver_props->driverInfo, 18);
                 DumpVkConformanceVersion(p, "conformanceVersion", driver_props->conformanceVersion, 18);
+            }
+            if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
+                VkPhysicalDeviceIDProperties *device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
+                p.PrintKeyString("deviceUUID", to_string_16(device_id_props->deviceUUID), 18);
+                p.PrintKeyString("driverUUID", to_string_16(device_id_props->driverUUID), 18);
             }
             place = structure->pNext;
         }
@@ -748,7 +753,7 @@ void DumpPortability(Printer &p, AppGpu &gpu) {
         if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             void *props_place = gpu.props2.pNext;
             while (props_place) {
-                VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(props_place);
+                VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(props_place);
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR) {
                     VkPhysicalDevicePortabilitySubsetPropertiesKHR *props =
                         reinterpret_cast<VkPhysicalDevicePortabilitySubsetPropertiesKHR *>(structure);
@@ -760,7 +765,7 @@ void DumpPortability(Printer &p, AppGpu &gpu) {
 
             void *feats_place = gpu.features2.pNext;
             while (feats_place) {
-                VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(feats_place);
+                VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(feats_place);
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR) {
                     VkPhysicalDevicePortabilitySubsetFeaturesKHR *features =
                         reinterpret_cast<VkPhysicalDevicePortabilitySubsetFeaturesKHR *>(structure);
@@ -1063,8 +1068,7 @@ int main(int argc, char **argv) {
             surface_extension.create_window(instance);
             surface_extension.surface = surface_extension.create_surface(instance);
             for (auto &phys_device : phys_devices) {
-                surfaces.push_back(std::unique_ptr<AppSurface>(
-                    new AppSurface(instance, phys_device, surface_extension)));
+                surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
             }
         }
 
