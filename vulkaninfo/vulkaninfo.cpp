@@ -932,7 +932,8 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv) 
     return results;
 }
 
-PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppInstance &inst, AppGpu &selected_gpu) {
+PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppInstance &inst, AppGpu &selected_gpu,
+                                                std::string const &executable_name) {
     PrinterCreateDetails create{};
     create.print_to_file = parse_data.print_to_file;
     create.file_name = (!parse_data.filename.empty()) ? parse_data.filename : parse_data.default_filename;
@@ -949,7 +950,7 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
             create.start_string = std::string("{\n\t\"$schema\": \"https://schema.khronos.org/vulkan/devsim_1_0_0.json#\",\n") +
                                   "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " +
                                   std::to_string(parse_data.selected_gpu) + " (" + selected_gpu.props.deviceName +
-                                  "). Generated using the vulkaninfo program.\",\n\t\t\"vulkanApiVersion\": \"" +
+                                  "). Generated using the " + executable_name + " program.\",\n\t\t\"vulkanApiVersion\": \"" +
                                   VkVersionString(inst.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
             create.print_to_file = true;
@@ -964,8 +965,8 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
                     "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
                 "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " +
                 std::to_string(parse_data.selected_gpu) + "'s (" + selected_gpu.props.deviceName +
-                ") portability features and properties. Generated using the vulkaninfo "
-                "program.\",\n\t\t\"vulkanApiVersion\": "
+                ") portability features and properties. Generated using the " + executable_name +
+                " program.\",\n\t\t\"vulkanApiVersion\": "
                 "\"" +
                 VkVersionString(inst.vk_version) + "\"\n" + "\t}";
 #ifdef VK_USE_PLATFORM_IOS_MVK
@@ -1051,6 +1052,22 @@ int main(int argc, char **argv) {
     }
 #endif
 
+    // Figure out the name of the executable, pull out the name if given a path
+    // Default is `vulkaninfo`
+    std::string executable_name = "vulkaninfo";
+    if (argc >= 1) {
+        const auto argv_0 = std::string(argv[0]);
+        // don't include path separator
+        // Look for forward slash first, only look for backslash if that found nothing
+        auto last_occurrence = argv_0.rfind('/');
+        if (last_occurrence == std::string::npos) {
+            last_occurrence = argv_0.rfind('\\');
+        }
+        if (last_occurrence != std::string::npos && last_occurrence + 1 < argv_0.size()) {
+            executable_name = argv_0.substr(last_occurrence + 1);
+        }
+    }
+
     int return_code = 0;  // set in case of error
     std::unique_ptr<Printer> printer;
     std::ostream std_out(std::cout.rdbuf());
@@ -1107,7 +1124,7 @@ int main(int argc, char **argv) {
         }
 #endif
 
-        auto printer_data = get_printer_create_details(parse_data, instance, *gpus.at(parse_data.selected_gpu));
+        auto printer_data = get_printer_create_details(parse_data, instance, *gpus.at(parse_data.selected_gpu), executable_name);
         if (printer_data.print_to_file) {
             file_out = std::ofstream(printer_data.file_name);
             out = &file_out;
