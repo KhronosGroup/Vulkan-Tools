@@ -1030,6 +1030,11 @@ int main(int argc, char **argv) {
     ParsedResults parse_data = parsing_return.value();
 
 #ifdef _WIN32
+    _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
+
     if (ConsoleIsExclusive()) ConsoleEnlarge();
     User32Handles local_user32_handles;
     user32_handles = &local_user32_handles;
