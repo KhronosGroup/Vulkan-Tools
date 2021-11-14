@@ -958,7 +958,7 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
                     "\"https://schema.khronos.org/vulkan/devsim_VK_KHR_portability_subset-provisional-1.json#\",\n") +
                 "\t\"comments\": {\n\t\t\"desc\": \"JSON configuration file describing GPU " +
                 std::to_string(parse_data.selected_gpu) + "'s (" + selected_gpu.props.deviceName +
-                "( portability features and properties. Generated using the vulkaninfo "
+                ") portability features and properties. Generated using the vulkaninfo "
                 "program.\",\n\t\t\"vulkanApiVersion\": "
                 "\"" +
                 VkVersionString(inst.vk_version) + "\"\n" + "\t}";
@@ -1045,6 +1045,7 @@ int main(int argc, char **argv) {
     }
 #endif
 
+    int return_code = 0;  // set in case of error
     std::unique_ptr<Printer> printer;
     std::ostream std_out(std::cout.rdbuf());
     std::ofstream file_out;
@@ -1120,6 +1121,7 @@ int main(int argc, char **argv) {
         if (printer) {
             printer->FinishOutput();
         }
+        return_code = 1;
     }
     // Call the printer's destructor before the file handle gets closed
     printer.reset(nullptr);
@@ -1128,5 +1130,5 @@ int main(int argc, char **argv) {
     if (parse_data.output_category == OutputCategory::text && !parse_data.print_to_file) wait_for_console_destroy();
 #endif
 
-    return 0;
+    return return_code;
 }
