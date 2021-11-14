@@ -253,8 +253,18 @@ class Printer {
         return *this;
     }
 
+    Printer &UnsetHeader() {
+        set_next_header = false;
+        return *this;
+    }
+
     Printer &SetSubHeader() {
         set_next_subheader = true;
+        return *this;
+    }
+
+    Printer &UnsetSubHeader() {
+        set_next_subheader = false;
         return *this;
     }
 

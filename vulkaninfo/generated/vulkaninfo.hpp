@@ -434,6 +434,22 @@ void DumpVkPresentModeKHR(Printer &p, std::string name, VkPresentModeKHR value, 
         p.PrintKeyString(name, VkPresentModeKHRString(value), width);
     }
 }
+static const char *VkQueueGlobalPriorityKHRString(VkQueueGlobalPriorityKHR value) {
+    switch (value) {
+        case (128): return "QUEUE_GLOBAL_PRIORITY_LOW_KHR";
+        case (256): return "QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR";
+        case (512): return "QUEUE_GLOBAL_PRIORITY_HIGH_KHR";
+        case (1024): return "QUEUE_GLOBAL_PRIORITY_REALTIME_KHR";
+        default: return "UNKNOWN_VkQueueGlobalPriorityKHR";
+    }
+}
+void DumpVkQueueGlobalPriorityKHR(Printer &p, std::string name, VkQueueGlobalPriorityKHR value, int width = 0) {
+    if (p.Type() == OutputType::json) {
+        p.PrintKeyValue(name, value, width);
+    } else {
+        p.PrintKeyString(name, VkQueueGlobalPriorityKHRString(value), width);
+    }
+}
 static const char *VkResultString(VkResult value) {
     switch (value) {
         case (0): return "SUCCESS";
@@ -1024,6 +1040,37 @@ void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBi
     auto strings = VkToolPurposeFlagBitsGetStrings(value);
     p.PrintKeyString(name, strings.at(0), width);
 }
+
+std::vector<const char *>VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodecOperationFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (0 & value) strings.push_back("VIDEO_CODEC_OPERATION_INVALID_BIT_KHR");
+    if (0x10000 & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_EXT");
+    if (0x20000 & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_EXT");
+    if (0x1 & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H264_BIT_EXT");
+    if (0x2 & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H265_BIT_EXT");
+    return strings;
+}
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagsKHR value, int width = 0) {
+    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
+    if (static_cast<VkVideoCodecOperationFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoCodecOperationFlagBitsKHRGetStrings(static_cast<VkVideoCodecOperationFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagBitsKHR value, int width = 0) {
+    auto strings = VkVideoCodecOperationFlagBitsKHRGetStrings(value);
+    p.PrintKeyString(name, strings.at(0), width);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
@@ -2294,6 +2341,34 @@ void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory), 35);
 }
+void DumpVkQueueFamilyGlobalPriorityPropertiesKHR(Printer &p, std::string name, VkQueueFamilyGlobalPriorityPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyValue("priorityCount", obj.priorityCount, 14);
+    {   ArrayWrapper arr(p,"priorities", 16);
+        p.PrintElement(obj.priorities[0]);
+        p.PrintElement(obj.priorities[1]);
+        p.PrintElement(obj.priorities[2]);
+        p.PrintElement(obj.priorities[3]);
+        p.PrintElement(obj.priorities[4]);
+        p.PrintElement(obj.priorities[5]);
+        p.PrintElement(obj.priorities[6]);
+        p.PrintElement(obj.priorities[7]);
+        p.PrintElement(obj.priorities[8]);
+        p.PrintElement(obj.priorities[9]);
+        p.PrintElement(obj.priorities[10]);
+        p.PrintElement(obj.priorities[11]);
+        p.PrintElement(obj.priorities[12]);
+        p.PrintElement(obj.priorities[13]);
+        p.PrintElement(obj.priorities[14]);
+        p.PrintElement(obj.priorities[15]);
+    }
+}
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkQueueFamilyQueryResultStatusProperties2KHR(Printer &p, std::string name, VkQueueFamilyQueryResultStatusProperties2KHR &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("supported", static_cast<bool>(obj.supported), 9);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, VkSharedPresentSurfaceCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkImageUsageFlags(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags, 0);
@@ -2326,6 +2401,12 @@ void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, VkSurfa
     ObjectWrapper object{p, name};
     p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected), 17);
 }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkVideoQueueFamilyProperties2KHR(Printer &p, std::string name, VkVideoQueueFamilyProperties2KHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoCodecOperationFlagsKHR(p, "videoCodecOperations", obj.videoCodecOperations, 0);
+}
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 struct phys_device_props2_chain {
     phys_device_props2_chain() = default;
     phys_device_props2_chain(const phys_device_props2_chain &) = delete;
@@ -2846,6 +2927,48 @@ void setup_format_properties2_chain(VkFormatProperties2& start, std::unique_ptr<
     chain->initialize_chain();
     start.pNext = chain->start_of_chain;
 };
+struct queue_properties2_chain {
+    queue_properties2_chain() = default;
+    queue_properties2_chain(const queue_properties2_chain &) = delete;
+    queue_properties2_chain& operator=(const queue_properties2_chain &) = delete;
+    queue_properties2_chain(queue_properties2_chain &&) = delete;
+    queue_properties2_chain& operator=(queue_properties2_chain &&) = delete;
+    void* start_of_chain = nullptr;
+    VkQueueFamilyGlobalPriorityPropertiesKHR QueueFamilyGlobalPriorityPropertiesKHR{};
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    VkQueueFamilyQueryResultStatusProperties2KHR QueueFamilyQueryResultStatusProperties2KHR{};
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    VkVideoQueueFamilyProperties2KHR VideoQueueFamilyProperties2KHR{};
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+    void initialize_chain() noexcept {
+        QueueFamilyGlobalPriorityPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        QueueFamilyQueryResultStatusProperties2KHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_2_KHR;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoQueueFamilyProperties2KHR.sType = VK_STRUCTURE_TYPE_VIDEO_QUEUE_FAMILY_PROPERTIES_2_KHR;
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+        std::vector<VkBaseOutStructure*> chain_members;
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&QueueFamilyGlobalPriorityPropertiesKHR));
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&QueueFamilyQueryResultStatusProperties2KHR));
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoQueueFamilyProperties2KHR));
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+
+        for(size_t i = 0; i < chain_members.size() - 1; i++){
+            chain_members[i]->pNext = chain_members[i + 1];
+        }
+        if (chain_members.size() > 0) start_of_chain = chain_members[0];
+    };
+};
+void setup_queue_properties2_chain(VkQueueFamilyProperties2& start, std::unique_ptr<queue_properties2_chain>& chain){
+    chain = std::unique_ptr<queue_properties2_chain>(new queue_properties2_chain());
+    chain->initialize_chain();
+    start.pNext = chain->start_of_chain;
+};
 void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
         struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
@@ -3121,6 +3244,7 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
         }
         place = structure->pNext;
     }
+    p.UnsetSubHeader();
 }
 void chain_iterator_phys_device_mem_props2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3134,6 +3258,7 @@ void chain_iterator_phys_device_mem_props2(Printer &p, AppGpu &gpu, void * place
         }
         place = structure->pNext;
     }
+    p.UnsetSubHeader();
 }
 void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3671,6 +3796,7 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
         }
         place = structure->pNext;
     }
+    p.UnsetSubHeader();
 }
 void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3698,6 +3824,7 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
         }
         place = structure->pNext;
     }
+    p.UnsetSubHeader();
 }
 void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3724,6 +3851,37 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place, Vu
         }
         place = structure->pNext;
     }
+    p.UnsetSubHeader();
+}
+void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
+    while (place) {
+        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME))) {
+            VkQueueFamilyGlobalPriorityPropertiesKHR* props = (VkQueueFamilyGlobalPriorityPropertiesKHR*)structure;
+            DumpVkQueueFamilyGlobalPriorityPropertiesKHR(p, "VkQueueFamilyGlobalPriorityPropertiesKHR", *props);
+            p.AddNewline();
+        }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_2_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_QUEUE_EXTENSION_NAME))) {
+            VkQueueFamilyQueryResultStatusProperties2KHR* props = (VkQueueFamilyQueryResultStatusProperties2KHR*)structure;
+            DumpVkQueueFamilyQueryResultStatusProperties2KHR(p, "VkQueueFamilyQueryResultStatusProperties2KHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_QUEUE_FAMILY_PROPERTIES_2_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_QUEUE_EXTENSION_NAME))) {
+            VkVideoQueueFamilyProperties2KHR* props = (VkVideoQueueFamilyProperties2KHR*)structure;
+            DumpVkVideoQueueFamilyProperties2KHR(p, "VkVideoQueueFamilyProperties2KHR", *props);
+            p.AddNewline();
+        }
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+        place = structure->pNext;
+    }
+    p.UnsetSubHeader();
 }
 bool operator==(const VkExtent2D & a, const VkExtent2D b);
 bool operator==(const VkSurfaceCapabilities2EXT & a, const VkSurfaceCapabilities2EXT b);
