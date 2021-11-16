@@ -1201,6 +1201,9 @@ VK_EXT_color_write_enable = Extension(name='VK_EXT_color_write_enable', version=
 VK_EXT_global_priority_query = Extension(name='VK_EXT_global_priority_query', version=1, guard=None, commands=[
 ])
 
+VK_EXT_image_view_min_lod = Extension(name='VK_EXT_image_view_min_lod', version=1, guard=None, commands=[
+])
+
 VK_EXT_multi_draw = Extension(name='VK_EXT_multi_draw', version=1, guard=None, commands=[
     Command(name='vkCmdDrawMultiEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdDrawMultiIndexedEXT', dispatch='VkCommandBuffer'),
@@ -1634,6 +1637,7 @@ extensions = [
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
     VK_EXT_global_priority_query,
+    VK_EXT_image_view_min_lod,
     VK_EXT_multi_draw,
     VK_EXT_load_store_op_none,
     VK_EXT_border_color_swizzle,
