@@ -5297,6 +5297,7 @@ static VKAPI_ATTR void                                    VKAPI_CALL CmdSetColor
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiEXT(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    drawCount,
