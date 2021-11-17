@@ -1228,7 +1228,7 @@ class AppSurface {
             win32_fullscreen_exclusive_info.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
             win32_fullscreen_exclusive_info.hmonitor = MonitorFromWindow(inst.h_wnd, MONITOR_DEFAULTTOPRIMARY);
 
-            surface_info.pNext = reinterpret_cast<void *>(&win32_fullscreen_exclusive_info);
+            surface_info.pNext = static_cast<void *>(&win32_fullscreen_exclusive_info);
 #endif  // defined(WIN32)
             VkResult err =
                 inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
