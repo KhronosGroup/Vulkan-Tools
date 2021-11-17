@@ -65,11 +65,17 @@ std::string VkVersionString(VulkanVersion v) {
 
 enum class OutputType { text, html, json, vkconfig_output };
 
+struct PrinterCreateDetails {
+    OutputType output_type = OutputType::text;
+    bool print_to_file = false;
+    std::string file_name = "vulkaninfo.txt";
+    std::string start_string = "";
+};
+
 class Printer {
   public:
-    Printer(OutputType output_type, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version,
-            std::string start_string = "")
-        : output_type(output_type), out(out) {
+    Printer(const PrinterCreateDetails &details, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version)
+        : output_type(details.output_type), out(out) {
         switch (output_type) {
             case (OutputType::text):
                 out << "==========\n";
@@ -174,7 +180,7 @@ class Printer {
             case (OutputType::json):
                 /* fall through */
             case (OutputType::vkconfig_output):
-                out << start_string;
+                out << details.start_string;
                 indents++;
                 is_first_item.push(false);
                 is_array.push(false);
