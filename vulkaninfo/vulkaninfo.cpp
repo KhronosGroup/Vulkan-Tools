@@ -818,6 +818,9 @@ void print_usage(const char *argv0) {
     std::cout << "USAGE: " << argv0 << " [options]\n\n";
     std::cout << "OPTIONS:\n";
     std::cout << "-h, --help          Print this help.\n";
+    std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
+    std::cout << "--text              Produce a text version of vulkaninfo output to stdout. This is\n";
+    std::cout << "                    the default output.\n";
     std::cout << "--html              Produce an html version of vulkaninfo output, saved as\n";
     std::cout << "                    \"vulkaninfo.html\" in the directory in which the command\n";
     std::cout << "                    is run.\n";
@@ -841,7 +844,6 @@ void print_usage(const char *argv0) {
     std::cout << "-o <filename>, --output<filename>\n";
     std::cout << "                    Print output to a new file whose name is specified by filename.\n";
     std::cout << "                    File will be written to the current working directory.\n";
-    std::cout << "--summary           Show a summary of the instance and GPU's on a system.\n\n";
 }
 
 struct ParsedResults {
@@ -862,8 +864,10 @@ util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
         // Usage "--vkconfig_output <path>"
         if (0 == strcmp("--vkconfig_output", argv[i]) && argc > (i + 1)) {
             results.output_category = OutputCategory::vkconfig_output;
-            results.output_path = argv[i + 1];
-            ++i;
+            if (argc > (i + 1) && argv[i + 1][0] != '-') {
+                results.output_path = argv[i + 1];
+                ++i;
+            }
         } else if (strncmp("--json", argv[i], 6) == 0 || strcmp(argv[i], "-j") == 0) {
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
                 results.selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 7, nullptr, 10));
@@ -879,6 +883,8 @@ util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
         } else if (strcmp(argv[i], "--summary") == 0) {
             results.output_category = OutputCategory::summary;
+        } else if (strcmp(argv[i], "--text") == 0) {
+            results.output_category = OutputCategory::text;
         } else if (strcmp(argv[i], "--html") == 0) {
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
             results.show_tool_props = true;
@@ -887,6 +893,10 @@ util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
         } else if ((strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) && argc > (i + 1)) {
             results.use_custom_filename = true;
             results.custom_filename = argv[i + 1];
+            if (argv[i + 1][0] == '-') {
+                std::cout << "-o or --output must be followed by a filename\n";
+                return {};
+            }
             ++i;
         } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             print_usage(argv[0]);
