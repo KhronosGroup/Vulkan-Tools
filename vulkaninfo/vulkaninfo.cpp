@@ -189,6 +189,7 @@ bool operator==(AppSurface const &a, AppSurface const &b) {
            a.surface_capabilities2_khr == b.surface_capabilities2_khr && a.surface_capabilities2_ext == b.surface_capabilities2_ext;
 }
 
+#if defined(VULKANINFO_WSI_ENABLED)
 void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<std::unique_ptr<AppGpu>> &gpus,
                              const std::vector<std::unique_ptr<AppSurface>> &surfaces) {
     // Don't print anything if no surfaces are found
@@ -225,6 +226,7 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
     }
     p.AddNewline();
 }
+#endif  // defined(VULKANINFO_WSI_ENABLED)
 
 void DumpGroups(Printer &p, AppInstance &inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
@@ -1011,8 +1013,10 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
         p.AddNewline();
 
         DumpLayers(p, instance.global_layers, gpus);
+#if defined(VULKANINFO_WSI_ENABLED)
         // Doesn't print anything if no surfaces are available
         DumpPresentableSurfaces(p, instance, gpus, surfaces);
+#endif  // defined(VULKANINFO_WSI_ENABLED)
         DumpGroups(p, instance);
 
         p.SetHeader();
@@ -1082,6 +1086,7 @@ int main(int argc, char **argv) {
         auto phys_devices = instance.FindPhysicalDevices();
 
         std::vector<std::unique_ptr<AppSurface>> surfaces;
+#if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
             surface_extension.create_window(instance);
             surface_extension.surface = surface_extension.create_surface(instance);
@@ -1089,6 +1094,7 @@ int main(int argc, char **argv) {
                 surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
             }
         }
+#endif  // defined(VULKANINFO_WSI_ENABLED)
 
         std::vector<std::unique_ptr<AppGpu>> gpus;
 
@@ -1102,13 +1108,15 @@ int main(int argc, char **argv) {
                 std::cout << "The selected gpu (" << parse_data.selected_gpu << ") is not a valid GPU index. ";
                 if (gpus.size() == 0) {
                     std::cout << "vulkaninfo could not find any GPU's.\n";
-                }
-                if (gpus.size() == 1) {
-                    std::cout << "The only available GPU selection is 0.\n";
+                    return 1;
                 } else {
-                    std::cout << "The available GPUs are in the range of 0 to " << gpus.size() - 1 << ".\n";
+                    if (gpus.size() == 1) {
+                        std::cout << "The only available GPU selection is 0.\n";
+                    } else {
+                        std::cout << "The available GPUs are in the range of 0 to " << gpus.size() - 1 << ".\n";
+                    }
+                    return 1;
                 }
-                return 1;
             } else if (parse_data.output_category == OutputCategory::devsim_json ||
                        parse_data.output_category == OutputCategory::portability_json) {
                 std::cout << "vulkaninfo could not find any GPU's.\n";
@@ -1133,10 +1141,12 @@ int main(int argc, char **argv) {
 
         RunPrinter(*(printer.get()), parse_data, instance, gpus, surfaces);
 
+#if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
             AppDestroySurface(instance, surface_extension.surface);
             surface_extension.destroy_window(instance);
         }
+#endif  // defined(VULKANINFO_WSI_ENABLED)
     } catch (std::exception &e) {
         // Print the error to stderr and leave all outputs in a valid state (mainly for json)
         std::cerr << "ERROR at " << e.what() << "\n";
