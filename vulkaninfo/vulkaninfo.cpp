@@ -202,7 +202,7 @@ void DumpPresentableSurfaces(Printer &p, AppInstance &inst, const std::vector<st
     for (auto &surface : surfaces) {
         auto exists = surface_list.end();
         for (auto it = surface_list.begin(); it != surface_list.end(); it++) {
-            // check for duplicat surfaces that differ only by the surface extension
+            // check for duplicate surfaces that differ only by the surface extension
             if (*(it->surface) == *(surface.get())) {
                 exists = it;
                 break;
@@ -395,7 +395,7 @@ std::string NumToNiceStr(const size_t sz) {
     return std::string(buf);
 }
 
-std::string append_human_readible(VkDeviceSize memory) {
+std::string append_human_readable(VkDeviceSize memory) {
     return std::to_string(memory) + " (" + to_hex_str(memory) + ") (" + NumToNiceStr(static_cast<size_t>(memory)) + ")";
 }
 
@@ -410,10 +410,10 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
             p.SetElementIndex(static_cast<int>(i));
             ObjectWrapper obj_mem_heap(p, "memoryHeaps");
 
-            p.PrintKeyString("size", append_human_readible(gpu.memory_props.memoryHeaps[i].size), 6);
+            p.PrintKeyString("size", append_human_readable(gpu.memory_props.memoryHeaps[i].size), 6);
             if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
-                p.PrintKeyString("budget", append_human_readible(gpu.heapBudget[i]), 6);
-                p.PrintKeyString("usage", append_human_readible(gpu.heapUsage[i]), 6);
+                p.PrintKeyString("budget", append_human_readable(gpu.heapBudget[i]), 6);
+                p.PrintKeyString("usage", append_human_readable(gpu.heapUsage[i]), 6);
             }
             DumpVkMemoryHeapFlags(p, "flags", gpu.memory_props.memoryHeaps[i].flags, 6);
         }

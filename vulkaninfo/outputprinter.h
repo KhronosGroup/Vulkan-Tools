@@ -705,7 +705,7 @@ class Printer {
     int element_index = -1;  // negative one is the sentinel value
 
     // json
-    std::stack<bool> is_first_item;  // for json: for adding a comma inbetween objects
+    std::stack<bool> is_first_item;  // for json: for adding a comma in between objects
     std::stack<bool> is_array;       // for json: match pairs of {}'s and []'s
 
     // utility
