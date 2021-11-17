@@ -642,7 +642,7 @@ void GpuDevDumpJson(Printer &p, AppGpu &gpu) {
 }
 // Print gpu info for text, html, & vkconfig_output
 // Uses a seperate function than schema-json for clarity
-void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
+void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats) {
     ObjectWrapper obj_gpu(p, "GPU" + std::to_string(gpu.id));
     IndentWrapper indent(p);
 
@@ -658,7 +658,9 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_formats) {
     }
     GpuDumpMemoryProps(p, gpu);
     GpuDumpFeatures(p, gpu);
-    GpuDumpToolingInfo(p, gpu);
+    if (show_tooling_info) {
+        GpuDumpToolingInfo(p, gpu);
+    }
 
     if (p.Type() != OutputType::text || show_formats) {
         GpuDevDump(p, gpu);
@@ -831,6 +833,7 @@ void print_usage(const char *argv0) {
     std::cout << "                    Subset Schema for the GPU specified to standard output,\n";
     std::cout << "                    where N is the GPU desired.\n";
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
+    std::cout << "--show-tool-props   Show the active VkPhysicalDeviceToolPropertiesEXT that vulkaninfo finds.\n";
     std::cout << "--show-formats      Display the format properties of each physical device.\n";
     std::cout << "                    Note: This option does not affect html or json output;\n";
     std::cout << "                    they will always print format properties.\n\n";
@@ -854,6 +857,7 @@ int main(int argc, char **argv) {
 #endif
 
     uint32_t selected_gpu = 0;
+    bool show_tool_props = false;
     bool show_formats = false;
     char *output_path = nullptr;
 
@@ -887,6 +891,8 @@ int main(int argc, char **argv) {
         } else if (strcmp(argv[i], "--html") == 0) {
             human_readable_output = false;
             html_output = true;
+        } else if (strcmp(argv[i], "--show-tool-props") == 0) {
+            show_tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
             show_formats = true;
         } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
@@ -1047,7 +1053,7 @@ int main(int argc, char **argv) {
                 IndentWrapper indent(*p);
 
                 for (auto &gpu : gpus) {
-                    DumpGpu(*p.get(), *gpu.get(), show_formats);
+                    DumpGpu(*p.get(), *gpu.get(), show_tool_props, show_formats);
                 }
             }
         }
