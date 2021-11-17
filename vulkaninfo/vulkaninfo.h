@@ -620,10 +620,9 @@ struct AppInstance {
             if (err) THROW_VK_ERR("vkEnumerateInstanceVersion", err);
         }
 
-        // fallback to baked header version if loader returns 0 for the patch version
-        uint32_t patch_version = VK_VERSION_PATCH(instance_version);
-        if (patch_version == 0) patch_version = VK_VERSION_PATCH(VK_HEADER_VERSION);
         vk_version = make_vulkan_version(instance_version);
+        // fallback to baked header version if loader returns 0 for the patch version
+        if (VK_VERSION_PATCH(instance_version) == 0) vk_version.patch = VK_VERSION_PATCH(VK_HEADER_VERSION);
 
         AppGetInstanceExtensions();
 
@@ -708,6 +707,11 @@ struct AppInstance {
 
 // --------- Platform Specific Presentation Calls --------- //
 
+#if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
+    defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
+    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR)
+#define VULKANINFO_WSI_ENABLED
+#endif
 //---------------------------Win32---------------------------
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
@@ -779,10 +783,11 @@ static void AppDestroyWin32Window(AppInstance &inst) { user32_handles->pfnDestro
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
+#if defined(VULKANINFO_WSI_ENABLED)
 static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
     inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
 }
-
+#endif  // defined(VULKANINFO_WSI_ENABLED)
 //----------------------------XCB----------------------------
 
 #ifdef VK_USE_PLATFORM_XCB_KHR
