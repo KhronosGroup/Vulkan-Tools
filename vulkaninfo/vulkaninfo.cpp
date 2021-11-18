@@ -858,7 +858,7 @@ struct ParsedResults {
     std::string default_filename;
 };
 
-util::trivial_optional<ParsedResults> parse_arguments(int argc, char **argv) {
+util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv) {
     ParsedResults results{};                         // default it to zero init everything
     results.output_category = OutputCategory::text;  // default output category
     results.default_filename = "vulkaninfo.txt";

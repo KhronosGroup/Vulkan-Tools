@@ -511,40 +511,35 @@ void freepNextChain(VkStructureHeader *first) {
     }
 }
 
-/* An ptional contains either a value or nothing. The trivial_optional asserts if a value is trying to be gotten but none exist.
+/* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
  * This class assumes the template type is 'trivial'
  */
 namespace util {
 template <typename T>
-struct trivial_optional {
+struct vulkaninfo_optional {
     using value_type = T;
 
     bool _contains_value = false;
-    T _value;
+    value_type _value;
 
-    void check_type_properties() {
-        static_assert(std::is_trivially_constructible<T>::value, "Type must be trivially constructable");
-        static_assert(std::is_trivially_copyable<T>::value, "Type must be trivially copyable");
-    }
-
-    trivial_optional() noexcept : _contains_value(false), _value({}) { check_type_properties(); }
-    trivial_optional(T value) noexcept : _contains_value(true), _value(value) { check_type_properties(); }
+    vulkaninfo_optional() noexcept : _contains_value(false), _value({}) {}
+    vulkaninfo_optional(T value) noexcept : _contains_value(true), _value(value) {}
 
     explicit operator bool() const noexcept { return _contains_value; }
     bool has_value() const noexcept { return _contains_value; }
 
-    T value() const noexcept {
+    value_type value() const noexcept {
         assert(_contains_value);
         return _value;
     }
     // clang-format off
-    const T* operator->() const { assert(_contains_value); return _value;}
-    T* operator->() { assert(_contains_value); return &_value;}
-    const T& operator*() const& { assert(_contains_value); return _value;}
-    T& operator*() & { assert(_contains_value); return _value;}
-    const T&& operator*() const&& { assert(_contains_value); return _value;}
-    T&& operator*() && { assert(_contains_value); return _value;}
+    const value_type* operator->() const { assert(_contains_value); return _value;}
+    value_type* operator->() { assert(_contains_value); return &_value;}
+    const value_type& operator*() const& { assert(_contains_value); return _value;}
+    value_type& operator*() & { assert(_contains_value); return _value;}
+    const value_type&& operator*() const&& { assert(_contains_value); return _value;}
+    value_type&& operator*() && { assert(_contains_value); return _value;}
     // clang-format on
 };  // namespace util
 }  // namespace util
@@ -1298,8 +1293,8 @@ std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance &inst, VkPhysi
     return props;
 }
 
-util::trivial_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
-                                                                                 VkPhysicalDeviceGroupProperties group) {
+util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
+                                                                                    VkPhysicalDeviceGroupProperties group) {
     // Build create info for logical device made from all physical devices in this group.
     std::vector<std::string> extensions_list = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DEVICE_GROUP_EXTENSION_NAME};
     VkDeviceGroupDeviceCreateInfoKHR dg_ci = {VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR, nullptr,
@@ -1374,8 +1369,8 @@ VkImageCreateInfo GetImageCreateInfo(VkImageCreateFlags flags, VkFormat format, 
             VK_IMAGE_LAYOUT_UNDEFINED};
 }
 
-util::trivial_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
-                                                              ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
+util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
+                                                                 ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
     VkImageFormatProperties img_props;
     VkResult res = inst.dll.fp_vkGetPhysicalDeviceImageFormatProperties(
         phys_device, image_ci.format, image_ci.imageType, image_ci.tiling, image_ci.usage, image_ci.flags, &img_props);
@@ -1395,7 +1390,7 @@ util::trivial_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst,
         inst.dll.fp_vkDestroyImage(device, dummy_img, nullptr);
         return img_type_support;
     } else if (res == VK_ERROR_FORMAT_NOT_SUPPORTED) {
-        return {};  // return empty optional
+        return {};  // return empty util::vulkaninfo_optional
     }
     THROW_VK_ERR("vkGetPhysicalDeviceImageFormatProperties", res);
     return {};
