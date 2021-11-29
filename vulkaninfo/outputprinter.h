@@ -252,18 +252,8 @@ class Printer {
         return *this;
     }
 
-    Printer &UnsetHeader() {
-        get_top().set_next_header = false;
-        return *this;
-    }
-
     Printer &SetSubHeader() {
         get_top().set_next_subheader = true;
-        return *this;
-    }
-
-    Printer &UnsetSubHeader() {
-        get_top().set_next_subheader = false;
         return *this;
     }
 
@@ -289,6 +279,11 @@ class Printer {
 
     Printer &SetIgnoreMinWidthInChild() {
         get_top().ignore_min_width_parameter_in_child = true;
+        return *this;
+    }
+
+    Printer &SetMinKeyWidth(size_t min_key_width) {
+        get_top().min_key_width = min_key_width;
         return *this;
     }
 
@@ -463,15 +458,14 @@ class Printer {
     }
 
     // For printing key-value pairs.
-    // min_key_width lines up the values listed
     // value_description is for reference information and is displayed inside parenthesis after the value
     template <typename T>
-    void PrintKeyValue(std::string key, T value, size_t min_key_width = 0, std::string value_description = "") {
+    void PrintKeyValue(std::string key, T value, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << key;
-                if (min_key_width > key.size() && !get_top().ignore_min_width_parameter) {
-                    out << std::string(min_key_width - key.size(), ' ');
+                if (get_top().min_key_width > key.size() && !get_top().ignore_min_width_parameter) {
+                    out << std::string(get_top().min_key_width - key.size(), ' ');
                 }
                 out << " = " << value;
                 if (value_description != "") {
@@ -481,8 +475,8 @@ class Printer {
                 break;
             case (OutputType::html):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << "<details><summary>" << key;
-                if (min_key_width > key.size()) {
-                    out << std::string(min_key_width - key.size(), ' ');
+                if (get_top().min_key_width > key.size()) {
+                    out << std::string(get_top().min_key_width - key.size(), ' ');
                 }
                 if (get_top().set_as_type) {
                     get_top().set_as_type = false;
@@ -521,15 +515,15 @@ class Printer {
     }
 
     // For printing key - string pairs (necessary because of json)
-    void PrintKeyString(std::string key, std::string value, size_t min_key_width = 0, std::string value_description = "") {
+    void PrintKeyString(std::string key, std::string value, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
             case (OutputType::html):
-                PrintKeyValue(key, value, min_key_width, value_description);
+                PrintKeyValue(key, value, value_description);
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                PrintKeyValue(key, std::string("\"") + value + "\"", min_key_width, value_description);
+                PrintKeyValue(key, std::string("\"") + value + "\"", value_description);
                 break;
             default:
                 break;
@@ -537,15 +531,15 @@ class Printer {
     }
 
     // For printing key - string pairs (necessary because of json)
-    void PrintKeyBool(std::string key, bool value, size_t min_key_width = 0, std::string value_description = "") {
+    void PrintKeyBool(std::string key, bool value, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
             case (OutputType::html):
             case (OutputType::vkconfig_output):
-                PrintKeyValue(key, value ? "true" : "false", min_key_width, value_description);
+                PrintKeyValue(key, value ? "true" : "false", value_description);
                 break;
             case (OutputType::json):
-                PrintKeyValue(key, value, min_key_width, value_description);
+                PrintKeyValue(key, value, value_description);
                 break;
             default:
                 break;
@@ -687,6 +681,9 @@ class Printer {
 
         // sets the next created object/child to ignore the min_width parameter
         bool ignore_min_width_parameter_in_child = false;
+
+        // keep track of the spacing between names and values
+        size_t min_key_width = 0;
 
         // objects which are in an array
         int element_index = -1;  // negative one is the sentinel value

@@ -27,9 +27,9 @@
 #include "vulkaninfo.h"
 #include "outputprinter.h"
 
-void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c, int width = 0) {
+void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c) {
     p.PrintKeyString("conformanceVersion", std::to_string(c.major)+ "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "."
-             + std::to_string(c.patch), width);
+             + std::to_string(c.patch));
 }
 
 template <typename T>
@@ -70,11 +70,11 @@ static const char *VkColorSpaceKHRString(VkColorSpaceKHR value) {
         default: return "UNKNOWN_VkColorSpaceKHR";
     }
 }
-void DumpVkColorSpaceKHR(Printer &p, std::string name, VkColorSpaceKHR value, int width = 0) {
+void DumpVkColorSpaceKHR(Printer &p, std::string name, VkColorSpaceKHR value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkColorSpaceKHRString(value), width);
+        p.PrintKeyString(name, VkColorSpaceKHRString(value));
     }
 }
 static const char *VkDriverIdString(VkDriverId value) {
@@ -104,11 +104,11 @@ static const char *VkDriverIdString(VkDriverId value) {
         default: return "UNKNOWN_VkDriverId";
     }
 }
-void DumpVkDriverId(Printer &p, std::string name, VkDriverId value, int width = 0) {
+void DumpVkDriverId(Printer &p, std::string name, VkDriverId value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkDriverIdString(value), width);
+        p.PrintKeyString(name, VkDriverIdString(value));
     }
 }
 static const char *VkFormatString(VkFormat value) {
@@ -363,11 +363,11 @@ static const char *VkFormatString(VkFormat value) {
         default: return "UNKNOWN_VkFormat";
     }
 }
-void DumpVkFormat(Printer &p, std::string name, VkFormat value, int width = 0) {
+void DumpVkFormat(Printer &p, std::string name, VkFormat value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkFormatString(value), width);
+        p.PrintKeyString(name, VkFormatString(value));
     }
 }
 static const char *VkImageTilingString(VkImageTiling value) {
@@ -378,11 +378,11 @@ static const char *VkImageTilingString(VkImageTiling value) {
         default: return "UNKNOWN_VkImageTiling";
     }
 }
-void DumpVkImageTiling(Printer &p, std::string name, VkImageTiling value, int width = 0) {
+void DumpVkImageTiling(Printer &p, std::string name, VkImageTiling value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkImageTilingString(value), width);
+        p.PrintKeyString(name, VkImageTilingString(value));
     }
 }
 static const char *VkPhysicalDeviceTypeString(VkPhysicalDeviceType value) {
@@ -395,11 +395,11 @@ static const char *VkPhysicalDeviceTypeString(VkPhysicalDeviceType value) {
         default: return "UNKNOWN_VkPhysicalDeviceType";
     }
 }
-void DumpVkPhysicalDeviceType(Printer &p, std::string name, VkPhysicalDeviceType value, int width = 0) {
+void DumpVkPhysicalDeviceType(Printer &p, std::string name, VkPhysicalDeviceType value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkPhysicalDeviceTypeString(value), width);
+        p.PrintKeyString(name, VkPhysicalDeviceTypeString(value));
     }
 }
 static const char *VkPointClippingBehaviorString(VkPointClippingBehavior value) {
@@ -409,11 +409,11 @@ static const char *VkPointClippingBehaviorString(VkPointClippingBehavior value) 
         default: return "UNKNOWN_VkPointClippingBehavior";
     }
 }
-void DumpVkPointClippingBehavior(Printer &p, std::string name, VkPointClippingBehavior value, int width = 0) {
+void DumpVkPointClippingBehavior(Printer &p, std::string name, VkPointClippingBehavior value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkPointClippingBehaviorString(value), width);
+        p.PrintKeyString(name, VkPointClippingBehaviorString(value));
     }
 }
 static const char *VkPresentModeKHRString(VkPresentModeKHR value) {
@@ -427,11 +427,11 @@ static const char *VkPresentModeKHRString(VkPresentModeKHR value) {
         default: return "UNKNOWN_VkPresentModeKHR";
     }
 }
-void DumpVkPresentModeKHR(Printer &p, std::string name, VkPresentModeKHR value, int width = 0) {
+void DumpVkPresentModeKHR(Printer &p, std::string name, VkPresentModeKHR value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkPresentModeKHRString(value), width);
+        p.PrintKeyString(name, VkPresentModeKHRString(value));
     }
 }
 static const char *VkQueueGlobalPriorityKHRString(VkQueueGlobalPriorityKHR value) {
@@ -443,11 +443,11 @@ static const char *VkQueueGlobalPriorityKHRString(VkQueueGlobalPriorityKHR value
         default: return "UNKNOWN_VkQueueGlobalPriorityKHR";
     }
 }
-void DumpVkQueueGlobalPriorityKHR(Printer &p, std::string name, VkQueueGlobalPriorityKHR value, int width = 0) {
+void DumpVkQueueGlobalPriorityKHR(Printer &p, std::string name, VkQueueGlobalPriorityKHR value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkQueueGlobalPriorityKHRString(value), width);
+        p.PrintKeyString(name, VkQueueGlobalPriorityKHRString(value));
     }
 }
 static const char *VkResultString(VkResult value) {
@@ -493,11 +493,11 @@ static const char *VkResultString(VkResult value) {
         default: return "UNKNOWN_VkResult";
     }
 }
-void DumpVkResult(Printer &p, std::string name, VkResult value, int width = 0) {
+void DumpVkResult(Printer &p, std::string name, VkResult value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkResultString(value), width);
+        p.PrintKeyString(name, VkResultString(value));
     }
 }
 static const char *VkShaderFloatControlsIndependenceString(VkShaderFloatControlsIndependence value) {
@@ -508,11 +508,11 @@ static const char *VkShaderFloatControlsIndependenceString(VkShaderFloatControls
         default: return "UNKNOWN_VkShaderFloatControlsIndependence";
     }
 }
-void DumpVkShaderFloatControlsIndependence(Printer &p, std::string name, VkShaderFloatControlsIndependence value, int width = 0) {
+void DumpVkShaderFloatControlsIndependence(Printer &p, std::string name, VkShaderFloatControlsIndependence value) {
     if (p.Type() == OutputType::json) {
-        p.PrintKeyValue(name, value, width);
+        p.PrintKeyValue(name, value);
     } else {
-        p.PrintKeyString(name, VkShaderFloatControlsIndependenceString(value), width);
+        p.PrintKeyString(name, VkShaderFloatControlsIndependenceString(value));
     }
 }
 std::vector<const char *>VkCompositeAlphaFlagBitsKHRGetStrings(VkCompositeAlphaFlagBitsKHR value) {
@@ -524,7 +524,7 @@ std::vector<const char *>VkCompositeAlphaFlagBitsKHRGetStrings(VkCompositeAlphaF
     if (0x8 & value) strings.push_back("COMPOSITE_ALPHA_INHERIT_BIT_KHR");
     return strings;
 }
-void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlphaFlagsKHR value, int width = 0) {
+void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlphaFlagsKHR value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkCompositeAlphaFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -538,9 +538,9 @@ void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlpha
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkCompositeAlphaFlagBitsKHR(Printer &p, std::string name, VkCompositeAlphaFlagBitsKHR value, int width = 0) {
+void DumpVkCompositeAlphaFlagBitsKHR(Printer &p, std::string name, VkCompositeAlphaFlagBitsKHR value) {
     auto strings = VkCompositeAlphaFlagBitsKHRGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkDeviceGroupPresentModeFlagBitsKHRGetStrings(VkDeviceGroupPresentModeFlagBitsKHR value) {
@@ -552,7 +552,7 @@ std::vector<const char *>VkDeviceGroupPresentModeFlagBitsKHRGetStrings(VkDeviceG
     if (0x8 & value) strings.push_back("DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR");
     return strings;
 }
-void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagsKHR value, int width = 0) {
+void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagsKHR value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkDeviceGroupPresentModeFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -566,9 +566,9 @@ void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDevice
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagBitsKHR value, int width = 0) {
+void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagBitsKHR value) {
     auto strings = VkDeviceGroupPresentModeFlagBitsKHRGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBits value) {
@@ -607,7 +607,7 @@ std::vector<const char *>VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBi
     if (0x10000000 & value) strings.push_back("FORMAT_FEATURE_VIDEO_ENCODE_DPB_BIT_KHR");
     return strings;
 }
-void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags value, int width = 0) {
+void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkFormatFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -621,9 +621,9 @@ void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkFormatFeatureFlagBits(Printer &p, std::string name, VkFormatFeatureFlagBits value, int width = 0) {
+void DumpVkFormatFeatureFlagBits(Printer &p, std::string name, VkFormatFeatureFlagBits value) {
     auto strings = VkFormatFeatureFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlagBits2 value) {
@@ -666,7 +666,7 @@ std::vector<const char *>VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlagB
     if (0x4000000000 & value) strings.push_back("FORMAT_FEATURE_2_LINEAR_COLOR_ATTACHMENT_BIT_NV");
     return strings;
 }
-void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlags2 value, int width = 0) {
+void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlags2 value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkFormatFeatureFlagBits2>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -680,9 +680,9 @@ void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlag
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureFlagBits2 value, int width = 0) {
+void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureFlagBits2 value) {
     auto strings = VkFormatFeatureFlagBits2GetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits value) {
@@ -707,7 +707,7 @@ std::vector<const char *>VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits val
     if (0x40000 & value) strings.push_back("IMAGE_USAGE_INVOCATION_MASK_BIT_HUAWEI");
     return strings;
 }
-void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value, int width = 0) {
+void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkImageUsageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -721,9 +721,9 @@ void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkImageUsageFlagBits(Printer &p, std::string name, VkImageUsageFlagBits value, int width = 0) {
+void DumpVkImageUsageFlagBits(Printer &p, std::string name, VkImageUsageFlagBits value) {
     auto strings = VkImageUsageFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkMemoryHeapFlagBitsGetStrings(VkMemoryHeapFlagBits value) {
@@ -733,7 +733,7 @@ std::vector<const char *>VkMemoryHeapFlagBitsGetStrings(VkMemoryHeapFlagBits val
     if (0x2 & value) strings.push_back("MEMORY_HEAP_MULTI_INSTANCE_BIT");
     return strings;
 }
-void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value, int width = 0) {
+void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkMemoryHeapFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -747,9 +747,9 @@ void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkMemoryHeapFlagBits(Printer &p, std::string name, VkMemoryHeapFlagBits value, int width = 0) {
+void DumpVkMemoryHeapFlagBits(Printer &p, std::string name, VkMemoryHeapFlagBits value) {
     auto strings = VkMemoryHeapFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlagBits value) {
@@ -766,7 +766,7 @@ std::vector<const char *>VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlag
     if (0x100 & value) strings.push_back("MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV");
     return strings;
 }
-void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFlags value, int width = 0) {
+void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkMemoryPropertyFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -780,12 +780,12 @@ void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFla
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkMemoryPropertyFlagBits(Printer &p, std::string name, VkMemoryPropertyFlagBits value, int width = 0) {
+void DumpVkMemoryPropertyFlagBits(Printer &p, std::string name, VkMemoryPropertyFlagBits value) {
     auto strings = VkMemoryPropertyFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
-std::string VkQueueFlagsString(VkQueueFlags value, int width = 0) {
+std::string VkQueueFlagsString(VkQueueFlags value) {
     std::string out;
     bool is_first = true;
     if (1 & value) {
@@ -828,7 +828,7 @@ std::vector<const char *>VkResolveModeFlagBitsGetStrings(VkResolveModeFlagBits v
     if (0x8 & value) strings.push_back("RESOLVE_MODE_MAX_BIT");
     return strings;
 }
-void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags value, int width = 0) {
+void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkResolveModeFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -842,9 +842,9 @@ void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags val
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkResolveModeFlagBits(Printer &p, std::string name, VkResolveModeFlagBits value, int width = 0) {
+void DumpVkResolveModeFlagBits(Printer &p, std::string name, VkResolveModeFlagBits value) {
     auto strings = VkResolveModeFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkSampleCountFlagBitsGetStrings(VkSampleCountFlagBits value) {
@@ -859,7 +859,7 @@ std::vector<const char *>VkSampleCountFlagBitsGetStrings(VkSampleCountFlagBits v
     if (0x40 & value) strings.push_back("SAMPLE_COUNT_64_BIT");
     return strings;
 }
-void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags value, int width = 0) {
+void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSampleCountFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -873,9 +873,9 @@ void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags val
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkSampleCountFlagBits(Printer &p, std::string name, VkSampleCountFlagBits value, int width = 0) {
+void DumpVkSampleCountFlagBits(Printer &p, std::string name, VkSampleCountFlagBits value) {
     auto strings = VkSampleCountFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits value) {
@@ -900,7 +900,7 @@ std::vector<const char *>VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits v
     if (0x4000 & value) strings.push_back("SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI");
     return strings;
 }
-void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags value, int width = 0) {
+void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkShaderStageFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -914,9 +914,9 @@ void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags val
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkShaderStageFlagBits(Printer &p, std::string name, VkShaderStageFlagBits value, int width = 0) {
+void DumpVkShaderStageFlagBits(Printer &p, std::string name, VkShaderStageFlagBits value) {
     auto strings = VkShaderStageFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureFlagBits value) {
@@ -933,7 +933,7 @@ std::vector<const char *>VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureFl
     if (0x100 & value) strings.push_back("SUBGROUP_FEATURE_PARTITIONED_BIT_NV");
     return strings;
 }
-void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureFlags value, int width = 0) {
+void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSubgroupFeatureFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -947,9 +947,9 @@ void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureF
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkSubgroupFeatureFlagBits(Printer &p, std::string name, VkSubgroupFeatureFlagBits value, int width = 0) {
+void DumpVkSubgroupFeatureFlagBits(Printer &p, std::string name, VkSubgroupFeatureFlagBits value) {
     auto strings = VkSubgroupFeatureFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkSurfaceCounterFlagBitsEXTGetStrings(VkSurfaceCounterFlagBitsEXT value) {
@@ -958,7 +958,7 @@ std::vector<const char *>VkSurfaceCounterFlagBitsEXTGetStrings(VkSurfaceCounterF
     if (0x1 & value) strings.push_back("SURFACE_COUNTER_VBLANK_BIT_EXT");
     return strings;
 }
-void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounterFlagsEXT value, int width = 0) {
+void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounterFlagsEXT value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSurfaceCounterFlagBitsEXT>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -972,9 +972,9 @@ void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounter
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkSurfaceCounterFlagBitsEXT(Printer &p, std::string name, VkSurfaceCounterFlagBitsEXT value, int width = 0) {
+void DumpVkSurfaceCounterFlagBitsEXT(Printer &p, std::string name, VkSurfaceCounterFlagBitsEXT value) {
     auto strings = VkSurfaceCounterFlagBitsEXTGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkSurfaceTransformFlagBitsKHRGetStrings(VkSurfaceTransformFlagBitsKHR value) {
@@ -991,7 +991,7 @@ std::vector<const char *>VkSurfaceTransformFlagBitsKHRGetStrings(VkSurfaceTransf
     if (0x100 & value) strings.push_back("SURFACE_TRANSFORM_INHERIT_BIT_KHR");
     return strings;
 }
-void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTransformFlagsKHR value, int width = 0) {
+void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTransformFlagsKHR value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkSurfaceTransformFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -1005,9 +1005,9 @@ void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTrans
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTransformFlagBitsKHR value, int width = 0) {
+void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTransformFlagBitsKHR value) {
     auto strings = VkSurfaceTransformFlagBitsKHRGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkToolPurposeFlagBitsGetStrings(VkToolPurposeFlagBits value) {
@@ -1022,7 +1022,7 @@ std::vector<const char *>VkToolPurposeFlagBitsGetStrings(VkToolPurposeFlagBits v
     if (0x40 & value) strings.push_back("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
     return strings;
 }
-void DumpVkToolPurposeFlags(Printer &p, std::string name, VkToolPurposeFlags value, int width = 0) {
+void DumpVkToolPurposeFlags(Printer &p, std::string name, VkToolPurposeFlags value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkToolPurposeFlagBits>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -1036,9 +1036,9 @@ void DumpVkToolPurposeFlags(Printer &p, std::string name, VkToolPurposeFlags val
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBits value, int width = 0) {
+void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBits value) {
     auto strings = VkToolPurposeFlagBitsGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 
 std::vector<const char *>VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodecOperationFlagBitsKHR value) {
@@ -1052,7 +1052,7 @@ std::vector<const char *>VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodec
     return strings;
 }
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagsKHR value, int width = 0) {
+void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagsKHR value) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
     if (static_cast<VkVideoCodecOperationFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -1066,27 +1066,30 @@ void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCode
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagBitsKHR value, int width = 0) {
+void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagBitsKHR value) {
     auto strings = VkVideoCodecOperationFlagBitsKHRGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
+    p.PrintKeyString(name, strings.at(0));
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier, 27);
-    p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount, 27);
-    DumpVkFormatFeatureFlags2(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures, 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier);
+    p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount);
+    DumpVkFormatFeatureFlags2(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures);
 }
 void DumpVkDrmFormatModifierPropertiesEXT(Printer &p, std::string name, VkDrmFormatModifierPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier, 27);
-    p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount, 27);
-    DumpVkFormatFeatureFlags(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures, 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier);
+    p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount);
+    DumpVkFormatFeatureFlags(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures);
 }
 void DumpVkDrmFormatModifierPropertiesList2EXT(Printer &p, std::string name, VkDrmFormatModifierPropertiesList2EXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("drmFormatModifierCount", obj.drmFormatModifierCount, 52);
+    p.SetMinKeyWidth(52);
+    p.PrintKeyValue("drmFormatModifierCount", obj.drmFormatModifierCount);
     ArrayWrapper arr(p,"pDrmFormatModifierProperties", obj.drmFormatModifierCount);
     for (uint32_t i = 0; i < obj.drmFormatModifierCount; i++) {
         if (obj.pDrmFormatModifierProperties != nullptr) {
@@ -1097,7 +1100,8 @@ void DumpVkDrmFormatModifierPropertiesList2EXT(Printer &p, std::string name, VkD
 }
 void DumpVkDrmFormatModifierPropertiesListEXT(Printer &p, std::string name, VkDrmFormatModifierPropertiesListEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("drmFormatModifierCount", obj.drmFormatModifierCount, 52);
+    p.SetMinKeyWidth(52);
+    p.PrintKeyValue("drmFormatModifierCount", obj.drmFormatModifierCount);
     ArrayWrapper arr(p,"pDrmFormatModifierProperties", obj.drmFormatModifierCount);
     for (uint32_t i = 0; i < obj.drmFormatModifierCount; i++) {
         if (obj.pDrmFormatModifierProperties != nullptr) {
@@ -1108,489 +1112,540 @@ void DumpVkDrmFormatModifierPropertiesListEXT(Printer &p, std::string name, VkDr
 }
 void DumpVkExtent2D(Printer &p, std::string name, VkExtent2D &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("width", obj.width, 6);
-    p.PrintKeyValue("height", obj.height, 6);
+    p.SetMinKeyWidth(6);
+    p.PrintKeyValue("width", obj.width);
+    p.PrintKeyValue("height", obj.height);
 }
 void DumpVkExtent3D(Printer &p, std::string name, VkExtent3D &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("width", obj.width, 6);
-    p.PrintKeyValue("height", obj.height, 6);
-    p.PrintKeyValue("depth", obj.depth, 6);
+    p.SetMinKeyWidth(6);
+    p.PrintKeyValue("width", obj.width);
+    p.PrintKeyValue("height", obj.height);
+    p.PrintKeyValue("depth", obj.depth);
 }
 void DumpVkFormatProperties3(Printer &p, std::string name, VkFormatProperties3 &obj) {
     ObjectWrapper object{p, name};
-    DumpVkFormatFeatureFlags2(p, "linearTilingFeatures", obj.linearTilingFeatures, 0);
-    DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", obj.optimalTilingFeatures, 0);
-    DumpVkFormatFeatureFlags2(p, "bufferFeatures", obj.bufferFeatures, 0);
+    DumpVkFormatFeatureFlags2(p, "linearTilingFeatures", obj.linearTilingFeatures);
+    DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", obj.optimalTilingFeatures);
+    DumpVkFormatFeatureFlags2(p, "bufferFeatures", obj.bufferFeatures);
 }
 void DumpVkLayerProperties(Printer &p, std::string name, VkLayerProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyString("layerName", obj.layerName, 21);
-    p.PrintKeyValue("specVersion", obj.specVersion, 21);
-    p.PrintKeyValue("implementationVersion", obj.implementationVersion, 21);
-    p.PrintKeyString("description", obj.description, 21);
+    p.SetMinKeyWidth(21);
+    p.PrintKeyString("layerName", obj.layerName);
+    p.PrintKeyValue("specVersion", obj.specVersion);
+    p.PrintKeyValue("implementationVersion", obj.implementationVersion);
+    p.PrintKeyString("description", obj.description);
 }
 void DumpVkPhysicalDevice16BitStorageFeatures(Printer &p, std::string name, VkPhysicalDevice16BitStorageFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("storageBuffer16BitAccess", static_cast<bool>(obj.storageBuffer16BitAccess), 34);
-    p.PrintKeyBool("uniformAndStorageBuffer16BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer16BitAccess), 34);
-    p.PrintKeyBool("storagePushConstant16", static_cast<bool>(obj.storagePushConstant16), 34);
-    p.PrintKeyBool("storageInputOutput16", static_cast<bool>(obj.storageInputOutput16), 34);
+    p.SetMinKeyWidth(34);
+    p.PrintKeyBool("storageBuffer16BitAccess", static_cast<bool>(obj.storageBuffer16BitAccess));
+    p.PrintKeyBool("uniformAndStorageBuffer16BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer16BitAccess));
+    p.PrintKeyBool("storagePushConstant16", static_cast<bool>(obj.storagePushConstant16));
+    p.PrintKeyBool("storageInputOutput16", static_cast<bool>(obj.storageInputOutput16));
 }
 void DumpVkPhysicalDevice4444FormatsFeaturesEXT(Printer &p, std::string name, VkPhysicalDevice4444FormatsFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("formatA4R4G4B4", static_cast<bool>(obj.formatA4R4G4B4), 14);
-    p.PrintKeyBool("formatA4B4G4R4", static_cast<bool>(obj.formatA4B4G4R4), 14);
+    p.SetMinKeyWidth(14);
+    p.PrintKeyBool("formatA4R4G4B4", static_cast<bool>(obj.formatA4R4G4B4));
+    p.PrintKeyBool("formatA4B4G4R4", static_cast<bool>(obj.formatA4B4G4R4));
 }
 void DumpVkPhysicalDevice8BitStorageFeatures(Printer &p, std::string name, VkPhysicalDevice8BitStorageFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("storageBuffer8BitAccess", static_cast<bool>(obj.storageBuffer8BitAccess), 33);
-    p.PrintKeyBool("uniformAndStorageBuffer8BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer8BitAccess), 33);
-    p.PrintKeyBool("storagePushConstant8", static_cast<bool>(obj.storagePushConstant8), 33);
+    p.SetMinKeyWidth(33);
+    p.PrintKeyBool("storageBuffer8BitAccess", static_cast<bool>(obj.storageBuffer8BitAccess));
+    p.PrintKeyBool("uniformAndStorageBuffer8BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer8BitAccess));
+    p.PrintKeyBool("storagePushConstant8", static_cast<bool>(obj.storagePushConstant8));
 }
 void DumpVkPhysicalDeviceASTCDecodeFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceASTCDecodeFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("decodeModeSharedExponent", static_cast<bool>(obj.decodeModeSharedExponent), 24);
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("decodeModeSharedExponent", static_cast<bool>(obj.decodeModeSharedExponent));
 }
 void DumpVkPhysicalDeviceAccelerationStructureFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceAccelerationStructureFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("accelerationStructure", static_cast<bool>(obj.accelerationStructure), 53);
-    p.PrintKeyBool("accelerationStructureCaptureReplay", static_cast<bool>(obj.accelerationStructureCaptureReplay), 53);
-    p.PrintKeyBool("accelerationStructureIndirectBuild", static_cast<bool>(obj.accelerationStructureIndirectBuild), 53);
-    p.PrintKeyBool("accelerationStructureHostCommands", static_cast<bool>(obj.accelerationStructureHostCommands), 53);
-    p.PrintKeyBool("descriptorBindingAccelerationStructureUpdateAfterBind", static_cast<bool>(obj.descriptorBindingAccelerationStructureUpdateAfterBind), 53);
+    p.SetMinKeyWidth(53);
+    p.PrintKeyBool("accelerationStructure", static_cast<bool>(obj.accelerationStructure));
+    p.PrintKeyBool("accelerationStructureCaptureReplay", static_cast<bool>(obj.accelerationStructureCaptureReplay));
+    p.PrintKeyBool("accelerationStructureIndirectBuild", static_cast<bool>(obj.accelerationStructureIndirectBuild));
+    p.PrintKeyBool("accelerationStructureHostCommands", static_cast<bool>(obj.accelerationStructureHostCommands));
+    p.PrintKeyBool("descriptorBindingAccelerationStructureUpdateAfterBind", static_cast<bool>(obj.descriptorBindingAccelerationStructureUpdateAfterBind));
 }
 void DumpVkPhysicalDeviceAccelerationStructurePropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceAccelerationStructurePropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxGeometryCount", obj.maxGeometryCount, 58);
-    p.PrintKeyValue("maxInstanceCount", obj.maxInstanceCount, 58);
-    p.PrintKeyValue("maxPrimitiveCount", obj.maxPrimitiveCount, 58);
-    p.PrintKeyValue("maxPerStageDescriptorAccelerationStructures", obj.maxPerStageDescriptorAccelerationStructures, 58);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindAccelerationStructures", obj.maxPerStageDescriptorUpdateAfterBindAccelerationStructures, 58);
-    p.PrintKeyValue("maxDescriptorSetAccelerationStructures", obj.maxDescriptorSetAccelerationStructures, 58);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindAccelerationStructures", obj.maxDescriptorSetUpdateAfterBindAccelerationStructures, 58);
-    p.PrintKeyValue("minAccelerationStructureScratchOffsetAlignment", obj.minAccelerationStructureScratchOffsetAlignment, 58);
+    p.SetMinKeyWidth(58);
+    p.PrintKeyValue("maxGeometryCount", obj.maxGeometryCount);
+    p.PrintKeyValue("maxInstanceCount", obj.maxInstanceCount);
+    p.PrintKeyValue("maxPrimitiveCount", obj.maxPrimitiveCount);
+    p.PrintKeyValue("maxPerStageDescriptorAccelerationStructures", obj.maxPerStageDescriptorAccelerationStructures);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindAccelerationStructures", obj.maxPerStageDescriptorUpdateAfterBindAccelerationStructures);
+    p.PrintKeyValue("maxDescriptorSetAccelerationStructures", obj.maxDescriptorSetAccelerationStructures);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindAccelerationStructures", obj.maxDescriptorSetUpdateAfterBindAccelerationStructures);
+    p.PrintKeyValue("minAccelerationStructureScratchOffsetAlignment", obj.minAccelerationStructureScratchOffsetAlignment);
 }
 void DumpVkPhysicalDeviceBlendOperationAdvancedFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("advancedBlendCoherentOperations", static_cast<bool>(obj.advancedBlendCoherentOperations), 31);
+    p.SetMinKeyWidth(31);
+    p.PrintKeyBool("advancedBlendCoherentOperations", static_cast<bool>(obj.advancedBlendCoherentOperations));
 }
 void DumpVkPhysicalDeviceBlendOperationAdvancedPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("advancedBlendMaxColorAttachments", obj.advancedBlendMaxColorAttachments, 37);
-    p.PrintKeyBool("advancedBlendIndependentBlend", static_cast<bool>(obj.advancedBlendIndependentBlend), 37);
-    p.PrintKeyBool("advancedBlendNonPremultipliedSrcColor", static_cast<bool>(obj.advancedBlendNonPremultipliedSrcColor), 37);
-    p.PrintKeyBool("advancedBlendNonPremultipliedDstColor", static_cast<bool>(obj.advancedBlendNonPremultipliedDstColor), 37);
-    p.PrintKeyBool("advancedBlendCorrelatedOverlap", static_cast<bool>(obj.advancedBlendCorrelatedOverlap), 37);
-    p.PrintKeyBool("advancedBlendAllOperations", static_cast<bool>(obj.advancedBlendAllOperations), 37);
+    p.SetMinKeyWidth(37);
+    p.PrintKeyValue("advancedBlendMaxColorAttachments", obj.advancedBlendMaxColorAttachments);
+    p.PrintKeyBool("advancedBlendIndependentBlend", static_cast<bool>(obj.advancedBlendIndependentBlend));
+    p.PrintKeyBool("advancedBlendNonPremultipliedSrcColor", static_cast<bool>(obj.advancedBlendNonPremultipliedSrcColor));
+    p.PrintKeyBool("advancedBlendNonPremultipliedDstColor", static_cast<bool>(obj.advancedBlendNonPremultipliedDstColor));
+    p.PrintKeyBool("advancedBlendCorrelatedOverlap", static_cast<bool>(obj.advancedBlendCorrelatedOverlap));
+    p.PrintKeyBool("advancedBlendAllOperations", static_cast<bool>(obj.advancedBlendAllOperations));
 }
 void DumpVkPhysicalDeviceBorderColorSwizzleFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceBorderColorSwizzleFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("borderColorSwizzle", static_cast<bool>(obj.borderColorSwizzle), 27);
-    p.PrintKeyBool("borderColorSwizzleFromImage", static_cast<bool>(obj.borderColorSwizzleFromImage), 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("borderColorSwizzle", static_cast<bool>(obj.borderColorSwizzle));
+    p.PrintKeyBool("borderColorSwizzleFromImage", static_cast<bool>(obj.borderColorSwizzleFromImage));
 }
 void DumpVkPhysicalDeviceBufferDeviceAddressFeatures(Printer &p, std::string name, VkPhysicalDeviceBufferDeviceAddressFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress), 32);
-    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay), 32);
-    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice), 32);
+    p.SetMinKeyWidth(32);
+    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress));
+    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay));
+    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice));
 }
 void DumpVkPhysicalDeviceBufferDeviceAddressFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceBufferDeviceAddressFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress), 32);
-    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay), 32);
-    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice), 32);
+    p.SetMinKeyWidth(32);
+    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress));
+    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay));
+    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice));
 }
 void DumpVkPhysicalDeviceColorWriteEnableFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceColorWriteEnableFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("colorWriteEnable", static_cast<bool>(obj.colorWriteEnable), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("colorWriteEnable", static_cast<bool>(obj.colorWriteEnable));
 }
 void DumpVkPhysicalDeviceConditionalRenderingFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceConditionalRenderingFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("conditionalRendering", static_cast<bool>(obj.conditionalRendering), 29);
-    p.PrintKeyBool("inheritedConditionalRendering", static_cast<bool>(obj.inheritedConditionalRendering), 29);
+    p.SetMinKeyWidth(29);
+    p.PrintKeyBool("conditionalRendering", static_cast<bool>(obj.conditionalRendering));
+    p.PrintKeyBool("inheritedConditionalRendering", static_cast<bool>(obj.inheritedConditionalRendering));
 }
 void DumpVkPhysicalDeviceConservativeRasterizationPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceConservativeRasterizationPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("primitiveOverestimationSize", obj.primitiveOverestimationSize, 43);
-    p.PrintKeyValue("maxExtraPrimitiveOverestimationSize", obj.maxExtraPrimitiveOverestimationSize, 43);
-    p.PrintKeyValue("extraPrimitiveOverestimationSizeGranularity", obj.extraPrimitiveOverestimationSizeGranularity, 43);
-    p.PrintKeyBool("primitiveUnderestimation", static_cast<bool>(obj.primitiveUnderestimation), 43);
-    p.PrintKeyBool("conservativePointAndLineRasterization", static_cast<bool>(obj.conservativePointAndLineRasterization), 43);
-    p.PrintKeyBool("degenerateTrianglesRasterized", static_cast<bool>(obj.degenerateTrianglesRasterized), 43);
-    p.PrintKeyBool("degenerateLinesRasterized", static_cast<bool>(obj.degenerateLinesRasterized), 43);
-    p.PrintKeyBool("fullyCoveredFragmentShaderInputVariable", static_cast<bool>(obj.fullyCoveredFragmentShaderInputVariable), 43);
-    p.PrintKeyBool("conservativeRasterizationPostDepthCoverage", static_cast<bool>(obj.conservativeRasterizationPostDepthCoverage), 43);
+    p.SetMinKeyWidth(43);
+    p.PrintKeyValue("primitiveOverestimationSize", obj.primitiveOverestimationSize);
+    p.PrintKeyValue("maxExtraPrimitiveOverestimationSize", obj.maxExtraPrimitiveOverestimationSize);
+    p.PrintKeyValue("extraPrimitiveOverestimationSizeGranularity", obj.extraPrimitiveOverestimationSizeGranularity);
+    p.PrintKeyBool("primitiveUnderestimation", static_cast<bool>(obj.primitiveUnderestimation));
+    p.PrintKeyBool("conservativePointAndLineRasterization", static_cast<bool>(obj.conservativePointAndLineRasterization));
+    p.PrintKeyBool("degenerateTrianglesRasterized", static_cast<bool>(obj.degenerateTrianglesRasterized));
+    p.PrintKeyBool("degenerateLinesRasterized", static_cast<bool>(obj.degenerateLinesRasterized));
+    p.PrintKeyBool("fullyCoveredFragmentShaderInputVariable", static_cast<bool>(obj.fullyCoveredFragmentShaderInputVariable));
+    p.PrintKeyBool("conservativeRasterizationPostDepthCoverage", static_cast<bool>(obj.conservativeRasterizationPostDepthCoverage));
 }
 void DumpVkPhysicalDeviceCustomBorderColorFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceCustomBorderColorFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("customBorderColors", static_cast<bool>(obj.customBorderColors), 30);
-    p.PrintKeyBool("customBorderColorWithoutFormat", static_cast<bool>(obj.customBorderColorWithoutFormat), 30);
+    p.SetMinKeyWidth(30);
+    p.PrintKeyBool("customBorderColors", static_cast<bool>(obj.customBorderColors));
+    p.PrintKeyBool("customBorderColorWithoutFormat", static_cast<bool>(obj.customBorderColorWithoutFormat));
 }
 void DumpVkPhysicalDeviceCustomBorderColorPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceCustomBorderColorPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxCustomBorderColorSamplers", obj.maxCustomBorderColorSamplers, 28);
+    p.SetMinKeyWidth(28);
+    p.PrintKeyValue("maxCustomBorderColorSamplers", obj.maxCustomBorderColorSamplers);
 }
 void DumpVkPhysicalDeviceDepthClipControlFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceDepthClipControlFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("depthClipControl", static_cast<bool>(obj.depthClipControl), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("depthClipControl", static_cast<bool>(obj.depthClipControl));
 }
 void DumpVkPhysicalDeviceDepthClipEnableFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceDepthClipEnableFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("depthClipEnable", static_cast<bool>(obj.depthClipEnable), 15);
+    p.SetMinKeyWidth(15);
+    p.PrintKeyBool("depthClipEnable", static_cast<bool>(obj.depthClipEnable));
 }
 void DumpVkPhysicalDeviceDepthStencilResolveProperties(Printer &p, std::string name, VkPhysicalDeviceDepthStencilResolveProperties &obj) {
     ObjectWrapper object{p, name};
-    DumpVkResolveModeFlags(p, "supportedDepthResolveModes", obj.supportedDepthResolveModes, 22);
-    DumpVkResolveModeFlags(p, "supportedStencilResolveModes", obj.supportedStencilResolveModes, 22);
-    p.PrintKeyBool("independentResolveNone", static_cast<bool>(obj.independentResolveNone), 22);
-    p.PrintKeyBool("independentResolve", static_cast<bool>(obj.independentResolve), 22);
+    p.SetMinKeyWidth(22);
+    DumpVkResolveModeFlags(p, "supportedDepthResolveModes", obj.supportedDepthResolveModes);
+    DumpVkResolveModeFlags(p, "supportedStencilResolveModes", obj.supportedStencilResolveModes);
+    p.PrintKeyBool("independentResolveNone", static_cast<bool>(obj.independentResolveNone));
+    p.PrintKeyBool("independentResolve", static_cast<bool>(obj.independentResolve));
 }
 void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name, VkPhysicalDeviceDescriptorIndexingFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderInputAttachmentArrayDynamicIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderUniformTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderStorageTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderUniformTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("descriptorBindingUniformBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingSampledImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingSampledImageUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageImageUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingUniformTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformTexelBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageTexelBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingUpdateUnusedWhilePending", static_cast<bool>(obj.descriptorBindingUpdateUnusedWhilePending), 50);
-    p.PrintKeyBool("descriptorBindingPartiallyBound", static_cast<bool>(obj.descriptorBindingPartiallyBound), 50);
-    p.PrintKeyBool("descriptorBindingVariableDescriptorCount", static_cast<bool>(obj.descriptorBindingVariableDescriptorCount), 50);
-    p.PrintKeyBool("runtimeDescriptorArray", static_cast<bool>(obj.runtimeDescriptorArray), 50);
+    p.SetMinKeyWidth(50);
+    p.PrintKeyBool("shaderInputAttachmentArrayDynamicIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayDynamicIndexing));
+    p.PrintKeyBool("shaderUniformTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderStorageTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderUniformTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("descriptorBindingUniformBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingSampledImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingSampledImageUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageImageUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingUniformTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformTexelBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageTexelBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingUpdateUnusedWhilePending", static_cast<bool>(obj.descriptorBindingUpdateUnusedWhilePending));
+    p.PrintKeyBool("descriptorBindingPartiallyBound", static_cast<bool>(obj.descriptorBindingPartiallyBound));
+    p.PrintKeyBool("descriptorBindingVariableDescriptorCount", static_cast<bool>(obj.descriptorBindingVariableDescriptorCount));
+    p.PrintKeyBool("runtimeDescriptorArray", static_cast<bool>(obj.runtimeDescriptorArray));
 }
 void DumpVkPhysicalDeviceDescriptorIndexingProperties(Printer &p, std::string name, VkPhysicalDeviceDescriptorIndexingProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxUpdateAfterBindDescriptorsInAllPools", obj.maxUpdateAfterBindDescriptorsInAllPools, 52);
-    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("robustBufferAccessUpdateAfterBind", static_cast<bool>(obj.robustBufferAccessUpdateAfterBind), 52);
-    p.PrintKeyBool("quadDivergentImplicitLod", static_cast<bool>(obj.quadDivergentImplicitLod), 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSamplers", obj.maxPerStageDescriptorUpdateAfterBindSamplers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindUniformBuffers", obj.maxPerStageDescriptorUpdateAfterBindUniformBuffers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageBuffers", obj.maxPerStageDescriptorUpdateAfterBindStorageBuffers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSampledImages", obj.maxPerStageDescriptorUpdateAfterBindSampledImages, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageImages", obj.maxPerStageDescriptorUpdateAfterBindStorageImages, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInputAttachments", obj.maxPerStageDescriptorUpdateAfterBindInputAttachments, 52);
-    p.PrintKeyValue("maxPerStageUpdateAfterBindResources", obj.maxPerStageUpdateAfterBindResources, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSamplers", obj.maxDescriptorSetUpdateAfterBindSamplers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffers", obj.maxDescriptorSetUpdateAfterBindUniformBuffers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindUniformBuffersDynamic, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffers", obj.maxDescriptorSetUpdateAfterBindStorageBuffers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindStorageBuffersDynamic, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSampledImages", obj.maxDescriptorSetUpdateAfterBindSampledImages, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageImages", obj.maxDescriptorSetUpdateAfterBindStorageImages, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInputAttachments", obj.maxDescriptorSetUpdateAfterBindInputAttachments, 52);
+    p.SetMinKeyWidth(52);
+    p.PrintKeyValue("maxUpdateAfterBindDescriptorsInAllPools", obj.maxUpdateAfterBindDescriptorsInAllPools);
+    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexingNative));
+    p.PrintKeyBool("robustBufferAccessUpdateAfterBind", static_cast<bool>(obj.robustBufferAccessUpdateAfterBind));
+    p.PrintKeyBool("quadDivergentImplicitLod", static_cast<bool>(obj.quadDivergentImplicitLod));
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSamplers", obj.maxPerStageDescriptorUpdateAfterBindSamplers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindUniformBuffers", obj.maxPerStageDescriptorUpdateAfterBindUniformBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageBuffers", obj.maxPerStageDescriptorUpdateAfterBindStorageBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSampledImages", obj.maxPerStageDescriptorUpdateAfterBindSampledImages);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageImages", obj.maxPerStageDescriptorUpdateAfterBindStorageImages);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInputAttachments", obj.maxPerStageDescriptorUpdateAfterBindInputAttachments);
+    p.PrintKeyValue("maxPerStageUpdateAfterBindResources", obj.maxPerStageUpdateAfterBindResources);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSamplers", obj.maxDescriptorSetUpdateAfterBindSamplers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffers", obj.maxDescriptorSetUpdateAfterBindUniformBuffers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindUniformBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffers", obj.maxDescriptorSetUpdateAfterBindStorageBuffers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindStorageBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSampledImages", obj.maxDescriptorSetUpdateAfterBindSampledImages);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageImages", obj.maxDescriptorSetUpdateAfterBindStorageImages);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInputAttachments", obj.maxDescriptorSetUpdateAfterBindInputAttachments);
 }
 void DumpVkPhysicalDeviceDeviceMemoryReportFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceDeviceMemoryReportFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("deviceMemoryReport", static_cast<bool>(obj.deviceMemoryReport), 18);
+    p.SetMinKeyWidth(18);
+    p.PrintKeyBool("deviceMemoryReport", static_cast<bool>(obj.deviceMemoryReport));
 }
 void DumpVkPhysicalDeviceDiscardRectanglePropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceDiscardRectanglePropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxDiscardRectangles", obj.maxDiscardRectangles, 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyValue("maxDiscardRectangles", obj.maxDiscardRectangles);
 }
 void DumpVkPhysicalDeviceDriverProperties(Printer &p, std::string name, VkPhysicalDeviceDriverProperties &obj) {
     ObjectWrapper object{p, name};
-    DumpVkDriverId(p, "driverID", obj.driverID, 18);
-    p.PrintKeyString("driverName", obj.driverName, 18);
-    p.PrintKeyString("driverInfo", obj.driverInfo, 18);
-    DumpVkConformanceVersion(p, "conformanceVersion", obj.conformanceVersion, 18);
+    p.SetMinKeyWidth(18);
+    DumpVkDriverId(p, "driverID", obj.driverID);
+    p.PrintKeyString("driverName", obj.driverName);
+    p.PrintKeyString("driverInfo", obj.driverInfo);
+    DumpVkConformanceVersion(p, "conformanceVersion", obj.conformanceVersion);
 }
 void DumpVkPhysicalDeviceDrmPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceDrmPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("hasPrimary", static_cast<bool>(obj.hasPrimary), 12);
-    p.PrintKeyBool("hasRender", static_cast<bool>(obj.hasRender), 12);
-    p.PrintKeyValue("primaryMajor", obj.primaryMajor, 12);
-    p.PrintKeyValue("primaryMinor", obj.primaryMinor, 12);
-    p.PrintKeyValue("renderMajor", obj.renderMajor, 12);
-    p.PrintKeyValue("renderMinor", obj.renderMinor, 12);
+    p.SetMinKeyWidth(12);
+    p.PrintKeyBool("hasPrimary", static_cast<bool>(obj.hasPrimary));
+    p.PrintKeyBool("hasRender", static_cast<bool>(obj.hasRender));
+    p.PrintKeyValue("primaryMajor", obj.primaryMajor);
+    p.PrintKeyValue("primaryMinor", obj.primaryMinor);
+    p.PrintKeyValue("renderMajor", obj.renderMajor);
+    p.PrintKeyValue("renderMinor", obj.renderMinor);
 }
 void DumpVkPhysicalDeviceDynamicRenderingFeatures(Printer &p, std::string name, VkPhysicalDeviceDynamicRenderingFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering));
 }
 void DumpVkPhysicalDeviceExtendedDynamicState2FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceExtendedDynamicState2FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("extendedDynamicState2", static_cast<bool>(obj.extendedDynamicState2), 39);
-    p.PrintKeyBool("extendedDynamicState2LogicOp", static_cast<bool>(obj.extendedDynamicState2LogicOp), 39);
-    p.PrintKeyBool("extendedDynamicState2PatchControlPoints", static_cast<bool>(obj.extendedDynamicState2PatchControlPoints), 39);
+    p.SetMinKeyWidth(39);
+    p.PrintKeyBool("extendedDynamicState2", static_cast<bool>(obj.extendedDynamicState2));
+    p.PrintKeyBool("extendedDynamicState2LogicOp", static_cast<bool>(obj.extendedDynamicState2LogicOp));
+    p.PrintKeyBool("extendedDynamicState2PatchControlPoints", static_cast<bool>(obj.extendedDynamicState2PatchControlPoints));
 }
 void DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceExtendedDynamicStateFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("extendedDynamicState", static_cast<bool>(obj.extendedDynamicState), 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("extendedDynamicState", static_cast<bool>(obj.extendedDynamicState));
 }
 void DumpVkPhysicalDeviceExternalMemoryHostPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceExternalMemoryHostPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("minImportedHostPointerAlignment", to_hex_str(p, obj.minImportedHostPointerAlignment), 31);
+    p.SetMinKeyWidth(31);
+    p.PrintKeyValue("minImportedHostPointerAlignment", to_hex_str(p, obj.minImportedHostPointerAlignment));
 }
 void DumpVkPhysicalDeviceFeatures(Printer &p, std::string name, VkPhysicalDeviceFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("robustBufferAccess", static_cast<bool>(obj.robustBufferAccess), 39);
-    p.PrintKeyBool("fullDrawIndexUint32", static_cast<bool>(obj.fullDrawIndexUint32), 39);
-    p.PrintKeyBool("imageCubeArray", static_cast<bool>(obj.imageCubeArray), 39);
-    p.PrintKeyBool("independentBlend", static_cast<bool>(obj.independentBlend), 39);
-    p.PrintKeyBool("geometryShader", static_cast<bool>(obj.geometryShader), 39);
-    p.PrintKeyBool("tessellationShader", static_cast<bool>(obj.tessellationShader), 39);
-    p.PrintKeyBool("sampleRateShading", static_cast<bool>(obj.sampleRateShading), 39);
-    p.PrintKeyBool("dualSrcBlend", static_cast<bool>(obj.dualSrcBlend), 39);
-    p.PrintKeyBool("logicOp", static_cast<bool>(obj.logicOp), 39);
-    p.PrintKeyBool("multiDrawIndirect", static_cast<bool>(obj.multiDrawIndirect), 39);
-    p.PrintKeyBool("drawIndirectFirstInstance", static_cast<bool>(obj.drawIndirectFirstInstance), 39);
-    p.PrintKeyBool("depthClamp", static_cast<bool>(obj.depthClamp), 39);
-    p.PrintKeyBool("depthBiasClamp", static_cast<bool>(obj.depthBiasClamp), 39);
-    p.PrintKeyBool("fillModeNonSolid", static_cast<bool>(obj.fillModeNonSolid), 39);
-    p.PrintKeyBool("depthBounds", static_cast<bool>(obj.depthBounds), 39);
-    p.PrintKeyBool("wideLines", static_cast<bool>(obj.wideLines), 39);
-    p.PrintKeyBool("largePoints", static_cast<bool>(obj.largePoints), 39);
-    p.PrintKeyBool("alphaToOne", static_cast<bool>(obj.alphaToOne), 39);
-    p.PrintKeyBool("multiViewport", static_cast<bool>(obj.multiViewport), 39);
-    p.PrintKeyBool("samplerAnisotropy", static_cast<bool>(obj.samplerAnisotropy), 39);
-    p.PrintKeyBool("textureCompressionETC2", static_cast<bool>(obj.textureCompressionETC2), 39);
-    p.PrintKeyBool("textureCompressionASTC_LDR", static_cast<bool>(obj.textureCompressionASTC_LDR), 39);
-    p.PrintKeyBool("textureCompressionBC", static_cast<bool>(obj.textureCompressionBC), 39);
-    p.PrintKeyBool("occlusionQueryPrecise", static_cast<bool>(obj.occlusionQueryPrecise), 39);
-    p.PrintKeyBool("pipelineStatisticsQuery", static_cast<bool>(obj.pipelineStatisticsQuery), 39);
-    p.PrintKeyBool("vertexPipelineStoresAndAtomics", static_cast<bool>(obj.vertexPipelineStoresAndAtomics), 39);
-    p.PrintKeyBool("fragmentStoresAndAtomics", static_cast<bool>(obj.fragmentStoresAndAtomics), 39);
-    p.PrintKeyBool("shaderTessellationAndGeometryPointSize", static_cast<bool>(obj.shaderTessellationAndGeometryPointSize), 39);
-    p.PrintKeyBool("shaderImageGatherExtended", static_cast<bool>(obj.shaderImageGatherExtended), 39);
-    p.PrintKeyBool("shaderStorageImageExtendedFormats", static_cast<bool>(obj.shaderStorageImageExtendedFormats), 39);
-    p.PrintKeyBool("shaderStorageImageMultisample", static_cast<bool>(obj.shaderStorageImageMultisample), 39);
-    p.PrintKeyBool("shaderStorageImageReadWithoutFormat", static_cast<bool>(obj.shaderStorageImageReadWithoutFormat), 39);
-    p.PrintKeyBool("shaderStorageImageWriteWithoutFormat", static_cast<bool>(obj.shaderStorageImageWriteWithoutFormat), 39);
-    p.PrintKeyBool("shaderUniformBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformBufferArrayDynamicIndexing), 39);
-    p.PrintKeyBool("shaderSampledImageArrayDynamicIndexing", static_cast<bool>(obj.shaderSampledImageArrayDynamicIndexing), 39);
-    p.PrintKeyBool("shaderStorageBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageBufferArrayDynamicIndexing), 39);
-    p.PrintKeyBool("shaderStorageImageArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageImageArrayDynamicIndexing), 39);
-    p.PrintKeyBool("shaderClipDistance", static_cast<bool>(obj.shaderClipDistance), 39);
-    p.PrintKeyBool("shaderCullDistance", static_cast<bool>(obj.shaderCullDistance), 39);
-    p.PrintKeyBool("shaderFloat64", static_cast<bool>(obj.shaderFloat64), 39);
-    p.PrintKeyBool("shaderInt64", static_cast<bool>(obj.shaderInt64), 39);
-    p.PrintKeyBool("shaderInt16", static_cast<bool>(obj.shaderInt16), 39);
-    p.PrintKeyBool("shaderResourceResidency", static_cast<bool>(obj.shaderResourceResidency), 39);
-    p.PrintKeyBool("shaderResourceMinLod", static_cast<bool>(obj.shaderResourceMinLod), 39);
-    p.PrintKeyBool("sparseBinding", static_cast<bool>(obj.sparseBinding), 39);
-    p.PrintKeyBool("sparseResidencyBuffer", static_cast<bool>(obj.sparseResidencyBuffer), 39);
-    p.PrintKeyBool("sparseResidencyImage2D", static_cast<bool>(obj.sparseResidencyImage2D), 39);
-    p.PrintKeyBool("sparseResidencyImage3D", static_cast<bool>(obj.sparseResidencyImage3D), 39);
-    p.PrintKeyBool("sparseResidency2Samples", static_cast<bool>(obj.sparseResidency2Samples), 39);
-    p.PrintKeyBool("sparseResidency4Samples", static_cast<bool>(obj.sparseResidency4Samples), 39);
-    p.PrintKeyBool("sparseResidency8Samples", static_cast<bool>(obj.sparseResidency8Samples), 39);
-    p.PrintKeyBool("sparseResidency16Samples", static_cast<bool>(obj.sparseResidency16Samples), 39);
-    p.PrintKeyBool("sparseResidencyAliased", static_cast<bool>(obj.sparseResidencyAliased), 39);
-    p.PrintKeyBool("variableMultisampleRate", static_cast<bool>(obj.variableMultisampleRate), 39);
-    p.PrintKeyBool("inheritedQueries", static_cast<bool>(obj.inheritedQueries), 39);
+    p.SetMinKeyWidth(39);
+    p.PrintKeyBool("robustBufferAccess", static_cast<bool>(obj.robustBufferAccess));
+    p.PrintKeyBool("fullDrawIndexUint32", static_cast<bool>(obj.fullDrawIndexUint32));
+    p.PrintKeyBool("imageCubeArray", static_cast<bool>(obj.imageCubeArray));
+    p.PrintKeyBool("independentBlend", static_cast<bool>(obj.independentBlend));
+    p.PrintKeyBool("geometryShader", static_cast<bool>(obj.geometryShader));
+    p.PrintKeyBool("tessellationShader", static_cast<bool>(obj.tessellationShader));
+    p.PrintKeyBool("sampleRateShading", static_cast<bool>(obj.sampleRateShading));
+    p.PrintKeyBool("dualSrcBlend", static_cast<bool>(obj.dualSrcBlend));
+    p.PrintKeyBool("logicOp", static_cast<bool>(obj.logicOp));
+    p.PrintKeyBool("multiDrawIndirect", static_cast<bool>(obj.multiDrawIndirect));
+    p.PrintKeyBool("drawIndirectFirstInstance", static_cast<bool>(obj.drawIndirectFirstInstance));
+    p.PrintKeyBool("depthClamp", static_cast<bool>(obj.depthClamp));
+    p.PrintKeyBool("depthBiasClamp", static_cast<bool>(obj.depthBiasClamp));
+    p.PrintKeyBool("fillModeNonSolid", static_cast<bool>(obj.fillModeNonSolid));
+    p.PrintKeyBool("depthBounds", static_cast<bool>(obj.depthBounds));
+    p.PrintKeyBool("wideLines", static_cast<bool>(obj.wideLines));
+    p.PrintKeyBool("largePoints", static_cast<bool>(obj.largePoints));
+    p.PrintKeyBool("alphaToOne", static_cast<bool>(obj.alphaToOne));
+    p.PrintKeyBool("multiViewport", static_cast<bool>(obj.multiViewport));
+    p.PrintKeyBool("samplerAnisotropy", static_cast<bool>(obj.samplerAnisotropy));
+    p.PrintKeyBool("textureCompressionETC2", static_cast<bool>(obj.textureCompressionETC2));
+    p.PrintKeyBool("textureCompressionASTC_LDR", static_cast<bool>(obj.textureCompressionASTC_LDR));
+    p.PrintKeyBool("textureCompressionBC", static_cast<bool>(obj.textureCompressionBC));
+    p.PrintKeyBool("occlusionQueryPrecise", static_cast<bool>(obj.occlusionQueryPrecise));
+    p.PrintKeyBool("pipelineStatisticsQuery", static_cast<bool>(obj.pipelineStatisticsQuery));
+    p.PrintKeyBool("vertexPipelineStoresAndAtomics", static_cast<bool>(obj.vertexPipelineStoresAndAtomics));
+    p.PrintKeyBool("fragmentStoresAndAtomics", static_cast<bool>(obj.fragmentStoresAndAtomics));
+    p.PrintKeyBool("shaderTessellationAndGeometryPointSize", static_cast<bool>(obj.shaderTessellationAndGeometryPointSize));
+    p.PrintKeyBool("shaderImageGatherExtended", static_cast<bool>(obj.shaderImageGatherExtended));
+    p.PrintKeyBool("shaderStorageImageExtendedFormats", static_cast<bool>(obj.shaderStorageImageExtendedFormats));
+    p.PrintKeyBool("shaderStorageImageMultisample", static_cast<bool>(obj.shaderStorageImageMultisample));
+    p.PrintKeyBool("shaderStorageImageReadWithoutFormat", static_cast<bool>(obj.shaderStorageImageReadWithoutFormat));
+    p.PrintKeyBool("shaderStorageImageWriteWithoutFormat", static_cast<bool>(obj.shaderStorageImageWriteWithoutFormat));
+    p.PrintKeyBool("shaderUniformBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderSampledImageArrayDynamicIndexing", static_cast<bool>(obj.shaderSampledImageArrayDynamicIndexing));
+    p.PrintKeyBool("shaderStorageBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderStorageImageArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageImageArrayDynamicIndexing));
+    p.PrintKeyBool("shaderClipDistance", static_cast<bool>(obj.shaderClipDistance));
+    p.PrintKeyBool("shaderCullDistance", static_cast<bool>(obj.shaderCullDistance));
+    p.PrintKeyBool("shaderFloat64", static_cast<bool>(obj.shaderFloat64));
+    p.PrintKeyBool("shaderInt64", static_cast<bool>(obj.shaderInt64));
+    p.PrintKeyBool("shaderInt16", static_cast<bool>(obj.shaderInt16));
+    p.PrintKeyBool("shaderResourceResidency", static_cast<bool>(obj.shaderResourceResidency));
+    p.PrintKeyBool("shaderResourceMinLod", static_cast<bool>(obj.shaderResourceMinLod));
+    p.PrintKeyBool("sparseBinding", static_cast<bool>(obj.sparseBinding));
+    p.PrintKeyBool("sparseResidencyBuffer", static_cast<bool>(obj.sparseResidencyBuffer));
+    p.PrintKeyBool("sparseResidencyImage2D", static_cast<bool>(obj.sparseResidencyImage2D));
+    p.PrintKeyBool("sparseResidencyImage3D", static_cast<bool>(obj.sparseResidencyImage3D));
+    p.PrintKeyBool("sparseResidency2Samples", static_cast<bool>(obj.sparseResidency2Samples));
+    p.PrintKeyBool("sparseResidency4Samples", static_cast<bool>(obj.sparseResidency4Samples));
+    p.PrintKeyBool("sparseResidency8Samples", static_cast<bool>(obj.sparseResidency8Samples));
+    p.PrintKeyBool("sparseResidency16Samples", static_cast<bool>(obj.sparseResidency16Samples));
+    p.PrintKeyBool("sparseResidencyAliased", static_cast<bool>(obj.sparseResidencyAliased));
+    p.PrintKeyBool("variableMultisampleRate", static_cast<bool>(obj.variableMultisampleRate));
+    p.PrintKeyBool("inheritedQueries", static_cast<bool>(obj.inheritedQueries));
 }
 void DumpVkPhysicalDeviceFloatControlsProperties(Printer &p, std::string name, VkPhysicalDeviceFloatControlsProperties &obj) {
     ObjectWrapper object{p, name};
-    DumpVkShaderFloatControlsIndependence(p, "denormBehaviorIndependence", obj.denormBehaviorIndependence, 37);
-    DumpVkShaderFloatControlsIndependence(p, "roundingModeIndependence", obj.roundingModeIndependence, 37);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat16", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat16), 37);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat32", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat32), 37);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat64", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat64), 37);
-    p.PrintKeyBool("shaderDenormPreserveFloat16", static_cast<bool>(obj.shaderDenormPreserveFloat16), 37);
-    p.PrintKeyBool("shaderDenormPreserveFloat32", static_cast<bool>(obj.shaderDenormPreserveFloat32), 37);
-    p.PrintKeyBool("shaderDenormPreserveFloat64", static_cast<bool>(obj.shaderDenormPreserveFloat64), 37);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat16", static_cast<bool>(obj.shaderDenormFlushToZeroFloat16), 37);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat32", static_cast<bool>(obj.shaderDenormFlushToZeroFloat32), 37);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat64", static_cast<bool>(obj.shaderDenormFlushToZeroFloat64), 37);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat16", static_cast<bool>(obj.shaderRoundingModeRTEFloat16), 37);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat32", static_cast<bool>(obj.shaderRoundingModeRTEFloat32), 37);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat64", static_cast<bool>(obj.shaderRoundingModeRTEFloat64), 37);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat16", static_cast<bool>(obj.shaderRoundingModeRTZFloat16), 37);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat32", static_cast<bool>(obj.shaderRoundingModeRTZFloat32), 37);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat64", static_cast<bool>(obj.shaderRoundingModeRTZFloat64), 37);
+    p.SetMinKeyWidth(37);
+    DumpVkShaderFloatControlsIndependence(p, "denormBehaviorIndependence", obj.denormBehaviorIndependence);
+    DumpVkShaderFloatControlsIndependence(p, "roundingModeIndependence", obj.roundingModeIndependence);
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat16", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat16));
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat32", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat32));
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat64", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat64));
+    p.PrintKeyBool("shaderDenormPreserveFloat16", static_cast<bool>(obj.shaderDenormPreserveFloat16));
+    p.PrintKeyBool("shaderDenormPreserveFloat32", static_cast<bool>(obj.shaderDenormPreserveFloat32));
+    p.PrintKeyBool("shaderDenormPreserveFloat64", static_cast<bool>(obj.shaderDenormPreserveFloat64));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat16", static_cast<bool>(obj.shaderDenormFlushToZeroFloat16));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat32", static_cast<bool>(obj.shaderDenormFlushToZeroFloat32));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat64", static_cast<bool>(obj.shaderDenormFlushToZeroFloat64));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat16", static_cast<bool>(obj.shaderRoundingModeRTEFloat16));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat32", static_cast<bool>(obj.shaderRoundingModeRTEFloat32));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat64", static_cast<bool>(obj.shaderRoundingModeRTEFloat64));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat16", static_cast<bool>(obj.shaderRoundingModeRTZFloat16));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat32", static_cast<bool>(obj.shaderRoundingModeRTZFloat32));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat64", static_cast<bool>(obj.shaderRoundingModeRTZFloat64));
 }
 void DumpVkPhysicalDeviceFragmentDensityMap2FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentDensityMap2FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("fragmentDensityMapDeferred", static_cast<bool>(obj.fragmentDensityMapDeferred), 26);
+    p.SetMinKeyWidth(26);
+    p.PrintKeyBool("fragmentDensityMapDeferred", static_cast<bool>(obj.fragmentDensityMapDeferred));
 }
 void DumpVkPhysicalDeviceFragmentDensityMap2PropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentDensityMap2PropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("subsampledLoads", static_cast<bool>(obj.subsampledLoads), 41);
-    p.PrintKeyBool("subsampledCoarseReconstructionEarlyAccess", static_cast<bool>(obj.subsampledCoarseReconstructionEarlyAccess), 41);
-    p.PrintKeyValue("maxSubsampledArrayLayers", obj.maxSubsampledArrayLayers, 41);
-    p.PrintKeyValue("maxDescriptorSetSubsampledSamplers", obj.maxDescriptorSetSubsampledSamplers, 41);
+    p.SetMinKeyWidth(41);
+    p.PrintKeyBool("subsampledLoads", static_cast<bool>(obj.subsampledLoads));
+    p.PrintKeyBool("subsampledCoarseReconstructionEarlyAccess", static_cast<bool>(obj.subsampledCoarseReconstructionEarlyAccess));
+    p.PrintKeyValue("maxSubsampledArrayLayers", obj.maxSubsampledArrayLayers);
+    p.PrintKeyValue("maxDescriptorSetSubsampledSamplers", obj.maxDescriptorSetSubsampledSamplers);
 }
 void DumpVkPhysicalDeviceFragmentDensityMapFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentDensityMapFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("fragmentDensityMap", static_cast<bool>(obj.fragmentDensityMap), 37);
-    p.PrintKeyBool("fragmentDensityMapDynamic", static_cast<bool>(obj.fragmentDensityMapDynamic), 37);
-    p.PrintKeyBool("fragmentDensityMapNonSubsampledImages", static_cast<bool>(obj.fragmentDensityMapNonSubsampledImages), 37);
+    p.SetMinKeyWidth(37);
+    p.PrintKeyBool("fragmentDensityMap", static_cast<bool>(obj.fragmentDensityMap));
+    p.PrintKeyBool("fragmentDensityMapDynamic", static_cast<bool>(obj.fragmentDensityMapDynamic));
+    p.PrintKeyBool("fragmentDensityMapNonSubsampledImages", static_cast<bool>(obj.fragmentDensityMapNonSubsampledImages));
 }
 void DumpVkPhysicalDeviceFragmentDensityMapPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentDensityMapPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(26);
     DumpVkExtent2D(p, "minFragmentDensityTexelSize", obj.minFragmentDensityTexelSize);
     DumpVkExtent2D(p, "maxFragmentDensityTexelSize", obj.maxFragmentDensityTexelSize);
-    p.PrintKeyBool("fragmentDensityInvocations", static_cast<bool>(obj.fragmentDensityInvocations), 26);
+    p.PrintKeyBool("fragmentDensityInvocations", static_cast<bool>(obj.fragmentDensityInvocations));
 }
 void DumpVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("fragmentShaderSampleInterlock", static_cast<bool>(obj.fragmentShaderSampleInterlock), 34);
-    p.PrintKeyBool("fragmentShaderPixelInterlock", static_cast<bool>(obj.fragmentShaderPixelInterlock), 34);
-    p.PrintKeyBool("fragmentShaderShadingRateInterlock", static_cast<bool>(obj.fragmentShaderShadingRateInterlock), 34);
+    p.SetMinKeyWidth(34);
+    p.PrintKeyBool("fragmentShaderSampleInterlock", static_cast<bool>(obj.fragmentShaderSampleInterlock));
+    p.PrintKeyBool("fragmentShaderPixelInterlock", static_cast<bool>(obj.fragmentShaderPixelInterlock));
+    p.PrintKeyBool("fragmentShaderShadingRateInterlock", static_cast<bool>(obj.fragmentShaderShadingRateInterlock));
 }
 void DumpVkPhysicalDeviceFragmentShadingRateFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceFragmentShadingRateFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("pipelineFragmentShadingRate", static_cast<bool>(obj.pipelineFragmentShadingRate), 29);
-    p.PrintKeyBool("primitiveFragmentShadingRate", static_cast<bool>(obj.primitiveFragmentShadingRate), 29);
-    p.PrintKeyBool("attachmentFragmentShadingRate", static_cast<bool>(obj.attachmentFragmentShadingRate), 29);
+    p.SetMinKeyWidth(29);
+    p.PrintKeyBool("pipelineFragmentShadingRate", static_cast<bool>(obj.pipelineFragmentShadingRate));
+    p.PrintKeyBool("primitiveFragmentShadingRate", static_cast<bool>(obj.primitiveFragmentShadingRate));
+    p.PrintKeyBool("attachmentFragmentShadingRate", static_cast<bool>(obj.attachmentFragmentShadingRate));
 }
 void DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceFragmentShadingRatePropertiesKHR &obj) {
     ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(52);
     DumpVkExtent2D(p, "minFragmentShadingRateAttachmentTexelSize", obj.minFragmentShadingRateAttachmentTexelSize);
     DumpVkExtent2D(p, "maxFragmentShadingRateAttachmentTexelSize", obj.maxFragmentShadingRateAttachmentTexelSize);
-    p.PrintKeyValue("maxFragmentShadingRateAttachmentTexelSizeAspectRatio", obj.maxFragmentShadingRateAttachmentTexelSizeAspectRatio, 52);
-    p.PrintKeyBool("primitiveFragmentShadingRateWithMultipleViewports", static_cast<bool>(obj.primitiveFragmentShadingRateWithMultipleViewports), 52);
-    p.PrintKeyBool("layeredShadingRateAttachments", static_cast<bool>(obj.layeredShadingRateAttachments), 52);
-    p.PrintKeyBool("fragmentShadingRateNonTrivialCombinerOps", static_cast<bool>(obj.fragmentShadingRateNonTrivialCombinerOps), 52);
+    p.PrintKeyValue("maxFragmentShadingRateAttachmentTexelSizeAspectRatio", obj.maxFragmentShadingRateAttachmentTexelSizeAspectRatio);
+    p.PrintKeyBool("primitiveFragmentShadingRateWithMultipleViewports", static_cast<bool>(obj.primitiveFragmentShadingRateWithMultipleViewports));
+    p.PrintKeyBool("layeredShadingRateAttachments", static_cast<bool>(obj.layeredShadingRateAttachments));
+    p.PrintKeyBool("fragmentShadingRateNonTrivialCombinerOps", static_cast<bool>(obj.fragmentShadingRateNonTrivialCombinerOps));
     DumpVkExtent2D(p, "maxFragmentSize", obj.maxFragmentSize);
-    p.PrintKeyValue("maxFragmentSizeAspectRatio", obj.maxFragmentSizeAspectRatio, 52);
-    p.PrintKeyValue("maxFragmentShadingRateCoverageSamples", obj.maxFragmentShadingRateCoverageSamples, 52);
-    DumpVkSampleCountFlagBits(p, "maxFragmentShadingRateRasterizationSamples", obj.maxFragmentShadingRateRasterizationSamples, 52);
-    p.PrintKeyBool("fragmentShadingRateWithShaderDepthStencilWrites", static_cast<bool>(obj.fragmentShadingRateWithShaderDepthStencilWrites), 52);
-    p.PrintKeyBool("fragmentShadingRateWithSampleMask", static_cast<bool>(obj.fragmentShadingRateWithSampleMask), 52);
-    p.PrintKeyBool("fragmentShadingRateWithShaderSampleMask", static_cast<bool>(obj.fragmentShadingRateWithShaderSampleMask), 52);
-    p.PrintKeyBool("fragmentShadingRateWithConservativeRasterization", static_cast<bool>(obj.fragmentShadingRateWithConservativeRasterization), 52);
-    p.PrintKeyBool("fragmentShadingRateWithFragmentShaderInterlock", static_cast<bool>(obj.fragmentShadingRateWithFragmentShaderInterlock), 52);
-    p.PrintKeyBool("fragmentShadingRateWithCustomSampleLocations", static_cast<bool>(obj.fragmentShadingRateWithCustomSampleLocations), 52);
-    p.PrintKeyBool("fragmentShadingRateStrictMultiplyCombiner", static_cast<bool>(obj.fragmentShadingRateStrictMultiplyCombiner), 52);
+    p.PrintKeyValue("maxFragmentSizeAspectRatio", obj.maxFragmentSizeAspectRatio);
+    p.PrintKeyValue("maxFragmentShadingRateCoverageSamples", obj.maxFragmentShadingRateCoverageSamples);
+    DumpVkSampleCountFlagBits(p, "maxFragmentShadingRateRasterizationSamples", obj.maxFragmentShadingRateRasterizationSamples);
+    p.PrintKeyBool("fragmentShadingRateWithShaderDepthStencilWrites", static_cast<bool>(obj.fragmentShadingRateWithShaderDepthStencilWrites));
+    p.PrintKeyBool("fragmentShadingRateWithSampleMask", static_cast<bool>(obj.fragmentShadingRateWithSampleMask));
+    p.PrintKeyBool("fragmentShadingRateWithShaderSampleMask", static_cast<bool>(obj.fragmentShadingRateWithShaderSampleMask));
+    p.PrintKeyBool("fragmentShadingRateWithConservativeRasterization", static_cast<bool>(obj.fragmentShadingRateWithConservativeRasterization));
+    p.PrintKeyBool("fragmentShadingRateWithFragmentShaderInterlock", static_cast<bool>(obj.fragmentShadingRateWithFragmentShaderInterlock));
+    p.PrintKeyBool("fragmentShadingRateWithCustomSampleLocations", static_cast<bool>(obj.fragmentShadingRateWithCustomSampleLocations));
+    p.PrintKeyBool("fragmentShadingRateStrictMultiplyCombiner", static_cast<bool>(obj.fragmentShadingRateStrictMultiplyCombiner));
 }
 void DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("globalPriorityQuery", static_cast<bool>(obj.globalPriorityQuery), 19);
+    p.SetMinKeyWidth(19);
+    p.PrintKeyBool("globalPriorityQuery", static_cast<bool>(obj.globalPriorityQuery));
 }
 void DumpVkPhysicalDeviceHostQueryResetFeatures(Printer &p, std::string name, VkPhysicalDeviceHostQueryResetFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("hostQueryReset", static_cast<bool>(obj.hostQueryReset), 14);
+    p.SetMinKeyWidth(14);
+    p.PrintKeyBool("hostQueryReset", static_cast<bool>(obj.hostQueryReset));
 }
 void DumpVkPhysicalDeviceIDProperties(Printer &p, std::string name, VkPhysicalDeviceIDProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID), 15);
-    p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID), 15);
-    if (obj.deviceLUIDValid) p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID), 15);
-    p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask, 15);
-    p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid), 15);
+    p.SetMinKeyWidth(15);
+    p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID));
+    p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID));
+    if (obj.deviceLUIDValid) p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID));
+    p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask);
+    p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid));
 }
 void DumpVkPhysicalDeviceImageRobustnessFeatures(Printer &p, std::string name, VkPhysicalDeviceImageRobustnessFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess), 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess));
 }
 void DumpVkPhysicalDeviceImageViewMinLodFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceImageViewMinLodFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("minLod", static_cast<bool>(obj.minLod), 6);
+    p.SetMinKeyWidth(6);
+    p.PrintKeyBool("minLod", static_cast<bool>(obj.minLod));
 }
 void DumpVkPhysicalDeviceImagelessFramebufferFeatures(Printer &p, std::string name, VkPhysicalDeviceImagelessFramebufferFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("imagelessFramebuffer", static_cast<bool>(obj.imagelessFramebuffer), 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("imagelessFramebuffer", static_cast<bool>(obj.imagelessFramebuffer));
 }
 void DumpVkPhysicalDeviceIndexTypeUint8FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceIndexTypeUint8FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("indexTypeUint8", static_cast<bool>(obj.indexTypeUint8), 14);
+    p.SetMinKeyWidth(14);
+    p.PrintKeyBool("indexTypeUint8", static_cast<bool>(obj.indexTypeUint8));
 }
 void DumpVkPhysicalDeviceInlineUniformBlockFeatures(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock), 50);
-    p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind), 50);
+    p.SetMinKeyWidth(50);
+    p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock));
+    p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind));
 }
 void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize, 55);
-    p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks, 55);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks", obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks, 55);
-    p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks, 55);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks, 55);
+    p.SetMinKeyWidth(55);
+    p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize);
+    p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks", obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks);
+    p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks);
 }
 void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, VkPhysicalDeviceLimits &obj) {
     if (p.Type() == OutputType::json)
         p.ObjectStart("limits");
     else
         p.SetSubHeader().ObjectStart(name);
-    p.PrintKeyValue("maxImageDimension1D", obj.maxImageDimension1D, 47);
-    p.PrintKeyValue("maxImageDimension2D", obj.maxImageDimension2D, 47);
-    p.PrintKeyValue("maxImageDimension3D", obj.maxImageDimension3D, 47);
-    p.PrintKeyValue("maxImageDimensionCube", obj.maxImageDimensionCube, 47);
-    p.PrintKeyValue("maxImageArrayLayers", obj.maxImageArrayLayers, 47);
-    p.PrintKeyValue("maxTexelBufferElements", obj.maxTexelBufferElements, 47);
-    p.PrintKeyValue("maxUniformBufferRange", obj.maxUniformBufferRange, 47);
-    p.PrintKeyValue("maxStorageBufferRange", obj.maxStorageBufferRange, 47);
-    p.PrintKeyValue("maxPushConstantsSize", obj.maxPushConstantsSize, 47);
-    p.PrintKeyValue("maxMemoryAllocationCount", obj.maxMemoryAllocationCount, 47);
-    p.PrintKeyValue("maxSamplerAllocationCount", obj.maxSamplerAllocationCount, 47);
-    p.PrintKeyValue("bufferImageGranularity", to_hex_str(p, obj.bufferImageGranularity), 47);
-    p.PrintKeyValue("sparseAddressSpaceSize", to_hex_str(p, obj.sparseAddressSpaceSize), 47);
-    p.PrintKeyValue("maxBoundDescriptorSets", obj.maxBoundDescriptorSets, 47);
-    p.PrintKeyValue("maxPerStageDescriptorSamplers", obj.maxPerStageDescriptorSamplers, 47);
-    p.PrintKeyValue("maxPerStageDescriptorUniformBuffers", obj.maxPerStageDescriptorUniformBuffers, 47);
-    p.PrintKeyValue("maxPerStageDescriptorStorageBuffers", obj.maxPerStageDescriptorStorageBuffers, 47);
-    p.PrintKeyValue("maxPerStageDescriptorSampledImages", obj.maxPerStageDescriptorSampledImages, 47);
-    p.PrintKeyValue("maxPerStageDescriptorStorageImages", obj.maxPerStageDescriptorStorageImages, 47);
-    p.PrintKeyValue("maxPerStageDescriptorInputAttachments", obj.maxPerStageDescriptorInputAttachments, 47);
-    p.PrintKeyValue("maxPerStageResources", obj.maxPerStageResources, 47);
-    p.PrintKeyValue("maxDescriptorSetSamplers", obj.maxDescriptorSetSamplers, 47);
-    p.PrintKeyValue("maxDescriptorSetUniformBuffers", obj.maxDescriptorSetUniformBuffers, 47);
-    p.PrintKeyValue("maxDescriptorSetUniformBuffersDynamic", obj.maxDescriptorSetUniformBuffersDynamic, 47);
-    p.PrintKeyValue("maxDescriptorSetStorageBuffers", obj.maxDescriptorSetStorageBuffers, 47);
-    p.PrintKeyValue("maxDescriptorSetStorageBuffersDynamic", obj.maxDescriptorSetStorageBuffersDynamic, 47);
-    p.PrintKeyValue("maxDescriptorSetSampledImages", obj.maxDescriptorSetSampledImages, 47);
-    p.PrintKeyValue("maxDescriptorSetStorageImages", obj.maxDescriptorSetStorageImages, 47);
-    p.PrintKeyValue("maxDescriptorSetInputAttachments", obj.maxDescriptorSetInputAttachments, 47);
-    p.PrintKeyValue("maxVertexInputAttributes", obj.maxVertexInputAttributes, 47);
-    p.PrintKeyValue("maxVertexInputBindings", obj.maxVertexInputBindings, 47);
-    p.PrintKeyValue("maxVertexInputAttributeOffset", obj.maxVertexInputAttributeOffset, 47);
-    p.PrintKeyValue("maxVertexInputBindingStride", obj.maxVertexInputBindingStride, 47);
-    p.PrintKeyValue("maxVertexOutputComponents", obj.maxVertexOutputComponents, 47);
-    p.PrintKeyValue("maxTessellationGenerationLevel", obj.maxTessellationGenerationLevel, 47);
-    p.PrintKeyValue("maxTessellationPatchSize", obj.maxTessellationPatchSize, 47);
-    p.PrintKeyValue("maxTessellationControlPerVertexInputComponents", obj.maxTessellationControlPerVertexInputComponents, 47);
-    p.PrintKeyValue("maxTessellationControlPerVertexOutputComponents", obj.maxTessellationControlPerVertexOutputComponents, 47);
-    p.PrintKeyValue("maxTessellationControlPerPatchOutputComponents", obj.maxTessellationControlPerPatchOutputComponents, 47);
-    p.PrintKeyValue("maxTessellationControlTotalOutputComponents", obj.maxTessellationControlTotalOutputComponents, 47);
-    p.PrintKeyValue("maxTessellationEvaluationInputComponents", obj.maxTessellationEvaluationInputComponents, 47);
-    p.PrintKeyValue("maxTessellationEvaluationOutputComponents", obj.maxTessellationEvaluationOutputComponents, 47);
-    p.PrintKeyValue("maxGeometryShaderInvocations", obj.maxGeometryShaderInvocations, 47);
-    p.PrintKeyValue("maxGeometryInputComponents", obj.maxGeometryInputComponents, 47);
-    p.PrintKeyValue("maxGeometryOutputComponents", obj.maxGeometryOutputComponents, 47);
-    p.PrintKeyValue("maxGeometryOutputVertices", obj.maxGeometryOutputVertices, 47);
-    p.PrintKeyValue("maxGeometryTotalOutputComponents", obj.maxGeometryTotalOutputComponents, 47);
-    p.PrintKeyValue("maxFragmentInputComponents", obj.maxFragmentInputComponents, 47);
-    p.PrintKeyValue("maxFragmentOutputAttachments", obj.maxFragmentOutputAttachments, 47);
-    p.PrintKeyValue("maxFragmentDualSrcAttachments", obj.maxFragmentDualSrcAttachments, 47);
-    p.PrintKeyValue("maxFragmentCombinedOutputResources", obj.maxFragmentCombinedOutputResources, 47);
-    p.PrintKeyValue("maxComputeSharedMemorySize", obj.maxComputeSharedMemorySize, 47);
+    p.SetMinKeyWidth(47);
+    p.PrintKeyValue("maxImageDimension1D", obj.maxImageDimension1D);
+    p.PrintKeyValue("maxImageDimension2D", obj.maxImageDimension2D);
+    p.PrintKeyValue("maxImageDimension3D", obj.maxImageDimension3D);
+    p.PrintKeyValue("maxImageDimensionCube", obj.maxImageDimensionCube);
+    p.PrintKeyValue("maxImageArrayLayers", obj.maxImageArrayLayers);
+    p.PrintKeyValue("maxTexelBufferElements", obj.maxTexelBufferElements);
+    p.PrintKeyValue("maxUniformBufferRange", obj.maxUniformBufferRange);
+    p.PrintKeyValue("maxStorageBufferRange", obj.maxStorageBufferRange);
+    p.PrintKeyValue("maxPushConstantsSize", obj.maxPushConstantsSize);
+    p.PrintKeyValue("maxMemoryAllocationCount", obj.maxMemoryAllocationCount);
+    p.PrintKeyValue("maxSamplerAllocationCount", obj.maxSamplerAllocationCount);
+    p.PrintKeyValue("bufferImageGranularity", to_hex_str(p, obj.bufferImageGranularity));
+    p.PrintKeyValue("sparseAddressSpaceSize", to_hex_str(p, obj.sparseAddressSpaceSize));
+    p.PrintKeyValue("maxBoundDescriptorSets", obj.maxBoundDescriptorSets);
+    p.PrintKeyValue("maxPerStageDescriptorSamplers", obj.maxPerStageDescriptorSamplers);
+    p.PrintKeyValue("maxPerStageDescriptorUniformBuffers", obj.maxPerStageDescriptorUniformBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorStorageBuffers", obj.maxPerStageDescriptorStorageBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorSampledImages", obj.maxPerStageDescriptorSampledImages);
+    p.PrintKeyValue("maxPerStageDescriptorStorageImages", obj.maxPerStageDescriptorStorageImages);
+    p.PrintKeyValue("maxPerStageDescriptorInputAttachments", obj.maxPerStageDescriptorInputAttachments);
+    p.PrintKeyValue("maxPerStageResources", obj.maxPerStageResources);
+    p.PrintKeyValue("maxDescriptorSetSamplers", obj.maxDescriptorSetSamplers);
+    p.PrintKeyValue("maxDescriptorSetUniformBuffers", obj.maxDescriptorSetUniformBuffers);
+    p.PrintKeyValue("maxDescriptorSetUniformBuffersDynamic", obj.maxDescriptorSetUniformBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetStorageBuffers", obj.maxDescriptorSetStorageBuffers);
+    p.PrintKeyValue("maxDescriptorSetStorageBuffersDynamic", obj.maxDescriptorSetStorageBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetSampledImages", obj.maxDescriptorSetSampledImages);
+    p.PrintKeyValue("maxDescriptorSetStorageImages", obj.maxDescriptorSetStorageImages);
+    p.PrintKeyValue("maxDescriptorSetInputAttachments", obj.maxDescriptorSetInputAttachments);
+    p.PrintKeyValue("maxVertexInputAttributes", obj.maxVertexInputAttributes);
+    p.PrintKeyValue("maxVertexInputBindings", obj.maxVertexInputBindings);
+    p.PrintKeyValue("maxVertexInputAttributeOffset", obj.maxVertexInputAttributeOffset);
+    p.PrintKeyValue("maxVertexInputBindingStride", obj.maxVertexInputBindingStride);
+    p.PrintKeyValue("maxVertexOutputComponents", obj.maxVertexOutputComponents);
+    p.PrintKeyValue("maxTessellationGenerationLevel", obj.maxTessellationGenerationLevel);
+    p.PrintKeyValue("maxTessellationPatchSize", obj.maxTessellationPatchSize);
+    p.PrintKeyValue("maxTessellationControlPerVertexInputComponents", obj.maxTessellationControlPerVertexInputComponents);
+    p.PrintKeyValue("maxTessellationControlPerVertexOutputComponents", obj.maxTessellationControlPerVertexOutputComponents);
+    p.PrintKeyValue("maxTessellationControlPerPatchOutputComponents", obj.maxTessellationControlPerPatchOutputComponents);
+    p.PrintKeyValue("maxTessellationControlTotalOutputComponents", obj.maxTessellationControlTotalOutputComponents);
+    p.PrintKeyValue("maxTessellationEvaluationInputComponents", obj.maxTessellationEvaluationInputComponents);
+    p.PrintKeyValue("maxTessellationEvaluationOutputComponents", obj.maxTessellationEvaluationOutputComponents);
+    p.PrintKeyValue("maxGeometryShaderInvocations", obj.maxGeometryShaderInvocations);
+    p.PrintKeyValue("maxGeometryInputComponents", obj.maxGeometryInputComponents);
+    p.PrintKeyValue("maxGeometryOutputComponents", obj.maxGeometryOutputComponents);
+    p.PrintKeyValue("maxGeometryOutputVertices", obj.maxGeometryOutputVertices);
+    p.PrintKeyValue("maxGeometryTotalOutputComponents", obj.maxGeometryTotalOutputComponents);
+    p.PrintKeyValue("maxFragmentInputComponents", obj.maxFragmentInputComponents);
+    p.PrintKeyValue("maxFragmentOutputAttachments", obj.maxFragmentOutputAttachments);
+    p.PrintKeyValue("maxFragmentDualSrcAttachments", obj.maxFragmentDualSrcAttachments);
+    p.PrintKeyValue("maxFragmentCombinedOutputResources", obj.maxFragmentCombinedOutputResources);
+    p.PrintKeyValue("maxComputeSharedMemorySize", obj.maxComputeSharedMemorySize);
     {   ArrayWrapper arr(p,"maxComputeWorkGroupCount", 3);
         p.PrintElement(obj.maxComputeWorkGroupCount[0]);
         p.PrintElement(obj.maxComputeWorkGroupCount[1]);
         p.PrintElement(obj.maxComputeWorkGroupCount[2]);
     }
-    p.PrintKeyValue("maxComputeWorkGroupInvocations", obj.maxComputeWorkGroupInvocations, 47);
+    p.PrintKeyValue("maxComputeWorkGroupInvocations", obj.maxComputeWorkGroupInvocations);
     {   ArrayWrapper arr(p,"maxComputeWorkGroupSize", 3);
         p.PrintElement(obj.maxComputeWorkGroupSize[0]);
         p.PrintElement(obj.maxComputeWorkGroupSize[1]);
         p.PrintElement(obj.maxComputeWorkGroupSize[2]);
     }
-    p.PrintKeyValue("subPixelPrecisionBits", obj.subPixelPrecisionBits, 47);
-    p.PrintKeyValue("subTexelPrecisionBits", obj.subTexelPrecisionBits, 47);
-    p.PrintKeyValue("mipmapPrecisionBits", obj.mipmapPrecisionBits, 47);
-    p.PrintKeyValue("maxDrawIndexedIndexValue", obj.maxDrawIndexedIndexValue, 47);
-    p.PrintKeyValue("maxDrawIndirectCount", obj.maxDrawIndirectCount, 47);
-    p.PrintKeyValue("maxSamplerLodBias", obj.maxSamplerLodBias, 47);
-    p.PrintKeyValue("maxSamplerAnisotropy", obj.maxSamplerAnisotropy, 47);
-    p.PrintKeyValue("maxViewports", obj.maxViewports, 47);
+    p.PrintKeyValue("subPixelPrecisionBits", obj.subPixelPrecisionBits);
+    p.PrintKeyValue("subTexelPrecisionBits", obj.subTexelPrecisionBits);
+    p.PrintKeyValue("mipmapPrecisionBits", obj.mipmapPrecisionBits);
+    p.PrintKeyValue("maxDrawIndexedIndexValue", obj.maxDrawIndexedIndexValue);
+    p.PrintKeyValue("maxDrawIndirectCount", obj.maxDrawIndirectCount);
+    p.PrintKeyValue("maxSamplerLodBias", obj.maxSamplerLodBias);
+    p.PrintKeyValue("maxSamplerAnisotropy", obj.maxSamplerAnisotropy);
+    p.PrintKeyValue("maxViewports", obj.maxViewports);
     {   ArrayWrapper arr(p,"maxViewportDimensions", 2);
         p.PrintElement(obj.maxViewportDimensions[0]);
         p.PrintElement(obj.maxViewportDimensions[1]);
@@ -1599,38 +1654,38 @@ void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, VkPhysicalDeviceLi
         p.PrintElement(obj.viewportBoundsRange[0]);
         p.PrintElement(obj.viewportBoundsRange[1]);
     }
-    p.PrintKeyValue("viewportSubPixelBits", obj.viewportSubPixelBits, 47);
-    p.PrintKeyValue("minMemoryMapAlignment", obj.minMemoryMapAlignment, 47);
-    p.PrintKeyValue("minTexelBufferOffsetAlignment", to_hex_str(p, obj.minTexelBufferOffsetAlignment), 47);
-    p.PrintKeyValue("minUniformBufferOffsetAlignment", to_hex_str(p, obj.minUniformBufferOffsetAlignment), 47);
-    p.PrintKeyValue("minStorageBufferOffsetAlignment", to_hex_str(p, obj.minStorageBufferOffsetAlignment), 47);
-    p.PrintKeyValue("minTexelOffset", obj.minTexelOffset, 47);
-    p.PrintKeyValue("maxTexelOffset", obj.maxTexelOffset, 47);
-    p.PrintKeyValue("minTexelGatherOffset", obj.minTexelGatherOffset, 47);
-    p.PrintKeyValue("maxTexelGatherOffset", obj.maxTexelGatherOffset, 47);
-    p.PrintKeyValue("minInterpolationOffset", obj.minInterpolationOffset, 47);
-    p.PrintKeyValue("maxInterpolationOffset", obj.maxInterpolationOffset, 47);
-    p.PrintKeyValue("subPixelInterpolationOffsetBits", obj.subPixelInterpolationOffsetBits, 47);
-    p.PrintKeyValue("maxFramebufferWidth", obj.maxFramebufferWidth, 47);
-    p.PrintKeyValue("maxFramebufferHeight", obj.maxFramebufferHeight, 47);
-    p.PrintKeyValue("maxFramebufferLayers", obj.maxFramebufferLayers, 47);
-    DumpVkSampleCountFlags(p, "framebufferColorSampleCounts", obj.framebufferColorSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "framebufferDepthSampleCounts", obj.framebufferDepthSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "framebufferStencilSampleCounts", obj.framebufferStencilSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "framebufferNoAttachmentsSampleCounts", obj.framebufferNoAttachmentsSampleCounts, 47);
-    p.PrintKeyValue("maxColorAttachments", obj.maxColorAttachments, 47);
-    DumpVkSampleCountFlags(p, "sampledImageColorSampleCounts", obj.sampledImageColorSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "sampledImageIntegerSampleCounts", obj.sampledImageIntegerSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "sampledImageDepthSampleCounts", obj.sampledImageDepthSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "sampledImageStencilSampleCounts", obj.sampledImageStencilSampleCounts, 47);
-    DumpVkSampleCountFlags(p, "storageImageSampleCounts", obj.storageImageSampleCounts, 47);
-    p.PrintKeyValue("maxSampleMaskWords", obj.maxSampleMaskWords, 47);
-    p.PrintKeyBool("timestampComputeAndGraphics", static_cast<bool>(obj.timestampComputeAndGraphics), 47);
-    p.PrintKeyValue("timestampPeriod", obj.timestampPeriod, 47);
-    p.PrintKeyValue("maxClipDistances", obj.maxClipDistances, 47);
-    p.PrintKeyValue("maxCullDistances", obj.maxCullDistances, 47);
-    p.PrintKeyValue("maxCombinedClipAndCullDistances", obj.maxCombinedClipAndCullDistances, 47);
-    p.PrintKeyValue("discreteQueuePriorities", obj.discreteQueuePriorities, 47);
+    p.PrintKeyValue("viewportSubPixelBits", obj.viewportSubPixelBits);
+    p.PrintKeyValue("minMemoryMapAlignment", obj.minMemoryMapAlignment);
+    p.PrintKeyValue("minTexelBufferOffsetAlignment", to_hex_str(p, obj.minTexelBufferOffsetAlignment));
+    p.PrintKeyValue("minUniformBufferOffsetAlignment", to_hex_str(p, obj.minUniformBufferOffsetAlignment));
+    p.PrintKeyValue("minStorageBufferOffsetAlignment", to_hex_str(p, obj.minStorageBufferOffsetAlignment));
+    p.PrintKeyValue("minTexelOffset", obj.minTexelOffset);
+    p.PrintKeyValue("maxTexelOffset", obj.maxTexelOffset);
+    p.PrintKeyValue("minTexelGatherOffset", obj.minTexelGatherOffset);
+    p.PrintKeyValue("maxTexelGatherOffset", obj.maxTexelGatherOffset);
+    p.PrintKeyValue("minInterpolationOffset", obj.minInterpolationOffset);
+    p.PrintKeyValue("maxInterpolationOffset", obj.maxInterpolationOffset);
+    p.PrintKeyValue("subPixelInterpolationOffsetBits", obj.subPixelInterpolationOffsetBits);
+    p.PrintKeyValue("maxFramebufferWidth", obj.maxFramebufferWidth);
+    p.PrintKeyValue("maxFramebufferHeight", obj.maxFramebufferHeight);
+    p.PrintKeyValue("maxFramebufferLayers", obj.maxFramebufferLayers);
+    DumpVkSampleCountFlags(p, "framebufferColorSampleCounts", obj.framebufferColorSampleCounts);
+    DumpVkSampleCountFlags(p, "framebufferDepthSampleCounts", obj.framebufferDepthSampleCounts);
+    DumpVkSampleCountFlags(p, "framebufferStencilSampleCounts", obj.framebufferStencilSampleCounts);
+    DumpVkSampleCountFlags(p, "framebufferNoAttachmentsSampleCounts", obj.framebufferNoAttachmentsSampleCounts);
+    p.PrintKeyValue("maxColorAttachments", obj.maxColorAttachments);
+    DumpVkSampleCountFlags(p, "sampledImageColorSampleCounts", obj.sampledImageColorSampleCounts);
+    DumpVkSampleCountFlags(p, "sampledImageIntegerSampleCounts", obj.sampledImageIntegerSampleCounts);
+    DumpVkSampleCountFlags(p, "sampledImageDepthSampleCounts", obj.sampledImageDepthSampleCounts);
+    DumpVkSampleCountFlags(p, "sampledImageStencilSampleCounts", obj.sampledImageStencilSampleCounts);
+    DumpVkSampleCountFlags(p, "storageImageSampleCounts", obj.storageImageSampleCounts);
+    p.PrintKeyValue("maxSampleMaskWords", obj.maxSampleMaskWords);
+    p.PrintKeyBool("timestampComputeAndGraphics", static_cast<bool>(obj.timestampComputeAndGraphics));
+    p.PrintKeyValue("timestampPeriod", obj.timestampPeriod);
+    p.PrintKeyValue("maxClipDistances", obj.maxClipDistances);
+    p.PrintKeyValue("maxCullDistances", obj.maxCullDistances);
+    p.PrintKeyValue("maxCombinedClipAndCullDistances", obj.maxCombinedClipAndCullDistances);
+    p.PrintKeyValue("discreteQueuePriorities", obj.discreteQueuePriorities);
     {   ArrayWrapper arr(p,"pointSizeRange", 2);
         p.PrintElement(obj.pointSizeRange[0]);
         p.PrintElement(obj.pointSizeRange[1]);
@@ -1639,43 +1694,49 @@ void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, VkPhysicalDeviceLi
         p.PrintElement(obj.lineWidthRange[0]);
         p.PrintElement(obj.lineWidthRange[1]);
     }
-    p.PrintKeyValue("pointSizeGranularity", obj.pointSizeGranularity, 47);
-    p.PrintKeyValue("lineWidthGranularity", obj.lineWidthGranularity, 47);
-    p.PrintKeyBool("strictLines", static_cast<bool>(obj.strictLines), 47);
-    p.PrintKeyBool("standardSampleLocations", static_cast<bool>(obj.standardSampleLocations), 47);
-    p.PrintKeyValue("optimalBufferCopyOffsetAlignment", to_hex_str(p, obj.optimalBufferCopyOffsetAlignment), 47);
-    p.PrintKeyValue("optimalBufferCopyRowPitchAlignment", to_hex_str(p, obj.optimalBufferCopyRowPitchAlignment), 47);
-    p.PrintKeyValue("nonCoherentAtomSize", to_hex_str(p, obj.nonCoherentAtomSize), 47);
+    p.PrintKeyValue("pointSizeGranularity", obj.pointSizeGranularity);
+    p.PrintKeyValue("lineWidthGranularity", obj.lineWidthGranularity);
+    p.PrintKeyBool("strictLines", static_cast<bool>(obj.strictLines));
+    p.PrintKeyBool("standardSampleLocations", static_cast<bool>(obj.standardSampleLocations));
+    p.PrintKeyValue("optimalBufferCopyOffsetAlignment", to_hex_str(p, obj.optimalBufferCopyOffsetAlignment));
+    p.PrintKeyValue("optimalBufferCopyRowPitchAlignment", to_hex_str(p, obj.optimalBufferCopyRowPitchAlignment));
+    p.PrintKeyValue("nonCoherentAtomSize", to_hex_str(p, obj.nonCoherentAtomSize));
     p.ObjectEnd();
 }
 void DumpVkPhysicalDeviceLineRasterizationFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceLineRasterizationFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("rectangularLines", static_cast<bool>(obj.rectangularLines), 24);
-    p.PrintKeyBool("bresenhamLines", static_cast<bool>(obj.bresenhamLines), 24);
-    p.PrintKeyBool("smoothLines", static_cast<bool>(obj.smoothLines), 24);
-    p.PrintKeyBool("stippledRectangularLines", static_cast<bool>(obj.stippledRectangularLines), 24);
-    p.PrintKeyBool("stippledBresenhamLines", static_cast<bool>(obj.stippledBresenhamLines), 24);
-    p.PrintKeyBool("stippledSmoothLines", static_cast<bool>(obj.stippledSmoothLines), 24);
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("rectangularLines", static_cast<bool>(obj.rectangularLines));
+    p.PrintKeyBool("bresenhamLines", static_cast<bool>(obj.bresenhamLines));
+    p.PrintKeyBool("smoothLines", static_cast<bool>(obj.smoothLines));
+    p.PrintKeyBool("stippledRectangularLines", static_cast<bool>(obj.stippledRectangularLines));
+    p.PrintKeyBool("stippledBresenhamLines", static_cast<bool>(obj.stippledBresenhamLines));
+    p.PrintKeyBool("stippledSmoothLines", static_cast<bool>(obj.stippledSmoothLines));
 }
 void DumpVkPhysicalDeviceLineRasterizationPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceLineRasterizationPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("lineSubPixelPrecisionBits", obj.lineSubPixelPrecisionBits, 25);
+    p.SetMinKeyWidth(25);
+    p.PrintKeyValue("lineSubPixelPrecisionBits", obj.lineSubPixelPrecisionBits);
 }
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, VkPhysicalDeviceMaintenance3Properties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxPerSetDescriptors", obj.maxPerSetDescriptors, 23);
-    p.PrintKeyValue("maxMemoryAllocationSize", to_hex_str(p, obj.maxMemoryAllocationSize), 23);
+    p.SetMinKeyWidth(23);
+    p.PrintKeyValue("maxPerSetDescriptors", obj.maxPerSetDescriptors);
+    p.PrintKeyValue("maxMemoryAllocationSize", to_hex_str(p, obj.maxMemoryAllocationSize));
 }
 void DumpVkPhysicalDeviceMaintenance4Features(Printer &p, std::string name, VkPhysicalDeviceMaintenance4Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4), 12);
+    p.SetMinKeyWidth(12);
+    p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4));
 }
 void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, VkPhysicalDeviceMaintenance4Properties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize), 13);
+    p.SetMinKeyWidth(13);
+    p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize));
 }
 void DumpVkPhysicalDeviceMemoryBudgetPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceMemoryBudgetPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(14);
     {   ArrayWrapper arr(p,"heapBudget", 16);
         p.PrintElement(obj.heapBudget[0]);
         p.PrintElement(obj.heapBudget[1]);
@@ -1715,635 +1776,711 @@ void DumpVkPhysicalDeviceMemoryBudgetPropertiesEXT(Printer &p, std::string name,
 }
 void DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceMemoryPriorityFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("memoryPriority", static_cast<bool>(obj.memoryPriority), 14);
+    p.SetMinKeyWidth(14);
+    p.PrintKeyBool("memoryPriority", static_cast<bool>(obj.memoryPriority));
 }
 void DumpVkPhysicalDeviceMultiDrawFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceMultiDrawFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("multiDraw", static_cast<bool>(obj.multiDraw), 9);
+    p.SetMinKeyWidth(9);
+    p.PrintKeyBool("multiDraw", static_cast<bool>(obj.multiDraw));
 }
 void DumpVkPhysicalDeviceMultiDrawPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceMultiDrawPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxMultiDrawCount", obj.maxMultiDrawCount, 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyValue("maxMultiDrawCount", obj.maxMultiDrawCount);
 }
 void DumpVkPhysicalDeviceMultiviewFeatures(Printer &p, std::string name, VkPhysicalDeviceMultiviewFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("multiview", static_cast<bool>(obj.multiview), 27);
-    p.PrintKeyBool("multiviewGeometryShader", static_cast<bool>(obj.multiviewGeometryShader), 27);
-    p.PrintKeyBool("multiviewTessellationShader", static_cast<bool>(obj.multiviewTessellationShader), 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("multiview", static_cast<bool>(obj.multiview));
+    p.PrintKeyBool("multiviewGeometryShader", static_cast<bool>(obj.multiviewGeometryShader));
+    p.PrintKeyBool("multiviewTessellationShader", static_cast<bool>(obj.multiviewTessellationShader));
 }
 void DumpVkPhysicalDeviceMultiviewProperties(Printer &p, std::string name, VkPhysicalDeviceMultiviewProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxMultiviewViewCount", obj.maxMultiviewViewCount, 25);
-    p.PrintKeyValue("maxMultiviewInstanceIndex", obj.maxMultiviewInstanceIndex, 25);
+    p.SetMinKeyWidth(25);
+    p.PrintKeyValue("maxMultiviewViewCount", obj.maxMultiviewViewCount);
+    p.PrintKeyValue("maxMultiviewInstanceIndex", obj.maxMultiviewInstanceIndex);
 }
 void DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(Printer &p, std::string name, VkPhysicalDevicePCIBusInfoPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("pciDomain", obj.pciDomain, 11);
-    p.PrintKeyValue("pciBus", obj.pciBus, 11);
-    p.PrintKeyValue("pciDevice", obj.pciDevice, 11);
-    p.PrintKeyValue("pciFunction", obj.pciFunction, 11);
+    p.SetMinKeyWidth(11);
+    p.PrintKeyValue("pciDomain", obj.pciDomain);
+    p.PrintKeyValue("pciBus", obj.pciBus);
+    p.PrintKeyValue("pciDevice", obj.pciDevice);
+    p.PrintKeyValue("pciFunction", obj.pciFunction);
 }
 void DumpVkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("pageableDeviceLocalMemory", static_cast<bool>(obj.pageableDeviceLocalMemory), 25);
+    p.SetMinKeyWidth(25);
+    p.PrintKeyBool("pageableDeviceLocalMemory", static_cast<bool>(obj.pageableDeviceLocalMemory));
 }
 void DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("performanceCounterQueryPools", static_cast<bool>(obj.performanceCounterQueryPools), 36);
-    p.PrintKeyBool("performanceCounterMultipleQueryPools", static_cast<bool>(obj.performanceCounterMultipleQueryPools), 36);
+    p.SetMinKeyWidth(36);
+    p.PrintKeyBool("performanceCounterQueryPools", static_cast<bool>(obj.performanceCounterQueryPools));
+    p.PrintKeyBool("performanceCounterMultipleQueryPools", static_cast<bool>(obj.performanceCounterMultipleQueryPools));
 }
 void DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePerformanceQueryPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("allowCommandBufferQueryCopies", static_cast<bool>(obj.allowCommandBufferQueryCopies), 29);
+    p.SetMinKeyWidth(29);
+    p.PrintKeyBool("allowCommandBufferQueryCopies", static_cast<bool>(obj.allowCommandBufferQueryCopies));
 }
 void DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(Printer &p, std::string name, VkPhysicalDevicePipelineCreationCacheControlFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl), 28);
+    p.SetMinKeyWidth(28);
+    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl));
 }
 void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("pipelineExecutableInfo", static_cast<bool>(obj.pipelineExecutableInfo), 22);
+    p.SetMinKeyWidth(22);
+    p.PrintKeyBool("pipelineExecutableInfo", static_cast<bool>(obj.pipelineExecutableInfo));
 }
 void DumpVkPhysicalDevicePointClippingProperties(Printer &p, std::string name, VkPhysicalDevicePointClippingProperties &obj) {
     ObjectWrapper object{p, name};
-    DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior, 0);
+    DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior);
 }
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePortabilitySubsetFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("constantAlphaColorBlendFactors", static_cast<bool>(obj.constantAlphaColorBlendFactors), 38);
-    p.PrintKeyBool("events", static_cast<bool>(obj.events), 38);
-    p.PrintKeyBool("imageViewFormatReinterpretation", static_cast<bool>(obj.imageViewFormatReinterpretation), 38);
-    p.PrintKeyBool("imageViewFormatSwizzle", static_cast<bool>(obj.imageViewFormatSwizzle), 38);
-    p.PrintKeyBool("imageView2DOn3DImage", static_cast<bool>(obj.imageView2DOn3DImage), 38);
-    p.PrintKeyBool("multisampleArrayImage", static_cast<bool>(obj.multisampleArrayImage), 38);
-    p.PrintKeyBool("mutableComparisonSamplers", static_cast<bool>(obj.mutableComparisonSamplers), 38);
-    p.PrintKeyBool("pointPolygons", static_cast<bool>(obj.pointPolygons), 38);
-    p.PrintKeyBool("samplerMipLodBias", static_cast<bool>(obj.samplerMipLodBias), 38);
-    p.PrintKeyBool("separateStencilMaskRef", static_cast<bool>(obj.separateStencilMaskRef), 38);
-    p.PrintKeyBool("shaderSampleRateInterpolationFunctions", static_cast<bool>(obj.shaderSampleRateInterpolationFunctions), 38);
-    p.PrintKeyBool("tessellationIsolines", static_cast<bool>(obj.tessellationIsolines), 38);
-    p.PrintKeyBool("tessellationPointMode", static_cast<bool>(obj.tessellationPointMode), 38);
-    p.PrintKeyBool("triangleFans", static_cast<bool>(obj.triangleFans), 38);
-    p.PrintKeyBool("vertexAttributeAccessBeyondStride", static_cast<bool>(obj.vertexAttributeAccessBeyondStride), 38);
+    p.SetMinKeyWidth(38);
+    p.PrintKeyBool("constantAlphaColorBlendFactors", static_cast<bool>(obj.constantAlphaColorBlendFactors));
+    p.PrintKeyBool("events", static_cast<bool>(obj.events));
+    p.PrintKeyBool("imageViewFormatReinterpretation", static_cast<bool>(obj.imageViewFormatReinterpretation));
+    p.PrintKeyBool("imageViewFormatSwizzle", static_cast<bool>(obj.imageViewFormatSwizzle));
+    p.PrintKeyBool("imageView2DOn3DImage", static_cast<bool>(obj.imageView2DOn3DImage));
+    p.PrintKeyBool("multisampleArrayImage", static_cast<bool>(obj.multisampleArrayImage));
+    p.PrintKeyBool("mutableComparisonSamplers", static_cast<bool>(obj.mutableComparisonSamplers));
+    p.PrintKeyBool("pointPolygons", static_cast<bool>(obj.pointPolygons));
+    p.PrintKeyBool("samplerMipLodBias", static_cast<bool>(obj.samplerMipLodBias));
+    p.PrintKeyBool("separateStencilMaskRef", static_cast<bool>(obj.separateStencilMaskRef));
+    p.PrintKeyBool("shaderSampleRateInterpolationFunctions", static_cast<bool>(obj.shaderSampleRateInterpolationFunctions));
+    p.PrintKeyBool("tessellationIsolines", static_cast<bool>(obj.tessellationIsolines));
+    p.PrintKeyBool("tessellationPointMode", static_cast<bool>(obj.tessellationPointMode));
+    p.PrintKeyBool("triangleFans", static_cast<bool>(obj.triangleFans));
+    p.PrintKeyBool("vertexAttributeAccessBeyondStride", static_cast<bool>(obj.vertexAttributeAccessBeyondStride));
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePortabilitySubsetPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("minVertexInputBindingStrideAlignment", obj.minVertexInputBindingStrideAlignment, 36);
+    p.SetMinKeyWidth(36);
+    p.PrintKeyValue("minVertexInputBindingStrideAlignment", obj.minVertexInputBindingStrideAlignment);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkPhysicalDevicePresentIdFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePresentIdFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("presentId", static_cast<bool>(obj.presentId), 9);
+    p.SetMinKeyWidth(9);
+    p.PrintKeyBool("presentId", static_cast<bool>(obj.presentId));
 }
 void DumpVkPhysicalDevicePresentWaitFeaturesKHR(Printer &p, std::string name, VkPhysicalDevicePresentWaitFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("presentWait", static_cast<bool>(obj.presentWait), 11);
+    p.SetMinKeyWidth(11);
+    p.PrintKeyBool("presentWait", static_cast<bool>(obj.presentWait));
 }
 void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("primitiveTopologyListRestart", static_cast<bool>(obj.primitiveTopologyListRestart), 33);
-    p.PrintKeyBool("primitiveTopologyPatchListRestart", static_cast<bool>(obj.primitiveTopologyPatchListRestart), 33);
+    p.SetMinKeyWidth(33);
+    p.PrintKeyBool("primitiveTopologyListRestart", static_cast<bool>(obj.primitiveTopologyListRestart));
+    p.PrintKeyBool("primitiveTopologyPatchListRestart", static_cast<bool>(obj.primitiveTopologyPatchListRestart));
 }
 void DumpVkPhysicalDevicePrivateDataFeatures(Printer &p, std::string name, VkPhysicalDevicePrivateDataFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData), 11);
+    p.SetMinKeyWidth(11);
+    p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData));
 }
 void DumpVkPhysicalDeviceProtectedMemoryFeatures(Printer &p, std::string name, VkPhysicalDeviceProtectedMemoryFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("protectedMemory", static_cast<bool>(obj.protectedMemory), 15);
+    p.SetMinKeyWidth(15);
+    p.PrintKeyBool("protectedMemory", static_cast<bool>(obj.protectedMemory));
 }
 void DumpVkPhysicalDeviceProtectedMemoryProperties(Printer &p, std::string name, VkPhysicalDeviceProtectedMemoryProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("protectedNoFault", static_cast<bool>(obj.protectedNoFault), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("protectedNoFault", static_cast<bool>(obj.protectedNoFault));
 }
 void DumpVkPhysicalDeviceProvokingVertexFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceProvokingVertexFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("provokingVertexLast", static_cast<bool>(obj.provokingVertexLast), 41);
-    p.PrintKeyBool("transformFeedbackPreservesProvokingVertex", static_cast<bool>(obj.transformFeedbackPreservesProvokingVertex), 41);
+    p.SetMinKeyWidth(41);
+    p.PrintKeyBool("provokingVertexLast", static_cast<bool>(obj.provokingVertexLast));
+    p.PrintKeyBool("transformFeedbackPreservesProvokingVertex", static_cast<bool>(obj.transformFeedbackPreservesProvokingVertex));
 }
 void DumpVkPhysicalDeviceProvokingVertexPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceProvokingVertexPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("provokingVertexModePerPipeline", static_cast<bool>(obj.provokingVertexModePerPipeline), 52);
-    p.PrintKeyBool("transformFeedbackPreservesTriangleFanProvokingVertex", static_cast<bool>(obj.transformFeedbackPreservesTriangleFanProvokingVertex), 52);
+    p.SetMinKeyWidth(52);
+    p.PrintKeyBool("provokingVertexModePerPipeline", static_cast<bool>(obj.provokingVertexModePerPipeline));
+    p.PrintKeyBool("transformFeedbackPreservesTriangleFanProvokingVertex", static_cast<bool>(obj.transformFeedbackPreservesTriangleFanProvokingVertex));
 }
 void DumpVkPhysicalDevicePushDescriptorPropertiesKHR(Printer &p, std::string name, VkPhysicalDevicePushDescriptorPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxPushDescriptors", obj.maxPushDescriptors, 18);
+    p.SetMinKeyWidth(18);
+    p.PrintKeyValue("maxPushDescriptors", obj.maxPushDescriptors);
 }
 void DumpVkPhysicalDeviceRGBA10X6FormatsFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("formatRgba10x6WithoutYCbCrSampler", static_cast<bool>(obj.formatRgba10x6WithoutYCbCrSampler), 33);
+    p.SetMinKeyWidth(33);
+    p.PrintKeyBool("formatRgba10x6WithoutYCbCrSampler", static_cast<bool>(obj.formatRgba10x6WithoutYCbCrSampler));
 }
 void DumpVkPhysicalDeviceRayQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceRayQueryFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("rayQuery", static_cast<bool>(obj.rayQuery), 8);
+    p.SetMinKeyWidth(8);
+    p.PrintKeyBool("rayQuery", static_cast<bool>(obj.rayQuery));
 }
 void DumpVkPhysicalDeviceRayTracingPipelineFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceRayTracingPipelineFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("rayTracingPipeline", static_cast<bool>(obj.rayTracingPipeline), 53);
-    p.PrintKeyBool("rayTracingPipelineShaderGroupHandleCaptureReplay", static_cast<bool>(obj.rayTracingPipelineShaderGroupHandleCaptureReplay), 53);
-    p.PrintKeyBool("rayTracingPipelineShaderGroupHandleCaptureReplayMixed", static_cast<bool>(obj.rayTracingPipelineShaderGroupHandleCaptureReplayMixed), 53);
-    p.PrintKeyBool("rayTracingPipelineTraceRaysIndirect", static_cast<bool>(obj.rayTracingPipelineTraceRaysIndirect), 53);
-    p.PrintKeyBool("rayTraversalPrimitiveCulling", static_cast<bool>(obj.rayTraversalPrimitiveCulling), 53);
+    p.SetMinKeyWidth(53);
+    p.PrintKeyBool("rayTracingPipeline", static_cast<bool>(obj.rayTracingPipeline));
+    p.PrintKeyBool("rayTracingPipelineShaderGroupHandleCaptureReplay", static_cast<bool>(obj.rayTracingPipelineShaderGroupHandleCaptureReplay));
+    p.PrintKeyBool("rayTracingPipelineShaderGroupHandleCaptureReplayMixed", static_cast<bool>(obj.rayTracingPipelineShaderGroupHandleCaptureReplayMixed));
+    p.PrintKeyBool("rayTracingPipelineTraceRaysIndirect", static_cast<bool>(obj.rayTracingPipelineTraceRaysIndirect));
+    p.PrintKeyBool("rayTraversalPrimitiveCulling", static_cast<bool>(obj.rayTraversalPrimitiveCulling));
 }
 void DumpVkPhysicalDeviceRayTracingPipelinePropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceRayTracingPipelinePropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("shaderGroupHandleSize", obj.shaderGroupHandleSize, 34);
-    p.PrintKeyValue("maxRayRecursionDepth", obj.maxRayRecursionDepth, 34);
-    p.PrintKeyValue("maxShaderGroupStride", obj.maxShaderGroupStride, 34);
-    p.PrintKeyValue("shaderGroupBaseAlignment", obj.shaderGroupBaseAlignment, 34);
-    p.PrintKeyValue("shaderGroupHandleCaptureReplaySize", obj.shaderGroupHandleCaptureReplaySize, 34);
-    p.PrintKeyValue("maxRayDispatchInvocationCount", obj.maxRayDispatchInvocationCount, 34);
-    p.PrintKeyValue("shaderGroupHandleAlignment", obj.shaderGroupHandleAlignment, 34);
-    p.PrintKeyValue("maxRayHitAttributeSize", obj.maxRayHitAttributeSize, 34);
+    p.SetMinKeyWidth(34);
+    p.PrintKeyValue("shaderGroupHandleSize", obj.shaderGroupHandleSize);
+    p.PrintKeyValue("maxRayRecursionDepth", obj.maxRayRecursionDepth);
+    p.PrintKeyValue("maxShaderGroupStride", obj.maxShaderGroupStride);
+    p.PrintKeyValue("shaderGroupBaseAlignment", obj.shaderGroupBaseAlignment);
+    p.PrintKeyValue("shaderGroupHandleCaptureReplaySize", obj.shaderGroupHandleCaptureReplaySize);
+    p.PrintKeyValue("maxRayDispatchInvocationCount", obj.maxRayDispatchInvocationCount);
+    p.PrintKeyValue("shaderGroupHandleAlignment", obj.shaderGroupHandleAlignment);
+    p.PrintKeyValue("maxRayHitAttributeSize", obj.maxRayHitAttributeSize);
 }
 void DumpVkPhysicalDeviceRobustness2FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceRobustness2FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("robustBufferAccess2", static_cast<bool>(obj.robustBufferAccess2), 19);
-    p.PrintKeyBool("robustImageAccess2", static_cast<bool>(obj.robustImageAccess2), 19);
-    p.PrintKeyBool("nullDescriptor", static_cast<bool>(obj.nullDescriptor), 19);
+    p.SetMinKeyWidth(19);
+    p.PrintKeyBool("robustBufferAccess2", static_cast<bool>(obj.robustBufferAccess2));
+    p.PrintKeyBool("robustImageAccess2", static_cast<bool>(obj.robustImageAccess2));
+    p.PrintKeyBool("nullDescriptor", static_cast<bool>(obj.nullDescriptor));
 }
 void DumpVkPhysicalDeviceRobustness2PropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceRobustness2PropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("robustStorageBufferAccessSizeAlignment", to_hex_str(p, obj.robustStorageBufferAccessSizeAlignment), 38);
-    p.PrintKeyValue("robustUniformBufferAccessSizeAlignment", to_hex_str(p, obj.robustUniformBufferAccessSizeAlignment), 38);
+    p.SetMinKeyWidth(38);
+    p.PrintKeyValue("robustStorageBufferAccessSizeAlignment", to_hex_str(p, obj.robustStorageBufferAccessSizeAlignment));
+    p.PrintKeyValue("robustUniformBufferAccessSizeAlignment", to_hex_str(p, obj.robustUniformBufferAccessSizeAlignment));
 }
 void DumpVkPhysicalDeviceSampleLocationsPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceSampleLocationsPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    DumpVkSampleCountFlags(p, "sampleLocationSampleCounts", obj.sampleLocationSampleCounts, 32);
+    p.SetMinKeyWidth(32);
+    DumpVkSampleCountFlags(p, "sampleLocationSampleCounts", obj.sampleLocationSampleCounts);
     DumpVkExtent2D(p, "maxSampleLocationGridSize", obj.maxSampleLocationGridSize);
     {   ArrayWrapper arr(p,"sampleLocationCoordinateRange", 2);
         p.PrintElement(obj.sampleLocationCoordinateRange[0]);
         p.PrintElement(obj.sampleLocationCoordinateRange[1]);
     }
-    p.PrintKeyValue("sampleLocationSubPixelBits", obj.sampleLocationSubPixelBits, 32);
-    p.PrintKeyBool("variableSampleLocations", static_cast<bool>(obj.variableSampleLocations), 32);
+    p.PrintKeyValue("sampleLocationSubPixelBits", obj.sampleLocationSubPixelBits);
+    p.PrintKeyBool("variableSampleLocations", static_cast<bool>(obj.variableSampleLocations));
 }
 void DumpVkPhysicalDeviceSamplerFilterMinmaxProperties(Printer &p, std::string name, VkPhysicalDeviceSamplerFilterMinmaxProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("filterMinmaxSingleComponentFormats", static_cast<bool>(obj.filterMinmaxSingleComponentFormats), 34);
-    p.PrintKeyBool("filterMinmaxImageComponentMapping", static_cast<bool>(obj.filterMinmaxImageComponentMapping), 34);
+    p.SetMinKeyWidth(34);
+    p.PrintKeyBool("filterMinmaxSingleComponentFormats", static_cast<bool>(obj.filterMinmaxSingleComponentFormats));
+    p.PrintKeyBool("filterMinmaxImageComponentMapping", static_cast<bool>(obj.filterMinmaxImageComponentMapping));
 }
 void DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(Printer &p, std::string name, VkPhysicalDeviceSamplerYcbcrConversionFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("samplerYcbcrConversion", static_cast<bool>(obj.samplerYcbcrConversion), 22);
+    p.SetMinKeyWidth(22);
+    p.PrintKeyBool("samplerYcbcrConversion", static_cast<bool>(obj.samplerYcbcrConversion));
 }
 void DumpVkPhysicalDeviceScalarBlockLayoutFeatures(Printer &p, std::string name, VkPhysicalDeviceScalarBlockLayoutFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("scalarBlockLayout", static_cast<bool>(obj.scalarBlockLayout), 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("scalarBlockLayout", static_cast<bool>(obj.scalarBlockLayout));
 }
 void DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeatures(Printer &p, std::string name, VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("separateDepthStencilLayouts", static_cast<bool>(obj.separateDepthStencilLayouts), 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("separateDepthStencilLayouts", static_cast<bool>(obj.separateDepthStencilLayouts));
 }
 void DumpVkPhysicalDeviceShaderAtomicFloat2FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderBufferFloat16Atomics", static_cast<bool>(obj.shaderBufferFloat16Atomics), 31);
-    p.PrintKeyBool("shaderBufferFloat16AtomicAdd", static_cast<bool>(obj.shaderBufferFloat16AtomicAdd), 31);
-    p.PrintKeyBool("shaderBufferFloat16AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat16AtomicMinMax), 31);
-    p.PrintKeyBool("shaderBufferFloat32AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat32AtomicMinMax), 31);
-    p.PrintKeyBool("shaderBufferFloat64AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat64AtomicMinMax), 31);
-    p.PrintKeyBool("shaderSharedFloat16Atomics", static_cast<bool>(obj.shaderSharedFloat16Atomics), 31);
-    p.PrintKeyBool("shaderSharedFloat16AtomicAdd", static_cast<bool>(obj.shaderSharedFloat16AtomicAdd), 31);
-    p.PrintKeyBool("shaderSharedFloat16AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat16AtomicMinMax), 31);
-    p.PrintKeyBool("shaderSharedFloat32AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat32AtomicMinMax), 31);
-    p.PrintKeyBool("shaderSharedFloat64AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat64AtomicMinMax), 31);
-    p.PrintKeyBool("shaderImageFloat32AtomicMinMax", static_cast<bool>(obj.shaderImageFloat32AtomicMinMax), 31);
-    p.PrintKeyBool("sparseImageFloat32AtomicMinMax", static_cast<bool>(obj.sparseImageFloat32AtomicMinMax), 31);
+    p.SetMinKeyWidth(31);
+    p.PrintKeyBool("shaderBufferFloat16Atomics", static_cast<bool>(obj.shaderBufferFloat16Atomics));
+    p.PrintKeyBool("shaderBufferFloat16AtomicAdd", static_cast<bool>(obj.shaderBufferFloat16AtomicAdd));
+    p.PrintKeyBool("shaderBufferFloat16AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat16AtomicMinMax));
+    p.PrintKeyBool("shaderBufferFloat32AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat32AtomicMinMax));
+    p.PrintKeyBool("shaderBufferFloat64AtomicMinMax", static_cast<bool>(obj.shaderBufferFloat64AtomicMinMax));
+    p.PrintKeyBool("shaderSharedFloat16Atomics", static_cast<bool>(obj.shaderSharedFloat16Atomics));
+    p.PrintKeyBool("shaderSharedFloat16AtomicAdd", static_cast<bool>(obj.shaderSharedFloat16AtomicAdd));
+    p.PrintKeyBool("shaderSharedFloat16AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat16AtomicMinMax));
+    p.PrintKeyBool("shaderSharedFloat32AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat32AtomicMinMax));
+    p.PrintKeyBool("shaderSharedFloat64AtomicMinMax", static_cast<bool>(obj.shaderSharedFloat64AtomicMinMax));
+    p.PrintKeyBool("shaderImageFloat32AtomicMinMax", static_cast<bool>(obj.shaderImageFloat32AtomicMinMax));
+    p.PrintKeyBool("sparseImageFloat32AtomicMinMax", static_cast<bool>(obj.sparseImageFloat32AtomicMinMax));
 }
 void DumpVkPhysicalDeviceShaderAtomicFloatFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicFloatFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderBufferFloat32Atomics", static_cast<bool>(obj.shaderBufferFloat32Atomics), 28);
-    p.PrintKeyBool("shaderBufferFloat32AtomicAdd", static_cast<bool>(obj.shaderBufferFloat32AtomicAdd), 28);
-    p.PrintKeyBool("shaderBufferFloat64Atomics", static_cast<bool>(obj.shaderBufferFloat64Atomics), 28);
-    p.PrintKeyBool("shaderBufferFloat64AtomicAdd", static_cast<bool>(obj.shaderBufferFloat64AtomicAdd), 28);
-    p.PrintKeyBool("shaderSharedFloat32Atomics", static_cast<bool>(obj.shaderSharedFloat32Atomics), 28);
-    p.PrintKeyBool("shaderSharedFloat32AtomicAdd", static_cast<bool>(obj.shaderSharedFloat32AtomicAdd), 28);
-    p.PrintKeyBool("shaderSharedFloat64Atomics", static_cast<bool>(obj.shaderSharedFloat64Atomics), 28);
-    p.PrintKeyBool("shaderSharedFloat64AtomicAdd", static_cast<bool>(obj.shaderSharedFloat64AtomicAdd), 28);
-    p.PrintKeyBool("shaderImageFloat32Atomics", static_cast<bool>(obj.shaderImageFloat32Atomics), 28);
-    p.PrintKeyBool("shaderImageFloat32AtomicAdd", static_cast<bool>(obj.shaderImageFloat32AtomicAdd), 28);
-    p.PrintKeyBool("sparseImageFloat32Atomics", static_cast<bool>(obj.sparseImageFloat32Atomics), 28);
-    p.PrintKeyBool("sparseImageFloat32AtomicAdd", static_cast<bool>(obj.sparseImageFloat32AtomicAdd), 28);
+    p.SetMinKeyWidth(28);
+    p.PrintKeyBool("shaderBufferFloat32Atomics", static_cast<bool>(obj.shaderBufferFloat32Atomics));
+    p.PrintKeyBool("shaderBufferFloat32AtomicAdd", static_cast<bool>(obj.shaderBufferFloat32AtomicAdd));
+    p.PrintKeyBool("shaderBufferFloat64Atomics", static_cast<bool>(obj.shaderBufferFloat64Atomics));
+    p.PrintKeyBool("shaderBufferFloat64AtomicAdd", static_cast<bool>(obj.shaderBufferFloat64AtomicAdd));
+    p.PrintKeyBool("shaderSharedFloat32Atomics", static_cast<bool>(obj.shaderSharedFloat32Atomics));
+    p.PrintKeyBool("shaderSharedFloat32AtomicAdd", static_cast<bool>(obj.shaderSharedFloat32AtomicAdd));
+    p.PrintKeyBool("shaderSharedFloat64Atomics", static_cast<bool>(obj.shaderSharedFloat64Atomics));
+    p.PrintKeyBool("shaderSharedFloat64AtomicAdd", static_cast<bool>(obj.shaderSharedFloat64AtomicAdd));
+    p.PrintKeyBool("shaderImageFloat32Atomics", static_cast<bool>(obj.shaderImageFloat32Atomics));
+    p.PrintKeyBool("shaderImageFloat32AtomicAdd", static_cast<bool>(obj.shaderImageFloat32AtomicAdd));
+    p.PrintKeyBool("sparseImageFloat32Atomics", static_cast<bool>(obj.sparseImageFloat32Atomics));
+    p.PrintKeyBool("sparseImageFloat32AtomicAdd", static_cast<bool>(obj.sparseImageFloat32AtomicAdd));
 }
 void DumpVkPhysicalDeviceShaderAtomicInt64Features(Printer &p, std::string name, VkPhysicalDeviceShaderAtomicInt64Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderBufferInt64Atomics", static_cast<bool>(obj.shaderBufferInt64Atomics), 24);
-    p.PrintKeyBool("shaderSharedInt64Atomics", static_cast<bool>(obj.shaderSharedInt64Atomics), 24);
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("shaderBufferInt64Atomics", static_cast<bool>(obj.shaderBufferInt64Atomics));
+    p.PrintKeyBool("shaderSharedInt64Atomics", static_cast<bool>(obj.shaderSharedInt64Atomics));
 }
 void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderClockFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderSubgroupClock", static_cast<bool>(obj.shaderSubgroupClock), 19);
-    p.PrintKeyBool("shaderDeviceClock", static_cast<bool>(obj.shaderDeviceClock), 19);
+    p.SetMinKeyWidth(19);
+    p.PrintKeyBool("shaderSubgroupClock", static_cast<bool>(obj.shaderSubgroupClock));
+    p.PrintKeyBool("shaderDeviceClock", static_cast<bool>(obj.shaderDeviceClock));
 }
 void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation), 30);
+    p.SetMinKeyWidth(30);
+    p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation));
 }
 void DumpVkPhysicalDeviceShaderDrawParametersFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderDrawParametersFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderDrawParameters", static_cast<bool>(obj.shaderDrawParameters), 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("shaderDrawParameters", static_cast<bool>(obj.shaderDrawParameters));
 }
 void DumpVkPhysicalDeviceShaderFloat16Int8Features(Printer &p, std::string name, VkPhysicalDeviceShaderFloat16Int8Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderFloat16", static_cast<bool>(obj.shaderFloat16), 13);
-    p.PrintKeyBool("shaderInt8", static_cast<bool>(obj.shaderInt8), 13);
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("shaderFloat16", static_cast<bool>(obj.shaderFloat16));
+    p.PrintKeyBool("shaderInt8", static_cast<bool>(obj.shaderInt8));
 }
 void DumpVkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderImageInt64Atomics", static_cast<bool>(obj.shaderImageInt64Atomics), 23);
-    p.PrintKeyBool("sparseImageInt64Atomics", static_cast<bool>(obj.sparseImageInt64Atomics), 23);
+    p.SetMinKeyWidth(23);
+    p.PrintKeyBool("shaderImageInt64Atomics", static_cast<bool>(obj.shaderImageInt64Atomics));
+    p.PrintKeyBool("sparseImageInt64Atomics", static_cast<bool>(obj.sparseImageInt64Atomics));
 }
 void DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct), 23);
+    p.SetMinKeyWidth(23);
+    p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct));
 }
 void DumpVkPhysicalDeviceShaderIntegerDotProductProperties(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct8BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct16BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct32BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct64BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated), 77);
+    p.SetMinKeyWidth(77);
+    p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct8BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct16BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct32BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct64BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated));
 }
 void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderSubgroupExtendedTypes", static_cast<bool>(obj.shaderSubgroupExtendedTypes), 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("shaderSubgroupExtendedTypes", static_cast<bool>(obj.shaderSubgroupExtendedTypes));
 }
 void DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderSubgroupUniformControlFlow", static_cast<bool>(obj.shaderSubgroupUniformControlFlow), 32);
+    p.SetMinKeyWidth(32);
+    p.PrintKeyBool("shaderSubgroupUniformControlFlow", static_cast<bool>(obj.shaderSubgroupUniformControlFlow));
 }
 void DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderTerminateInvocationFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation), 25);
+    p.SetMinKeyWidth(25);
+    p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation));
 }
 void DumpVkPhysicalDeviceSparseProperties(Printer &p, std::string name, VkPhysicalDeviceSparseProperties &obj) {
     if (p.Type() == OutputType::json)
         p.ObjectStart("sparseProperties");
     else
         p.SetSubHeader().ObjectStart(name);
-    p.PrintKeyBool("residencyStandard2DBlockShape", static_cast<bool>(obj.residencyStandard2DBlockShape), 40);
-    p.PrintKeyBool("residencyStandard2DMultisampleBlockShape", static_cast<bool>(obj.residencyStandard2DMultisampleBlockShape), 40);
-    p.PrintKeyBool("residencyStandard3DBlockShape", static_cast<bool>(obj.residencyStandard3DBlockShape), 40);
-    p.PrintKeyBool("residencyAlignedMipSize", static_cast<bool>(obj.residencyAlignedMipSize), 40);
-    p.PrintKeyBool("residencyNonResidentStrict", static_cast<bool>(obj.residencyNonResidentStrict), 40);
+    p.SetMinKeyWidth(40);
+    p.PrintKeyBool("residencyStandard2DBlockShape", static_cast<bool>(obj.residencyStandard2DBlockShape));
+    p.PrintKeyBool("residencyStandard2DMultisampleBlockShape", static_cast<bool>(obj.residencyStandard2DMultisampleBlockShape));
+    p.PrintKeyBool("residencyStandard3DBlockShape", static_cast<bool>(obj.residencyStandard3DBlockShape));
+    p.PrintKeyBool("residencyAlignedMipSize", static_cast<bool>(obj.residencyAlignedMipSize));
+    p.PrintKeyBool("residencyNonResidentStrict", static_cast<bool>(obj.residencyNonResidentStrict));
     p.ObjectEnd();
 }
 void DumpVkPhysicalDeviceSubgroupProperties(Printer &p, std::string name, VkPhysicalDeviceSubgroupProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("subgroupSize", obj.subgroupSize, 25);
-    DumpVkShaderStageFlags(p, "supportedStages", obj.supportedStages, 25);
-    DumpVkSubgroupFeatureFlags(p, "supportedOperations", obj.supportedOperations, 25);
-    p.PrintKeyBool("quadOperationsInAllStages", static_cast<bool>(obj.quadOperationsInAllStages), 25);
+    p.SetMinKeyWidth(25);
+    p.PrintKeyValue("subgroupSize", obj.subgroupSize);
+    DumpVkShaderStageFlags(p, "supportedStages", obj.supportedStages);
+    DumpVkSubgroupFeatureFlags(p, "supportedOperations", obj.supportedOperations);
+    p.PrintKeyBool("quadOperationsInAllStages", static_cast<bool>(obj.quadOperationsInAllStages));
 }
 void DumpVkPhysicalDeviceSubgroupSizeControlFeatures(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl), 20);
-    p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups), 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl));
+    p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups));
 }
 void DumpVkPhysicalDeviceSubgroupSizeControlProperties(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize, 28);
-    p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize, 28);
-    p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups, 28);
-    DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages, 28);
+    p.SetMinKeyWidth(28);
+    p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize);
+    p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize);
+    p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups);
+    DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages);
 }
 void DumpVkPhysicalDeviceSynchronization2Features(Printer &p, std::string name, VkPhysicalDeviceSynchronization2Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2));
 }
 void DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("texelBufferAlignment", static_cast<bool>(obj.texelBufferAlignment), 20);
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("texelBufferAlignment", static_cast<bool>(obj.texelBufferAlignment));
 }
 void DumpVkPhysicalDeviceTexelBufferAlignmentProperties(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes), 44);
-    p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment), 44);
-    p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes), 44);
-    p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment), 44);
+    p.SetMinKeyWidth(44);
+    p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes));
+    p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment));
+    p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes));
+    p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment));
 }
 void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR), 26);
+    p.SetMinKeyWidth(26);
+    p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR));
 }
 void DumpVkPhysicalDeviceTimelineSemaphoreFeatures(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("timelineSemaphore", static_cast<bool>(obj.timelineSemaphore), 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("timelineSemaphore", static_cast<bool>(obj.timelineSemaphore));
 }
 void DumpVkPhysicalDeviceTimelineSemaphoreProperties(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 35);
+    p.SetMinKeyWidth(35);
+    p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference);
 }
 void DumpVkPhysicalDeviceToolProperties(Printer &p, std::string name, VkPhysicalDeviceToolProperties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyString("name", obj.name, 16);
-    p.PrintKeyString("version", obj.version, 16);
-    DumpVkToolPurposeFlags(p, "purposes", obj.purposes, 16);
-    p.PrintKeyString("description", obj.description, 16);
-    p.PrintKeyString("layer", obj.layer, 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyString("name", obj.name);
+    p.PrintKeyString("version", obj.version);
+    DumpVkToolPurposeFlags(p, "purposes", obj.purposes);
+    p.PrintKeyString("description", obj.description);
+    p.PrintKeyString("layer", obj.layer);
 }
 void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("transformFeedback", static_cast<bool>(obj.transformFeedback), 17);
-    p.PrintKeyBool("geometryStreams", static_cast<bool>(obj.geometryStreams), 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("transformFeedback", static_cast<bool>(obj.transformFeedback));
+    p.PrintKeyBool("geometryStreams", static_cast<bool>(obj.geometryStreams));
 }
 void DumpVkPhysicalDeviceTransformFeedbackPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxTransformFeedbackStreams", obj.maxTransformFeedbackStreams, 42);
-    p.PrintKeyValue("maxTransformFeedbackBuffers", obj.maxTransformFeedbackBuffers, 42);
-    p.PrintKeyValue("maxTransformFeedbackBufferSize", to_hex_str(p, obj.maxTransformFeedbackBufferSize), 42);
-    p.PrintKeyValue("maxTransformFeedbackStreamDataSize", obj.maxTransformFeedbackStreamDataSize, 42);
-    p.PrintKeyValue("maxTransformFeedbackBufferDataSize", obj.maxTransformFeedbackBufferDataSize, 42);
-    p.PrintKeyValue("maxTransformFeedbackBufferDataStride", obj.maxTransformFeedbackBufferDataStride, 42);
-    p.PrintKeyBool("transformFeedbackQueries", static_cast<bool>(obj.transformFeedbackQueries), 42);
-    p.PrintKeyBool("transformFeedbackStreamsLinesTriangles", static_cast<bool>(obj.transformFeedbackStreamsLinesTriangles), 42);
-    p.PrintKeyBool("transformFeedbackRasterizationStreamSelect", static_cast<bool>(obj.transformFeedbackRasterizationStreamSelect), 42);
-    p.PrintKeyBool("transformFeedbackDraw", static_cast<bool>(obj.transformFeedbackDraw), 42);
+    p.SetMinKeyWidth(42);
+    p.PrintKeyValue("maxTransformFeedbackStreams", obj.maxTransformFeedbackStreams);
+    p.PrintKeyValue("maxTransformFeedbackBuffers", obj.maxTransformFeedbackBuffers);
+    p.PrintKeyValue("maxTransformFeedbackBufferSize", to_hex_str(p, obj.maxTransformFeedbackBufferSize));
+    p.PrintKeyValue("maxTransformFeedbackStreamDataSize", obj.maxTransformFeedbackStreamDataSize);
+    p.PrintKeyValue("maxTransformFeedbackBufferDataSize", obj.maxTransformFeedbackBufferDataSize);
+    p.PrintKeyValue("maxTransformFeedbackBufferDataStride", obj.maxTransformFeedbackBufferDataStride);
+    p.PrintKeyBool("transformFeedbackQueries", static_cast<bool>(obj.transformFeedbackQueries));
+    p.PrintKeyBool("transformFeedbackStreamsLinesTriangles", static_cast<bool>(obj.transformFeedbackStreamsLinesTriangles));
+    p.PrintKeyBool("transformFeedbackRasterizationStreamSelect", static_cast<bool>(obj.transformFeedbackRasterizationStreamSelect));
+    p.PrintKeyBool("transformFeedbackDraw", static_cast<bool>(obj.transformFeedbackDraw));
 }
 void DumpVkPhysicalDeviceUniformBufferStandardLayoutFeatures(Printer &p, std::string name, VkPhysicalDeviceUniformBufferStandardLayoutFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("uniformBufferStandardLayout", static_cast<bool>(obj.uniformBufferStandardLayout), 27);
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("uniformBufferStandardLayout", static_cast<bool>(obj.uniformBufferStandardLayout));
 }
 void DumpVkPhysicalDeviceVariablePointersFeatures(Printer &p, std::string name, VkPhysicalDeviceVariablePointersFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("variablePointersStorageBuffer", static_cast<bool>(obj.variablePointersStorageBuffer), 29);
-    p.PrintKeyBool("variablePointers", static_cast<bool>(obj.variablePointers), 29);
+    p.SetMinKeyWidth(29);
+    p.PrintKeyBool("variablePointersStorageBuffer", static_cast<bool>(obj.variablePointersStorageBuffer));
+    p.PrintKeyBool("variablePointers", static_cast<bool>(obj.variablePointers));
 }
 void DumpVkPhysicalDeviceVertexAttributeDivisorFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("vertexAttributeInstanceRateDivisor", static_cast<bool>(obj.vertexAttributeInstanceRateDivisor), 38);
-    p.PrintKeyBool("vertexAttributeInstanceRateZeroDivisor", static_cast<bool>(obj.vertexAttributeInstanceRateZeroDivisor), 38);
+    p.SetMinKeyWidth(38);
+    p.PrintKeyBool("vertexAttributeInstanceRateDivisor", static_cast<bool>(obj.vertexAttributeInstanceRateDivisor));
+    p.PrintKeyBool("vertexAttributeInstanceRateZeroDivisor", static_cast<bool>(obj.vertexAttributeInstanceRateZeroDivisor));
 }
 void DumpVkPhysicalDeviceVertexAttributeDivisorPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("maxVertexAttribDivisor", obj.maxVertexAttribDivisor, 22);
+    p.SetMinKeyWidth(22);
+    p.PrintKeyValue("maxVertexAttribDivisor", obj.maxVertexAttribDivisor);
 }
 void DumpVkPhysicalDeviceVertexInputDynamicStateFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("vertexInputDynamicState", static_cast<bool>(obj.vertexInputDynamicState), 23);
+    p.SetMinKeyWidth(23);
+    p.PrintKeyBool("vertexInputDynamicState", static_cast<bool>(obj.vertexInputDynamicState));
 }
 void DumpVkPhysicalDeviceVulkan11Features(Printer &p, std::string name, VkPhysicalDeviceVulkan11Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("storageBuffer16BitAccess", static_cast<bool>(obj.storageBuffer16BitAccess), 34);
-    p.PrintKeyBool("uniformAndStorageBuffer16BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer16BitAccess), 34);
-    p.PrintKeyBool("storagePushConstant16", static_cast<bool>(obj.storagePushConstant16), 34);
-    p.PrintKeyBool("storageInputOutput16", static_cast<bool>(obj.storageInputOutput16), 34);
-    p.PrintKeyBool("multiview", static_cast<bool>(obj.multiview), 34);
-    p.PrintKeyBool("multiviewGeometryShader", static_cast<bool>(obj.multiviewGeometryShader), 34);
-    p.PrintKeyBool("multiviewTessellationShader", static_cast<bool>(obj.multiviewTessellationShader), 34);
-    p.PrintKeyBool("variablePointersStorageBuffer", static_cast<bool>(obj.variablePointersStorageBuffer), 34);
-    p.PrintKeyBool("variablePointers", static_cast<bool>(obj.variablePointers), 34);
-    p.PrintKeyBool("protectedMemory", static_cast<bool>(obj.protectedMemory), 34);
-    p.PrintKeyBool("samplerYcbcrConversion", static_cast<bool>(obj.samplerYcbcrConversion), 34);
-    p.PrintKeyBool("shaderDrawParameters", static_cast<bool>(obj.shaderDrawParameters), 34);
+    p.SetMinKeyWidth(34);
+    p.PrintKeyBool("storageBuffer16BitAccess", static_cast<bool>(obj.storageBuffer16BitAccess));
+    p.PrintKeyBool("uniformAndStorageBuffer16BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer16BitAccess));
+    p.PrintKeyBool("storagePushConstant16", static_cast<bool>(obj.storagePushConstant16));
+    p.PrintKeyBool("storageInputOutput16", static_cast<bool>(obj.storageInputOutput16));
+    p.PrintKeyBool("multiview", static_cast<bool>(obj.multiview));
+    p.PrintKeyBool("multiviewGeometryShader", static_cast<bool>(obj.multiviewGeometryShader));
+    p.PrintKeyBool("multiviewTessellationShader", static_cast<bool>(obj.multiviewTessellationShader));
+    p.PrintKeyBool("variablePointersStorageBuffer", static_cast<bool>(obj.variablePointersStorageBuffer));
+    p.PrintKeyBool("variablePointers", static_cast<bool>(obj.variablePointers));
+    p.PrintKeyBool("protectedMemory", static_cast<bool>(obj.protectedMemory));
+    p.PrintKeyBool("samplerYcbcrConversion", static_cast<bool>(obj.samplerYcbcrConversion));
+    p.PrintKeyBool("shaderDrawParameters", static_cast<bool>(obj.shaderDrawParameters));
 }
 void DumpVkPhysicalDeviceVulkan11Properties(Printer &p, std::string name, VkPhysicalDeviceVulkan11Properties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID), 33);
-    p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID), 33);
-    if (obj.deviceLUIDValid) p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID), 33);
-    p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask, 33);
-    p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid), 33);
-    p.PrintKeyValue("subgroupSize", obj.subgroupSize, 33);
-    DumpVkShaderStageFlags(p, "subgroupSupportedStages", obj.subgroupSupportedStages, 33);
-    DumpVkSubgroupFeatureFlags(p, "subgroupSupportedOperations", obj.subgroupSupportedOperations, 33);
-    p.PrintKeyBool("subgroupQuadOperationsInAllStages", static_cast<bool>(obj.subgroupQuadOperationsInAllStages), 33);
-    DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior, 33);
-    p.PrintKeyValue("maxMultiviewViewCount", obj.maxMultiviewViewCount, 33);
-    p.PrintKeyValue("maxMultiviewInstanceIndex", obj.maxMultiviewInstanceIndex, 33);
-    p.PrintKeyBool("protectedNoFault", static_cast<bool>(obj.protectedNoFault), 33);
-    p.PrintKeyValue("maxPerSetDescriptors", obj.maxPerSetDescriptors, 33);
-    p.PrintKeyValue("maxMemoryAllocationSize", to_hex_str(p, obj.maxMemoryAllocationSize), 33);
+    p.SetMinKeyWidth(33);
+    p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID));
+    p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID));
+    if (obj.deviceLUIDValid) p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID));
+    p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask);
+    p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid));
+    p.PrintKeyValue("subgroupSize", obj.subgroupSize);
+    DumpVkShaderStageFlags(p, "subgroupSupportedStages", obj.subgroupSupportedStages);
+    DumpVkSubgroupFeatureFlags(p, "subgroupSupportedOperations", obj.subgroupSupportedOperations);
+    p.PrintKeyBool("subgroupQuadOperationsInAllStages", static_cast<bool>(obj.subgroupQuadOperationsInAllStages));
+    DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior);
+    p.PrintKeyValue("maxMultiviewViewCount", obj.maxMultiviewViewCount);
+    p.PrintKeyValue("maxMultiviewInstanceIndex", obj.maxMultiviewInstanceIndex);
+    p.PrintKeyBool("protectedNoFault", static_cast<bool>(obj.protectedNoFault));
+    p.PrintKeyValue("maxPerSetDescriptors", obj.maxPerSetDescriptors);
+    p.PrintKeyValue("maxMemoryAllocationSize", to_hex_str(p, obj.maxMemoryAllocationSize));
 }
 void DumpVkPhysicalDeviceVulkan12Features(Printer &p, std::string name, VkPhysicalDeviceVulkan12Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("samplerMirrorClampToEdge", static_cast<bool>(obj.samplerMirrorClampToEdge), 50);
-    p.PrintKeyBool("drawIndirectCount", static_cast<bool>(obj.drawIndirectCount), 50);
-    p.PrintKeyBool("storageBuffer8BitAccess", static_cast<bool>(obj.storageBuffer8BitAccess), 50);
-    p.PrintKeyBool("uniformAndStorageBuffer8BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer8BitAccess), 50);
-    p.PrintKeyBool("storagePushConstant8", static_cast<bool>(obj.storagePushConstant8), 50);
-    p.PrintKeyBool("shaderBufferInt64Atomics", static_cast<bool>(obj.shaderBufferInt64Atomics), 50);
-    p.PrintKeyBool("shaderSharedInt64Atomics", static_cast<bool>(obj.shaderSharedInt64Atomics), 50);
-    p.PrintKeyBool("shaderFloat16", static_cast<bool>(obj.shaderFloat16), 50);
-    p.PrintKeyBool("shaderInt8", static_cast<bool>(obj.shaderInt8), 50);
-    p.PrintKeyBool("descriptorIndexing", static_cast<bool>(obj.descriptorIndexing), 50);
-    p.PrintKeyBool("shaderInputAttachmentArrayDynamicIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderUniformTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderStorageTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayDynamicIndexing), 50);
-    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderUniformTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("shaderStorageTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayNonUniformIndexing), 50);
-    p.PrintKeyBool("descriptorBindingUniformBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingSampledImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingSampledImageUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageImageUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingUniformTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformTexelBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingStorageTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageTexelBufferUpdateAfterBind), 50);
-    p.PrintKeyBool("descriptorBindingUpdateUnusedWhilePending", static_cast<bool>(obj.descriptorBindingUpdateUnusedWhilePending), 50);
-    p.PrintKeyBool("descriptorBindingPartiallyBound", static_cast<bool>(obj.descriptorBindingPartiallyBound), 50);
-    p.PrintKeyBool("descriptorBindingVariableDescriptorCount", static_cast<bool>(obj.descriptorBindingVariableDescriptorCount), 50);
-    p.PrintKeyBool("runtimeDescriptorArray", static_cast<bool>(obj.runtimeDescriptorArray), 50);
-    p.PrintKeyBool("samplerFilterMinmax", static_cast<bool>(obj.samplerFilterMinmax), 50);
-    p.PrintKeyBool("scalarBlockLayout", static_cast<bool>(obj.scalarBlockLayout), 50);
-    p.PrintKeyBool("imagelessFramebuffer", static_cast<bool>(obj.imagelessFramebuffer), 50);
-    p.PrintKeyBool("uniformBufferStandardLayout", static_cast<bool>(obj.uniformBufferStandardLayout), 50);
-    p.PrintKeyBool("shaderSubgroupExtendedTypes", static_cast<bool>(obj.shaderSubgroupExtendedTypes), 50);
-    p.PrintKeyBool("separateDepthStencilLayouts", static_cast<bool>(obj.separateDepthStencilLayouts), 50);
-    p.PrintKeyBool("hostQueryReset", static_cast<bool>(obj.hostQueryReset), 50);
-    p.PrintKeyBool("timelineSemaphore", static_cast<bool>(obj.timelineSemaphore), 50);
-    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress), 50);
-    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay), 50);
-    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice), 50);
-    p.PrintKeyBool("vulkanMemoryModel", static_cast<bool>(obj.vulkanMemoryModel), 50);
-    p.PrintKeyBool("vulkanMemoryModelDeviceScope", static_cast<bool>(obj.vulkanMemoryModelDeviceScope), 50);
-    p.PrintKeyBool("vulkanMemoryModelAvailabilityVisibilityChains", static_cast<bool>(obj.vulkanMemoryModelAvailabilityVisibilityChains), 50);
-    p.PrintKeyBool("shaderOutputViewportIndex", static_cast<bool>(obj.shaderOutputViewportIndex), 50);
-    p.PrintKeyBool("shaderOutputLayer", static_cast<bool>(obj.shaderOutputLayer), 50);
-    p.PrintKeyBool("subgroupBroadcastDynamicId", static_cast<bool>(obj.subgroupBroadcastDynamicId), 50);
+    p.SetMinKeyWidth(50);
+    p.PrintKeyBool("samplerMirrorClampToEdge", static_cast<bool>(obj.samplerMirrorClampToEdge));
+    p.PrintKeyBool("drawIndirectCount", static_cast<bool>(obj.drawIndirectCount));
+    p.PrintKeyBool("storageBuffer8BitAccess", static_cast<bool>(obj.storageBuffer8BitAccess));
+    p.PrintKeyBool("uniformAndStorageBuffer8BitAccess", static_cast<bool>(obj.uniformAndStorageBuffer8BitAccess));
+    p.PrintKeyBool("storagePushConstant8", static_cast<bool>(obj.storagePushConstant8));
+    p.PrintKeyBool("shaderBufferInt64Atomics", static_cast<bool>(obj.shaderBufferInt64Atomics));
+    p.PrintKeyBool("shaderSharedInt64Atomics", static_cast<bool>(obj.shaderSharedInt64Atomics));
+    p.PrintKeyBool("shaderFloat16", static_cast<bool>(obj.shaderFloat16));
+    p.PrintKeyBool("shaderInt8", static_cast<bool>(obj.shaderInt8));
+    p.PrintKeyBool("descriptorIndexing", static_cast<bool>(obj.descriptorIndexing));
+    p.PrintKeyBool("shaderInputAttachmentArrayDynamicIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayDynamicIndexing));
+    p.PrintKeyBool("shaderUniformTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderStorageTexelBufferArrayDynamicIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayDynamicIndexing));
+    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexing", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderUniformTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderUniformTexelBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("shaderStorageTexelBufferArrayNonUniformIndexing", static_cast<bool>(obj.shaderStorageTexelBufferArrayNonUniformIndexing));
+    p.PrintKeyBool("descriptorBindingUniformBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingSampledImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingSampledImageUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageImageUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageImageUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingUniformTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingUniformTexelBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingStorageTexelBufferUpdateAfterBind", static_cast<bool>(obj.descriptorBindingStorageTexelBufferUpdateAfterBind));
+    p.PrintKeyBool("descriptorBindingUpdateUnusedWhilePending", static_cast<bool>(obj.descriptorBindingUpdateUnusedWhilePending));
+    p.PrintKeyBool("descriptorBindingPartiallyBound", static_cast<bool>(obj.descriptorBindingPartiallyBound));
+    p.PrintKeyBool("descriptorBindingVariableDescriptorCount", static_cast<bool>(obj.descriptorBindingVariableDescriptorCount));
+    p.PrintKeyBool("runtimeDescriptorArray", static_cast<bool>(obj.runtimeDescriptorArray));
+    p.PrintKeyBool("samplerFilterMinmax", static_cast<bool>(obj.samplerFilterMinmax));
+    p.PrintKeyBool("scalarBlockLayout", static_cast<bool>(obj.scalarBlockLayout));
+    p.PrintKeyBool("imagelessFramebuffer", static_cast<bool>(obj.imagelessFramebuffer));
+    p.PrintKeyBool("uniformBufferStandardLayout", static_cast<bool>(obj.uniformBufferStandardLayout));
+    p.PrintKeyBool("shaderSubgroupExtendedTypes", static_cast<bool>(obj.shaderSubgroupExtendedTypes));
+    p.PrintKeyBool("separateDepthStencilLayouts", static_cast<bool>(obj.separateDepthStencilLayouts));
+    p.PrintKeyBool("hostQueryReset", static_cast<bool>(obj.hostQueryReset));
+    p.PrintKeyBool("timelineSemaphore", static_cast<bool>(obj.timelineSemaphore));
+    p.PrintKeyBool("bufferDeviceAddress", static_cast<bool>(obj.bufferDeviceAddress));
+    p.PrintKeyBool("bufferDeviceAddressCaptureReplay", static_cast<bool>(obj.bufferDeviceAddressCaptureReplay));
+    p.PrintKeyBool("bufferDeviceAddressMultiDevice", static_cast<bool>(obj.bufferDeviceAddressMultiDevice));
+    p.PrintKeyBool("vulkanMemoryModel", static_cast<bool>(obj.vulkanMemoryModel));
+    p.PrintKeyBool("vulkanMemoryModelDeviceScope", static_cast<bool>(obj.vulkanMemoryModelDeviceScope));
+    p.PrintKeyBool("vulkanMemoryModelAvailabilityVisibilityChains", static_cast<bool>(obj.vulkanMemoryModelAvailabilityVisibilityChains));
+    p.PrintKeyBool("shaderOutputViewportIndex", static_cast<bool>(obj.shaderOutputViewportIndex));
+    p.PrintKeyBool("shaderOutputLayer", static_cast<bool>(obj.shaderOutputLayer));
+    p.PrintKeyBool("subgroupBroadcastDynamicId", static_cast<bool>(obj.subgroupBroadcastDynamicId));
 }
 void DumpVkPhysicalDeviceVulkan12Properties(Printer &p, std::string name, VkPhysicalDeviceVulkan12Properties &obj) {
     ObjectWrapper object{p, name};
-    DumpVkDriverId(p, "driverID", obj.driverID, 52);
-    p.PrintKeyString("driverName", obj.driverName, 52);
-    p.PrintKeyString("driverInfo", obj.driverInfo, 52);
-    DumpVkConformanceVersion(p, "conformanceVersion", obj.conformanceVersion, 52);
-    DumpVkShaderFloatControlsIndependence(p, "denormBehaviorIndependence", obj.denormBehaviorIndependence, 52);
-    DumpVkShaderFloatControlsIndependence(p, "roundingModeIndependence", obj.roundingModeIndependence, 52);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat16", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat16), 52);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat32", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat32), 52);
-    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat64", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat64), 52);
-    p.PrintKeyBool("shaderDenormPreserveFloat16", static_cast<bool>(obj.shaderDenormPreserveFloat16), 52);
-    p.PrintKeyBool("shaderDenormPreserveFloat32", static_cast<bool>(obj.shaderDenormPreserveFloat32), 52);
-    p.PrintKeyBool("shaderDenormPreserveFloat64", static_cast<bool>(obj.shaderDenormPreserveFloat64), 52);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat16", static_cast<bool>(obj.shaderDenormFlushToZeroFloat16), 52);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat32", static_cast<bool>(obj.shaderDenormFlushToZeroFloat32), 52);
-    p.PrintKeyBool("shaderDenormFlushToZeroFloat64", static_cast<bool>(obj.shaderDenormFlushToZeroFloat64), 52);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat16", static_cast<bool>(obj.shaderRoundingModeRTEFloat16), 52);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat32", static_cast<bool>(obj.shaderRoundingModeRTEFloat32), 52);
-    p.PrintKeyBool("shaderRoundingModeRTEFloat64", static_cast<bool>(obj.shaderRoundingModeRTEFloat64), 52);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat16", static_cast<bool>(obj.shaderRoundingModeRTZFloat16), 52);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat32", static_cast<bool>(obj.shaderRoundingModeRTZFloat32), 52);
-    p.PrintKeyBool("shaderRoundingModeRTZFloat64", static_cast<bool>(obj.shaderRoundingModeRTZFloat64), 52);
-    p.PrintKeyValue("maxUpdateAfterBindDescriptorsInAllPools", obj.maxUpdateAfterBindDescriptorsInAllPools, 52);
-    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexingNative), 52);
-    p.PrintKeyBool("robustBufferAccessUpdateAfterBind", static_cast<bool>(obj.robustBufferAccessUpdateAfterBind), 52);
-    p.PrintKeyBool("quadDivergentImplicitLod", static_cast<bool>(obj.quadDivergentImplicitLod), 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSamplers", obj.maxPerStageDescriptorUpdateAfterBindSamplers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindUniformBuffers", obj.maxPerStageDescriptorUpdateAfterBindUniformBuffers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageBuffers", obj.maxPerStageDescriptorUpdateAfterBindStorageBuffers, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSampledImages", obj.maxPerStageDescriptorUpdateAfterBindSampledImages, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageImages", obj.maxPerStageDescriptorUpdateAfterBindStorageImages, 52);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInputAttachments", obj.maxPerStageDescriptorUpdateAfterBindInputAttachments, 52);
-    p.PrintKeyValue("maxPerStageUpdateAfterBindResources", obj.maxPerStageUpdateAfterBindResources, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSamplers", obj.maxDescriptorSetUpdateAfterBindSamplers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffers", obj.maxDescriptorSetUpdateAfterBindUniformBuffers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindUniformBuffersDynamic, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffers", obj.maxDescriptorSetUpdateAfterBindStorageBuffers, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindStorageBuffersDynamic, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSampledImages", obj.maxDescriptorSetUpdateAfterBindSampledImages, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageImages", obj.maxDescriptorSetUpdateAfterBindStorageImages, 52);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInputAttachments", obj.maxDescriptorSetUpdateAfterBindInputAttachments, 52);
-    DumpVkResolveModeFlags(p, "supportedDepthResolveModes", obj.supportedDepthResolveModes, 52);
-    DumpVkResolveModeFlags(p, "supportedStencilResolveModes", obj.supportedStencilResolveModes, 52);
-    p.PrintKeyBool("independentResolveNone", static_cast<bool>(obj.independentResolveNone), 52);
-    p.PrintKeyBool("independentResolve", static_cast<bool>(obj.independentResolve), 52);
-    p.PrintKeyBool("filterMinmaxSingleComponentFormats", static_cast<bool>(obj.filterMinmaxSingleComponentFormats), 52);
-    p.PrintKeyBool("filterMinmaxImageComponentMapping", static_cast<bool>(obj.filterMinmaxImageComponentMapping), 52);
-    p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 52);
-    DumpVkSampleCountFlags(p, "framebufferIntegerColorSampleCounts", obj.framebufferIntegerColorSampleCounts, 52);
+    p.SetMinKeyWidth(52);
+    DumpVkDriverId(p, "driverID", obj.driverID);
+    p.PrintKeyString("driverName", obj.driverName);
+    p.PrintKeyString("driverInfo", obj.driverInfo);
+    DumpVkConformanceVersion(p, "conformanceVersion", obj.conformanceVersion);
+    DumpVkShaderFloatControlsIndependence(p, "denormBehaviorIndependence", obj.denormBehaviorIndependence);
+    DumpVkShaderFloatControlsIndependence(p, "roundingModeIndependence", obj.roundingModeIndependence);
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat16", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat16));
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat32", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat32));
+    p.PrintKeyBool("shaderSignedZeroInfNanPreserveFloat64", static_cast<bool>(obj.shaderSignedZeroInfNanPreserveFloat64));
+    p.PrintKeyBool("shaderDenormPreserveFloat16", static_cast<bool>(obj.shaderDenormPreserveFloat16));
+    p.PrintKeyBool("shaderDenormPreserveFloat32", static_cast<bool>(obj.shaderDenormPreserveFloat32));
+    p.PrintKeyBool("shaderDenormPreserveFloat64", static_cast<bool>(obj.shaderDenormPreserveFloat64));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat16", static_cast<bool>(obj.shaderDenormFlushToZeroFloat16));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat32", static_cast<bool>(obj.shaderDenormFlushToZeroFloat32));
+    p.PrintKeyBool("shaderDenormFlushToZeroFloat64", static_cast<bool>(obj.shaderDenormFlushToZeroFloat64));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat16", static_cast<bool>(obj.shaderRoundingModeRTEFloat16));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat32", static_cast<bool>(obj.shaderRoundingModeRTEFloat32));
+    p.PrintKeyBool("shaderRoundingModeRTEFloat64", static_cast<bool>(obj.shaderRoundingModeRTEFloat64));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat16", static_cast<bool>(obj.shaderRoundingModeRTZFloat16));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat32", static_cast<bool>(obj.shaderRoundingModeRTZFloat32));
+    p.PrintKeyBool("shaderRoundingModeRTZFloat64", static_cast<bool>(obj.shaderRoundingModeRTZFloat64));
+    p.PrintKeyValue("maxUpdateAfterBindDescriptorsInAllPools", obj.maxUpdateAfterBindDescriptorsInAllPools);
+    p.PrintKeyBool("shaderUniformBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderUniformBufferArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderSampledImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderSampledImageArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderStorageBufferArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageBufferArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderStorageImageArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderStorageImageArrayNonUniformIndexingNative));
+    p.PrintKeyBool("shaderInputAttachmentArrayNonUniformIndexingNative", static_cast<bool>(obj.shaderInputAttachmentArrayNonUniformIndexingNative));
+    p.PrintKeyBool("robustBufferAccessUpdateAfterBind", static_cast<bool>(obj.robustBufferAccessUpdateAfterBind));
+    p.PrintKeyBool("quadDivergentImplicitLod", static_cast<bool>(obj.quadDivergentImplicitLod));
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSamplers", obj.maxPerStageDescriptorUpdateAfterBindSamplers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindUniformBuffers", obj.maxPerStageDescriptorUpdateAfterBindUniformBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageBuffers", obj.maxPerStageDescriptorUpdateAfterBindStorageBuffers);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindSampledImages", obj.maxPerStageDescriptorUpdateAfterBindSampledImages);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindStorageImages", obj.maxPerStageDescriptorUpdateAfterBindStorageImages);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInputAttachments", obj.maxPerStageDescriptorUpdateAfterBindInputAttachments);
+    p.PrintKeyValue("maxPerStageUpdateAfterBindResources", obj.maxPerStageUpdateAfterBindResources);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSamplers", obj.maxDescriptorSetUpdateAfterBindSamplers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffers", obj.maxDescriptorSetUpdateAfterBindUniformBuffers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindUniformBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindUniformBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffers", obj.maxDescriptorSetUpdateAfterBindStorageBuffers);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageBuffersDynamic", obj.maxDescriptorSetUpdateAfterBindStorageBuffersDynamic);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSampledImages", obj.maxDescriptorSetUpdateAfterBindSampledImages);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageImages", obj.maxDescriptorSetUpdateAfterBindStorageImages);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInputAttachments", obj.maxDescriptorSetUpdateAfterBindInputAttachments);
+    DumpVkResolveModeFlags(p, "supportedDepthResolveModes", obj.supportedDepthResolveModes);
+    DumpVkResolveModeFlags(p, "supportedStencilResolveModes", obj.supportedStencilResolveModes);
+    p.PrintKeyBool("independentResolveNone", static_cast<bool>(obj.independentResolveNone));
+    p.PrintKeyBool("independentResolve", static_cast<bool>(obj.independentResolve));
+    p.PrintKeyBool("filterMinmaxSingleComponentFormats", static_cast<bool>(obj.filterMinmaxSingleComponentFormats));
+    p.PrintKeyBool("filterMinmaxImageComponentMapping", static_cast<bool>(obj.filterMinmaxImageComponentMapping));
+    p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference);
+    DumpVkSampleCountFlags(p, "framebufferIntegerColorSampleCounts", obj.framebufferIntegerColorSampleCounts);
 }
 void DumpVkPhysicalDeviceVulkan13Features(Printer &p, std::string name, VkPhysicalDeviceVulkan13Features &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess), 50);
-    p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock), 50);
-    p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind), 50);
-    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl), 50);
-    p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData), 50);
-    p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation), 50);
-    p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation), 50);
-    p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl), 50);
-    p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups), 50);
-    p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2), 50);
-    p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR), 50);
-    p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory), 50);
-    p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering), 50);
-    p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct), 50);
-    p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4), 50);
+    p.SetMinKeyWidth(50);
+    p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess));
+    p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock));
+    p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind));
+    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl));
+    p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData));
+    p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation));
+    p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation));
+    p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl));
+    p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups));
+    p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2));
+    p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR));
+    p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory));
+    p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering));
+    p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct));
+    p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4));
 }
 void DumpVkPhysicalDeviceVulkan13Properties(Printer &p, std::string name, VkPhysicalDeviceVulkan13Properties &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize, 77);
-    p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize, 77);
-    p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups, 77);
-    DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages, 77);
-    p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize, 77);
-    p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks, 77);
-    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks", obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks, 77);
-    p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks, 77);
-    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks, 77);
-    p.PrintKeyValue("maxInlineUniformTotalSize", obj.maxInlineUniformTotalSize, 77);
-    p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct8BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct16BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct32BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProduct64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct64BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitUnsignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitSignedAccelerated), 77);
-    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated), 77);
-    p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes), 77);
-    p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment), 77);
-    p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes), 77);
-    p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment), 77);
-    p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize), 77);
+    p.SetMinKeyWidth(77);
+    p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize);
+    p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize);
+    p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups);
+    DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages);
+    p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize);
+    p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks", obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks);
+    p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks);
+    p.PrintKeyValue("maxInlineUniformTotalSize", obj.maxInlineUniformTotalSize);
+    p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct8BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct16BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct32BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProduct64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct64BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitUnsignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitSignedAccelerated));
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated));
+    p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes));
+    p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment));
+    p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes));
+    p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment));
+    p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize));
 }
 void DumpVkPhysicalDeviceVulkanMemoryModelFeatures(Printer &p, std::string name, VkPhysicalDeviceVulkanMemoryModelFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("vulkanMemoryModel", static_cast<bool>(obj.vulkanMemoryModel), 45);
-    p.PrintKeyBool("vulkanMemoryModelDeviceScope", static_cast<bool>(obj.vulkanMemoryModelDeviceScope), 45);
-    p.PrintKeyBool("vulkanMemoryModelAvailabilityVisibilityChains", static_cast<bool>(obj.vulkanMemoryModelAvailabilityVisibilityChains), 45);
+    p.SetMinKeyWidth(45);
+    p.PrintKeyBool("vulkanMemoryModel", static_cast<bool>(obj.vulkanMemoryModel));
+    p.PrintKeyBool("vulkanMemoryModelDeviceScope", static_cast<bool>(obj.vulkanMemoryModelDeviceScope));
+    p.PrintKeyBool("vulkanMemoryModelAvailabilityVisibilityChains", static_cast<bool>(obj.vulkanMemoryModelAvailabilityVisibilityChains));
 }
 void DumpVkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("workgroupMemoryExplicitLayout", static_cast<bool>(obj.workgroupMemoryExplicitLayout), 46);
-    p.PrintKeyBool("workgroupMemoryExplicitLayoutScalarBlockLayout", static_cast<bool>(obj.workgroupMemoryExplicitLayoutScalarBlockLayout), 46);
-    p.PrintKeyBool("workgroupMemoryExplicitLayout8BitAccess", static_cast<bool>(obj.workgroupMemoryExplicitLayout8BitAccess), 46);
-    p.PrintKeyBool("workgroupMemoryExplicitLayout16BitAccess", static_cast<bool>(obj.workgroupMemoryExplicitLayout16BitAccess), 46);
+    p.SetMinKeyWidth(46);
+    p.PrintKeyBool("workgroupMemoryExplicitLayout", static_cast<bool>(obj.workgroupMemoryExplicitLayout));
+    p.PrintKeyBool("workgroupMemoryExplicitLayoutScalarBlockLayout", static_cast<bool>(obj.workgroupMemoryExplicitLayoutScalarBlockLayout));
+    p.PrintKeyBool("workgroupMemoryExplicitLayout8BitAccess", static_cast<bool>(obj.workgroupMemoryExplicitLayout8BitAccess));
+    p.PrintKeyBool("workgroupMemoryExplicitLayout16BitAccess", static_cast<bool>(obj.workgroupMemoryExplicitLayout16BitAccess));
 }
 void DumpVkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("ycbcr2plane444Formats", static_cast<bool>(obj.ycbcr2plane444Formats), 21);
+    p.SetMinKeyWidth(21);
+    p.PrintKeyBool("ycbcr2plane444Formats", static_cast<bool>(obj.ycbcr2plane444Formats));
 }
 void DumpVkPhysicalDeviceYcbcrImageArraysFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceYcbcrImageArraysFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("ycbcrImageArrays", static_cast<bool>(obj.ycbcrImageArrays), 16);
+    p.SetMinKeyWidth(16);
+    p.PrintKeyBool("ycbcrImageArrays", static_cast<bool>(obj.ycbcrImageArrays));
 }
 void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::string name, VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory), 35);
+    p.SetMinKeyWidth(35);
+    p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory));
 }
 void DumpVkQueueFamilyGlobalPriorityPropertiesKHR(Printer &p, std::string name, VkQueueFamilyGlobalPriorityPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("priorityCount", obj.priorityCount, 14);
+    p.SetMinKeyWidth(14);
+    p.PrintKeyValue("priorityCount", obj.priorityCount);
     {   ArrayWrapper arr(p,"priorities", 16);
         p.PrintElement(obj.priorities[0]);
         p.PrintElement(obj.priorities[1]);
@@ -2366,45 +2503,49 @@ void DumpVkQueueFamilyGlobalPriorityPropertiesKHR(Printer &p, std::string name, 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkQueueFamilyQueryResultStatusProperties2KHR(Printer &p, std::string name, VkQueueFamilyQueryResultStatusProperties2KHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("supported", static_cast<bool>(obj.supported), 9);
+    p.SetMinKeyWidth(9);
+    p.PrintKeyBool("supported", static_cast<bool>(obj.supported));
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, VkSharedPresentSurfaceCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
-    DumpVkImageUsageFlags(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags, 0);
+    DumpVkImageUsageFlags(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags);
 }
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 void DumpVkSurfaceCapabilitiesFullScreenExclusiveEXT(Printer &p, std::string name, VkSurfaceCapabilitiesFullScreenExclusiveEXT &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("fullScreenExclusiveSupported", static_cast<bool>(obj.fullScreenExclusiveSupported), 28);
+    p.SetMinKeyWidth(28);
+    p.PrintKeyBool("fullScreenExclusiveSupported", static_cast<bool>(obj.fullScreenExclusiveSupported));
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 void DumpVkSurfaceCapabilitiesKHR(Printer &p, std::string name, VkSurfaceCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyValue("minImageCount", obj.minImageCount, 19);
-    p.PrintKeyValue("maxImageCount", obj.maxImageCount, 19);
+    p.SetMinKeyWidth(19);
+    p.PrintKeyValue("minImageCount", obj.minImageCount);
+    p.PrintKeyValue("maxImageCount", obj.maxImageCount);
     DumpVkExtent2D(p, "currentExtent", obj.currentExtent);
     DumpVkExtent2D(p, "minImageExtent", obj.minImageExtent);
     DumpVkExtent2D(p, "maxImageExtent", obj.maxImageExtent);
-    p.PrintKeyValue("maxImageArrayLayers", obj.maxImageArrayLayers, 19);
-    DumpVkSurfaceTransformFlagsKHR(p, "supportedTransforms", obj.supportedTransforms, 19);
-    DumpVkSurfaceTransformFlagBitsKHR(p, "currentTransform", obj.currentTransform, 19);
-    DumpVkCompositeAlphaFlagsKHR(p, "supportedCompositeAlpha", obj.supportedCompositeAlpha, 19);
-    DumpVkImageUsageFlags(p, "supportedUsageFlags", obj.supportedUsageFlags, 19);
+    p.PrintKeyValue("maxImageArrayLayers", obj.maxImageArrayLayers);
+    DumpVkSurfaceTransformFlagsKHR(p, "supportedTransforms", obj.supportedTransforms);
+    DumpVkSurfaceTransformFlagBitsKHR(p, "currentTransform", obj.currentTransform);
+    DumpVkCompositeAlphaFlagsKHR(p, "supportedCompositeAlpha", obj.supportedCompositeAlpha);
+    DumpVkImageUsageFlags(p, "supportedUsageFlags", obj.supportedUsageFlags);
 }
 void DumpVkSurfaceFormatKHR(Printer &p, std::string name, VkSurfaceFormatKHR &obj) {
     ObjectWrapper object{p, name};
-    DumpVkFormat(p, "format", obj.format, 0);
-    DumpVkColorSpaceKHR(p, "colorSpace", obj.colorSpace, 0);
+    DumpVkFormat(p, "format", obj.format);
+    DumpVkColorSpaceKHR(p, "colorSpace", obj.colorSpace);
 }
 void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, VkSurfaceProtectedCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
-    p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected), 17);
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected));
 }
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkVideoQueueFamilyProperties2KHR(Printer &p, std::string name, VkVideoQueueFamilyProperties2KHR &obj) {
     ObjectWrapper object{p, name};
-    DumpVkVideoCodecOperationFlagsKHR(p, "videoCodecOperations", obj.videoCodecOperations, 0);
+    DumpVkVideoCodecOperationFlagsKHR(p, "videoCodecOperations", obj.videoCodecOperations);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 struct phys_device_props2_chain {
@@ -3244,7 +3385,6 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
         }
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 void chain_iterator_phys_device_mem_props2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3258,7 +3398,6 @@ void chain_iterator_phys_device_mem_props2(Printer &p, AppGpu &gpu, void * place
         }
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3796,7 +3935,6 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
         }
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3824,7 +3962,6 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
         }
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3851,7 +3988,6 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place, Vu
         }
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place, VulkanVersion version) {
     while (place) {
@@ -3881,7 +4017,6 @@ void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place, Vul
 #endif  // VK_ENABLE_BETA_EXTENSIONS
         place = structure->pNext;
     }
-    p.UnsetSubHeader();
 }
 bool operator==(const VkExtent2D & a, const VkExtent2D b);
 bool operator==(const VkSurfaceCapabilities2EXT & a, const VkSurfaceCapabilities2EXT b);

@@ -74,7 +74,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
 
                 ArrayWrapper arr_devices(p, "Devices", gpus.size());
                 for (auto &gpu : gpus) {
-                    p.PrintKeyValue("GPU id", gpu->id, 0, gpu->props.deviceName);
+                    p.PrintKeyValue("GPU id", gpu->id, gpu->props.deviceName);
                     auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(props.layerName);
                     DumpExtensions(p, "Layer-Device", exts);
                     p.AddNewline();
@@ -96,15 +96,16 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
             ObjectWrapper obj(p, "Layer Properties");
             for (auto &layer : layers) {
                 ObjectWrapper obj_name(p, layer.layer_properties.layerName);
-                p.PrintKeyString("layerName", layer.layer_properties.layerName, 21);
-                p.PrintKeyString("version", VkVersionString(layer.layer_properties.specVersion), 21);
-                p.PrintKeyValue("implementation version", layer.layer_properties.implementationVersion, 21);
-                p.PrintKeyString("description", layer.layer_properties.description, 21);
+                p.SetMinKeyWidth(21);
+                p.PrintKeyString("layerName", layer.layer_properties.layerName);
+                p.PrintKeyString("version", VkVersionString(layer.layer_properties.specVersion));
+                p.PrintKeyValue("implementation version", layer.layer_properties.implementationVersion);
+                p.PrintKeyString("description", layer.layer_properties.description);
                 DumpExtensions(p, "Layer", layer.extension_properties);
                 ObjectWrapper obj_devices(p, "Devices");
                 for (auto &gpu : gpus) {
                     ObjectWrapper obj_gpu(p, gpu->props.deviceName);
-                    p.PrintKeyValue("GPU id", gpu->id, 0, gpu->props.deviceName);
+                    p.PrintKeyValue("GPU id", gpu->id, gpu->props.deviceName);
                     auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(layer.layer_properties.layerName);
                     DumpExtensions(p, "Layer-Device", exts);
                 }
@@ -292,13 +293,14 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     p.SetSubHeader();
     {
         ObjectWrapper obj(p, "VkPhysicalDeviceProperties");
-        p.PrintKeyValue("apiVersion", props.apiVersion, 17, VkVersionString(props.apiVersion));
-        p.PrintKeyValue("driverVersion", props.driverVersion, 17, to_hex_str(props.driverVersion));
-        p.PrintKeyString("vendorID", to_hex_str(props.vendorID), 17);
-        p.PrintKeyString("deviceID", to_hex_str(props.deviceID), 17);
-        p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType), 17);
-        p.PrintKeyString("deviceName", props.deviceName, 17);
-        p.PrintKeyString("pipelineCacheUUID", to_string_16(props.pipelineCacheUUID), 17);
+        p.SetMinKeyWidth(17);
+        p.PrintKeyValue("apiVersion", props.apiVersion, VkVersionString(props.apiVersion));
+        p.PrintKeyValue("driverVersion", props.driverVersion, to_hex_str(props.driverVersion));
+        p.PrintKeyString("vendorID", to_hex_str(props.vendorID));
+        p.PrintKeyString("deviceID", to_hex_str(props.deviceID));
+        p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType));
+        p.PrintKeyString("deviceName", props.deviceName);
+        p.PrintKeyString("pipelineCacheUUID", to_string_16(props.pipelineCacheUUID));
     }
     p.AddNewline();
     DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
@@ -314,12 +316,13 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
 void GpuDumpPropsJson(Printer &p, AppGpu &gpu) {
     auto props = gpu.GetDeviceProperties();
     ObjectWrapper obj(p, "VkPhysicalDeviceProperties");
-    p.PrintKeyValue("apiVersion", props.apiVersion, 14, VkVersionString(props.apiVersion));
-    p.PrintKeyValue("driverVersion", props.driverVersion, 14, to_hex_str(props.driverVersion));
-    p.PrintKeyValue("vendorID", props.vendorID, 14);
-    p.PrintKeyValue("deviceID", props.deviceID, 14);
-    p.PrintKeyValue("deviceType", props.deviceType, 14);
-    p.PrintKeyString("deviceName", props.deviceName, 14);
+    p.SetMinKeyWidth(24);
+    p.PrintKeyValue("apiVersion", props.apiVersion, VkVersionString(props.apiVersion));
+    p.PrintKeyValue("driverVersion", props.driverVersion, to_hex_str(props.driverVersion));
+    p.PrintKeyValue("vendorID", props.vendorID);
+    p.PrintKeyValue("deviceID", props.deviceID);
+    p.PrintKeyValue("deviceType", props.deviceType);
+    p.PrintKeyString("deviceName", props.deviceName);
     {
         ArrayWrapper arr(p, "pipelineCacheUUID", VK_UUID_SIZE);
         for (uint32_t i = 0; i < VK_UUID_SIZE; ++i) {
@@ -335,25 +338,27 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, std::vector<SurfaceExtension> &s
     VkQueueFamilyProperties props = queue.props;
     p.SetSubHeader().SetElementIndex(static_cast<int>(queue.queue_index));
     ObjectWrapper obj_queue_props(p, "queueProperties");
+    p.SetMinKeyWidth(27);
     if (p.Type() == OutputType::vkconfig_output) {
         DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
     } else {
-        p.PrintKeyValue("minImageTransferGranularity", props.minImageTransferGranularity, 27);
+        p.PrintKeyValue("minImageTransferGranularity", props.minImageTransferGranularity);
     }
-    p.PrintKeyValue("queueCount", props.queueCount, 27);
-    p.PrintKeyString("queueFlags", VkQueueFlagsString(props.queueFlags), 27);
-    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
+    p.PrintKeyValue("queueCount", props.queueCount);
+    p.PrintKeyString("queueFlags", VkQueueFlagsString(props.queueFlags));
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits);
 
     if (queue.is_present_platform_agnostic) {
-        p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false", 27);
+        p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false");
     } else {
         size_t width = 0;
         for (auto &surface : surfaces) {
             if (surface.name.size() > width) width = surface.name.size();
         }
         ObjectWrapper obj_present_support(p, "present support");
+        p.SetMinKeyWidth(width);
         for (auto &surface : surfaces) {
-            p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false", width);
+            p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false");
         }
     }
     chain_iterator_queue_properties2(p, gpu, queue.pNext, gpu.api_version);
@@ -363,10 +368,11 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, std::vector<SurfaceExtension> &s
 
 void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, VkQueueFamilyProperties props) {
     ObjectWrapper obj(p, "");
+    p.SetMinKeyWidth(27);
     DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
-    p.PrintKeyValue("queueCount", props.queueCount, 27);
-    p.PrintKeyValue("queueFlags", props.queueFlags, 27);
-    p.PrintKeyValue("timestampValidBits", props.timestampValidBits, 27);
+    p.PrintKeyValue("queueCount", props.queueCount);
+    p.PrintKeyValue("queueFlags", props.queueFlags);
+    p.PrintKeyValue("timestampValidBits", props.timestampValidBits);
 }
 
 // This prints a number of bytes in a human-readable format according to prefixes of the International System of Quantities (ISQ),
@@ -410,22 +416,22 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
         for (uint32_t i = 0; i < gpu.memory_props.memoryHeapCount; ++i) {
             p.SetElementIndex(static_cast<int>(i));
             ObjectWrapper obj_mem_heap(p, "memoryHeaps");
-
-            p.PrintKeyString("size", append_human_readable(gpu.memory_props.memoryHeaps[i].size), 6);
+            p.SetMinKeyWidth(6);
+            p.PrintKeyString("size", append_human_readable(gpu.memory_props.memoryHeaps[i].size));
             if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
-                p.PrintKeyString("budget", append_human_readable(gpu.heapBudget[i]), 6);
-                p.PrintKeyString("usage", append_human_readable(gpu.heapUsage[i]), 6);
+                p.PrintKeyString("budget", append_human_readable(gpu.heapBudget[i]));
+                p.PrintKeyString("usage", append_human_readable(gpu.heapUsage[i]));
             }
-            DumpVkMemoryHeapFlags(p, "flags", gpu.memory_props.memoryHeaps[i].flags, 6);
+            DumpVkMemoryHeapFlags(p, "flags", gpu.memory_props.memoryHeaps[i].flags);
         }
     }
     {
         ObjectWrapper obj_mem_types(p, "memoryTypes", gpu.memory_props.memoryTypeCount);
-
         for (uint32_t i = 0; i < gpu.memory_props.memoryTypeCount; ++i) {
             p.SetElementIndex(static_cast<int>(i));
             ObjectWrapper obj_mem_type(p, "memoryTypes");
-            p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex, 13);
+            p.SetMinKeyWidth(13);
+            p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex);
 
             auto flags = gpu.memory_props.memoryTypes[i].propertyFlags;
             DumpVkMemoryPropertyFlags(p, "propertyFlags = " + to_hex_str(flags), flags);
@@ -492,8 +498,8 @@ void GpuDumpMemoryPropsJson(Printer &p, AppGpu &gpu) {
         ArrayWrapper arr(p, "memoryTypes", gpu.memory_props.memoryTypeCount);
         for (uint32_t i = 0; i < gpu.memory_props.memoryTypeCount; ++i) {
             ObjectWrapper obj(p, "");
-            p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex, 13);
-            p.PrintKeyValue("propertyFlags", gpu.memory_props.memoryTypes[i].propertyFlags, 13);
+            p.PrintKeyValue("heapIndex", gpu.memory_props.memoryTypes[i].heapIndex);
+            p.PrintKeyValue("propertyFlags", gpu.memory_props.memoryTypes[i].propertyFlags);
         }
     }
 }
@@ -719,13 +725,14 @@ void DumpSummaryInstance(Printer &p, AppInstance &inst) {
 
 void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
     ObjectWrapper obj(p, "GPU" + std::to_string(gpu.id));
+    p.SetMinKeyWidth(18);
     auto props = gpu.GetDeviceProperties();
-    p.PrintKeyValue("apiVersion", props.apiVersion, 18, VkVersionString(props.apiVersion));
-    p.PrintKeyValue("driverVersion", props.driverVersion, 18, to_hex_str(props.driverVersion));
-    p.PrintKeyString("vendorID", to_hex_str(props.vendorID), 18);
-    p.PrintKeyString("deviceID", to_hex_str(props.deviceID), 18);
-    p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType), 18);
-    p.PrintKeyString("deviceName", props.deviceName, 18);
+    p.PrintKeyValue("apiVersion", props.apiVersion, VkVersionString(props.apiVersion));
+    p.PrintKeyValue("driverVersion", props.driverVersion, to_hex_str(props.driverVersion));
+    p.PrintKeyString("vendorID", to_hex_str(props.vendorID));
+    p.PrintKeyString("deviceID", to_hex_str(props.deviceID));
+    p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType));
+    p.PrintKeyString("deviceName", props.deviceName);
 
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) &&
         (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || gpu.api_version.minor >= 2)) {
@@ -734,15 +741,15 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
             VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
                 VkPhysicalDeviceDriverProperties *driver_props = reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
-                DumpVkDriverId(p, "driverID", driver_props->driverID, 18);
-                p.PrintKeyString("driverName", driver_props->driverName, 18);
-                p.PrintKeyString("driverInfo", driver_props->driverInfo, 18);
-                DumpVkConformanceVersion(p, "conformanceVersion", driver_props->conformanceVersion, 18);
+                DumpVkDriverId(p, "driverID", driver_props->driverID);
+                p.PrintKeyString("driverName", driver_props->driverName);
+                p.PrintKeyString("driverInfo", driver_props->driverInfo);
+                DumpVkConformanceVersion(p, "conformanceVersion", driver_props->conformanceVersion);
             }
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
                 VkPhysicalDeviceIDProperties *device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
-                p.PrintKeyString("deviceUUID", to_string_16(device_id_props->deviceUUID), 18);
-                p.PrintKeyString("driverUUID", to_string_16(device_id_props->driverUUID), 18);
+                p.PrintKeyString("deviceUUID", to_string_16(device_id_props->deviceUUID));
+                p.PrintKeyString("driverUUID", to_string_16(device_id_props->driverUUID));
             }
             place = structure->pNext;
         }
