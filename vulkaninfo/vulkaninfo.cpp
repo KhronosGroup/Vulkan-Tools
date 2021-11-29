@@ -142,9 +142,8 @@ void DumpPresentModes(Printer &p, AppSurface &surface) {
 
 void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurface &surface) {
     auto &surf_cap = surface.surface_capabilities;
-    p.SetSubHeader().SetIgnoreMinWidth();
+    p.SetSubHeader().SetIgnoreMinWidthInChild();
     DumpVkSurfaceCapabilitiesKHR(p, "VkSurfaceCapabilitiesKHR", surf_cap);
-    p.UnsetIgnoreMinWidth();
 
     if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
         p.SetSubHeader();
