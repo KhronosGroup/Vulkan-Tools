@@ -1452,8 +1452,7 @@ struct AppGpu {
         inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
 
         // needs to find the minimum of the instance and device version, and use that to print the device info
-        uint32_t gpu_version = props.apiVersion < inst.instance_version ? props.apiVersion : inst.instance_version;
-        api_version = make_vulkan_version(gpu_version);
+        api_version = make_vulkan_version(props.apiVersion);
 
         inst.dll.fp_vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
 
