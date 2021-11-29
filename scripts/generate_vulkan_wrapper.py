@@ -608,7 +608,7 @@ VK_KHR_copy_commands2 = Extension(name='VK_KHR_copy_commands2', version=1, guard
 VK_KHR_format_feature_flags2 = Extension(name='VK_KHR_format_feature_flags2', version=1, guard=None, commands=[
 ])
 
-VK_KHR_maintenance4 = Extension(name='VK_KHR_maintenance4', version=1, guard=None, commands=[
+VK_KHR_maintenance4 = Extension(name='VK_KHR_maintenance4', version=2, guard=None, commands=[
     Command(name='vkGetDeviceBufferMemoryRequirementsKHR', dispatch='VkDevice'),
     Command(name='vkGetDeviceImageMemoryRequirementsKHR', dispatch='VkDevice'),
     Command(name='vkGetDeviceImageSparseMemoryRequirementsKHR', dispatch='VkDevice'),
@@ -1152,6 +1152,9 @@ VK_EXT_image_robustness = Extension(name='VK_EXT_image_robustness', version=1, g
 VK_EXT_4444_formats = Extension(name='VK_EXT_4444_formats', version=1, guard=None, commands=[
 ])
 
+VK_ARM_rasterization_order_attachment_access = Extension(name='VK_ARM_rasterization_order_attachment_access', version=1, guard=None, commands=[
+])
+
 VK_EXT_rgba10x6_formats = Extension(name='VK_EXT_rgba10x6_formats', version=1, guard=None, commands=[
 ])
 
@@ -1168,6 +1171,9 @@ VK_EXT_vertex_input_dynamic_state = Extension(name='VK_EXT_vertex_input_dynamic_
 ])
 
 VK_EXT_physical_device_drm = Extension(name='VK_EXT_physical_device_drm', version=1, guard=None, commands=[
+])
+
+VK_EXT_depth_clip_control = Extension(name='VK_EXT_depth_clip_control', version=1, guard=None, commands=[
 ])
 
 VK_EXT_primitive_topology_list_restart = Extension(name='VK_EXT_primitive_topology_list_restart', version=1, guard=None, commands=[
@@ -1625,11 +1631,13 @@ extensions = [
     VK_QCOM_rotated_copy_commands,
     VK_EXT_image_robustness,
     VK_EXT_4444_formats,
+    VK_ARM_rasterization_order_attachment_access,
     VK_EXT_rgba10x6_formats,
     VK_NV_acquire_winrt_display,
     VK_VALVE_mutable_descriptor_type,
     VK_EXT_vertex_input_dynamic_state,
     VK_EXT_physical_device_drm,
+    VK_EXT_depth_clip_control,
     VK_EXT_primitive_topology_list_restart,
     VK_HUAWEI_subpass_shading,
     VK_HUAWEI_invocation_mask,

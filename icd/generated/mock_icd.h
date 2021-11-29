@@ -295,11 +295,13 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_workgroup_memory_explicit_layout", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_4444_formats", 1},
+    {"VK_ARM_rasterization_order_attachment_access", 1},
     {"VK_EXT_rgba10x6_formats", 1},
     {"VK_NV_acquire_winrt_display", 1},
     {"VK_VALVE_mutable_descriptor_type", 1},
     {"VK_EXT_vertex_input_dynamic_state", 2},
     {"VK_EXT_physical_device_drm", 1},
+    {"VK_EXT_depth_clip_control", 1},
     {"VK_EXT_primitive_topology_list_restart", 1},
     {"VK_KHR_format_feature_flags2", 1},
     {"VK_FUCHSIA_external_memory", 1},
@@ -316,7 +318,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_load_store_op_none", 1},
     {"VK_EXT_border_color_swizzle", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
-    {"VK_KHR_maintenance4", 1},
+    {"VK_KHR_maintenance4", 2},
 };
 
 
@@ -3131,6 +3133,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -3165,6 +3168,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+
 
 
 
