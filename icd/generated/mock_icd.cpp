@@ -5044,6 +5044,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -5098,6 +5099,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 
