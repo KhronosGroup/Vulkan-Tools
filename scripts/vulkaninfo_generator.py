@@ -59,9 +59,9 @@ license_header = '''
 '''
 
 custom_formaters = r'''
-void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c, int width = 0) {
+void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c) {
     p.PrintKeyString("conformanceVersion", std::to_string(c.major)+ "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "."
-             + std::to_string(c.patch), width);
+             + std::to_string(c.patch));
 }
 
 template <typename T>
@@ -418,11 +418,11 @@ def PrintEnumToString(enum, gen):
 def PrintEnum(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
-    out += f"void Dump{enum.name}(Printer &p, std::string name, {enum.name} value, int width = 0) {{\n"
+    out += f"void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{\n"
     out += f"    if (p.Type() == OutputType::json) {{\n"
-    out += f"        p.PrintKeyValue(name, value, width);\n"
+    out += f"        p.PrintKeyValue(name, value);\n"
     out += f"    }} else {{\n"
-    out += f"        p.PrintKeyString(name, {enum.name}String(value), width);\n    }}\n"
+    out += f"        p.PrintKeyString(name, {enum.name}String(value));\n    }}\n"
     out += f"}}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
@@ -441,7 +441,7 @@ def PrintGetFlagStrings(name, bitmask):
 
 
 def PrintFlags(bitmask, name):
-    out = f"void Dump{name}(Printer &p, std::string name, {name} value, int width = 0) {{\n"
+    out = f"void Dump{name}(Printer &p, std::string name, {name} value) {{\n"
     out += f"    if (p.Type() == OutputType::json) {{ p.PrintKeyValue(name, value); return; }}\n"
     out += f"    if (static_cast<{bitmask.name}>(value) == 0) {{\n"
     out += f"        ArrayWrapper arr(p, name, 0);\n"
@@ -459,9 +459,9 @@ def PrintFlags(bitmask, name):
 
 
 def PrintFlagBits(bitmask):
-    out = f"void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value, int width = 0) {{\n"
+    out = f"void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{\n"
     out += f"    auto strings = {bitmask.name}GetStrings(value);\n"
-    out += f"    p.PrintKeyString(name, strings.at(0), width);\n"
+    out += f"    p.PrintKeyString(name, strings.at(0));\n"
     out += f"}}\n"
     return out
 
@@ -478,7 +478,7 @@ def PrintBitMask(bitmask, name, gen):
 
 def PrintBitMaskToString(bitmask, name, gen):
     out = AddGuardHeader(GetExtension(bitmask.name, gen))
-    out += f"std::string {name}String({name} value, int width = 0) {{\n"
+    out += f"std::string {name}String({name} value) {{\n"
     out += f"    std::string out;\n"
     out += f"    bool is_first = true;\n"
     for v in bitmask.options:
@@ -519,19 +519,20 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
         out += f"        p.SetSubHeader().ObjectStart(name);\n"
     else:
         out += f"    ObjectWrapper object{{p, name}};\n"
-
+    if max_key_len > 0:
+        out += f"    p.SetMinKeyWidth({max_key_len});\n"
     for v in struct.members:
         # arrays
         if v.arrayLength is not None:
             # strings
             if v.typeID == "char":
-                out += f"    p.PrintKeyString(\"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
+                out += f"    p.PrintKeyString(\"{v.name}\", obj.{v.name});\n"
             # uuid's
             elif (v.arrayLength == str(16) and v.typeID == "uint8_t"):  # VK_UUID_SIZE
-                out += f"    p.PrintKeyString(\"{v.name}\", to_string_16(obj.{v.name}), {str(max_key_len)});\n"
+                out += f"    p.PrintKeyString(\"{v.name}\", to_string_16(obj.{v.name}));\n"
             elif (v.arrayLength == str(8) and v.typeID == "uint8_t"):  # VK_LUID_SIZE
                 out += f"    if (obj.deviceLUIDValid)"  # special case
-                out += f" p.PrintKeyString(\"{v.name}\", to_string_8(obj.{v.name}), {str(max_key_len)});\n"
+                out += f" p.PrintKeyString(\"{v.name}\", to_string_8(obj.{v.name}));\n"
             elif struct.name == "VkQueueFamilyGlobalPriorityPropertiesEXT" and v.name == "priorities":
                 out += f"    ArrayWrapper arr(p,\"{v.name}\", obj.priorityCount);\n"
                 out += f"    for (uint32_t i = 0; i < obj.priorityCount; i++) {{\n"
@@ -554,23 +555,16 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
                     out += f"        p.PrintElement(obj.{v.name}[i]);\n"
                 out += f"    }}\n"
         elif v.typeID == "VkBool32":
-            out += f"    p.PrintKeyBool(\"{v.name}\", static_cast<bool>(obj.{v.name}), {str(max_key_len)});\n"
+            out += f"    p.PrintKeyBool(\"{v.name}\", static_cast<bool>(obj.{v.name}));\n"
         elif v.typeID == "VkConformanceVersion":
-            out += f"    DumpVkConformanceVersion(p, \"conformanceVersion\", obj.{v.name}, {str(max_key_len)});\n"
+            out += f"    DumpVkConformanceVersion(p, \"conformanceVersion\", obj.{v.name});\n"
         elif v.typeID == "VkDeviceSize":
-            out += f"    p.PrintKeyValue(\"{v.name}\", to_hex_str(p, obj.{v.name}), {str(max_key_len)});\n"
+            out += f"    p.PrintKeyValue(\"{v.name}\", to_hex_str(p, obj.{v.name}));\n"
         elif v.typeID in predefined_types:
-            out += f"    p.PrintKeyValue(\"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
+            out += f"    p.PrintKeyValue(\"{v.name}\", obj.{v.name});\n"
         elif v.name not in ['sType', 'pNext']:
-            # if it is an enum/flag/bitmask, add the calculated width
-            type_name = v.typeID
-            for key, value in aliases.items():
-                if type_name in value:
-                    type_name = key
-            if type_name not in structure_names:
-                out += f"    Dump{type_name}(p, \"{v.name}\", obj.{v.name}, {str(max_key_len)});\n"
-            else:
-                out += f"    Dump{type_name}(p, \"{v.name}\", obj.{v.name});\n"
+            # if it is an enum/flag/bitmask
+            out += f"    Dump{v.typeID}(p, \"{v.name}\", obj.{v.name});\n"
     if struct.name in ["VkPhysicalDeviceLimits", "VkPhysicalDeviceSparseProperties"]:
         out += f"    p.ObjectEnd();\n"
     out += f"}}\n"
@@ -723,7 +717,6 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
             out += AddGuardFooter(s)
     out += f"        place = structure->pNext;\n"
     out += f"    }}\n"
-    out += f"    p.UnsetSubHeader();\n"
     out += f"}}\n"
     return out
 
