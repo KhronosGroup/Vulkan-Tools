@@ -76,12 +76,16 @@ class Printer {
   public:
     Printer(const PrinterCreateDetails &details, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version)
         : output_type(details.output_type), out(out) {
+        StackNode node{};
+        node.is_first_item = false;
+        node.indents = 0;
         switch (output_type) {
             case (OutputType::text):
                 out << "==========\n";
                 out << "VULKANINFO\n";
                 out << "==========\n\n";
                 out << "Vulkan Instance Version: " << VkVersionString(vulkan_version) << "\n\n\n";
+
                 break;
             case (OutputType::html):
                 out << "<!doctype html>\n";
@@ -172,44 +176,40 @@ class Printer {
                 out << "\t\t\t<h1>vulkaninfo</h1>\n";
                 out << "\t\t</div>\n";
                 out << "\t\t<div id='wrapper'>\n";
-
                 out << "\t\t\t<details><summary>Vulkan Instance Version: <span class='val'>" << VkVersionString(vulkan_version)
                     << "</span></summary></details>\n\t\t\t<br />\n";
-                indents += 3;
+                node.indents = 3;
                 break;
             case (OutputType::json):
-                /* fall through */
+                out << details.start_string;
+                node.indents = 1;
+                break;
             case (OutputType::vkconfig_output):
                 out << details.start_string;
-                indents++;
-                is_first_item.push(false);
-                is_array.push(false);
+                node.indents = 1;
                 break;
             default:
                 break;
         }
+        object_stack.push(node);
     }
     ~Printer() {
         switch (output_type) {
             case (OutputType::text):
-
                 break;
             case (OutputType::html):
                 out << "\t\t</div>\n";
                 out << "\t</body>\n";
                 out << "</html>\n";
-                indents -= 3;
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
                 out << "\n}\n";
-                indents--;
-                is_first_item.pop();
-                assert(is_first_item.empty() && "mismatched number of ObjectStart/ObjectEnd or ArrayStart/ArrayEnd's");
-                is_array.pop();
                 break;
         }
-        assert(indents == 0 && "indents must be zero at program end");
+        assert(!object_stack.empty() && "mismatched number of ObjectStart/ObjectEnd or ArrayStart/ArrayEnd's");
+        object_stack.pop();
+        assert(object_stack.empty() && "indents must be zero at program end");
     };
 
     Printer(const Printer &) = delete;
@@ -219,29 +219,28 @@ class Printer {
 
     // When an error occurs, call this to create a valid output file. Needed for json/html
     void FinishOutput() {
-        switch (output_type) {
-            case (OutputType::text):
-                indents = 0;
-                break;
-            case (OutputType::html):
-                while (indents > 3) {
-                    out << "</details>\n";
-                    indents--;
-                }
-                break;
-            case (OutputType::json):
-            case (OutputType::vkconfig_output):
-                while (indents > 1) {
-                    out << "\n" << std::string(static_cast<size_t>(indents), '\t');
-                    if (is_array.top()) {
+        while (!object_stack.empty()) {
+            switch (output_type) {
+                case (OutputType::text):
+                    break;
+                case (OutputType::html):
+                    while (get_top().indents > 3) {
+                        out << "</details>\n";
+                    }
+                    break;
+                case (OutputType::json):
+                case (OutputType::vkconfig_output):
+                    out << "\n" << std::string(static_cast<size_t>(get_top().indents), '\t');
+                    if (get_top().is_array) {
                         out << "]";
                     } else {
                         out << "}";
                     }
-                    is_array.pop();
-                    indents--;
-                }
-                break;
+                    break;
+                default:
+                    break;
+            }
+            object_stack.pop();
         }
     }
 
@@ -249,67 +248,62 @@ class Printer {
     // use by prepending with p.SetXXX().ObjectStart/ArrayStart
 
     Printer &SetHeader() {
-        set_next_header = true;
+        get_top().set_next_header = true;
         return *this;
     }
 
     Printer &UnsetHeader() {
-        set_next_header = false;
+        get_top().set_next_header = false;
         return *this;
     }
 
     Printer &SetSubHeader() {
-        set_next_subheader = true;
+        get_top().set_next_subheader = true;
         return *this;
     }
 
     Printer &UnsetSubHeader() {
-        set_next_subheader = false;
+        get_top().set_next_subheader = false;
         return *this;
     }
 
     Printer &SetOpenDetails() {
-        set_details_open = true;
+        get_top().set_details_open = true;
         return *this;
     }
 
     Printer &SetAlwaysOpenDetails(bool value = true) {
-        should_always_open = value;
+        get_top().should_always_open = value;
         return *this;
     }
 
     Printer &SetTitleAsType() {
-        set_object_name_as_type = true;
+        get_top().set_object_name_as_type = true;
         return *this;
     }
 
     Printer &SetAsType() {
-        set_as_type = true;
+        get_top().set_as_type = true;
         return *this;
     }
 
-    Printer &SetIgnoreMinWidth() {
-        ignore_min_width_parameter = true;
-        return *this;
-    }
-
-    Printer &UnsetIgnoreMinWidth() {
-        ignore_min_width_parameter = false;
+    Printer &SetIgnoreMinWidthInChild() {
+        get_top().ignore_min_width_parameter_in_child = true;
         return *this;
     }
 
     Printer &SetElementIndex(int index) {
         assert(index >= 0 && "cannot set element index to a negative value");
-        element_index = index;
+        get_top().element_index = index;
         return *this;
     }
 
     void ObjectStart(std::string object_name, int32_t count_subobjects = -1) {
         switch (output_type) {
             case (OutputType::text): {
-                out << std::string(static_cast<size_t>(indents), '\t') << object_name;
-                if (element_index != -1) {
-                    out << "[" << element_index << "]";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << object_name;
+                if (get_top().element_index != -1) {
+                    out << "[" << get_top().element_index << "]";
                 }
                 out << ":";
                 if (count_subobjects >= 0) {
@@ -320,31 +314,31 @@ class Printer {
                 if (count_subobjects >= 0) {
                     headersize += 9 + std::to_string(count_subobjects).size();
                 }
-                if (element_index != -1) {
-                    headersize += 2 + std::to_string(element_index).size();
-                    element_index = -1;
+                if (get_top().element_index != -1) {
+                    headersize += 2 + std::to_string(get_top().element_index).size();
+                    get_top().element_index = -1;
                 }
                 PrintHeaderUnderlines(headersize);
                 break;
             }
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t');
-                if (set_details_open || should_always_open) {
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
+                if (get_top().set_details_open || get_top().should_always_open) {
                     out << "<details open>";
-                    set_details_open = false;
+                    get_top().set_details_open = false;
                 } else {
                     out << "<details>";
                 }
                 out << "<summary>";
-                if (set_object_name_as_type) {
+                if (get_top().set_object_name_as_type) {
                     out << "<span class='type'>" << object_name << "</span>";
-                    set_object_name_as_type = false;
+                    get_top().set_object_name_as_type = false;
                 } else {
                     out << object_name;
                 }
-                if (element_index != -1) {
-                    out << "[<span class='val'>" << element_index << "</span>]";
-                    element_index = -1;
+                if (get_top().element_index != -1) {
+                    out << "[<span class='val'>" << get_top().element_index << "</span>]";
+                    get_top().element_index = -1;
                 }
                 if (count_subobjects >= 0) {
                     out << ": count = <span class='val'>" << std::to_string(count_subobjects) << "</span>";
@@ -352,63 +346,54 @@ class Printer {
                 out << "</summary>\n";
                 break;
             case (OutputType::json):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t');
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
                 // Objects with no name are elements in an array of objects
-                if (object_name == "" || element_index != -1) {
+                if (object_name == "" || get_top().element_index != -1) {
                     out << "{\n";
-                    element_index = -1;
+                    get_top().element_index = -1;
                 } else {
                     out << "\"" << object_name << "\": {\n";
                 }
-
-                is_first_item.push(true);
-                is_array.push(false);
-
                 break;
             case (OutputType::vkconfig_output):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t');
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
 
-                if (element_index != -1) {
-                    out << "\"" << object_name << "[" << element_index << "]\": {\n";
-                    element_index = -1;
+                if (get_top().element_index != -1) {
+                    out << "\"" << object_name << "[" << get_top().element_index << "]\": {\n";
+                    get_top().element_index = -1;
                 } else {
                     out << "\"" << object_name << "\": {\n";
                 }
-                is_first_item.push(true);
-                is_array.push(false);
-
                 break;
             default:
                 break;
         }
-        indents++;
+        push_node(false);
     }
     void ObjectEnd() {
-        indents--;
-        assert(indents >= 0 && "indents cannot go below zero");
+        assert(get_top().is_array == false && "cannot call ObjectEnd while inside an Array");
+        object_stack.pop();
+        assert(get_top().indents >= 0 && "indents cannot go below zero");
         switch (output_type) {
             case (OutputType::text):
 
                 break;
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t') << "</details>\n";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "</details>\n";
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                out << "\n" << std::string(static_cast<size_t>(indents), '\t') << "}";
-                is_first_item.pop();
-                assert(is_array.top() == false && "cannot call ObjectEnd while inside an Array");
-                is_array.pop();
+                out << "\n" << std::string(static_cast<size_t>(get_top().indents), '\t') << "}";
                 break;
             default:
                 break;
@@ -417,7 +402,7 @@ class Printer {
     void ArrayStart(std::string array_name, size_t element_count = 0) {
         switch (output_type) {
             case (OutputType::text): {
-                out << std::string(static_cast<size_t>(indents), '\t') << array_name << ":";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << array_name << ":";
                 size_t underline_count = array_name.size() + 1;
                 if (element_count > 0) {
                     out << " count = " << element_count;
@@ -428,10 +413,10 @@ class Printer {
                 break;
             }
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t');
-                if (set_details_open || should_always_open) {
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
+                if (get_top().set_details_open || get_top().should_always_open) {
                     out << "<details open>";
-                    set_details_open = false;
+                    get_top().set_details_open = false;
                 } else {
                     out << "<details>";
                 }
@@ -443,38 +428,34 @@ class Printer {
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t') << "\"" << array_name << "\": "
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << array_name << "\": "
                     << "[\n";
-                assert(is_array.top() == false && "Cant start an array object inside another array, must be enclosed in an object");
-                is_first_item.push(true);
-                is_array.push(true);
+                assert(get_top().is_array == false &&
+                       "Cant start an array object inside another array, must be enclosed in an object");
                 break;
             default:
                 break;
         }
-        indents++;
+        push_node(true);
     }
     void ArrayEnd() {
-        indents--;
-        assert(indents >= 0 && "indents cannot go below zero");
+        assert(get_top().is_array == true && "cannot call ArrayEnd while inside an Object");
+        object_stack.pop();
+        assert(get_top().indents >= 0 && "indents cannot go below zero");
         switch (output_type) {
             case (OutputType::text):
-
                 break;
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t') << "</details>\n";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "</details>\n";
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                out << "\n" << std::string(static_cast<size_t>(indents), '\t') << "]";
-                is_first_item.pop();
-                assert(is_array.top() == true && "cannot call ArrayEnd while inside an Object");
-                is_array.pop();
+                out << "\n" << std::string(static_cast<size_t>(get_top().indents), '\t') << "]";
                 break;
             default:
                 break;
@@ -488,8 +469,8 @@ class Printer {
     void PrintKeyValue(std::string key, T value, size_t min_key_width = 0, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
-                out << std::string(static_cast<size_t>(indents), '\t') << key;
-                if (min_key_width > key.size() && !ignore_min_width_parameter) {
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << key;
+                if (min_key_width > key.size() && !get_top().ignore_min_width_parameter) {
                     out << std::string(min_key_width - key.size(), ' ');
                 }
                 out << " = " << value;
@@ -499,12 +480,12 @@ class Printer {
                 out << "\n";
                 break;
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t') << "<details><summary>" << key;
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "<details><summary>" << key;
                 if (min_key_width > key.size()) {
                     out << std::string(min_key_width - key.size(), ' ');
                 }
-                if (set_as_type) {
-                    set_as_type = false;
+                if (get_top().set_as_type) {
+                    get_top().set_as_type = false;
                     out << " = <span class='type'>" << value << "</span>";
                 } else {
                     out << " = <span class='val'>" << value << "</span>";
@@ -515,20 +496,20 @@ class Printer {
                 out << "</summary></details>\n";
                 break;
             case (OutputType::json):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t') << "\"" << key << "\": " << value;
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << key << "\": " << value;
                 break;
             case (OutputType::vkconfig_output):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t') << "\"" << key << "\": ";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << key << "\": ";
                 if (value_description != "") {
                     out << "\"" << value << " (" << value_description << ")\"";
                 } else {
@@ -576,16 +557,16 @@ class Printer {
     void PrintElement(T element, std::string value_description = "") {
         switch (output_type) {
             case (OutputType::text):
-                out << std::string(static_cast<size_t>(indents), '\t') << element;
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << element;
                 if (value_description != "") {
                     out << " (" << value_description << ")";
                 }
                 out << "\n";
                 break;
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t') << "<details><summary>";
-                if (set_as_type) {
-                    set_as_type = false;
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "<details><summary>";
+                if (get_top().set_as_type) {
+                    get_top().set_as_type = false;
                     out << "<span class='type'>" << element << "</span>";
                 } else {
                     out << "<span class='val'>" << element << "</span>";
@@ -597,12 +578,12 @@ class Printer {
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                if (!is_first_item.top()) {
+                if (!get_top().is_first_item) {
                     out << ",\n";
                 } else {
-                    is_first_item.top() = false;
+                    get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(indents), '\t') << element;
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << element;
                 break;
             default:
                 break;
@@ -624,11 +605,11 @@ class Printer {
     void PrintExtension(std::string ext_name, uint32_t revision, size_t min_width = 0) {
         switch (output_type) {
             case (OutputType::text):
-                out << std::string(static_cast<size_t>(indents), '\t') << ext_name << std::string(min_width - ext_name.size(), ' ')
-                    << " : extension revision " << revision << "\n";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << ext_name
+                    << std::string(min_width - ext_name.size(), ' ') << " : extension revision " << revision << "\n";
                 break;
             case (OutputType::html):
-                out << std::string(static_cast<size_t>(indents), '\t') << "<details><summary>" << DecorateAsType(ext_name)
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "<details><summary>" << DecorateAsType(ext_name)
                     << std::string(min_width - ext_name.size(), ' ') << " : extension revision "
                     << DecorateAsValue(std::to_string(revision)) << "</summary></details>\n";
                 break;
@@ -654,13 +635,13 @@ class Printer {
     }
     void IndentIncrease() {
         if (output_type == OutputType::text) {
-            indents++;
+            get_top().indents++;
         }
     }
     void IndentDecrease() {
         if (output_type == OutputType::text) {
-            indents--;
-            assert(indents >= 0 && "indents cannot go below zero");
+            get_top().indents--;
+            assert(get_top().indents >= 0 && "indents cannot go below zero");
         }
     }
 
@@ -681,43 +662,66 @@ class Printer {
   protected:
     OutputType output_type;
     std::ostream &out;
-    int indents = 0;
 
-    // header, subheader
-    bool set_next_header = false;
-    bool set_next_subheader = false;
+    struct StackNode {
+        int indents = 0;
 
-    // html coloring
-    bool set_as_type = false;
+        // header, subheader
+        bool set_next_header = false;
+        bool set_next_subheader = false;
 
-    // open <details>
-    bool set_details_open = false;
+        // html coloring
+        bool set_as_type = false;
 
-    // always open <details>
-    bool should_always_open = false;
+        // open <details>
+        bool set_details_open = false;
 
-    // make object titles the color of types
-    bool set_object_name_as_type = false;
+        // always open <details>
+        bool should_always_open = false;
 
-    bool ignore_min_width_parameter = false;
+        // make object titles the color of types
+        bool set_object_name_as_type = false;
 
-    // objects which are in an array
-    int element_index = -1;  // negative one is the sentinel value
+        // ignores the min_width parameter
+        bool ignore_min_width_parameter = false;
 
-    // json
-    std::stack<bool> is_first_item;  // for json: for adding a comma in between objects
-    std::stack<bool> is_array;       // for json: match pairs of {}'s and []'s
+        // sets the next created object/child to ignore the min_width parameter
+        bool ignore_min_width_parameter_in_child = false;
+
+        // objects which are in an array
+        int element_index = -1;  // negative one is the sentinel value
+
+        // json
+        bool is_first_item;  // for json: for adding a comma in between objects
+        bool is_array;       // for json: match pairs of {}'s and []'s
+    };
+
+    // Contains the details about the current 'object' in the tree
+    std::stack<StackNode> object_stack;
+
+    // Helper to get the current top of the object_stack
+    StackNode &get_top() { return object_stack.top(); }
+
+    // can only be called after a node was manually pushed onto the stack in the constructor
+    void push_node(bool array) {
+        StackNode node{};
+        node.indents = get_top().indents + 1;
+        node.is_array = array;
+        node.is_first_item = true;
+        node.ignore_min_width_parameter = get_top().ignore_min_width_parameter_in_child;
+        object_stack.push(node);
+    }
 
     // utility
     void PrintHeaderUnderlines(size_t length) {
-        assert(indents >= 0 && "indents must not be negative");
+        assert(get_top().indents >= 0 && "indents must not be negative");
         assert(length <= 10000 && "length shouldn't be unreasonably large");
-        if (set_next_header) {
-            out << std::string(static_cast<size_t>(indents), '\t') << std::string(length, '=') << "\n";
-            set_next_header = false;
-        } else if (set_next_subheader) {
-            out << std::string(static_cast<size_t>(indents), '\t') << std::string(length, '-') << "\n";
-            set_next_subheader = false;
+        if (get_top().set_next_header) {
+            out << std::string(static_cast<size_t>(get_top().indents), '\t') << std::string(length, '=') << "\n";
+            get_top().set_next_header = false;
+        } else if (get_top().set_next_subheader) {
+            out << std::string(static_cast<size_t>(get_top().indents), '\t') << std::string(length, '-') << "\n";
+            get_top().set_next_subheader = false;
         }
     }
 };
