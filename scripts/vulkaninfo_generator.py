@@ -405,11 +405,11 @@ def PrintEnumToString(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
 
-    out += f"static const char *{enum.name}String({enum.name} value) {{\n"
+    out += f"std::string {enum.name}String({enum.name} value) {{\n"
     out += f"    switch (value) {{\n"
     for v in enum.options:
         out += f"        case ({str(v.value)}): return \"{v.name[3:]}\";\n"
-    out += f"        default: return \"UNKNOWN_{enum.name}\";\n"
+    out += f"        default: return std::string(\"UNKNOWN_{enum.name}_value\") + std::to_string(value);\n"
     out += f"    }}\n}}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out

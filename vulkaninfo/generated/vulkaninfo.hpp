@@ -49,7 +49,7 @@ std::string to_hex_str(Printer &p, T i) {
         return to_hex_str(i);
 }
 
-static const char *VkColorSpaceKHRString(VkColorSpaceKHR value) {
+std::string VkColorSpaceKHRString(VkColorSpaceKHR value) {
     switch (value) {
         case (0): return "COLOR_SPACE_SRGB_NONLINEAR_KHR";
         case (1000104001): return "COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT";
@@ -67,7 +67,7 @@ static const char *VkColorSpaceKHRString(VkColorSpaceKHR value) {
         case (1000104013): return "COLOR_SPACE_PASS_THROUGH_EXT";
         case (1000104014): return "COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT";
         case (1000213000): return "COLOR_SPACE_DISPLAY_NATIVE_AMD";
-        default: return "UNKNOWN_VkColorSpaceKHR";
+        default: return std::string("UNKNOWN_VkColorSpaceKHR_value") + std::to_string(value);
     }
 }
 void DumpVkColorSpaceKHR(Printer &p, std::string name, VkColorSpaceKHR value) {
@@ -77,7 +77,7 @@ void DumpVkColorSpaceKHR(Printer &p, std::string name, VkColorSpaceKHR value) {
         p.PrintKeyString(name, VkColorSpaceKHRString(value));
     }
 }
-static const char *VkDriverIdString(VkDriverId value) {
+std::string VkDriverIdString(VkDriverId value) {
     switch (value) {
         case (1): return "DRIVER_ID_AMD_PROPRIETARY";
         case (2): return "DRIVER_ID_AMD_OPEN_SOURCE";
@@ -101,7 +101,7 @@ static const char *VkDriverIdString(VkDriverId value) {
         case (20): return "DRIVER_ID_MESA_PANVK";
         case (21): return "DRIVER_ID_SAMSUNG_PROPRIETARY";
         case (22): return "DRIVER_ID_MESA_VENUS";
-        default: return "UNKNOWN_VkDriverId";
+        default: return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
 }
 void DumpVkDriverId(Printer &p, std::string name, VkDriverId value) {
@@ -111,7 +111,7 @@ void DumpVkDriverId(Printer &p, std::string name, VkDriverId value) {
         p.PrintKeyString(name, VkDriverIdString(value));
     }
 }
-static const char *VkFormatString(VkFormat value) {
+std::string VkFormatString(VkFormat value) {
     switch (value) {
         case (0): return "FORMAT_UNDEFINED";
         case (1): return "FORMAT_R4G4_UNORM_PACK8";
@@ -360,7 +360,7 @@ static const char *VkFormatString(VkFormat value) {
         case (1000054005): return "FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG";
         case (1000054006): return "FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG";
         case (1000054007): return "FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG";
-        default: return "UNKNOWN_VkFormat";
+        default: return std::string("UNKNOWN_VkFormat_value") + std::to_string(value);
     }
 }
 void DumpVkFormat(Printer &p, std::string name, VkFormat value) {
@@ -370,12 +370,12 @@ void DumpVkFormat(Printer &p, std::string name, VkFormat value) {
         p.PrintKeyString(name, VkFormatString(value));
     }
 }
-static const char *VkImageTilingString(VkImageTiling value) {
+std::string VkImageTilingString(VkImageTiling value) {
     switch (value) {
         case (0): return "IMAGE_TILING_OPTIMAL";
         case (1): return "IMAGE_TILING_LINEAR";
         case (1000158000): return "IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT";
-        default: return "UNKNOWN_VkImageTiling";
+        default: return std::string("UNKNOWN_VkImageTiling_value") + std::to_string(value);
     }
 }
 void DumpVkImageTiling(Printer &p, std::string name, VkImageTiling value) {
@@ -385,14 +385,14 @@ void DumpVkImageTiling(Printer &p, std::string name, VkImageTiling value) {
         p.PrintKeyString(name, VkImageTilingString(value));
     }
 }
-static const char *VkPhysicalDeviceTypeString(VkPhysicalDeviceType value) {
+std::string VkPhysicalDeviceTypeString(VkPhysicalDeviceType value) {
     switch (value) {
         case (0): return "PHYSICAL_DEVICE_TYPE_OTHER";
         case (1): return "PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU";
         case (2): return "PHYSICAL_DEVICE_TYPE_DISCRETE_GPU";
         case (3): return "PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU";
         case (4): return "PHYSICAL_DEVICE_TYPE_CPU";
-        default: return "UNKNOWN_VkPhysicalDeviceType";
+        default: return std::string("UNKNOWN_VkPhysicalDeviceType_value") + std::to_string(value);
     }
 }
 void DumpVkPhysicalDeviceType(Printer &p, std::string name, VkPhysicalDeviceType value) {
@@ -402,11 +402,11 @@ void DumpVkPhysicalDeviceType(Printer &p, std::string name, VkPhysicalDeviceType
         p.PrintKeyString(name, VkPhysicalDeviceTypeString(value));
     }
 }
-static const char *VkPointClippingBehaviorString(VkPointClippingBehavior value) {
+std::string VkPointClippingBehaviorString(VkPointClippingBehavior value) {
     switch (value) {
         case (0): return "POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES";
         case (1): return "POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY";
-        default: return "UNKNOWN_VkPointClippingBehavior";
+        default: return std::string("UNKNOWN_VkPointClippingBehavior_value") + std::to_string(value);
     }
 }
 void DumpVkPointClippingBehavior(Printer &p, std::string name, VkPointClippingBehavior value) {
@@ -416,7 +416,7 @@ void DumpVkPointClippingBehavior(Printer &p, std::string name, VkPointClippingBe
         p.PrintKeyString(name, VkPointClippingBehaviorString(value));
     }
 }
-static const char *VkPresentModeKHRString(VkPresentModeKHR value) {
+std::string VkPresentModeKHRString(VkPresentModeKHR value) {
     switch (value) {
         case (0): return "PRESENT_MODE_IMMEDIATE_KHR";
         case (1): return "PRESENT_MODE_MAILBOX_KHR";
@@ -424,7 +424,7 @@ static const char *VkPresentModeKHRString(VkPresentModeKHR value) {
         case (3): return "PRESENT_MODE_FIFO_RELAXED_KHR";
         case (1000111000): return "PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR";
         case (1000111001): return "PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR";
-        default: return "UNKNOWN_VkPresentModeKHR";
+        default: return std::string("UNKNOWN_VkPresentModeKHR_value") + std::to_string(value);
     }
 }
 void DumpVkPresentModeKHR(Printer &p, std::string name, VkPresentModeKHR value) {
@@ -434,13 +434,13 @@ void DumpVkPresentModeKHR(Printer &p, std::string name, VkPresentModeKHR value) 
         p.PrintKeyString(name, VkPresentModeKHRString(value));
     }
 }
-static const char *VkQueueGlobalPriorityKHRString(VkQueueGlobalPriorityKHR value) {
+std::string VkQueueGlobalPriorityKHRString(VkQueueGlobalPriorityKHR value) {
     switch (value) {
         case (128): return "QUEUE_GLOBAL_PRIORITY_LOW_KHR";
         case (256): return "QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR";
         case (512): return "QUEUE_GLOBAL_PRIORITY_HIGH_KHR";
         case (1024): return "QUEUE_GLOBAL_PRIORITY_REALTIME_KHR";
-        default: return "UNKNOWN_VkQueueGlobalPriorityKHR";
+        default: return std::string("UNKNOWN_VkQueueGlobalPriorityKHR_value") + std::to_string(value);
     }
 }
 void DumpVkQueueGlobalPriorityKHR(Printer &p, std::string name, VkQueueGlobalPriorityKHR value) {
@@ -450,7 +450,7 @@ void DumpVkQueueGlobalPriorityKHR(Printer &p, std::string name, VkQueueGlobalPri
         p.PrintKeyString(name, VkQueueGlobalPriorityKHRString(value));
     }
 }
-static const char *VkResultString(VkResult value) {
+std::string VkResultString(VkResult value) {
     switch (value) {
         case (0): return "SUCCESS";
         case (1): return "NOT_READY";
@@ -490,7 +490,7 @@ static const char *VkResultString(VkResult value) {
         case (1000268001): return "THREAD_DONE_KHR";
         case (1000268002): return "OPERATION_DEFERRED_KHR";
         case (1000268003): return "OPERATION_NOT_DEFERRED_KHR";
-        default: return "UNKNOWN_VkResult";
+        default: return std::string("UNKNOWN_VkResult_value") + std::to_string(value);
     }
 }
 void DumpVkResult(Printer &p, std::string name, VkResult value) {
@@ -500,12 +500,12 @@ void DumpVkResult(Printer &p, std::string name, VkResult value) {
         p.PrintKeyString(name, VkResultString(value));
     }
 }
-static const char *VkShaderFloatControlsIndependenceString(VkShaderFloatControlsIndependence value) {
+std::string VkShaderFloatControlsIndependenceString(VkShaderFloatControlsIndependence value) {
     switch (value) {
         case (0): return "SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY";
         case (1): return "SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL";
         case (2): return "SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE";
-        default: return "UNKNOWN_VkShaderFloatControlsIndependence";
+        default: return std::string("UNKNOWN_VkShaderFloatControlsIndependence_value") + std::to_string(value);
     }
 }
 void DumpVkShaderFloatControlsIndependence(Printer &p, std::string name, VkShaderFloatControlsIndependence value) {
