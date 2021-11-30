@@ -152,7 +152,7 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
         DumpVkSurfaceCounterFlagsEXT(p, "supportedSurfaceCounters", surface.surface_capabilities2_ext.supportedSurfaceCounters);
     }
     if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-        chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext, inst.vk_version);
+        chain_iterator_surface_capabilities2(p, inst, gpu, surface.surface_capabilities2_khr.pNext);
     }
 }
 
@@ -309,7 +309,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     p.AddNewline();
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.props2.pNext;
-        chain_iterator_phys_device_props2(p, gpu.inst, gpu, place, gpu.api_version);
+        chain_iterator_phys_device_props2(p, gpu.inst, gpu, place);
         p.AddNewline();
     }
 }
@@ -361,7 +361,7 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, std::vector<SurfaceExtension> &s
             p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false");
         }
     }
-    chain_iterator_queue_properties2(p, gpu, queue.pNext, gpu.api_version);
+    chain_iterator_queue_properties2(p, gpu, queue.pNext);
 
     p.AddNewline();
 }
@@ -510,7 +510,7 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
     p.AddNewline();
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.features2.pNext;
-        chain_iterator_phys_device_features2(p, gpu, place, gpu.api_version);
+        chain_iterator_phys_device_features2(p, gpu, place);
     }
 }
 
