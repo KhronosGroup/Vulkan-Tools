@@ -334,7 +334,7 @@ void GpuDumpPropsJson(Printer &p, AppGpu &gpu) {
     DumpVkPhysicalDeviceSparseProperties(p, "VkPhysicalDeviceSparseProperties", gpu.props.sparseProperties);
 }
 
-void GpuDumpQueueProps(Printer &p, AppGpu &gpu, std::vector<SurfaceExtension> &surfaces, const AppQueueFamilyProperties &queue) {
+void GpuDumpQueueProps(Printer &p, AppGpu &gpu, const AppQueueFamilyProperties &queue) {
     VkQueueFamilyProperties props = queue.props;
     p.SetSubHeader().SetElementIndex(static_cast<int>(queue.queue_index));
     ObjectWrapper obj_queue_props(p, "queueProperties");
@@ -352,12 +352,12 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, std::vector<SurfaceExtension> &s
         p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false");
     } else {
         size_t width = 0;
-        for (auto &surface : surfaces) {
+        for (auto &surface : gpu.inst.surface_extensions) {
             if (surface.name.size() > width) width = surface.name.size();
         }
         ObjectWrapper obj_present_support(p, "present support");
         p.SetMinKeyWidth(width);
-        for (auto &surface : surfaces) {
+        for (auto &surface : gpu.inst.surface_extensions) {
             p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false");
         }
     }
@@ -650,7 +650,7 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats)
         p.SetHeader();
         ObjectWrapper obj_family_props(p, "VkQueueFamilyProperties");
         for (const auto &queue_prop : gpu.extended_queue_props) {
-            GpuDumpQueueProps(p, gpu, gpu.inst.surface_extensions, queue_prop);
+            GpuDumpQueueProps(p, gpu, queue_prop);
         }
     }
     GpuDumpMemoryProps(p, gpu);
