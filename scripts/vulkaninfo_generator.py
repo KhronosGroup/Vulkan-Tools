@@ -408,7 +408,7 @@ def PrintEnumToString(enum, gen):
     out += f"std::string {enum.name}String({enum.name} value) {{\n"
     out += f"    switch (value) {{\n"
     for v in enum.options:
-        out += f"        case ({str(v.value)}): return \"{v.name[3:]}\";\n"
+        out += f"        case ({v.name}): return \"{v.name[3:]}\";\n"
     out += f"        default: return std::string(\"UNKNOWN_{enum.name}_value\") + std::to_string(value);\n"
     out += f"    }}\n}}\n"
     out += AddGuardFooter(GetExtension(enum.name, gen))
@@ -434,8 +434,7 @@ def PrintGetFlagStrings(name, bitmask):
     out += f"    std::vector<const char *> strings;\n"
     out += f"    if (value == 0) {{ strings.push_back(\"None\"); return strings; }}\n"
     for v in bitmask.options:
-        val = v.value if isinstance(v.value, str) else str(hex(v.value))
-        out += f"    if ({val} & value) strings.push_back(\"{str(v.name[3:])}\");\n"
+        out += f"    if ({v.name} & value) strings.push_back(\"{str(v.name[3:])}\");\n"
     out += f"    return strings;\n}}\n"
     return out
 
@@ -482,7 +481,7 @@ def PrintBitMaskToString(bitmask, name, gen):
     out += f"    std::string out;\n"
     out += f"    bool is_first = true;\n"
     for v in bitmask.options:
-        out += f"    if ({str(v.value)} & value) {{\n"
+        out += f"    if ({v.name} & value) {{\n"
         out += f"        if (is_first) {{ is_first = false; }} else {{ out += \" | \"; }}\n"
         out += f"        out += \"{str(v.name).strip('VK_').strip('_BIT')}\";\n"
         out += f"    }}\n"
