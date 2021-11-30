@@ -394,6 +394,7 @@ struct Demo {
     bool validate;
     bool use_break;
     bool suppress_popups;
+    bool force_errors;
 
     uint32_t current_buffer;
     uint32_t queue_family_count;
@@ -566,6 +567,7 @@ Demo::Demo()
       validate{false},
       use_break{false},
       suppress_popups{false},
+      force_errors{false},
       current_buffer{0},
       queue_family_count{0} {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
@@ -923,7 +925,11 @@ void Demo::flush_init_cmd() {
     auto result = cmd.end();
     VERIFY(result == vk::Result::eSuccess);
 
-    auto const fenceInfo = vk::FenceCreateInfo();
+    auto fenceInfo = vk::FenceCreateInfo();
+    if (force_errors) {
+        // Remove sType to intentionally force validation layer errors.
+        fenceInfo.sType = vk::StructureType::eRenderPassBeginInfo;
+    }
     vk::Fence fence;
     result = device.createFence(&fenceInfo, nullptr, &fence);
     VERIFY(result == vk::Result::eSuccess);
@@ -1001,12 +1007,17 @@ void Demo::init(int argc, char **argv) {
             i++;
             continue;
         }
+        if (strcmp(argv[i], "--force_errors") == 0) {
+            force_errors = true;
+            continue;
+        }
         std::stringstream usage;
         usage << "Usage:\n  " << APP_SHORT_NAME << "\t[--use_staging] [--validate]\n"
               << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
               << "\t[--gpu_number <index of physical device>]\n"
               << "\t[--present_mode <present mode enum>]\n"
               << "\t[--width <width>] [--height <height>]\n"
+              << "\t[--force_errors]\n"
               << "\t<present_mode_enum>\n"
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
               << "\t\tVK_PRESENT_MODE_MAILBOX_KHR = " << VK_PRESENT_MODE_MAILBOX_KHR << "\n"
@@ -1896,11 +1907,15 @@ void Demo::prepare_depth() {
     result = device.bindImageMemory(depth.image, depth.mem, 0);
     VERIFY(result == vk::Result::eSuccess);
 
-    auto const view = vk::ImageViewCreateInfo()
+    auto view = vk::ImageViewCreateInfo()
                           .setImage(depth.image)
                           .setViewType(vk::ImageViewType::e2D)
                           .setFormat(depth.format)
                           .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eDepth, 0, 1, 0, 1));
+    if (force_errors) {
+        // Intentionally force a bad pNext value to generate a validation layer error
+        view.pNext = &image;
+    }
     result = device.createImageView(&view, nullptr, &depth.view);
     VERIFY(result == vk::Result::eSuccess);
 }

@@ -446,6 +446,7 @@ struct demo {
     bool validate_checks_disabled;
     bool use_break;
     bool suppress_popups;
+    bool force_errors;
 
     PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessengerEXT;
     PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT;
@@ -633,6 +634,10 @@ static void demo_flush_init_cmd(struct demo *demo) {
 
     VkFence fence;
     VkFenceCreateInfo fence_ci = {.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .pNext = NULL, .flags = 0};
+    if (demo->force_errors) {
+        // Remove sType to intentionally force validation layer errors.
+        fence_ci.sType = 0;
+    }
     err = vkCreateFence(demo->device, &fence_ci, NULL, &fence);
     assert(!err);
 
@@ -1445,6 +1450,12 @@ static void demo_prepare_depth(struct demo *demo) {
         .flags = 0,
         .viewType = VK_IMAGE_VIEW_TYPE_2D,
     };
+
+
+    if (demo->force_errors) {
+        // Intentionally force a bad pNext value to generate a validation layer error
+        view.pNext = &image;
+    }
 
     VkMemoryRequirements mem_reqs;
     VkResult U_ASSERT_ONLY err;
@@ -4010,6 +4021,10 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             i++;
             continue;
         }
+        if (strcmp(argv[i], "--force_errors") == 0) {
+            demo->force_errors = true;
+            continue;
+        }
 
 #if defined(ANDROID)
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
@@ -4021,6 +4036,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "\t[--gpu_number <index of physical device>]\n"
             "\t[--present_mode <present mode enum>]\n"
             "\t[--width <width>] [--height <height>]\n"
+            "\t[--force_errors]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
