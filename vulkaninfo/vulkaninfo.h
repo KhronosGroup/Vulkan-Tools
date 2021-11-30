@@ -80,7 +80,7 @@
 
 #include <vulkan/vulkan.h>
 
-static const char *VkResultString(VkResult err);
+static std::string VkResultString(VkResult err);
 
 // General error: Get file + line and a short message
 struct FileLineException : std::runtime_error {
