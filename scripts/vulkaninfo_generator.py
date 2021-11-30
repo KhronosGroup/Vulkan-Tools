@@ -649,21 +649,26 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
     return out
 
 
-def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, versions):
+def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, vulkan_versions):
     out = ''
     out += f"void chain_iterator_{listName}(Printer &p, "
-    if checkExtLoc == "device":
-        out += f"AppGpu &gpu"
-    elif checkExtLoc == "instance":
-        out += f"AppInstance &inst"
-    elif checkExtLoc == "both":
-        out += f"AppInstance &inst, AppGpu &gpu"
-    out += f", void * place, VulkanVersion version) {{\n"
+    if checkExtLoc in ["instance", "both"]:
+        out += f"AppInstance &inst, "
+    if checkExtLoc in ["device", "both"]:
+        out += f"AppGpu &gpu, "
+    out += f"void * place) {{\n"
     out += f"    while (place) {{\n"
     out += f"        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;\n"
     out += f"        p.SetSubHeader();\n"
     sorted_structures = sorted(
         all_structures, key=operator.attrgetter('name'))
+
+    version_desc = ''
+    if checkExtLoc in ["device", "both"]:
+        version_desc = "gpu.api_version"
+    else:
+        version_desc = "inst.instance_version"
+
     for s in sorted_structures:
         if s.sTypeName is None:
             continue
@@ -679,7 +684,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
                 break
         version = None
         oldVersionName = None
-        for v in versions:
+        for v in vulkan_versions:
             if s.name in v.names:
                 version = v.minorVersion
         if s.name in aliases.keys():
@@ -702,13 +707,13 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
                     if has_version and extType is not None:
                         out += f" ||\n            "
                 if has_version:
-                    out += f"version.minor >= {str(version)}"
+                    out += f"{version_desc}.minor >= {str(version)}"
                 out += f")"
             out += f") {{\n"
             out += f"            {s.name}* props = ({s.name}*)structure;\n"
             out += f"            Dump{s.name}(p, "
             if s.name in aliases.keys() and version is not None:
-                out += f"version.minor >= {version} ?\"{s.name}\":\"{oldVersionName}\""
+                out += f"{version_desc}.minor >= {version} ?\"{s.name}\":\"{oldVersionName}\""
             else:
                 out += f"\"{s.name}\""
             out += f", *props);\n"
