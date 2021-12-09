@@ -761,6 +761,12 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetPhysicalDeviceFormatProperties2KHR': '''
     GetPhysicalDeviceFormatProperties(physicalDevice, format, &pFormatProperties->formatProperties);
+    VkFormatProperties3KHR *props_3 = lvl_find_mod_in_chain<VkFormatProperties3KHR>(pFormatProperties->pNext);
+    if (props_3) {
+        props_3->linearTilingFeatures = pFormatProperties->formatProperties.linearTilingFeatures;
+        props_3->optimalTilingFeatures = pFormatProperties->formatProperties.optimalTilingFeatures;
+        props_3->bufferFeatures = pFormatProperties->formatProperties.bufferFeatures;
+    }
 ''',
 'vkGetPhysicalDeviceImageFormatProperties': '''
     // A hardcoded unsupported format
