@@ -5843,6 +5843,10 @@ struct LvlGenericHeader {
    VkStructureType sType;
    const LvlGenericHeader *pNext;
 };
+struct LvlGenericModHeader {
+   VkStructureType sType;
+   LvlGenericModHeader *pNext;
+};
 
 // Find an entry of the given type in the pNext chain
 template <typename T> const T *lvl_find_in_chain(const void *next) {
@@ -5851,6 +5855,20 @@ template <typename T> const T *lvl_find_in_chain(const void *next) {
     while (current) {
         if (LvlTypeMap<T>::kSType == current->sType) {
             found = reinterpret_cast<const T*>(current);
+            current = nullptr;
+        } else {
+            current = current->pNext;
+        }
+    }
+    return found;
+}
+// Find an entry of the given type in the pNext chain
+template <typename T> T *lvl_find_mod_in_chain(void *next) {
+    LvlGenericModHeader *current = reinterpret_cast<LvlGenericModHeader *>(next);
+    T *found = nullptr;
+    while (current) {
+        if (LvlTypeMap<T>::kSType == current->sType) {
+            found = reinterpret_cast<T*>(current);
             current = nullptr;
         } else {
             current = current->pNext;

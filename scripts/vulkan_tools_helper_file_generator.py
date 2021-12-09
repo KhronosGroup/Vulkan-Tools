@@ -1102,9 +1102,11 @@ class HelperFileOutputGenerator(OutputGenerator):
         id_member = 'kSType'
         id_decl = 'static const VkStructureType '
         generic_header = prefix + 'GenericHeader'
+        generic_mod_header = prefix + 'GenericModHeader'
         typename_func = fprefix + 'typename'
         idname_func = fprefix + 'stype_name'
         find_func = fprefix + 'find_in_chain'
+        find_mod_func = fprefix + 'find_mod_in_chain'
         init_func = fprefix + 'init_struct'
 
         explanatory_comment = '\n'.join((
@@ -1130,6 +1132,10 @@ class HelperFileOutputGenerator(OutputGenerator):
             '   VkStructureType sType;',
             '   const {header} *pNext;',
             '}};',
+            'struct {mod_header} {{',
+            '   VkStructureType sType;',
+            '   {mod_header} *pNext;',
+            '}};',
             '',
             '// Find an entry of the given type in the pNext chain',
             'template <typename T> const T *{find_func}(const void *next) {{',
@@ -1138,6 +1144,20 @@ class HelperFileOutputGenerator(OutputGenerator):
             '    while (current) {{',
             '        if ({type_map}<T>::{id_member} == current->sType) {{',
             '            found = reinterpret_cast<const T*>(current);',
+            '            current = nullptr;',
+            '        }} else {{',
+            '            current = current->pNext;',
+            '        }}',
+            '    }}',
+            '    return found;',
+            '}}',
+            '// Find an entry of the given type in the pNext chain',
+            'template <typename T> T *{find_mod_func}(void *next) {{',
+            '    {mod_header} *current = reinterpret_cast<{mod_header} *>(next);',
+            '    T *found = nullptr;',
+            '    while (current) {{',
+            '        if ({type_map}<T>::{id_member} == current->sType) {{',
+            '            found = reinterpret_cast<T*>(current);',
             '            current = nullptr;',
             '        }} else {{',
             '            current = current->pNext;',
@@ -1194,8 +1214,9 @@ class HelperFileOutputGenerator(OutputGenerator):
         # Generate utilities for all types
         code.append('\n'.join((
             utilities_format.format(id_member=id_member, id_map=idmap, type_map=typemap,
-                type_member=type_member, header=generic_header, typename_func=typename_func, idname_func=idname_func,
-                find_func=find_func, init_func=init_func), ''
+                type_member=type_member, header=generic_header, mod_header=generic_mod_header,
+                typename_func=typename_func, idname_func=idname_func, find_func=find_func,
+                find_mod_func=find_mod_func, init_func=init_func), ''
             )))
 
         return "\n".join(code)
