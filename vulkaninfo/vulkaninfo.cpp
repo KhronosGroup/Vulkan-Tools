@@ -316,7 +316,6 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
 void GpuDumpPropsJson(Printer &p, AppGpu &gpu) {
     auto props = gpu.GetDeviceProperties();
     ObjectWrapper obj(p, "VkPhysicalDeviceProperties");
-    p.SetMinKeyWidth(24);
     p.PrintKeyValue("apiVersion", props.apiVersion, VkVersionString(props.apiVersion));
     p.PrintKeyValue("driverVersion", props.driverVersion, to_hex_str(props.driverVersion));
     p.PrintKeyValue("vendorID", props.vendorID);
@@ -368,7 +367,6 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, const AppQueueFamilyProperties &
 
 void GpuDumpQueuePropsJson(Printer &p, std::vector<SurfaceExtension> &surfaces, VkQueueFamilyProperties props) {
     ObjectWrapper obj(p, "");
-    p.SetMinKeyWidth(27);
     DumpVkExtent3D(p, "minImageTransferGranularity", props.minImageTransferGranularity);
     p.PrintKeyValue("queueCount", props.queueCount);
     p.PrintKeyValue("queueFlags", props.queueFlags);
