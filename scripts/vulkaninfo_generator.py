@@ -214,7 +214,9 @@ class VulkanInfoGenerator(OutputGenerator):
         for node in self.registry.reg.find('extensions').findall('extension'):
             ext = VulkanExtension(node)
             for item in ext.vktypes:
-                self.extTypes[item] = ext
+                if item not in self.extTypes:
+                    self.extTypes[item] = []
+                self.extTypes[item].append(ext)
             for item in ext.vkfuncs:
                 self.extFuncs[item] = ext
 
@@ -383,7 +385,7 @@ def GetExtension(name, generator):
     if name in generator.extFuncs:
         return generator.extFuncs[name]
     elif name in generator.extTypes:
-        return generator.extTypes[name]
+        return generator.extTypes[name][0]
     else:
         return None
 
@@ -676,15 +678,12 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
         if s.sTypeName is None:
             continue
 
-        extNameStr = None
-        extType = None
-        for k, e in extTypes.items():
+        extEnables = {}
+        for k, elem in extTypes.items():
             if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
-                if e.extNameStr is not None:
-                    extNameStr = e.extNameStr
-                if e.type is not None:
-                    extType = e.type
-                break
+                for e in elem:
+                    extEnables[e.extNameStr] = e.type
+                
         version = None
         oldVersionName = None
         for v in vulkan_versions:
@@ -698,18 +697,25 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
             out += AddGuardHeader(s)
             out += f"        if (structure->sType == {s.sTypeName}"
             has_version = version is not None
-            has_extNameStr = extNameStr is not None or s.name in aliases.keys()
+            has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
 
             if has_version or has_extNameStr:
                 out += f" && \n           ("
+                has_printed_condition = False
                 if has_extNameStr:
-                    if extType == "device":
-                        out += f"gpu.CheckPhysicalDeviceExtensionIncluded({extNameStr})"
-                    elif extType == "instance":
-                        out += f"inst.CheckExtensionEnabled({extNameStr})"
-                    if has_version and extType is not None:
-                        out += f" ||\n            "
+                    for key, value in extEnables.items():
+                        if has_printed_condition:
+                            out += f' || '
+                        has_printed_condition = True
+                        if value == "device":
+                            out += f"gpu.CheckPhysicalDeviceExtensionIncluded({key})"
+                        elif value == "instance":
+                            out += f"inst.CheckExtensionEnabled({key})"
+                        else:
+                            assert(False and "Should never get here")
                 if has_version:
+                    if has_printed_condition:
+                        out += f' ||\n            '
                     out += f"{version_desc}.minor >= {str(version)}"
                 out += f")"
             out += f") {{\n"
@@ -926,10 +932,11 @@ class VulkanStructure:
             self.members.append(VulkanVariable(
                 node, constants, self.name))
 
-        for k, e in extTypes.items():
+        for k, elem in extTypes.items():
             if k == self.name:
-                if e.guard is not None:
-                    self.guard = e.guard
+                for e in elem:
+                    if e.guard is not None:
+                        self.guard = e.guard
 
 
 class VulkanExtension:
