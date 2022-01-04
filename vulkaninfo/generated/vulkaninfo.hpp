@@ -646,6 +646,7 @@ std::vector<const char *>VkFormatFeatureFlagBits2KHRGetStrings(VkFormatFeatureFl
     if (0x40000000 & value) strings.push_back("FORMAT_FEATURE_2_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR");
     if (0x8000000 & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_INPUT_BIT_KHR");
     if (0x10000000 & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_DPB_BIT_KHR");
+    if (0x4000000000 & value) strings.push_back("FORMAT_FEATURE_2_LINEAR_COLOR_ATTACHMENT_BIT_NV");
     return strings;
 }
 void DumpVkFormatFeatureFlags2KHR(Printer &p, std::string name, VkFormatFeatureFlags2KHR value, int width = 0) {
