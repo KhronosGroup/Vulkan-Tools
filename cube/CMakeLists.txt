@@ -69,53 +69,6 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         find_package(WaylandScanner REQUIRED)
         find_package(WaylandProtocols REQUIRED)
         include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
-    endif()
-
-    if(BUILD_WSI_DIRECTFB_SUPPORT)
-        find_package(DirectFB REQUIRED)
-        include_directories(${DIRECTFB_INCLUDE_DIR})
-    endif()
-endif()
-
-if(WIN32)
-    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
-    if(MSVC AND NOT MSVC_VERSION LESS 1900)
-        # If MSVC, Enable control flow guard
-        message(STATUS "Building vkcube with control flow guard")
-        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/guard:cf>")
-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
-    endif()
-elseif(ANDROID)
-    add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
-elseif(APPLE)
-    add_definitions(-DVK_USE_PLATFORM_METAL_EXT)
-elseif(UNIX AND NOT APPLE) # i.e. Linux
-    if(NOT CUBE_WSI_SELECTION)
-        set(CUBE_WSI_SELECTION "XCB")
-    endif()
-
-    if(CUBE_WSI_SELECTION STREQUAL "XCB")
-        if(NOT BUILD_WSI_XCB_SUPPORT)
-            message(FATAL_ERROR "Selected XCB for vkcube build but not building Xcb support")
-        endif()
-        set(CUBE_INCLUDE_DIRS ${XCB_INCLUDE_DIRS} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${XCB_LIBRARIES})
-        add_definitions(-DVK_USE_PLATFORM_XCB_KHR)
-    elseif(CUBE_WSI_SELECTION STREQUAL "XLIB")
-        if(NOT BUILD_WSI_XLIB_SUPPORT)
-            message(FATAL_ERROR "Selected XLIB for vkcube build but not building Xlib support")
-        endif()
-        set(CUBE_INCLUDE_DIRS ${X11_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${X11_LIBRARIES})
-        add_definitions(-DVK_USE_PLATFORM_XLIB_KHR)
-    elseif(CUBE_WSI_SELECTION STREQUAL "WAYLAND")
-        if(NOT BUILD_WSI_WAYLAND_SUPPORT)
-            message(FATAL_ERROR "Selected Wayland for vkcube build but not building Wayland support")
-        endif()
-        set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${WAYLAND_CLIENT_LIBRARIES})
-        add_definitions(-DVK_USE_PLATFORM_WAYLAND_KHR)
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
         add_custom_command(COMMENT "Generating xdg-shell protocol dispatch data"
                            OUTPUT xdg-shell-code.c
@@ -151,7 +104,54 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
                                    ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h
                            MAIN_DEPENDENCY ${XDG_DECORATION_PROTOCOL}
                            DEPENDS ${XDG_DECORATION_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+    endif()
 
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        find_package(DirectFB REQUIRED)
+        include_directories(${DIRECTFB_INCLUDE_DIR})
+    endif()
+endif()
+
+if(WIN32)
+    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
+    if(MSVC AND NOT MSVC_VERSION LESS 1900)
+        # If MSVC, Enable control flow guard
+        message(STATUS "Building vkcube with control flow guard")
+        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/guard:cf>")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
+    endif()
+elseif(ANDROID)
+    add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
+elseif(APPLE)
+    add_definitions(-DVK_USE_PLATFORM_METAL_EXT)
+elseif(UNIX AND NOT APPLE) # i.e. Linux
+    if(NOT CUBE_WSI_SELECTION)
+        set(CUBE_WSI_SELECTION "XCB")
+    endif()
+
+    if(CUBE_WSI_SELECTION STREQUAL "XCB")
+        if(NOT BUILD_WSI_XCB_SUPPORT)
+            message(FATAL_ERROR "Selected XCB for vkcube build but not building Xcb support")
+        endif()
+        set(CUBE_INCLUDE_DIRS ${XCB_INCLUDE_DIRS} ${CUBE_INCLUDE_DIRS})
+        link_libraries(${XCB_LIBRARIES})
+        set(CUBE_PLATFORM VK_USE_PLATFORM_XCB_KHR)
+    elseif(CUBE_WSI_SELECTION STREQUAL "XLIB")
+        if(NOT BUILD_WSI_XLIB_SUPPORT)
+            message(FATAL_ERROR "Selected XLIB for vkcube build but not building Xlib support")
+        endif()
+        set(CUBE_INCLUDE_DIRS ${X11_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
+        link_libraries(${X11_LIBRARIES})
+        set(CUBE_PLATFORM VK_USE_PLATFORM_XLIB_KHR)
+    elseif(CUBE_WSI_SELECTION STREQUAL "WAYLAND")
+        if(NOT BUILD_WSI_WAYLAND_SUPPORT)
+            message(FATAL_ERROR "Selected Wayland for vkcube build but not building Wayland support")
+        endif()
+        set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
+        link_libraries(${WAYLAND_CLIENT_LIBRARIES})
+        set(CUBE_PLATFORM VK_USE_PLATFORM_WAYLAND_KHR)
+        set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
         set(OPTIONAL_WAYLAND_DATA_FILES
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
@@ -164,9 +164,9 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         endif()
         set(CUBE_INCLUDE_DIRS ${DIRECTFB_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${DIRECTFB_LIBRARIES})
-        add_definitions(-DVK_USE_PLATFORM_DIRECTFB_EXT)
+        set(CUBE_PLATFORM VK_USE_PLATFORM_DIRECTFB_EXT)
     elseif(CUBE_WSI_SELECTION STREQUAL "DISPLAY")
-        add_definitions(-DVK_USE_PLATFORM_DISPLAY_KHR)
+        set(CUBE_PLATFORM VK_USE_PLATFORM_DISPLAY_KHR)
     else()
         message(FATAL_ERROR "Unrecognized value for CUBE_WSI_SELECTION: ${CUBE_WSI_SELECTION}")
     endif()
@@ -237,6 +237,7 @@ elseif(NOT WIN32)
                        cube.frag.inc
                        ${OPTIONAL_WAYLAND_DATA_FILES})
         target_link_libraries(vkcube Vulkan::Vulkan)
+        target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
         if (NEED_RT)
@@ -288,6 +289,7 @@ elseif(NOT WIN32)
                        cube.frag.inc
                        ${OPTIONAL_WAYLAND_DATA_FILES})
         target_link_libraries(vkcubepp Vulkan::Vulkan)
+        target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
     endif()
 else()
     if(CMAKE_CL_64)
@@ -317,4 +319,36 @@ if(APPLE)
         ")
 else()
     install(TARGETS vkcubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+endif()
+
+# ----------------------------------------------------------------------------
+# vkcube-wayland
+
+if(UNIX AND NOT APPLE) # i.e. Linux
+    if(BUILD_WSI_WAYLAND_SUPPORT AND EXISTS ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
+        set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
+        link_libraries(${WAYLAND_CLIENT_LIBRARIES})
+        set(OPTIONAL_WAYLAND_DATA_FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
+        include_directories(${CMAKE_CURRENT_BINARY_DIR})
+        if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
+            add_executable(vkcube-wayland
+                           cube.c
+                           ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                           ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                           cube.vert.inc
+                           cube.frag.inc
+                           ${OPTIONAL_WAYLAND_DATA_FILES})
+            target_link_libraries(vkcube-wayland Vulkan::Vulkan)
+            target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
+            include(CheckLibraryExists)
+            CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
+            if (NEED_RT)
+                target_link_libraries(vkcube-wayland rt)
+            endif()
+        endif()
+    endif()
 endif()
