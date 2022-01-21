@@ -444,6 +444,11 @@ CUSTOM_C_INTERCEPTS = {
         DestroyDispObjHandle((void*)instance);
     }
 ''',
+'vkFreeCommandBuffers': '''
+    for (auto i = 0u; i < commandBufferCount; ++i)
+        if (pCommandBuffers[i])
+            DestroyDispObjHandle((void*) pCommandBuffers[i]);
+''',
 'vkEnumeratePhysicalDevices': '''
     VkResult result_code = VK_SUCCESS;
     if (pPhysicalDevices) {
@@ -1360,6 +1365,7 @@ class MockICDOutputGenerator(OutputGenerator):
             'vkDestroyDevice',
             'vkCreateInstance',
             'vkDestroyInstance',
+            'vkFreeCommandBuffers',
             #'vkCreateDebugReportCallbackEXT',
             #'vkDestroyDebugReportCallbackEXT',
             'vkEnumerateInstanceLayerProperties',
