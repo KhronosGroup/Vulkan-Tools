@@ -380,14 +380,13 @@ static VKAPI_ATTR void VKAPI_CALL DestroyDevice(
     unique_lock_t lock(global_lock);
     // First destroy sub-device objects
     // Destroy Queues
-    for (auto dev_queue_map_pair : queue_map) {
-        for (auto queue_family_map_pair : queue_map[dev_queue_map_pair.first]) {
-            for (auto index_queue_pair : queue_map[dev_queue_map_pair.first][queue_family_map_pair.first]) {
-                DestroyDispObjHandle((void*)index_queue_pair.second);
-            }
+    for (auto queue_family_map_pair : queue_map[device]) {
+        for (auto index_queue_pair : queue_map[device][queue_family_map_pair.first]) {
+            DestroyDispObjHandle((void*)index_queue_pair.second);
         }
     }
-    queue_map.clear();
+
+    queue_map.erase(device);
     buffer_map.erase(device);
     image_memory_size_map.erase(device);
     // Now destroy device
