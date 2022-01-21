@@ -43,6 +43,7 @@ static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
 static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
 static unordered_map<VkDevice, unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
+static unordered_map<VkCommandPool, std::vector<VkCommandBuffer>> command_pool_buffer_map;
 
 static constexpr uint32_t icd_swapchain_image_count = 1;
 static unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
@@ -1221,7 +1222,16 @@ static VKAPI_ATTR void VKAPI_CALL DestroyCommandPool(
     VkCommandPool                               commandPool,
     const VkAllocationCallbacks*                pAllocator)
 {
-//Destroy object
+
+    // destroy command buffers for this pool
+    unique_lock_t lock(global_lock);
+    auto it = command_pool_buffer_map.find(commandPool);
+    if (it != command_pool_buffer_map.end()) {
+        for (auto& cb : it->second) {
+            DestroyDispObjHandle((void*) cb);
+        }
+        command_pool_buffer_map.erase(it);
+    }
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL ResetCommandPool(
@@ -1238,9 +1248,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL AllocateCommandBuffers(
     const VkCommandBufferAllocateInfo*          pAllocateInfo,
     VkCommandBuffer*                            pCommandBuffers)
 {
+
     unique_lock_t lock(global_lock);
     for (uint32_t i = 0; i < pAllocateInfo->commandBufferCount; ++i) {
         pCommandBuffers[i] = (VkCommandBuffer)CreateDispObjHandle();
+        command_pool_buffer_map[pAllocateInfo->commandPool].push_back(pCommandBuffers[i]);
     }
     return VK_SUCCESS;
 }
@@ -1252,9 +1264,22 @@ static VKAPI_ATTR void VKAPI_CALL FreeCommandBuffers(
     const VkCommandBuffer*                      pCommandBuffers)
 {
 
-    for (auto i = 0u; i < commandBufferCount; ++i)
-        if (pCommandBuffers[i])
-            DestroyDispObjHandle((void*) pCommandBuffers[i]);
+    unique_lock_t lock(global_lock);
+    for (auto i = 0u; i < commandBufferCount; ++i) {
+        if (!pCommandBuffers[i]) {
+            continue;
+        }
+
+        for (auto& pair : command_pool_buffer_map) {
+            auto& cbs = pair.second;
+            auto it = std::find(cbs.begin(), cbs.end(), pCommandBuffers[i]);
+            if (it != cbs.end()) {
+                cbs.erase(it);
+            }
+        }
+            
+        DestroyDispObjHandle((void*) pCommandBuffers[i]);
+    }
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL BeginCommandBuffer(
