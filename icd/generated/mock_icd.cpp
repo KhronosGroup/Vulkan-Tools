@@ -1251,7 +1251,10 @@ static VKAPI_ATTR void VKAPI_CALL FreeCommandBuffers(
     uint32_t                                    commandBufferCount,
     const VkCommandBuffer*                      pCommandBuffers)
 {
-//Destroy object
+
+    for (auto i = 0u; i < commandBufferCount; ++i)
+        if (pCommandBuffers[i])
+            DestroyDispObjHandle((void*) pCommandBuffers[i]);
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL BeginCommandBuffer(
