@@ -37,7 +37,7 @@ config("vulkan_internal_config") {
   if (is_clang || !is_win) {
     cflags = [ "-Wno-unused-function" ]
   }
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     defines += [
       "SYSCONFDIR=\"/etc\"",
       "FALLBACK_CONFIG_DIRS=\"/etc/xdg\"",
@@ -74,7 +74,7 @@ if (!is_android) {
       sources += [ "icd/windows/VkICD_mock_icd.json" ]
       args += [ "$raw_vulkan_icd_dir/windows" ]
     }
-    if (is_linux) {
+    if (is_linux || is_chromeos) {
       sources += [ "icd/linux/VkICD_mock_icd.json" ]
       args += [ "$raw_vulkan_icd_dir/linux" ]
     }
