@@ -100,6 +100,7 @@ static const char *VkDriverIdString(VkDriverId value) {
         case (19): return "DRIVER_ID_MESA_V3DV";
         case (20): return "DRIVER_ID_MESA_PANVK";
         case (21): return "DRIVER_ID_SAMSUNG_PROPRIETARY";
+        case (22): return "DRIVER_ID_MESA_VENUS";
         default: return "UNKNOWN_VkDriverId";
     }
 }
@@ -331,6 +332,26 @@ static const char *VkFormatString(VkFormat value) {
         case (1000156031): return "FORMAT_G16_B16_R16_3PLANE_422_UNORM";
         case (1000156032): return "FORMAT_G16_B16R16_2PLANE_422_UNORM";
         case (1000156033): return "FORMAT_G16_B16_R16_3PLANE_444_UNORM";
+        case (1000330000): return "FORMAT_G8_B8R8_2PLANE_444_UNORM";
+        case (1000330001): return "FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16";
+        case (1000330002): return "FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16";
+        case (1000330003): return "FORMAT_G16_B16R16_2PLANE_444_UNORM";
+        case (1000340000): return "FORMAT_A4R4G4B4_UNORM_PACK16";
+        case (1000340001): return "FORMAT_A4B4G4R4_UNORM_PACK16";
+        case (1000066000): return "FORMAT_ASTC_4x4_SFLOAT_BLOCK";
+        case (1000066001): return "FORMAT_ASTC_5x4_SFLOAT_BLOCK";
+        case (1000066002): return "FORMAT_ASTC_5x5_SFLOAT_BLOCK";
+        case (1000066003): return "FORMAT_ASTC_6x5_SFLOAT_BLOCK";
+        case (1000066004): return "FORMAT_ASTC_6x6_SFLOAT_BLOCK";
+        case (1000066005): return "FORMAT_ASTC_8x5_SFLOAT_BLOCK";
+        case (1000066006): return "FORMAT_ASTC_8x6_SFLOAT_BLOCK";
+        case (1000066007): return "FORMAT_ASTC_8x8_SFLOAT_BLOCK";
+        case (1000066008): return "FORMAT_ASTC_10x5_SFLOAT_BLOCK";
+        case (1000066009): return "FORMAT_ASTC_10x6_SFLOAT_BLOCK";
+        case (1000066010): return "FORMAT_ASTC_10x8_SFLOAT_BLOCK";
+        case (1000066011): return "FORMAT_ASTC_10x10_SFLOAT_BLOCK";
+        case (1000066012): return "FORMAT_ASTC_12x10_SFLOAT_BLOCK";
+        case (1000066013): return "FORMAT_ASTC_12x12_SFLOAT_BLOCK";
         case (1000054000): return "FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG";
         case (1000054001): return "FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG";
         case (1000054002): return "FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG";
@@ -339,26 +360,6 @@ static const char *VkFormatString(VkFormat value) {
         case (1000054005): return "FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG";
         case (1000054006): return "FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG";
         case (1000054007): return "FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG";
-        case (1000066000): return "FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT";
-        case (1000066001): return "FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT";
-        case (1000066002): return "FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT";
-        case (1000066003): return "FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT";
-        case (1000066004): return "FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT";
-        case (1000066005): return "FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT";
-        case (1000066006): return "FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT";
-        case (1000066007): return "FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT";
-        case (1000066008): return "FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT";
-        case (1000066009): return "FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT";
-        case (1000066010): return "FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT";
-        case (1000066011): return "FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT";
-        case (1000066012): return "FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT";
-        case (1000066013): return "FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT";
-        case (1000330000): return "FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT";
-        case (1000330001): return "FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT";
-        case (1000330002): return "FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT";
-        case (1000330003): return "FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT";
-        case (1000340000): return "FORMAT_A4R4G4B4_UNORM_PACK16_EXT";
-        case (1000340001): return "FORMAT_A4B4G4R4_UNORM_PACK16_EXT";
         default: return "UNKNOWN_VkFormat";
     }
 }
@@ -458,6 +459,7 @@ static const char *VkResultString(VkResult value) {
         case (-1000072003): return "ERROR_INVALID_EXTERNAL_HANDLE";
         case (-1000161000): return "ERROR_FRAGMENTATION";
         case (-1000257000): return "ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS";
+        case (1000297000): return "PIPELINE_COMPILE_REQUIRED";
         case (-1000000000): return "ERROR_SURFACE_LOST_KHR";
         case (-1000000001): return "ERROR_NATIVE_WINDOW_IN_USE_KHR";
         case (1000001003): return "SUBOPTIMAL_KHR";
@@ -466,13 +468,12 @@ static const char *VkResultString(VkResult value) {
         case (-1000011001): return "ERROR_VALIDATION_FAILED_EXT";
         case (-1000012000): return "ERROR_INVALID_SHADER_NV";
         case (-1000158000): return "ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
-        case (-1000174001): return "ERROR_NOT_PERMITTED_EXT";
+        case (-1000174001): return "ERROR_NOT_PERMITTED_KHR";
         case (-1000255000): return "ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
         case (1000268000): return "THREAD_IDLE_KHR";
         case (1000268001): return "THREAD_DONE_KHR";
         case (1000268002): return "OPERATION_DEFERRED_KHR";
         case (1000268003): return "OPERATION_NOT_DEFERRED_KHR";
-        case (1000297000): return "PIPELINE_COMPILE_REQUIRED_EXT";
         default: return "UNKNOWN_VkResult";
     }
 }
@@ -609,36 +610,36 @@ void DumpVkFormatFeatureFlagBits(Printer &p, std::string name, VkFormatFeatureFl
     p.PrintKeyString(name, strings.at(0), width);
 }
 
-std::vector<const char *>VkFormatFeatureFlagBits2KHRGetStrings(VkFormatFeatureFlagBits2KHR value) {
+std::vector<const char *>VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlagBits2 value) {
     std::vector<const char *> strings;
     if (value == 0) { strings.push_back("None"); return strings; }
-    if (0x1 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_BIT_KHR");
-    if (0x2 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_IMAGE_BIT_KHR");
-    if (0x4 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_IMAGE_ATOMIC_BIT_KHR");
-    if (0x8 & value) strings.push_back("FORMAT_FEATURE_2_UNIFORM_TEXEL_BUFFER_BIT_KHR");
-    if (0x10 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_BIT_KHR");
-    if (0x20 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_ATOMIC_BIT_KHR");
-    if (0x40 & value) strings.push_back("FORMAT_FEATURE_2_VERTEX_BUFFER_BIT_KHR");
-    if (0x80 & value) strings.push_back("FORMAT_FEATURE_2_COLOR_ATTACHMENT_BIT_KHR");
-    if (0x100 & value) strings.push_back("FORMAT_FEATURE_2_COLOR_ATTACHMENT_BLEND_BIT_KHR");
-    if (0x200 & value) strings.push_back("FORMAT_FEATURE_2_DEPTH_STENCIL_ATTACHMENT_BIT_KHR");
-    if (0x400 & value) strings.push_back("FORMAT_FEATURE_2_BLIT_SRC_BIT_KHR");
-    if (0x800 & value) strings.push_back("FORMAT_FEATURE_2_BLIT_DST_BIT_KHR");
-    if (0x1000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_BIT_KHR");
-    if (0x2000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT");
-    if (0x4000 & value) strings.push_back("FORMAT_FEATURE_2_TRANSFER_SRC_BIT_KHR");
-    if (0x8000 & value) strings.push_back("FORMAT_FEATURE_2_TRANSFER_DST_BIT_KHR");
-    if (0x10000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_MINMAX_BIT_KHR");
-    if (0x20000 & value) strings.push_back("FORMAT_FEATURE_2_MIDPOINT_CHROMA_SAMPLES_BIT_KHR");
-    if (0x40000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT_KHR");
-    if (0x80000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT_KHR");
-    if (0x100000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT_KHR");
-    if (0x200000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT_KHR");
-    if (0x400000 & value) strings.push_back("FORMAT_FEATURE_2_DISJOINT_BIT_KHR");
-    if (0x800000 & value) strings.push_back("FORMAT_FEATURE_2_COSITED_CHROMA_SAMPLES_BIT_KHR");
-    if (0x80000000 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_READ_WITHOUT_FORMAT_BIT_KHR");
-    if (0x100000000 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_WRITE_WITHOUT_FORMAT_BIT_KHR");
-    if (0x200000000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_DEPTH_COMPARISON_BIT_KHR");
+    if (0x1 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_BIT");
+    if (0x2 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_IMAGE_BIT");
+    if (0x4 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_IMAGE_ATOMIC_BIT");
+    if (0x8 & value) strings.push_back("FORMAT_FEATURE_2_UNIFORM_TEXEL_BUFFER_BIT");
+    if (0x10 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_BIT");
+    if (0x20 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_TEXEL_BUFFER_ATOMIC_BIT");
+    if (0x40 & value) strings.push_back("FORMAT_FEATURE_2_VERTEX_BUFFER_BIT");
+    if (0x80 & value) strings.push_back("FORMAT_FEATURE_2_COLOR_ATTACHMENT_BIT");
+    if (0x100 & value) strings.push_back("FORMAT_FEATURE_2_COLOR_ATTACHMENT_BLEND_BIT");
+    if (0x200 & value) strings.push_back("FORMAT_FEATURE_2_DEPTH_STENCIL_ATTACHMENT_BIT");
+    if (0x400 & value) strings.push_back("FORMAT_FEATURE_2_BLIT_SRC_BIT");
+    if (0x800 & value) strings.push_back("FORMAT_FEATURE_2_BLIT_DST_BIT");
+    if (0x1000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_BIT");
+    if (0x2000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT");
+    if (0x4000 & value) strings.push_back("FORMAT_FEATURE_2_TRANSFER_SRC_BIT");
+    if (0x8000 & value) strings.push_back("FORMAT_FEATURE_2_TRANSFER_DST_BIT");
+    if (0x10000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_MINMAX_BIT");
+    if (0x20000 & value) strings.push_back("FORMAT_FEATURE_2_MIDPOINT_CHROMA_SAMPLES_BIT");
+    if (0x40000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT");
+    if (0x80000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT");
+    if (0x100000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT");
+    if (0x200000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT");
+    if (0x400000 & value) strings.push_back("FORMAT_FEATURE_2_DISJOINT_BIT");
+    if (0x800000 & value) strings.push_back("FORMAT_FEATURE_2_COSITED_CHROMA_SAMPLES_BIT");
+    if (0x80000000 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_READ_WITHOUT_FORMAT_BIT");
+    if (0x100000000 & value) strings.push_back("FORMAT_FEATURE_2_STORAGE_WRITE_WITHOUT_FORMAT_BIT");
+    if (0x200000000 & value) strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_DEPTH_COMPARISON_BIT");
     if (0x2000000 & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_DECODE_OUTPUT_BIT_KHR");
     if (0x4000000 & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_DECODE_DPB_BIT_KHR");
     if (0x20000000 & value) strings.push_back("FORMAT_FEATURE_2_ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR");
@@ -649,22 +650,22 @@ std::vector<const char *>VkFormatFeatureFlagBits2KHRGetStrings(VkFormatFeatureFl
     if (0x4000000000 & value) strings.push_back("FORMAT_FEATURE_2_LINEAR_COLOR_ATTACHMENT_BIT_NV");
     return strings;
 }
-void DumpVkFormatFeatureFlags2KHR(Printer &p, std::string name, VkFormatFeatureFlags2KHR value, int width = 0) {
+void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlags2 value, int width = 0) {
     if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    if (static_cast<VkFormatFeatureFlagBits2KHR>(value) == 0) {
+    if (static_cast<VkFormatFeatureFlagBits2>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
         if (p.Type() != OutputType::vkconfig_output)
             p.SetAsType().PrintString("None");
         return;
     }
-    auto strings = VkFormatFeatureFlagBits2KHRGetStrings(static_cast<VkFormatFeatureFlagBits2KHR>(value));
+    auto strings = VkFormatFeatureFlagBits2GetStrings(static_cast<VkFormatFeatureFlagBits2>(value));
     ArrayWrapper arr(p, name, strings.size());
     for(auto& str : strings){
         p.SetAsType().PrintString(str);
     }
 }
-void DumpVkFormatFeatureFlagBits2KHR(Printer &p, std::string name, VkFormatFeatureFlagBits2KHR value, int width = 0) {
-    auto strings = VkFormatFeatureFlagBits2KHRGetStrings(value);
+void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureFlagBits2 value, int width = 0) {
+    auto strings = VkFormatFeatureFlagBits2GetStrings(value);
     p.PrintKeyString(name, strings.at(0), width);
 }
 
@@ -993,42 +994,11 @@ void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTr
     p.PrintKeyString(name, strings.at(0), width);
 }
 
-std::vector<const char *>VkToolPurposeFlagBitsEXTGetStrings(VkToolPurposeFlagBitsEXT value) {
-    std::vector<const char *> strings;
-    if (value == 0) { strings.push_back("None"); return strings; }
-    if (0x1 & value) strings.push_back("TOOL_PURPOSE_VALIDATION_BIT_EXT");
-    if (0x2 & value) strings.push_back("TOOL_PURPOSE_PROFILING_BIT_EXT");
-    if (0x4 & value) strings.push_back("TOOL_PURPOSE_TRACING_BIT_EXT");
-    if (0x8 & value) strings.push_back("TOOL_PURPOSE_ADDITIONAL_FEATURES_BIT_EXT");
-    if (0x10 & value) strings.push_back("TOOL_PURPOSE_MODIFYING_FEATURES_BIT_EXT");
-    if (0x20 & value) strings.push_back("TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT");
-    if (0x40 & value) strings.push_back("TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT");
-    return strings;
-}
-void DumpVkToolPurposeFlagsEXT(Printer &p, std::string name, VkToolPurposeFlagsEXT value, int width = 0) {
-    if (p.Type() == OutputType::json) { p.PrintKeyValue(name, value); return; }
-    if (static_cast<VkToolPurposeFlagBitsEXT>(value) == 0) {
-        ArrayWrapper arr(p, name, 0);
-        if (p.Type() != OutputType::vkconfig_output)
-            p.SetAsType().PrintString("None");
-        return;
-    }
-    auto strings = VkToolPurposeFlagBitsEXTGetStrings(static_cast<VkToolPurposeFlagBitsEXT>(value));
-    ArrayWrapper arr(p, name, strings.size());
-    for(auto& str : strings){
-        p.SetAsType().PrintString(str);
-    }
-}
-void DumpVkToolPurposeFlagBitsEXT(Printer &p, std::string name, VkToolPurposeFlagBitsEXT value, int width = 0) {
-    auto strings = VkToolPurposeFlagBitsEXTGetStrings(value);
-    p.PrintKeyString(name, strings.at(0), width);
-}
-
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier, 27);
     p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount, 27);
-    DumpVkFormatFeatureFlags2KHR(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures, 27);
+    DumpVkFormatFeatureFlags2(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures, 27);
 }
 void DumpVkDrmFormatModifierPropertiesEXT(Printer &p, std::string name, VkDrmFormatModifierPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
@@ -1069,11 +1039,11 @@ void DumpVkExtent3D(Printer &p, std::string name, VkExtent3D &obj) {
     p.PrintKeyValue("height", obj.height, 6);
     p.PrintKeyValue("depth", obj.depth, 6);
 }
-void DumpVkFormatProperties3KHR(Printer &p, std::string name, VkFormatProperties3KHR &obj) {
+void DumpVkFormatProperties3(Printer &p, std::string name, VkFormatProperties3 &obj) {
     ObjectWrapper object{p, name};
-    DumpVkFormatFeatureFlags2KHR(p, "linearTilingFeatures", obj.linearTilingFeatures, 0);
-    DumpVkFormatFeatureFlags2KHR(p, "optimalTilingFeatures", obj.optimalTilingFeatures, 0);
-    DumpVkFormatFeatureFlags2KHR(p, "bufferFeatures", obj.bufferFeatures, 0);
+    DumpVkFormatFeatureFlags2(p, "linearTilingFeatures", obj.linearTilingFeatures, 0);
+    DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", obj.optimalTilingFeatures, 0);
+    DumpVkFormatFeatureFlags2(p, "bufferFeatures", obj.bufferFeatures, 0);
 }
 void DumpVkLayerProperties(Printer &p, std::string name, VkLayerProperties &obj) {
     ObjectWrapper object{p, name};
@@ -1271,7 +1241,7 @@ void DumpVkPhysicalDeviceDrmPropertiesEXT(Printer &p, std::string name, VkPhysic
     p.PrintKeyValue("renderMajor", obj.renderMajor, 12);
     p.PrintKeyValue("renderMinor", obj.renderMinor, 12);
 }
-void DumpVkPhysicalDeviceDynamicRenderingFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceDynamicRenderingFeaturesKHR &obj) {
+void DumpVkPhysicalDeviceDynamicRenderingFeatures(Printer &p, std::string name, VkPhysicalDeviceDynamicRenderingFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering), 16);
 }
@@ -1422,7 +1392,7 @@ void DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(Printer &p, std::strin
     p.PrintKeyBool("fragmentShadingRateWithCustomSampleLocations", static_cast<bool>(obj.fragmentShadingRateWithCustomSampleLocations), 52);
     p.PrintKeyBool("fragmentShadingRateStrictMultiplyCombiner", static_cast<bool>(obj.fragmentShadingRateStrictMultiplyCombiner), 52);
 }
-void DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("globalPriorityQuery", static_cast<bool>(obj.globalPriorityQuery), 19);
 }
@@ -1438,7 +1408,7 @@ void DumpVkPhysicalDeviceIDProperties(Printer &p, std::string name, VkPhysicalDe
     p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask, 15);
     p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid), 15);
 }
-void DumpVkPhysicalDeviceImageRobustnessFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceImageRobustnessFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceImageRobustnessFeatures(Printer &p, std::string name, VkPhysicalDeviceImageRobustnessFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess), 17);
 }
@@ -1454,12 +1424,12 @@ void DumpVkPhysicalDeviceIndexTypeUint8FeaturesEXT(Printer &p, std::string name,
     ObjectWrapper object{p, name};
     p.PrintKeyBool("indexTypeUint8", static_cast<bool>(obj.indexTypeUint8), 14);
 }
-void DumpVkPhysicalDeviceInlineUniformBlockFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceInlineUniformBlockFeatures(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock), 50);
     p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind), 50);
 }
-void DumpVkPhysicalDeviceInlineUniformBlockPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockPropertiesEXT &obj) {
+void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string name, VkPhysicalDeviceInlineUniformBlockProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize, 55);
     p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks, 55);
@@ -1618,11 +1588,11 @@ void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, Vk
     p.PrintKeyValue("maxPerSetDescriptors", obj.maxPerSetDescriptors, 23);
     p.PrintKeyValue("maxMemoryAllocationSize", to_hex_str(p, obj.maxMemoryAllocationSize), 23);
 }
-void DumpVkPhysicalDeviceMaintenance4FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceMaintenance4FeaturesKHR &obj) {
+void DumpVkPhysicalDeviceMaintenance4Features(Printer &p, std::string name, VkPhysicalDeviceMaintenance4Features &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4), 12);
 }
-void DumpVkPhysicalDeviceMaintenance4PropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceMaintenance4PropertiesKHR &obj) {
+void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, VkPhysicalDeviceMaintenance4Properties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize), 13);
 }
@@ -1708,7 +1678,7 @@ void DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(Printer &p, std::string n
     ObjectWrapper object{p, name};
     p.PrintKeyBool("allowCommandBufferQueryCopies", static_cast<bool>(obj.allowCommandBufferQueryCopies), 29);
 }
-void DumpVkPhysicalDevicePipelineCreationCacheControlFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT &obj) {
+void DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(Printer &p, std::string name, VkPhysicalDevicePipelineCreationCacheControlFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl), 28);
 }
@@ -1759,7 +1729,7 @@ void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(Printer &p, std
     p.PrintKeyBool("primitiveTopologyListRestart", static_cast<bool>(obj.primitiveTopologyListRestart), 33);
     p.PrintKeyBool("primitiveTopologyPatchListRestart", static_cast<bool>(obj.primitiveTopologyPatchListRestart), 33);
 }
-void DumpVkPhysicalDevicePrivateDataFeaturesEXT(Printer &p, std::string name, VkPhysicalDevicePrivateDataFeaturesEXT &obj) {
+void DumpVkPhysicalDevicePrivateDataFeatures(Printer &p, std::string name, VkPhysicalDevicePrivateDataFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData), 11);
 }
@@ -1891,7 +1861,7 @@ void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, Vk
     p.PrintKeyBool("shaderSubgroupClock", static_cast<bool>(obj.shaderSubgroupClock), 19);
     p.PrintKeyBool("shaderDeviceClock", static_cast<bool>(obj.shaderDeviceClock), 19);
 }
-void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation), 30);
 }
@@ -1909,11 +1879,11 @@ void DumpVkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT(Printer &p, std::stri
     p.PrintKeyBool("shaderImageInt64Atomics", static_cast<bool>(obj.shaderImageInt64Atomics), 23);
     p.PrintKeyBool("sparseImageInt64Atomics", static_cast<bool>(obj.sparseImageInt64Atomics), 23);
 }
-void DumpVkPhysicalDeviceShaderIntegerDotProductFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR &obj) {
+void DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct), 23);
 }
-void DumpVkPhysicalDeviceShaderIntegerDotProductPropertiesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR &obj) {
+void DumpVkPhysicalDeviceShaderIntegerDotProductProperties(Printer &p, std::string name, VkPhysicalDeviceShaderIntegerDotProductProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated), 77);
     p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated), 77);
@@ -1954,7 +1924,7 @@ void DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(Printer &p,
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderSubgroupUniformControlFlow", static_cast<bool>(obj.shaderSubgroupUniformControlFlow), 32);
 }
-void DumpVkPhysicalDeviceShaderTerminateInvocationFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR &obj) {
+void DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(Printer &p, std::string name, VkPhysicalDeviceShaderTerminateInvocationFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation), 25);
 }
@@ -1977,19 +1947,19 @@ void DumpVkPhysicalDeviceSubgroupProperties(Printer &p, std::string name, VkPhys
     DumpVkSubgroupFeatureFlags(p, "supportedOperations", obj.supportedOperations, 25);
     p.PrintKeyBool("quadOperationsInAllStages", static_cast<bool>(obj.quadOperationsInAllStages), 25);
 }
-void DumpVkPhysicalDeviceSubgroupSizeControlFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceSubgroupSizeControlFeatures(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl), 20);
     p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups), 20);
 }
-void DumpVkPhysicalDeviceSubgroupSizeControlPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlPropertiesEXT &obj) {
+void DumpVkPhysicalDeviceSubgroupSizeControlProperties(Printer &p, std::string name, VkPhysicalDeviceSubgroupSizeControlProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize, 28);
     p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize, 28);
     p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups, 28);
     DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages, 28);
 }
-void DumpVkPhysicalDeviceSynchronization2FeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceSynchronization2FeaturesKHR &obj) {
+void DumpVkPhysicalDeviceSynchronization2Features(Printer &p, std::string name, VkPhysicalDeviceSynchronization2Features &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2), 16);
 }
@@ -1997,14 +1967,14 @@ void DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(Printer &p, std::string
     ObjectWrapper object{p, name};
     p.PrintKeyBool("texelBufferAlignment", static_cast<bool>(obj.texelBufferAlignment), 20);
 }
-void DumpVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT &obj) {
+void DumpVkPhysicalDeviceTexelBufferAlignmentProperties(Printer &p, std::string name, VkPhysicalDeviceTexelBufferAlignmentProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes), 44);
     p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment), 44);
     p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes), 44);
     p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment), 44);
 }
-void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT &obj) {
+void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(Printer &p, std::string name, VkPhysicalDeviceTextureCompressionASTCHDRFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR), 26);
 }
@@ -2015,14 +1985,6 @@ void DumpVkPhysicalDeviceTimelineSemaphoreFeatures(Printer &p, std::string name,
 void DumpVkPhysicalDeviceTimelineSemaphoreProperties(Printer &p, std::string name, VkPhysicalDeviceTimelineSemaphoreProperties &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 35);
-}
-void DumpVkPhysicalDeviceToolPropertiesEXT(Printer &p, std::string name, VkPhysicalDeviceToolPropertiesEXT &obj) {
-    ObjectWrapper object{p, name};
-    p.PrintKeyString("name", obj.name, 16);
-    p.PrintKeyString("version", obj.version, 16);
-    DumpVkToolPurposeFlagsEXT(p, "purposes", obj.purposes, 16);
-    p.PrintKeyString("description", obj.description, 16);
-    p.PrintKeyString("layer", obj.layer, 16);
 }
 void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name, VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
@@ -2202,6 +2164,72 @@ void DumpVkPhysicalDeviceVulkan12Properties(Printer &p, std::string name, VkPhys
     p.PrintKeyValue("maxTimelineSemaphoreValueDifference", obj.maxTimelineSemaphoreValueDifference, 52);
     DumpVkSampleCountFlags(p, "framebufferIntegerColorSampleCounts", obj.framebufferIntegerColorSampleCounts, 52);
 }
+void DumpVkPhysicalDeviceVulkan13Features(Printer &p, std::string name, VkPhysicalDeviceVulkan13Features &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyBool("robustImageAccess", static_cast<bool>(obj.robustImageAccess), 50);
+    p.PrintKeyBool("inlineUniformBlock", static_cast<bool>(obj.inlineUniformBlock), 50);
+    p.PrintKeyBool("descriptorBindingInlineUniformBlockUpdateAfterBind", static_cast<bool>(obj.descriptorBindingInlineUniformBlockUpdateAfterBind), 50);
+    p.PrintKeyBool("pipelineCreationCacheControl", static_cast<bool>(obj.pipelineCreationCacheControl), 50);
+    p.PrintKeyBool("privateData", static_cast<bool>(obj.privateData), 50);
+    p.PrintKeyBool("shaderDemoteToHelperInvocation", static_cast<bool>(obj.shaderDemoteToHelperInvocation), 50);
+    p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation), 50);
+    p.PrintKeyBool("subgroupSizeControl", static_cast<bool>(obj.subgroupSizeControl), 50);
+    p.PrintKeyBool("computeFullSubgroups", static_cast<bool>(obj.computeFullSubgroups), 50);
+    p.PrintKeyBool("synchronization2", static_cast<bool>(obj.synchronization2), 50);
+    p.PrintKeyBool("textureCompressionASTC_HDR", static_cast<bool>(obj.textureCompressionASTC_HDR), 50);
+    p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory), 50);
+    p.PrintKeyBool("dynamicRendering", static_cast<bool>(obj.dynamicRendering), 50);
+    p.PrintKeyBool("shaderIntegerDotProduct", static_cast<bool>(obj.shaderIntegerDotProduct), 50);
+    p.PrintKeyBool("maintenance4", static_cast<bool>(obj.maintenance4), 50);
+}
+void DumpVkPhysicalDeviceVulkan13Properties(Printer &p, std::string name, VkPhysicalDeviceVulkan13Properties &obj) {
+    ObjectWrapper object{p, name};
+    p.PrintKeyValue("minSubgroupSize", obj.minSubgroupSize, 77);
+    p.PrintKeyValue("maxSubgroupSize", obj.maxSubgroupSize, 77);
+    p.PrintKeyValue("maxComputeWorkgroupSubgroups", obj.maxComputeWorkgroupSubgroups, 77);
+    DumpVkShaderStageFlags(p, "requiredSubgroupSizeStages", obj.requiredSubgroupSizeStages, 77);
+    p.PrintKeyValue("maxInlineUniformBlockSize", obj.maxInlineUniformBlockSize, 77);
+    p.PrintKeyValue("maxPerStageDescriptorInlineUniformBlocks", obj.maxPerStageDescriptorInlineUniformBlocks, 77);
+    p.PrintKeyValue("maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks", obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks, 77);
+    p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks, 77);
+    p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks, 77);
+    p.PrintKeyValue("maxInlineUniformTotalSize", obj.maxInlineUniformTotalSize, 77);
+    p.PrintKeyBool("integerDotProduct8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct8BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct8BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct8BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct4x8BitPackedMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct16BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct16BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct16BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct32BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct32BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct32BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct64BitSignedAccelerated", static_cast<bool>(obj.integerDotProduct64BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProduct64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProduct64BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating8BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating4x8BitPackedMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating16BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating32BitMixedSignednessAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitUnsignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitUnsignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitSignedAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitSignedAccelerated), 77);
+    p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated", static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated), 77);
+    p.PrintKeyValue("storageTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.storageTexelBufferOffsetAlignmentBytes), 77);
+    p.PrintKeyBool("storageTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.storageTexelBufferOffsetSingleTexelAlignment), 77);
+    p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes), 77);
+    p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment", static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment), 77);
+    p.PrintKeyValue("maxBufferSize", to_hex_str(p, obj.maxBufferSize), 77);
+}
 void DumpVkPhysicalDeviceVulkanMemoryModelFeatures(Printer &p, std::string name, VkPhysicalDeviceVulkanMemoryModelFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("vulkanMemoryModel", static_cast<bool>(obj.vulkanMemoryModel), 45);
@@ -2223,7 +2251,7 @@ void DumpVkPhysicalDeviceYcbcrImageArraysFeaturesEXT(Printer &p, std::string nam
     ObjectWrapper object{p, name};
     p.PrintKeyBool("ycbcrImageArrays", static_cast<bool>(obj.ycbcrImageArrays), 16);
 }
-void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR(Printer &p, std::string name, VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR &obj) {
+void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::string name, VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures &obj) {
     ObjectWrapper object{p, name};
     p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory), 35);
 }
@@ -2277,10 +2305,10 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT, sizeof(VkPhysicalDeviceFragmentDensityMapPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR, sizeof(VkPhysicalDeviceFragmentShadingRatePropertiesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES, sizeof(VkPhysicalDeviceIDProperties)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES_EXT, sizeof(VkPhysicalDeviceInlineUniformBlockPropertiesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES, sizeof(VkPhysicalDeviceInlineUniformBlockProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT, sizeof(VkPhysicalDeviceLineRasterizationPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES, sizeof(VkPhysicalDeviceMaintenance3Properties)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR, sizeof(VkPhysicalDeviceMaintenance4PropertiesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES, sizeof(VkPhysicalDeviceMaintenance4Properties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT, sizeof(VkPhysicalDeviceMultiDrawPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES, sizeof(VkPhysicalDeviceMultiviewProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT, sizeof(VkPhysicalDevicePCIBusInfoPropertiesEXT)},
@@ -2296,15 +2324,16 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT, sizeof(VkPhysicalDeviceRobustness2PropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT, sizeof(VkPhysicalDeviceSampleLocationsPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES, sizeof(VkPhysicalDeviceSamplerFilterMinmaxProperties)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES_KHR, sizeof(VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES, sizeof(VkPhysicalDeviceShaderIntegerDotProductProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES, sizeof(VkPhysicalDeviceSubgroupProperties)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT, sizeof(VkPhysicalDeviceSubgroupSizeControlPropertiesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT, sizeof(VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES, sizeof(VkPhysicalDeviceSubgroupSizeControlProperties)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES, sizeof(VkPhysicalDeviceTexelBufferAlignmentProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES, sizeof(VkPhysicalDeviceTimelineSemaphoreProperties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT, sizeof(VkPhysicalDeviceTransformFeedbackPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT, sizeof(VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES, sizeof(VkPhysicalDeviceVulkan11Properties)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES, sizeof(VkPhysicalDeviceVulkan12Properties)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES, sizeof(VkPhysicalDeviceVulkan13Properties)},
     };
     infos.phys_device_mem_props2 = {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT, sizeof(VkPhysicalDeviceMemoryBudgetPropertiesEXT)},
@@ -2326,28 +2355,28 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT, sizeof(VkPhysicalDeviceDepthClipEnableFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES, sizeof(VkPhysicalDeviceDescriptorIndexingFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT, sizeof(VkPhysicalDeviceDeviceMemoryReportFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR, sizeof(VkPhysicalDeviceDynamicRenderingFeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES, sizeof(VkPhysicalDeviceDynamicRenderingFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT, sizeof(VkPhysicalDeviceExtendedDynamicState2FeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT, sizeof(VkPhysicalDeviceExtendedDynamicStateFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT, sizeof(VkPhysicalDeviceFragmentDensityMap2FeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT, sizeof(VkPhysicalDeviceFragmentDensityMapFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT, sizeof(VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR, sizeof(VkPhysicalDeviceFragmentShadingRateFeaturesKHR)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_EXT, sizeof(VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR, sizeof(VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES, sizeof(VkPhysicalDeviceHostQueryResetFeatures)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES_EXT, sizeof(VkPhysicalDeviceImageRobustnessFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES, sizeof(VkPhysicalDeviceImageRobustnessFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT, sizeof(VkPhysicalDeviceImageViewMinLodFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES, sizeof(VkPhysicalDeviceImagelessFramebufferFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT, sizeof(VkPhysicalDeviceIndexTypeUint8FeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT, sizeof(VkPhysicalDeviceInlineUniformBlockFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES, sizeof(VkPhysicalDeviceInlineUniformBlockFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT, sizeof(VkPhysicalDeviceLineRasterizationFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR, sizeof(VkPhysicalDeviceMaintenance4FeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES, sizeof(VkPhysicalDeviceMaintenance4Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT, sizeof(VkPhysicalDeviceMemoryPriorityFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT, sizeof(VkPhysicalDeviceMultiDrawFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES, sizeof(VkPhysicalDeviceMultiviewFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT, sizeof(VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR, sizeof(VkPhysicalDevicePerformanceQueryFeaturesKHR)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT, sizeof(VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES, sizeof(VkPhysicalDevicePipelineCreationCacheControlFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR, sizeof(VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR)},
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR, sizeof(VkPhysicalDevicePortabilitySubsetFeaturesKHR)},
@@ -2355,7 +2384,7 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR, sizeof(VkPhysicalDevicePresentIdFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR, sizeof(VkPhysicalDevicePresentWaitFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT, sizeof(VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT, sizeof(VkPhysicalDevicePrivateDataFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES, sizeof(VkPhysicalDevicePrivateDataFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES, sizeof(VkPhysicalDeviceProtectedMemoryFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT, sizeof(VkPhysicalDeviceProvokingVertexFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT, sizeof(VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT)},
@@ -2369,18 +2398,18 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT, sizeof(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES, sizeof(VkPhysicalDeviceShaderAtomicInt64Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderClockFeaturesKHR)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT, sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES, sizeof(VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES, sizeof(VkPhysicalDeviceShaderDrawParametersFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES, sizeof(VkPhysicalDeviceShaderFloat16Int8Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT, sizeof(VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR) + 256},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES, sizeof(VkPhysicalDeviceShaderIntegerDotProductFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES, sizeof(VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES_KHR, sizeof(VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT, sizeof(VkPhysicalDeviceSubgroupSizeControlFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR, sizeof(VkPhysicalDeviceSynchronization2FeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES, sizeof(VkPhysicalDeviceShaderTerminateInvocationFeatures)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES, sizeof(VkPhysicalDeviceSubgroupSizeControlFeatures)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES, sizeof(VkPhysicalDeviceSynchronization2Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT, sizeof(VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT, sizeof(VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES, sizeof(VkPhysicalDeviceTextureCompressionASTCHDRFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES, sizeof(VkPhysicalDeviceTimelineSemaphoreFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT, sizeof(VkPhysicalDeviceTransformFeedbackFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES, sizeof(VkPhysicalDeviceUniformBufferStandardLayoutFeatures)},
@@ -2389,11 +2418,12 @@ pNextChainInfos get_chain_infos() {
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT, sizeof(VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES, sizeof(VkPhysicalDeviceVulkan11Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES, sizeof(VkPhysicalDeviceVulkan12Features)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES, sizeof(VkPhysicalDeviceVulkan13Features)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES, sizeof(VkPhysicalDeviceVulkanMemoryModelFeatures)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_FEATURES_KHR, sizeof(VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT, sizeof(VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT)},
         {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT, sizeof(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT)},
-        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES_KHR, sizeof(VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR)},
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES, sizeof(VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures)},
     };
     infos.surface_capabilities2 = {
         {VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR, sizeof(VkSharedPresentSurfaceCapabilitiesKHR)},
@@ -2405,7 +2435,7 @@ pNextChainInfos get_chain_infos() {
     infos.format_properties2 = {
         {VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT, sizeof(VkDrmFormatModifierPropertiesList2EXT)},
         {VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT, sizeof(VkDrmFormatModifierPropertiesListEXT)},
-        {VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR, sizeof(VkFormatProperties3KHR)},
+        {VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3, sizeof(VkFormatProperties3)},
     };
     return infos;
 }
@@ -2508,10 +2538,11 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDeviceIDProperties(p, version.minor >= 1 ?"VkPhysicalDeviceIDProperties":"VkPhysicalDeviceIDPropertiesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME))) {
-            VkPhysicalDeviceInlineUniformBlockPropertiesEXT* props = (VkPhysicalDeviceInlineUniformBlockPropertiesEXT*)structure;
-            DumpVkPhysicalDeviceInlineUniformBlockPropertiesEXT(p, "VkPhysicalDeviceInlineUniformBlockPropertiesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceInlineUniformBlockProperties* props = (VkPhysicalDeviceInlineUniformBlockProperties*)structure;
+            DumpVkPhysicalDeviceInlineUniformBlockProperties(p, version.minor >= 3 ?"VkPhysicalDeviceInlineUniformBlockProperties":"VkPhysicalDeviceInlineUniformBlockPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT && 
@@ -2527,10 +2558,11 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDeviceMaintenance3Properties(p, version.minor >= 1 ?"VkPhysicalDeviceMaintenance3Properties":"VkPhysicalDeviceMaintenance3PropertiesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME))) {
-            VkPhysicalDeviceMaintenance4PropertiesKHR* props = (VkPhysicalDeviceMaintenance4PropertiesKHR*)structure;
-            DumpVkPhysicalDeviceMaintenance4PropertiesKHR(p, "VkPhysicalDeviceMaintenance4PropertiesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceMaintenance4Properties* props = (VkPhysicalDeviceMaintenance4Properties*)structure;
+            DumpVkPhysicalDeviceMaintenance4Properties(p, version.minor >= 3 ?"VkPhysicalDeviceMaintenance4Properties":"VkPhysicalDeviceMaintenance4PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT && 
@@ -2616,10 +2648,11 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDeviceSamplerFilterMinmaxProperties(p, version.minor >= 2 ?"VkPhysicalDeviceSamplerFilterMinmaxProperties":"VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME))) {
-            VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR* props = (VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR*)structure;
-            DumpVkPhysicalDeviceShaderIntegerDotProductPropertiesKHR(p, "VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceShaderIntegerDotProductProperties* props = (VkPhysicalDeviceShaderIntegerDotProductProperties*)structure;
+            DumpVkPhysicalDeviceShaderIntegerDotProductProperties(p, version.minor >= 3 ?"VkPhysicalDeviceShaderIntegerDotProductProperties":"VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES && 
@@ -2628,16 +2661,18 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             DumpVkPhysicalDeviceSubgroupProperties(p, "VkPhysicalDeviceSubgroupProperties", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME))) {
-            VkPhysicalDeviceSubgroupSizeControlPropertiesEXT* props = (VkPhysicalDeviceSubgroupSizeControlPropertiesEXT*)structure;
-            DumpVkPhysicalDeviceSubgroupSizeControlPropertiesEXT(p, "VkPhysicalDeviceSubgroupSizeControlPropertiesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceSubgroupSizeControlProperties* props = (VkPhysicalDeviceSubgroupSizeControlProperties*)structure;
+            DumpVkPhysicalDeviceSubgroupSizeControlProperties(p, version.minor >= 3 ?"VkPhysicalDeviceSubgroupSizeControlProperties":"VkPhysicalDeviceSubgroupSizeControlPropertiesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME))) {
-            VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT* props = (VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT*)structure;
-            DumpVkPhysicalDeviceTexelBufferAlignmentPropertiesEXT(p, "VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceTexelBufferAlignmentProperties* props = (VkPhysicalDeviceTexelBufferAlignmentProperties*)structure;
+            DumpVkPhysicalDeviceTexelBufferAlignmentProperties(p, version.minor >= 3 ?"VkPhysicalDeviceTexelBufferAlignmentProperties":"VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES && 
@@ -2669,6 +2704,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
            (version.minor >= 2)) {
             VkPhysicalDeviceVulkan12Properties* props = (VkPhysicalDeviceVulkan12Properties*)structure;
             DumpVkPhysicalDeviceVulkan12Properties(p, "VkPhysicalDeviceVulkan12Properties", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES && 
+           (version.minor >= 3)) {
+            VkPhysicalDeviceVulkan13Properties* props = (VkPhysicalDeviceVulkan13Properties*)structure;
+            DumpVkPhysicalDeviceVulkan13Properties(p, "VkPhysicalDeviceVulkan13Properties", *props);
             p.AddNewline();
         }
         place = structure->pNext;
@@ -2791,10 +2832,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceDeviceMemoryReportFeaturesEXT(p, "VkPhysicalDeviceDeviceMemoryReportFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME))) {
-            VkPhysicalDeviceDynamicRenderingFeaturesKHR* props = (VkPhysicalDeviceDynamicRenderingFeaturesKHR*)structure;
-            DumpVkPhysicalDeviceDynamicRenderingFeaturesKHR(p, "VkPhysicalDeviceDynamicRenderingFeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceDynamicRenderingFeatures* props = (VkPhysicalDeviceDynamicRenderingFeatures*)structure;
+            DumpVkPhysicalDeviceDynamicRenderingFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceDynamicRenderingFeatures":"VkPhysicalDeviceDynamicRenderingFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT && 
@@ -2833,10 +2875,10 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceFragmentShadingRateFeaturesKHR(p, "VkPhysicalDeviceFragmentShadingRateFeaturesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_GLOBAL_PRIORITY_QUERY_EXTENSION_NAME))) {
-            VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT* props = (VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesEXT(p, "VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME))) {
+            VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR* props = (VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesKHR(p, "VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES && 
@@ -2846,10 +2888,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceHostQueryResetFeatures(p, version.minor >= 2 ?"VkPhysicalDeviceHostQueryResetFeatures":"VkPhysicalDeviceHostQueryResetFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME))) {
-            VkPhysicalDeviceImageRobustnessFeaturesEXT* props = (VkPhysicalDeviceImageRobustnessFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceImageRobustnessFeaturesEXT(p, "VkPhysicalDeviceImageRobustnessFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceImageRobustnessFeatures* props = (VkPhysicalDeviceImageRobustnessFeatures*)structure;
+            DumpVkPhysicalDeviceImageRobustnessFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceImageRobustnessFeatures":"VkPhysicalDeviceImageRobustnessFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT && 
@@ -2871,10 +2914,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceIndexTypeUint8FeaturesEXT(p, "VkPhysicalDeviceIndexTypeUint8FeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME))) {
-            VkPhysicalDeviceInlineUniformBlockFeaturesEXT* props = (VkPhysicalDeviceInlineUniformBlockFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceInlineUniformBlockFeaturesEXT(p, "VkPhysicalDeviceInlineUniformBlockFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceInlineUniformBlockFeatures* props = (VkPhysicalDeviceInlineUniformBlockFeatures*)structure;
+            DumpVkPhysicalDeviceInlineUniformBlockFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceInlineUniformBlockFeatures":"VkPhysicalDeviceInlineUniformBlockFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT && 
@@ -2883,10 +2927,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceLineRasterizationFeaturesEXT(p, "VkPhysicalDeviceLineRasterizationFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME))) {
-            VkPhysicalDeviceMaintenance4FeaturesKHR* props = (VkPhysicalDeviceMaintenance4FeaturesKHR*)structure;
-            DumpVkPhysicalDeviceMaintenance4FeaturesKHR(p, "VkPhysicalDeviceMaintenance4FeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceMaintenance4Features* props = (VkPhysicalDeviceMaintenance4Features*)structure;
+            DumpVkPhysicalDeviceMaintenance4Features(p, version.minor >= 3 ?"VkPhysicalDeviceMaintenance4Features":"VkPhysicalDeviceMaintenance4FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT && 
@@ -2920,10 +2965,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(p, "VkPhysicalDevicePerformanceQueryFeaturesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME))) {
-            VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT* props = (VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT*)structure;
-            DumpVkPhysicalDevicePipelineCreationCacheControlFeaturesEXT(p, "VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDevicePipelineCreationCacheControlFeatures* props = (VkPhysicalDevicePipelineCreationCacheControlFeatures*)structure;
+            DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(p, version.minor >= 3 ?"VkPhysicalDevicePipelineCreationCacheControlFeatures":"VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR && 
@@ -2958,10 +3004,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(p, "VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME))) {
-            VkPhysicalDevicePrivateDataFeaturesEXT* props = (VkPhysicalDevicePrivateDataFeaturesEXT*)structure;
-            DumpVkPhysicalDevicePrivateDataFeaturesEXT(p, "VkPhysicalDevicePrivateDataFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDevicePrivateDataFeatures* props = (VkPhysicalDevicePrivateDataFeatures*)structure;
+            DumpVkPhysicalDevicePrivateDataFeatures(p, version.minor >= 3 ?"VkPhysicalDevicePrivateDataFeatures":"VkPhysicalDevicePrivateDataFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES && 
@@ -3046,10 +3093,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceShaderClockFeaturesKHR(p, "VkPhysicalDeviceShaderClockFeaturesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME))) {
-            VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT* props = (VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(p, "VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures* props = (VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures*)structure;
+            DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures":"VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES && 
@@ -3071,10 +3119,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT(p, "VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME))) {
-            VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR* props = (VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR*)structure;
-            DumpVkPhysicalDeviceShaderIntegerDotProductFeaturesKHR(p, "VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceShaderIntegerDotProductFeatures* props = (VkPhysicalDeviceShaderIntegerDotProductFeatures*)structure;
+            DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceShaderIntegerDotProductFeatures":"VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES && 
@@ -3090,22 +3139,25 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(p, "VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME))) {
-            VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR* props = (VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR*)structure;
-            DumpVkPhysicalDeviceShaderTerminateInvocationFeaturesKHR(p, "VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceShaderTerminateInvocationFeatures* props = (VkPhysicalDeviceShaderTerminateInvocationFeatures*)structure;
+            DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceShaderTerminateInvocationFeatures":"VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME))) {
-            VkPhysicalDeviceSubgroupSizeControlFeaturesEXT* props = (VkPhysicalDeviceSubgroupSizeControlFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceSubgroupSizeControlFeaturesEXT(p, "VkPhysicalDeviceSubgroupSizeControlFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceSubgroupSizeControlFeatures* props = (VkPhysicalDeviceSubgroupSizeControlFeatures*)structure;
+            DumpVkPhysicalDeviceSubgroupSizeControlFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceSubgroupSizeControlFeatures":"VkPhysicalDeviceSubgroupSizeControlFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME))) {
-            VkPhysicalDeviceSynchronization2FeaturesKHR* props = (VkPhysicalDeviceSynchronization2FeaturesKHR*)structure;
-            DumpVkPhysicalDeviceSynchronization2FeaturesKHR(p, "VkPhysicalDeviceSynchronization2FeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceSynchronization2Features* props = (VkPhysicalDeviceSynchronization2Features*)structure;
+            DumpVkPhysicalDeviceSynchronization2Features(p, version.minor >= 3 ?"VkPhysicalDeviceSynchronization2Features":"VkPhysicalDeviceSynchronization2FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT && 
@@ -3114,10 +3166,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(p, "VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME))) {
-            VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT* props = (VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT*)structure;
-            DumpVkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(p, "VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceTextureCompressionASTCHDRFeatures* props = (VkPhysicalDeviceTextureCompressionASTCHDRFeatures*)structure;
+            DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceTextureCompressionASTCHDRFeatures":"VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES && 
@@ -3171,6 +3224,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceVulkan12Features(p, "VkPhysicalDeviceVulkan12Features", *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES && 
+           (version.minor >= 3)) {
+            VkPhysicalDeviceVulkan13Features* props = (VkPhysicalDeviceVulkan13Features*)structure;
+            DumpVkPhysicalDeviceVulkan13Features(p, "VkPhysicalDeviceVulkan13Features", *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES && 
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME) ||
             version.minor >= 2)) {
@@ -3196,10 +3255,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place,
             DumpVkPhysicalDeviceYcbcrImageArraysFeaturesEXT(p, "VkPhysicalDeviceYcbcrImageArraysFeaturesEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME))) {
-            VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR* props = (VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR*)structure;
-            DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR(p, "VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures* props = (VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures*)structure;
+            DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(p, version.minor >= 3 ?"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures":"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR", *props);
             p.AddNewline();
         }
         place = structure->pNext;
@@ -3248,10 +3308,11 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place, Vu
             DumpVkDrmFormatModifierPropertiesListEXT(p, "VkDrmFormatModifierPropertiesListEXT", *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR && 
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME))) {
-            VkFormatProperties3KHR* props = (VkFormatProperties3KHR*)structure;
-            DumpVkFormatProperties3KHR(p, "VkFormatProperties3KHR", *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3 && 
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME) ||
+            version.minor >= 3)) {
+            VkFormatProperties3* props = (VkFormatProperties3*)structure;
+            DumpVkFormatProperties3(p, version.minor >= 3 ?"VkFormatProperties3":"VkFormatProperties3KHR", *props);
             p.AddNewline();
         }
         place = structure->pNext;
