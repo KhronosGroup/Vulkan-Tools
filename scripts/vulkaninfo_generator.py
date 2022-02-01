@@ -610,7 +610,7 @@ def PrintChainBuilders(listName, structures, all_structures):
                 # We need to artificially increase it just so the driver doesn't write 'out of bounds' and cause
                 # difficult to debug crashes. This bug comes from the in-development version of the extension having
                 # a larger size than the final version, so older drivers try to writ to members which don't exist.
-                if s.sTypeName == "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES_KHR":
+                if s.sTypeName == "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES":
                     out += " + 256" # Really make sure a driver wont write out of bounds
                 out += f"}},\n"
             out += AddGuardFooter(s)
