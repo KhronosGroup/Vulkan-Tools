@@ -474,42 +474,20 @@ struct ExtensionFunctions {
         dest = reinterpret_cast<T>(vkGetInstanceProcAddr(instance, name));
     }
 };
-struct VkStructureHeader {
-    VkStructureType sType;
-    VkStructureHeader *pNext;
-};
 
-struct pNextChainBuildingBlockInfo {
-    VkStructureType sType;
-    uint32_t mem_size;
-};
+// Forward declarations for pNext chains
+struct phys_device_props2_chain;
+struct phys_device_mem_props2_chain;
+struct phys_device_features2_chain;
+struct surface_capabilities2_chain;
+struct format_properties2_chain;
 
-void buildpNextChain(VkStructureHeader *first, const std::vector<pNextChainBuildingBlockInfo> &chain_info) {
-    VkStructureHeader *place = first;
+void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2& start, std::unique_ptr<phys_device_props2_chain>& chain);
+void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2& start, std::unique_ptr<phys_device_mem_props2_chain>& chain);
+void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2& start, std::unique_ptr<phys_device_features2_chain>& chain);
+void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR& start, std::unique_ptr<surface_capabilities2_chain>& chain);
+void setup_format_properties2_chain(VkFormatProperties2& start, std::unique_ptr<format_properties2_chain>& chain);
 
-    for (uint32_t i = 0; i < chain_info.size(); i++) {
-        place->pNext = static_cast<VkStructureHeader *>(malloc(chain_info[i].mem_size));
-        if (!place->pNext) {
-            THROW_ERR("buildpNextChain's malloc failed to allocate");
-        }
-        std::memset(place->pNext, 0, chain_info[i].mem_size);
-        place = place->pNext;
-        place->sType = chain_info[i].sType;
-    }
-
-    place->pNext = nullptr;
-}
-
-void freepNextChain(VkStructureHeader *first) {
-    VkStructureHeader *place = first;
-    VkStructureHeader *next = nullptr;
-
-    while (place) {
-        next = place->pNext;
-        free(place);
-        place = next;
-    }
-}
 
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
@@ -1206,8 +1184,9 @@ class AppSurface {
     VkSurfaceCapabilities2KHR surface_capabilities2_khr{};
     VkSurfaceCapabilities2EXT surface_capabilities2_ext{};
 
-    AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension,
-               std::vector<pNextChainBuildingBlockInfo> &sur_extension_pNextChain)
+    std::unique_ptr<surface_capabilities2_chain> chain_for_surface_capabilities2;
+
+    AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
         : inst(inst),
           phys_device(phys_device),
           surface_extension(surface_extension),
@@ -1237,7 +1216,7 @@ class AppSurface {
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
             surface_capabilities2_khr.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&surface_capabilities2_khr, sur_extension_pNextChain);
+            setup_surface_capabilities2_chain(surface_capabilities2_khr, chain_for_surface_capabilities2);
 
             VkPhysicalDeviceSurfaceInfo2KHR surface_info{};
             surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
@@ -1260,12 +1239,6 @@ class AppSurface {
             VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2EXT(phys_device, surface_extension.surface,
                                                                                      &surface_capabilities2_ext);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2EXT", err);
-        }
-    }
-
-    ~AppSurface() {
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
-            freepNextChain(static_cast<VkStructureHeader *>(surface_capabilities2_khr.pNext));
         }
     }
 
@@ -1396,13 +1369,13 @@ util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &in
     return {};
 }
 
-struct pNextChainInfos {
-    std::vector<pNextChainBuildingBlockInfo> phys_device_props2;
-    std::vector<pNextChainBuildingBlockInfo> phys_device_mem_props2;
-    std::vector<pNextChainBuildingBlockInfo> phys_device_features2;
-    std::vector<pNextChainBuildingBlockInfo> surface_capabilities2;
-    std::vector<pNextChainBuildingBlockInfo> format_properties2;
-};
+// struct pNextChainInfos {
+//     std::vector<pNextChainBuildingBlockInfo> phys_device_props2;
+//     std::vector<pNextChainBuildingBlockInfo> phys_device_mem_props2;
+//     std::vector<pNextChainBuildingBlockInfo> phys_device_features2;
+//     std::vector<pNextChainBuildingBlockInfo> surface_capabilities2;
+//     std::vector<pNextChainBuildingBlockInfo> format_properties2;
+// };
 
 struct FormatRange {
     // the Vulkan standard version that supports this format range, or 0 if non-standard
@@ -1470,7 +1443,11 @@ struct AppGpu {
 
     std::vector<FormatRange> supported_format_ranges;
 
-    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, pNextChainInfos chainInfos)
+    std::unique_ptr<phys_device_props2_chain> chain_for_phys_device_props2;
+    std::unique_ptr<phys_device_mem_props2_chain> chain_for_phys_device_mem_props2;
+    std::unique_ptr<phys_device_features2_chain> chain_for_phys_device_features2;
+
+    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device)
         : inst(inst), id(id), phys_device(phys_device) {
         inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
 
@@ -1495,19 +1472,19 @@ struct AppGpu {
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             // VkPhysicalDeviceProperties2
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&props2, chainInfos.phys_device_props2);
+            setup_phys_device_props2_chain(props2, chain_for_phys_device_props2);
 
             inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
 
             // VkPhysicalDeviceMemoryProperties2
             memory_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&memory_props2, chainInfos.phys_device_mem_props2);
+            setup_phys_device_mem_props2_chain(memory_props2, chain_for_phys_device_mem_props2);
 
             inst.ext_funcs.vkGetPhysicalDeviceMemoryProperties2KHR(phys_device, &memory_props2);
 
             // VkPhysicalDeviceFeatures2
             features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-            buildpNextChain((VkStructureHeader *)&features2, chainInfos.phys_device_features2);
+            setup_phys_device_features2_chain(features2, chain_for_phys_device_features2);
 
             inst.ext_funcs.vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
         }
@@ -1597,22 +1574,22 @@ struct AppGpu {
 
         // Memory //
 
-        struct VkStructureHeader *structure = NULL;
+        struct VkBaseOutStructure *structure = NULL;
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            structure = (struct VkStructureHeader *)memory_props2.pNext;
+            structure = (struct VkBaseOutStructure *)memory_props2.pNext;
 
             while (structure) {
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT &&
                     CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
                     VkPhysicalDeviceMemoryBudgetPropertiesEXT *mem_budget_props =
-                        (VkPhysicalDeviceMemoryBudgetPropertiesEXT *)structure;
+                        reinterpret_cast<VkPhysicalDeviceMemoryBudgetPropertiesEXT *>(structure);
                     for (uint32_t i = 0; i < VK_MAX_MEMORY_HEAPS; i++) {
                         heapBudget[i] = mem_budget_props->heapBudget[i];
                         heapUsage[i] = mem_budget_props->heapUsage[i];
                     }
                 }
 
-                structure = (struct VkStructureHeader *)structure->pNext;
+                structure = structure->pNext;
             }
         }
         // TODO buffer - memory type compatibility
@@ -1649,12 +1626,6 @@ struct AppGpu {
     }
     ~AppGpu() {
         inst.dll.fp_vkDestroyDevice(dev, nullptr);
-
-        if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            freepNextChain(static_cast<VkStructureHeader *>(features2.pNext));
-            freepNextChain(static_cast<VkStructureHeader *>(props2.pNext));
-            freepNextChain(static_cast<VkStructureHeader *>(memory_props2.pNext));
-        }
     }
 
     AppGpu(const AppGpu &) = delete;

@@ -729,9 +729,9 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
         (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || gpu.api_version.minor >= 2)) {
         void *place = gpu.props2.pNext;
         while (place) {
-            struct VkStructureHeader *structure = (struct VkStructureHeader *)place;
+            VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(place);
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
-                VkPhysicalDeviceDriverProperties *driver_props = (VkPhysicalDeviceDriverProperties *)structure;
+                VkPhysicalDeviceDriverProperties *driver_props = reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
                 DumpVkDriverId(p, "driverID", driver_props->driverID, 18);
                 p.PrintKeyString("driverName", driver_props->driverName, 18);
                 p.PrintKeyString("driverInfo", driver_props->driverInfo, 18);
@@ -748,10 +748,10 @@ void DumpPortability(Printer &p, AppGpu &gpu) {
         if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             void *props_place = gpu.props2.pNext;
             while (props_place) {
-                struct VkStructureHeader *structure = (struct VkStructureHeader *)props_place;
+                VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(props_place);
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR) {
                     VkPhysicalDevicePortabilitySubsetPropertiesKHR *props =
-                        (VkPhysicalDevicePortabilitySubsetPropertiesKHR *)structure;
+                        reinterpret_cast<VkPhysicalDevicePortabilitySubsetPropertiesKHR *>(structure);
                     DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(p, "VkPhysicalDevicePortabilitySubsetPropertiesKHR", *props);
                     break;
                 }
@@ -760,10 +760,10 @@ void DumpPortability(Printer &p, AppGpu &gpu) {
 
             void *feats_place = gpu.features2.pNext;
             while (feats_place) {
-                struct VkStructureHeader *structure = (struct VkStructureHeader *)feats_place;
+                VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(feats_place);
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR) {
                     VkPhysicalDevicePortabilitySubsetFeaturesKHR *features =
-                        (VkPhysicalDevicePortabilitySubsetFeaturesKHR *)structure;
+                        reinterpret_cast<VkPhysicalDevicePortabilitySubsetFeaturesKHR *>(structure);
                     DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(p, "VkPhysicalDevicePortabilitySubsetFeaturesKHR", *features);
                     break;
                 }
@@ -1050,8 +1050,6 @@ int main(int argc, char **argv) {
         AppInstance instance = {};
         SetupWindowExtensions(instance);
 
-        auto pNext_chains = get_chain_infos();
-
         auto phys_devices = instance.FindPhysicalDevices();
 
         std::vector<std::unique_ptr<AppSurface>> surfaces;
@@ -1060,7 +1058,7 @@ int main(int argc, char **argv) {
             surface_extension.surface = surface_extension.create_surface(instance);
             for (auto &phys_device : phys_devices) {
                 surfaces.push_back(std::unique_ptr<AppSurface>(
-                    new AppSurface(instance, phys_device, surface_extension, pNext_chains.surface_capabilities2)));
+                    new AppSurface(instance, phys_device, surface_extension)));
             }
         }
 
@@ -1068,7 +1066,7 @@ int main(int argc, char **argv) {
 
         uint32_t gpu_counter = 0;
         for (auto &phys_device : phys_devices) {
-            gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, pNext_chains)));
+            gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device)));
         }
 
         if (parse_data.selected_gpu >= gpus.size()) {

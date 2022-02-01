@@ -105,11 +105,12 @@ predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
                     'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'int64_t']
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
-EXTENSION_CATEGORIES = OrderedDict((('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both'}),
-                                   ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device'}),
-                                   ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device'}),
-                                   ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both'}),
-                                   ('format_properties2', {'extends': 'VkFormatProperties2', 'type': 'device'})
+EXTENSION_CATEGORIES = OrderedDict((
+    ('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both', 'holder_type': 'VkPhysicalDeviceProperties2'}),
+    ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device', 'holder_type':'VkPhysicalDeviceMemoryProperties2'}),
+    ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device', 'holder_type':'VkPhysicalDeviceFeatures2'}),
+    ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both', 'holder_type':'VkSurfaceCapabilities2KHR'}),
+    ('format_properties2', {'extends': 'VkFormatProperties2', 'type': 'device', 'holder_type':'VkFormatProperties2'})
                                    ))
 class VulkanInfoGeneratorOptions(GeneratorOptions):
     def __init__(self,
@@ -290,12 +291,8 @@ class VulkanInfoGenerator(OutputGenerator):
         for s in (x for x in self.all_structures if x.name in types_to_gen and x.name not in struct_blacklist):
             out += PrintStructure(s, types_to_gen, names_of_structures_to_gen, self.aliases)
 
-        out += "pNextChainInfos get_chain_infos() {\n"
-        out += "    pNextChainInfos infos;\n"
-        for key in EXTENSION_CATEGORIES.keys():
-            out += PrintChainBuilders(key,
-                                      self.extension_sets[key], self.all_structures)
-        out += "    return infos;\n}\n"
+        for key, value in EXTENSION_CATEGORIES.items():
+            out += PrintChainStruct(key, self.extension_sets[key], self.all_structures, value)
 
         for key, value in EXTENSION_CATEGORIES.items():
             out += PrintChainIterator(key,
@@ -595,26 +592,60 @@ def PrintStructShort(struct):
     return out
 
 
-def PrintChainBuilders(listName, structures, all_structures):
+def PrintChainStruct(listName, structures, all_structures, chain_details):
+    out = ''
     sorted_structures = sorted(
         all_structures, key=operator.attrgetter('name'))
-
-    out = ''
-    out += f"    infos.{listName} = {{\n"
+    structs_to_print = []
     for s in sorted_structures:
         if s.name in structures:
-            out += AddGuardHeader(s)
-            if s.sTypeName is not None:
-                out += f"        {{{s.sTypeName}, sizeof({s.name})"
-                # Specific versions of drivers have an incorrect definition of the size of this struct.
-                # We need to artificially increase it just so the driver doesn't write 'out of bounds' and cause
-                # difficult to debug crashes. This bug comes from the in-development version of the extension having
-                # a larger size than the final version, so older drivers try to writ to members which don't exist.
-                if s.sTypeName == "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES":
-                    out += " + 256" # Really make sure a driver wont write out of bounds
-                out += f"}},\n"
-            out += AddGuardFooter(s)
+            structs_to_print.append(s)
+    out += f"struct {listName}_chain {{\n"
+    # delete copy & move operators
+    out += f"    {listName}_chain() = default;\n"
+    out += f"    {listName}_chain(const {listName}_chain &) = delete;\n"
+    out += f"    {listName}_chain& operator=(const {listName}_chain &) = delete;\n"
+    out += f"    {listName}_chain({listName}_chain &&) = delete;\n"
+    out += f"    {listName}_chain& operator=({listName}_chain &&) = delete;\n"
+
+    out += f"    void* start_of_chain = nullptr;\n"
+    for s in structs_to_print:
+        out += AddGuardHeader(s)
+        if s.sTypeName is not None:
+            out += f"    {s.name} {s.name[2:]}{{}};\n"
+            # Specific versions of drivers have an incorrect definition of the size of this struct.
+            # We need to artificially pad the structure it just so the driver doesn't write out of bounds and
+            # into other structures that are adjacent. This bug comes from the in-development version of
+            # the extension having a larger size than the final version, so older drivers try to write to
+            # members which don't exist.
+            if s.sTypeName == "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES":
+                out += "    char padding[64];\n"
+        out += AddGuardFooter(s)
+    out += f"    void initialize_chain() noexcept {{\n"
+    for s in structs_to_print:
+        out += AddGuardHeader(s)
+        out += f"        {s.name[2:]}.sType = {s.sTypeName};\n"
+        out += AddGuardFooter(s)
+
+
+    out += f"        std::vector<VkBaseOutStructure*> chain_members;\n"
+    for s in structs_to_print:
+        out += AddGuardHeader(s)
+        out += f"        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{s.name[2:]}));\n"
+        out += AddGuardFooter(s)
+    out += f"\n"
+    out += f"        for(size_t i = 0; i < chain_members.size() - 1; i++){{\n"
+    out += f"            chain_members[i]->pNext = chain_members[i + 1];\n"
+    out += f"        }}\n"
+    out += f"        if (chain_members.size() > 0) start_of_chain = chain_members[0];\n"
     out += f"    }};\n"
+    out += f"}};\n"
+
+    out += f"void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain){{\n"
+    out += f"    chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());\n"
+    out += f"    chain->initialize_chain();\n"
+    out += f"    start.pNext = chain->start_of_chain;\n"
+    out += f"}};\n"
     return out
 
 
@@ -629,7 +660,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
         out += f"AppInstance &inst, AppGpu &gpu"
     out += f", void * place, VulkanVersion version) {{\n"
     out += f"    while (place) {{\n"
-    out += f"        struct VkStructureHeader *structure = (struct VkStructureHeader *)place;\n"
+    out += f"        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;\n"
     out += f"        p.SetSubHeader();\n"
     sorted_structures = sorted(
         all_structures, key=operator.attrgetter('name'))
