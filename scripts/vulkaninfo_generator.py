@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 #
-# Copyright (c) 2019 Valve Corporation
-# Copyright (c) 2019 LunarG, Inc.
-# Copyright (c) 2019 Google Inc.
+# Copyright (c) 2019-2022 Valve Corporation
+# Copyright (c) 2019-2022 LunarG, Inc.
+# Copyright (c) 2019-2022 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ from common_codegen import *
 
 license_header = '''
 /*
- * Copyright (c) 2019-2021 The Khronos Group Inc.
- * Copyright (c) 2019-2021 Valve Corporation
- * Copyright (c) 2019-2021 LunarG, Inc.
+ * Copyright (c) 2019-2022 The Khronos Group Inc.
+ * Copyright (c) 2019-2022 Valve Corporation
+ * Copyright (c) 2019-2022 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -683,7 +683,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
             if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
                 for e in elem:
                     extEnables[e.extNameStr] = e.type
-                
+
         version = None
         oldVersionName = None
         for v in vulkan_versions:
@@ -700,7 +700,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
             has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
 
             if has_version or has_extNameStr:
-                out += f" && \n           ("
+                out += f" &&\n           ("
                 has_printed_condition = False
                 if has_extNameStr:
                     for key, value in extEnables.items():
