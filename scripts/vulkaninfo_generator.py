@@ -411,7 +411,6 @@ def AddGuardFooter(obj):
 def PrintEnumToString(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
-
     out += f"std::string {enum.name}String({enum.name} value) {{\n"
     out += f"    switch (value) {{\n"
     for v in enum.options:
@@ -425,12 +424,13 @@ def PrintEnumToString(enum, gen):
 def PrintEnum(enum, gen):
     out = ''
     out += AddGuardHeader(GetExtension(enum.name, gen))
-    out += f"void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{\n"
-    out += f"    if (p.Type() == OutputType::json) {{\n"
-    out += f"        p.PrintKeyValue(name, value);\n"
-    out += f"    }} else {{\n"
-    out += f"        p.PrintKeyString(name, {enum.name}String(value));\n    }}\n"
-    out += f"}}\n"
+    out += f"""void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{
+    if (p.Type() == OutputType::json) {{
+        p.PrintKeyValue(name, value);
+    }} else {{
+        p.PrintKeyString(name, {enum.name}String(value));\n    }}
+}}
+"""
     out += AddGuardFooter(GetExtension(enum.name, gen))
     return out
 
@@ -451,28 +451,30 @@ def PrintGetFlagStrings(name, bitmask):
 
 def PrintFlags(bitmask, name):
     out = f"void Dump{name}(Printer &p, std::string name, {name} value) {{\n"
-    out += f"    if (p.Type() == OutputType::json) {{ p.PrintKeyValue(name, value); return; }}\n"
-    out += f"    if (static_cast<{bitmask.name}>(value) == 0) {{\n"
-    out += f"        ArrayWrapper arr(p, name, 0);\n"
-    out += f"        if (p.Type() != OutputType::vkconfig_output)\n"
-    out += f'            p.SetAsType().PrintString("None");\n'
-    out += f"        return;\n"
-    out += f"    }}\n"
-    out += f"    auto strings = {bitmask.name}GetStrings(static_cast<{bitmask.name}>(value));\n"
-    out += f"    ArrayWrapper arr(p, name, strings.size());\n"
-    out += f"    for(auto& str : strings){{\n"
-    out += f"        p.SetAsType().PrintString(str);\n"
-    out += f"    }}\n"
-    out += f"}}\n"
+    out += f"""    if (p.Type() == OutputType::json) {{ p.PrintKeyValue(name, value); return; }}
+    if (static_cast<{bitmask.name}>(value) == 0) {{
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }}
+    auto strings = {bitmask.name}GetStrings(static_cast<{bitmask.name}>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){{
+        p.SetAsType().PrintString(str);
+    }}
+}}
+"""
     return out
 
 
 def PrintFlagBits(bitmask):
-    out = f"void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{\n"
-    out += f"    auto strings = {bitmask.name}GetStrings(value);\n"
-    out += f"    p.PrintKeyString(name, strings.at(0));\n"
-    out += f"}}\n"
-    return out
+    return f"""void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{
+    auto strings = {bitmask.name}GetStrings(value);
+    p.PrintKeyString(name, strings.at(0));
+}}
+"""
+
 
 
 def PrintBitMask(bitmask, name, gen):
@@ -609,13 +611,14 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
     for s in sorted_structures:
         if s.name in structures:
             structs_to_print.append(s)
-    out += f"struct {listName}_chain {{\n"
-    # delete copy & move operators
-    out += f"    {listName}_chain() = default;\n"
-    out += f"    {listName}_chain(const {listName}_chain &) = delete;\n"
-    out += f"    {listName}_chain& operator=(const {listName}_chain &) = delete;\n"
-    out += f"    {listName}_chain({listName}_chain &&) = delete;\n"
-    out += f"    {listName}_chain& operator=({listName}_chain &&) = delete;\n"
+    # use default constructor and delete copy & move operators
+    out += f"""struct {listName}_chain {{
+    {listName}_chain() = default;
+    {listName}_chain(const {listName}_chain &) = delete;
+    {listName}_chain& operator=(const {listName}_chain &) = delete;
+    {listName}_chain({listName}_chain &&) = delete;
+    {listName}_chain& operator=({listName}_chain &&) = delete;
+"""
 
     out += f"    void* start_of_chain = nullptr;\n"
     for s in structs_to_print:
@@ -642,19 +645,20 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
         out += AddGuardHeader(s)
         out += f"        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{s.name[2:]}));\n"
         out += AddGuardFooter(s)
-    out += f"\n"
-    out += f"        for(size_t i = 0; i < chain_members.size() - 1; i++){{\n"
-    out += f"            chain_members[i]->pNext = chain_members[i + 1];\n"
-    out += f"        }}\n"
-    out += f"        if (chain_members.size() > 0) start_of_chain = chain_members[0];\n"
-    out += f"    }};\n"
-    out += f"}};\n"
 
-    out += f"void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain){{\n"
-    out += f"    chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());\n"
-    out += f"    chain->initialize_chain();\n"
-    out += f"    start.pNext = chain->start_of_chain;\n"
-    out += f"}};\n"
+    out += f"""
+        for(size_t i = 0; i < chain_members.size() - 1; i++){{
+            chain_members[i]->pNext = chain_members[i + 1];
+        }}
+        if (chain_members.size() > 0) start_of_chain = chain_members[0];
+    }};
+}};
+void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain){{
+    chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());
+    chain->initialize_chain();
+    start.pNext = chain->start_of_chain;
+}};
+"""
     return out
 
 
@@ -716,7 +720,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
                         elif value == EXTENSION_TYPE_INSTANCE:
                             out += f"inst.CheckExtensionEnabled({key})"
                         else:
-                            assert(False and "Should never get here")
+                            assert False, "Should never get here"
                 if has_version:
                     if has_printed_condition:
                         out += f' ||\n            '
