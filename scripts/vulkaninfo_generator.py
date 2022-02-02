@@ -58,7 +58,7 @@ license_header = '''
  */
 '''
 
-custom_formaters = r'''
+custom_formatters = r'''
 void DumpVkConformanceVersion(Printer &p, std::string name, VkConformanceVersion &c) {
     p.PrintKeyString("conformanceVersion", std::to_string(c.major)+ "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "."
              + std::to_string(c.patch));
@@ -104,14 +104,18 @@ struct_blacklist = ['VkConformanceVersion']
 predefined_types = ['char', 'VkBool32', 'uint32_t', 'uint8_t', 'int32_t',
                     'float', 'uint64_t', 'size_t', 'VkDeviceSize', 'int64_t']
 
+EXTENSION_TYPE_INSTANCE = 'instance'
+EXTENSION_TYPE_DEVICE = 'device'
+EXTENSION_TYPE_BOTH = 'both'
+
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
 EXTENSION_CATEGORIES = OrderedDict((
-    ('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': 'both', 'holder_type': 'VkPhysicalDeviceProperties2', 'print_iterator': True}),
-    ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': 'device', 'holder_type':'VkPhysicalDeviceMemoryProperties2', 'print_iterator': False}),
-    ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': 'device', 'holder_type': 'VkPhysicalDeviceFeatures2', 'print_iterator': True}),
-    ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': 'both', 'holder_type': 'VkSurfaceCapabilities2KHR', 'print_iterator': True}),
-    ('format_properties2', {'extends': 'VkFormatProperties2', 'type': 'device', 'holder_type':'VkFormatProperties2', 'print_iterator': True}),
-    ('queue_properties2', {'extends': 'VkQueueFamilyProperties2', 'type': 'device', 'holder_type': 'VkQueueFamilyProperties2', 'print_iterator': True})
+    ('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': EXTENSION_TYPE_BOTH, 'holder_type': 'VkPhysicalDeviceProperties2', 'print_iterator': True}),
+    ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type':'VkPhysicalDeviceMemoryProperties2', 'print_iterator': False}),
+    ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': EXTENSION_TYPE_DEVICE, 'holder_type': 'VkPhysicalDeviceFeatures2', 'print_iterator': True}),
+    ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': EXTENSION_TYPE_BOTH, 'holder_type': 'VkSurfaceCapabilities2KHR', 'print_iterator': True}),
+    ('format_properties2', {'extends': 'VkFormatProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type':'VkFormatProperties2', 'print_iterator': True}),
+    ('queue_properties2', {'extends': 'VkQueueFamilyProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type': 'VkQueueFamilyProperties2', 'print_iterator': True})
                                    ))
 class VulkanInfoGeneratorOptions(GeneratorOptions):
     def __init__(self,
@@ -276,7 +280,7 @@ class VulkanInfoGenerator(OutputGenerator):
         out += license_header + "\n"
         out += "#include \"vulkaninfo.h\"\n"
         out += "#include \"outputprinter.h\"\n"
-        out += custom_formaters
+        out += custom_formatters
 
         for enum in (e for e in self.enums if e.name in types_to_gen):
             out += PrintEnumToString(enum, self)
@@ -657,9 +661,9 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
 def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, vulkan_versions):
     out = ''
     out += f"void chain_iterator_{listName}(Printer &p, "
-    if checkExtLoc in ["instance", "both"]:
+    if checkExtLoc in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
         out += f"AppInstance &inst, "
-    if checkExtLoc in ["device", "both"]:
+    if checkExtLoc in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
         out += f"AppGpu &gpu, "
     out += f"void * place) {{\n"
     out += f"    while (place) {{\n"
@@ -669,7 +673,7 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
         all_structures, key=operator.attrgetter('name'))
 
     version_desc = ''
-    if checkExtLoc in ["device", "both"]:
+    if checkExtLoc in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
         version_desc = "gpu.api_version"
     else:
         version_desc = "inst.instance_version"
@@ -707,9 +711,9 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
                         if has_printed_condition:
                             out += f' || '
                         has_printed_condition = True
-                        if value == "device":
+                        if value == EXTENSION_TYPE_DEVICE:
                             out += f"gpu.CheckPhysicalDeviceExtensionIncluded({key})"
-                        elif value == "instance":
+                        elif value == EXTENSION_TYPE_INSTANCE:
                             out += f"inst.CheckExtensionEnabled({key})"
                         else:
                             assert(False and "Should never get here")
