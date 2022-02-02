@@ -444,7 +444,7 @@ def PrintGetFlagStrings(name, bitmask):
     if bitmask.options[0].value != "0":
         out += f'    if (value == 0) {{ strings.push_back("None"); return strings; }}\n'
     for v in bitmask.options:
-        out += f'    if ({v.name} & value) strings.push_back("{str(v.name[3:])}");\n'
+        out += f'    if ({v.name} & value) strings.push_back("{v.name[3:]}");\n'
     out += f"    return strings;\n}}\n"
     return out
 
