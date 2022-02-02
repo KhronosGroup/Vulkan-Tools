@@ -1533,7 +1533,6 @@ struct AppGpu {
                 if (tiling == VK_IMAGE_TILING_LINEAR) {
                     if (format == color_format) {
                         image_ci_regular.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-                        image_ci_transient.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
                     } else {
                         // linear tiling is only applicable to color image types
                         continue;
