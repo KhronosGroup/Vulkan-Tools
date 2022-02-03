@@ -246,6 +246,7 @@ struct Demo {
     void update_data_buffer();
     bool loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, int32_t &width, int32_t &height);
     bool memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlags requirements_mask, uint32_t &typeIndex);
+    vk::SurfaceFormatKHR pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats);
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     void run();
@@ -1378,18 +1379,10 @@ void Demo::init_vk_swapchain() {
     // Get the list of VkFormat's that are supported:
     auto surface_formats_return = gpu.getSurfaceFormatsKHR(surface);
     VERIFY(surface_formats_return.result == vk::Result::eSuccess);
-    auto surface_formats = surface_formats_return.value;
 
-    // If the format list includes just one entry of VK_FORMAT_UNDEFINED,
-    // the surface has no preferred format.  Otherwise, at least one
-    // supported format will be returned.
-    if (surface_formats.size() == 1 && surface_formats[0].format == vk::Format::eUndefined) {
-        format = vk::Format::eB8G8R8A8Unorm;
-    } else {
-        assert(surface_formats.size() >= 1);
-        format = surface_formats[0].format;
-    }
-    color_space = surface_formats[0].colorSpace;
+    vk::SurfaceFormatKHR surfaceFormat = pick_surface_format(surface_formats_return.value);
+    format = surfaceFormat.format;
+    color_space = surfaceFormat.colorSpace;
 
     quit = false;
     curFrame = 0;
@@ -2354,6 +2347,24 @@ bool Demo::memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlag
 
     // No memory types matched, return failure
     return false;
+}
+
+vk::SurfaceFormatKHR Demo::pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats) {
+    // Prefer non-SRGB formats...
+    for (const auto &surface_format : surface_formats) {
+        const vk::Format format = surface_format.format;
+
+        if (format == vk::Format::eR8G8B8A8Unorm || format == vk::Format::eB8G8R8A8Unorm ||
+            format == vk::Format::eA2B10G10R10UnormPack32 || format == vk::Format::eA2R10G10B10UnormPack32 ||
+            format == vk::Format::eR16G16B16A16Sfloat) {
+            return surface_format;
+        }
+    }
+
+    printf("Can't find our preferred formats... Falling back to first exposed format. Rendering may be incorrect.\n");
+
+    assert(surface_formats.size() >= 1);
+    return surface_formats[0];
 }
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
