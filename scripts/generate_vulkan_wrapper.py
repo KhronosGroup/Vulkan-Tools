@@ -1458,7 +1458,7 @@ VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=
 VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
