@@ -32,8 +32,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <csignal>
-#include <iostream>
+
 #include <sstream>
+#include <iostream>
 #include <memory>
 
 #define VULKAN_HPP_NO_EXCEPTIONS
@@ -50,14 +51,9 @@
 #endif
 
 #define APP_SHORT_NAME "vkcubepp"
-#ifdef _WIN32
-#define APP_NAME_STR_LEN 80
-#endif
 
 // Allow a maximum of two outstanding presentation operations.
-#define FRAME_LAG 2
-
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+constexpr uint32_t FRAME_LAG = 2;
 
 #ifdef _WIN32
 #define ERR_EXIT(err_msg, err_class)                                          \
@@ -206,8 +202,7 @@ struct SwapchainImageResources {
 };
 
 struct Demo {
-    Demo();
-    void build_image_ownership_cmd(const SwapchainImageResources &);
+    void build_image_ownership_cmd(const SwapchainImageResources &swapchain_image_resource);
     vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
     void cleanup();
     void destroy_swapchain_related_resources();
@@ -217,7 +212,7 @@ struct Demo {
     void draw_build_cmd(const SwapchainImageResources &swapchain_image_resource);
     void prepare_init_cmd();
     void flush_init_cmd();
-    void init(int, char **);
+    void init(int argc, char **argv);
     void init_connection();
     void init_vk();
     void init_vk_swapchain();
@@ -229,7 +224,7 @@ struct Demo {
     void prepare_descriptor_pool();
     void prepare_descriptor_set();
     void prepare_framebuffers();
-    vk::ShaderModule prepare_shader_module(const uint32_t *, size_t);
+    vk::ShaderModule prepare_shader_module(const uint32_t *code, size_t size);
     vk::ShaderModule prepare_vs();
     vk::ShaderModule prepare_fs();
     void prepare_pipeline();
@@ -253,17 +248,17 @@ struct Demo {
     void create_window();
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
     void create_xlib_window();
-    void handle_xlib_event(const XEvent *);
+    void handle_xlib_event(const XEvent *event);
     void run_xlib();
 #elif defined(VK_USE_PLATFORM_XCB_KHR)
-    void handle_xcb_event(const xcb_generic_event_t *);
+    void handle_xcb_event(const xcb_generic_event_t *event);
     void run_xcb();
     void create_xcb_window();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     void run();
     void create_window();
 #elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    void handle_directfb_event(const DFBInputEvent *);
+    void handle_directfb_event(const DFBInputEvent *event);
     void run_directfb();
     void create_directfb_window();
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
@@ -273,7 +268,7 @@ struct Demo {
     void run_display();
 #endif
 
-    std::string name;  // Name to put on the window/icon
+    std::string name = "vkcubepp";  // Name to put on the window/icon
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     HINSTANCE connection = nullptr;  // hInstance - Windows Instance
     HWND window = nullptr;           // hWnd - window handle
@@ -374,9 +369,9 @@ struct Demo {
     vk::RenderPass render_pass;
     vk::Pipeline pipeline;
 
-    mat4x4 projection_matrix;
-    mat4x4 view_matrix;
-    mat4x4 model_matrix;
+    mat4x4 projection_matrix = {};
+    mat4x4 view_matrix = {};
+    mat4x4 model_matrix = {};
 
     float spin_angle = 0.0f;
     float spin_increment = 0.0f;
@@ -470,7 +465,7 @@ static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
         wl_pointer_add_listener(demo->pointer, &pointer_listener, demo);
     } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo->pointer) {
         wl_pointer_destroy(demo->pointer);
-        demo->pointer = NULL;
+        demo->pointer = nullptr;
     }
     // Subscribe to keyboard events
     if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
@@ -478,7 +473,7 @@ static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
         wl_keyboard_add_listener(demo->keyboard, &keyboard_listener, demo);
     } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD)) {
         wl_keyboard_destroy(demo->keyboard);
-        demo->keyboard = NULL;
+        demo->keyboard = nullptr;
     }
 }
 
@@ -512,15 +507,7 @@ static void registry_handle_global_remove(void *data, wl_registry *registry, uin
 static const wl_registry_listener registry_listener = {registry_handle_global, registry_handle_global_remove};
 #endif
 
-Demo::Demo() {
-    name = APP_SHORT_NAME;
-
-    memset(projection_matrix, 0, sizeof(projection_matrix));
-    memset(view_matrix, 0, sizeof(view_matrix));
-    memset(model_matrix, 0, sizeof(model_matrix));
-}
-
-void Demo::build_image_ownership_cmd(SwapchainImageResources const &swapchain_image_resource) {
+void Demo::build_image_ownership_cmd(const SwapchainImageResources &swapchain_image_resource) {
     auto result = swapchain_image_resource.graphics_to_present_cmd.begin(
         vk::CommandBufferBeginInfo().setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse));
     VERIFY(result == vk::Result::eSuccess);
@@ -614,7 +601,7 @@ void Demo::cleanup() {
 }
 
 void Demo::create_device() {
-    float priorities = {0.0};
+    float priorities = 0.0;
 
     std::vector<vk::DeviceQueueCreateInfo> queues;
     queues.push_back(vk::DeviceQueueCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setQueuePriorities(priorities));
@@ -642,7 +629,7 @@ void Demo::draw() {
     device.waitForFences(fences[frame_index], VK_TRUE, UINT64_MAX);
     device.resetFences({fences[frame_index]});
 
-    auto acquire_result = vk::Result::eSuccess;
+    vk::Result acquire_result;
     do {
         acquire_result =
             device.acquireNextImageKHR(swapchain, UINT64_MAX, image_acquired_semaphores[frame_index], vk::Fence(), &current_buffer);
@@ -744,7 +731,7 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
 
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
     commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline_layout, 0, swapchain_image_resource.descriptor_set,
-                                     nullptr);
+                                     {});
     float viewport_dimension;
     float viewport_x = 0.0f;
     float viewport_y = 0.0f;
@@ -759,10 +746,10 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
     commandBuffer.setViewport(0, vk::Viewport()
                                      .setX(viewport_x)
                                      .setY(viewport_y)
-                                     .setWidth(static_cast<float>(viewport_dimension))
-                                     .setHeight(static_cast<float>(viewport_dimension))
-                                     .setMinDepth(static_cast<float>(0.0f))
-                                     .setMaxDepth(static_cast<float>(1.0f)));
+                                     .setWidth(viewport_dimension)
+                                     .setHeight(viewport_dimension)
+                                     .setMinDepth(0.0f)
+                                     .setMaxDepth(1.0f));
 
     commandBuffer.setScissor(0, vk::Rect2D(vk::Offset2D(0, 0), vk::Extent2D(width, height)));
     commandBuffer.draw(12 * 3, 1, 0, 0);
@@ -922,7 +909,7 @@ void Demo::init(int argc, char **argv) {
               << "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = " << VK_PRESENT_MODE_FIFO_RELAXED_KHR << "\n";
 
 #if defined(_WIN32)
-        if (!suppress_popups) MessageBox(NULL, usage.str().c_str(), "Usage Error", MB_OK);
+        if (!suppress_popups) MessageBox(nullptr, usage.str().c_str(), "Usage Error", MB_OK);
 #else
         std::cerr << usage.str();
         std::cerr.flush();
@@ -989,16 +976,15 @@ void Demo::init_connection() {
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
 int find_display_gpu(int gpu_number, const std::vector<vk::PhysicalDevice> &physical_devices) {
     uint32_t display_count = 0;
-    vk::Result result;
     int gpu_return = gpu_number;
     if (gpu_number >= 0) {
-        result = physical_devices[gpu_number].getDisplayPropertiesKHR(&display_count, nullptr);
-        VERIFY(result == vk::Result::eSuccess);
+        auto display_props_return = physical_devices[gpu_number].getDisplayPropertiesKHR();
+        VERIFY(display_props_return.result == vk::Result::eSuccess);
     } else {
         for (uint32_t i = 0; i < physical_devices.size(); i++) {
-            result = physical_devices[i].getDisplayPropertiesKHR(&display_count, nullptr);
-            VERIFY(result == vk::Result::eSuccess);
-            if (display_count) {
+            auto display_props_return = physical_devices[i].getDisplayPropertiesKHR();
+            VERIFY(display_props_return.result == vk::Result::eSuccess);
+            if (display_props_return.value.size() > 0) {
                 gpu_return = i;
                 break;
             }
@@ -1042,43 +1028,42 @@ void Demo::init_vk() {
     for (const auto &extension : instance_extensions_return.value) {
         if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
             enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
-        }
-        if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             surfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
         }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-        if (!strcmp(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-        if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_XCB_KHR)
-        if (!strcmp(VK_KHR_XCB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_KHR_XCB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        if (!strcmp(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);
         }
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
-        if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, extension.extensionName)) {
+        else if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             platformSurfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
         }
@@ -1243,8 +1228,7 @@ void Demo::init_vk() {
         if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, extension.extensionName)) {
             swapchainExtFound = 1;
             enabled_device_extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-        }
-        if (!strcmp("VK_KHR_portability_subset", extension.extensionName)) {
+        } else if (!strcmp("VK_KHR_portability_subset", extension.extensionName)) {
             enabled_device_extensions.push_back("VK_KHR_portability_subset");
         }
     }
@@ -1325,14 +1309,16 @@ void Demo::create_surface() {
 void Demo::init_vk_swapchain() {
     create_surface();
     // Iterate over each queue to learn whether it supports presenting:
-    std::vector<vk::Bool32> supportsPresent(queue_props.size());
-    for (uint32_t i = 0; i < supportsPresent.size(); i++) {
-        gpu.getSurfaceSupportKHR(i, surface, &supportsPresent[i]);
+    std::vector<vk::Bool32> supportsPresent;
+    for (uint32_t i = 0; i < static_cast<uint32_t>(queue_props.size()); i++) {
+        auto supports = gpu.getSurfaceSupportKHR(i, surface);
+        VERIFY(supports.result == vk::Result::eSuccess);
+        supportsPresent.push_back(supports.value);
     }
 
     uint32_t graphicsQueueFamilyIndex = UINT32_MAX;
     uint32_t presentQueueFamilyIndex = UINT32_MAX;
-    for (uint32_t i = 0; i < queue_props.size(); i++) {
+    for (uint32_t i = 0; i < static_cast<uint32_t>(queue_props.size()); i++) {
         if (queue_props[i].queueFlags & vk::QueueFlagBits::eGraphics) {
             if (graphicsQueueFamilyIndex == UINT32_MAX) {
                 graphicsQueueFamilyIndex = i;
@@ -1369,11 +1355,11 @@ void Demo::init_vk_swapchain() {
 
     create_device();
 
-    device.getQueue(graphics_queue_family_index, 0, &graphics_queue);
+    graphics_queue = device.getQueue(graphics_queue_family_index, 0);
     if (!separate_present_queue) {
         present_queue = graphics_queue;
     } else {
-        device.getQueue(present_queue_family_index, 0, &present_queue);
+        present_queue = device.getQueue(present_queue_family_index, 0);
     }
 
     // Get the list of VkFormat's that are supported:
@@ -1575,15 +1561,15 @@ void Demo::prepare_buffers() {
 
     // Find a supported composite alpha mode - one of these is guaranteed to be set
     vk::CompositeAlphaFlagBitsKHR compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
-    vk::CompositeAlphaFlagBitsKHR compositeAlphaFlags[4] = {
+    std::array<vk::CompositeAlphaFlagBitsKHR, 4> compositeAlphaFlags = {
         vk::CompositeAlphaFlagBitsKHR::eOpaque,
         vk::CompositeAlphaFlagBitsKHR::ePreMultiplied,
         vk::CompositeAlphaFlagBitsKHR::ePostMultiplied,
         vk::CompositeAlphaFlagBitsKHR::eInherit,
     };
-    for (uint32_t i = 0; i < ARRAY_SIZE(compositeAlphaFlags); i++) {
-        if (surfCapabilities.supportedCompositeAlpha & compositeAlphaFlags[i]) {
-            compositeAlpha = compositeAlphaFlags[i];
+    for (const auto &compositeAlphaFlag : compositeAlphaFlags) {
+        if (surfCapabilities.supportedCompositeAlpha & compositeAlphaFlag) {
+            compositeAlpha = compositeAlphaFlag;
             break;
         }
     }
@@ -1611,7 +1597,7 @@ void Demo::prepare_buffers() {
     // Note: destroying the swapchain also cleans up all its associated
     // presentable images once the platform is done with them.
     if (oldSwapchain) {
-        device.destroySwapchainKHR(oldSwapchain, nullptr);
+        device.destroySwapchainKHR(oldSwapchain);
     }
 
     auto swapchain_images_return = device.getSwapchainImagesKHR(swapchain);
@@ -1787,10 +1773,8 @@ void Demo::prepare_descriptor_set() {
         tex_descs[i].setImageLayout(vk::ImageLayout::eShaderReadOnlyOptimal);
     }
 
-    vk::WriteDescriptorSet writes[2];
-
+    std::array<vk::WriteDescriptorSet, 2> writes;
     writes[0].setDescriptorCount(1).setDescriptorType(vk::DescriptorType::eUniformBuffer).setPBufferInfo(&buffer_info);
-
     writes[1]
         .setDstBinding(1)
         .setDescriptorCount(texture_count)
@@ -1804,7 +1788,7 @@ void Demo::prepare_descriptor_set() {
         buffer_info.setBuffer(swapchain_image_resource.uniform_buffer);
         writes[0].setDstSet(swapchain_image_resource.descriptor_set);
         writes[1].setDstSet(swapchain_image_resource.descriptor_set);
-        device.updateDescriptorSets(2, writes, 0, nullptr);
+        device.updateDescriptorSets(writes, {});
     }
 }
 
@@ -1884,24 +1868,23 @@ void Demo::prepare_pipeline() {
 
     auto const dynamicStateInfo = vk::PipelineDynamicStateCreateInfo().setDynamicStates(dynamicStates);
 
-    auto const pipeline = vk::GraphicsPipelineCreateInfo()
-                              .setStages(shaderStageInfo)
-                              .setPVertexInputState(&vertexInputInfo)
-                              .setPInputAssemblyState(&inputAssemblyInfo)
-                              .setPViewportState(&viewportInfo)
-                              .setPRasterizationState(&rasterizationInfo)
-                              .setPMultisampleState(&multisampleInfo)
-                              .setPDepthStencilState(&depthStencilInfo)
-                              .setPColorBlendState(&colorBlendInfo)
-                              .setPDynamicState(&dynamicStateInfo)
-                              .setLayout(pipeline_layout)
-                              .setRenderPass(render_pass);
-
-    result = device.createGraphicsPipelines(pipelineCache, 1, &pipeline, nullptr, &this->pipeline);
+    auto pipline_return = device.createGraphicsPipelines(pipelineCache, vk::GraphicsPipelineCreateInfo()
+                                                                            .setStages(shaderStageInfo)
+                                                                            .setPVertexInputState(&vertexInputInfo)
+                                                                            .setPInputAssemblyState(&inputAssemblyInfo)
+                                                                            .setPViewportState(&viewportInfo)
+                                                                            .setPRasterizationState(&rasterizationInfo)
+                                                                            .setPMultisampleState(&multisampleInfo)
+                                                                            .setPDepthStencilState(&depthStencilInfo)
+                                                                            .setPColorBlendState(&colorBlendInfo)
+                                                                            .setPDynamicState(&dynamicStateInfo)
+                                                                            .setLayout(pipeline_layout)
+                                                                            .setRenderPass(render_pass));
     VERIFY(result == vk::Result::eSuccess);
+    pipeline = pipline_return.value.at(0);
 
-    device.destroyShaderModule(frag_shader_module, nullptr);
-    device.destroyShaderModule(vert_shader_module, nullptr);
+    device.destroyShaderModule(frag_shader_module);
+    device.destroyShaderModule(vert_shader_module);
 }
 
 void Demo::prepare_render_pass() {
@@ -1980,7 +1963,7 @@ void Demo::prepare_texture_buffer(const char *filename, texture_object &tex_obj)
     vk::SubresourceLayout tex_layout;
     int32_t tex_width;
     int32_t tex_height;
-    if (!loadTexture(filename, NULL, tex_layout, tex_width, tex_height)) {
+    if (!loadTexture(filename, nullptr, tex_layout, tex_width, tex_height)) {
         ERR_EXIT("Failed to load textures", "Load Texture Failure");
     }
 
@@ -2309,7 +2292,7 @@ bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::Subresource
     while (strncmp(cPtr++, "\n", 1))
         ;
     sscanf(cPtr, "%u %u", &width, &height);
-    if (rgba_data == NULL) {
+    if (rgba_data == nullptr) {
         return true;
     }
     while (strncmp(cPtr++, "\n", 1))
@@ -2757,7 +2740,7 @@ void Demo::run_directfb() {
 void Demo::create_directfb_window() {
     DFBResult ret;
 
-    ret = DirectFBInit(NULL, NULL);
+    ret = DirectFBInit(nullptr, nullptr);
     if (ret) {
         printf("DirectFBInit failed to initialize DirectFB!\n");
         fflush(stdout);
@@ -2801,85 +2784,53 @@ void Demo::run() {
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
 
 vk::Result Demo::create_display_surface() {
-    vk::Result result;
-    uint32_t display_count;
-    uint32_t mode_count;
-    uint32_t plane_count;
-    vk::DisplayPropertiesKHR display_props;
-    vk::DisplayKHR display;
-    vk::DisplayModePropertiesKHR mode_props;
-    vk::DisplayPlanePropertiesKHR *plane_props;
-    vk::Bool32 found_plane = VK_FALSE;
-    uint32_t plane_index;
-    vk::Extent2D image_extent;
+    auto display_properties_return = gpu.getDisplayPropertiesKHR();
+    VERIFY((display_properties_return.result == vk::Result::eSuccess) ||
+           (display_properties_return.result == vk::Result::eIncomplete));
 
-    display_count = 1;
-    result = gpu.getDisplayPropertiesKHR(&display_count, &display_props);
-    VERIFY((result == vk::Result::eSuccess) || (result == vk::Result::eIncomplete));
+    auto display = display_properties_return.value.at(0).display;
 
-    display = display_props.display;
+    auto display_mode_props_return = gpu.getDisplayModePropertiesKHR(display);
+    VERIFY(display_mode_props_return.result == vk::Result::eSuccess);
 
-    // Get the first mode of the display
-    result = gpu.getDisplayModePropertiesKHR(display, &mode_count, nullptr);
-    VERIFY(result == vk::Result::eSuccess);
-
-    if (mode_count == 0) {
+    if (display_mode_props_return.value.size() == 0) {
         printf("Cannot find any mode for the display!\n");
         fflush(stdout);
         exit(1);
     }
-
-    mode_count = 1;
-    result = gpu.getDisplayModePropertiesKHR(display, &mode_count, &mode_props);
-    VERIFY((result == vk::Result::eSuccess) || (result == vk::Result::eIncomplete));
+    auto display_mode_prop = display_mode_props_return.value.at(0);
 
     // Get the list of planes
-    result = gpu.getDisplayPlanePropertiesKHR(&plane_count, nullptr);
-    VERIFY(result == vk::Result::eSuccess);
+    auto display_plane_props_return = gpu.getDisplayPlanePropertiesKHR();
+    VERIFY(display_plane_props_return.result == vk::Result::eSuccess);
 
-    if (plane_count == 0) {
+    if (display_plane_props_return.value.size() == 0) {
         printf("Cannot find any plane!\n");
         fflush(stdout);
         exit(1);
     }
 
-    plane_props = (vk::DisplayPlanePropertiesKHR *)malloc(sizeof(vk::DisplayPlanePropertiesKHR) * plane_count);
-    VERIFY(plane_props != nullptr);
-
-    result = gpu.getDisplayPlanePropertiesKHR(&plane_count, plane_props);
-    VERIFY(result == vk::Result::eSuccess);
-
+    vk::Bool32 found_plane = VK_FALSE;
     // Find a plane compatible with the display
-    for (plane_index = 0; plane_index < plane_count; plane_index++) {
-        uint32_t supported_count;
-        vk::DisplayKHR *supported_displays;
-
+    for (uint32_t plane_index = 0; plane_index < display_plane_props_return.value.size(); plane_index++) {
         // Disqualify planes that are bound to a different display
         if (plane_props[plane_index].currentDisplay && (plane_props[plane_index].currentDisplay != display)) {
             continue;
         }
 
-        result = gpu.getDisplayPlaneSupportedDisplaysKHR(plane_index, &supported_count, nullptr);
-        VERIFY(result == vk::Result::eSuccess);
+        auto display_plane_supported_displays_return = gpu.getDisplayPlaneSupportedDisplaysKHR(plane_index);
+        VERIFY(display_plane_supported_displays_return.result == vk::Result::eSuccess);
 
-        if (supported_count == 0) {
+        if (display_plane_supported_displays_return.value.size() == 0) {
             continue;
         }
 
-        supported_displays = (vk::DisplayKHR *)malloc(sizeof(vk::DisplayKHR) * supported_count);
-        VERIFY(supported_displays != nullptr);
-
-        result = gpu.getDisplayPlaneSupportedDisplaysKHR(plane_index, &supported_count, supported_displays);
-        VERIFY(result == vk::Result::eSuccess);
-
-        for (uint32_t i = 0; i < supported_count; i++) {
-            if (supported_displays[i] == display) {
+        for (const auto &supported_display : display_plane_supported_displays_return.value) {
+            if (supported_display == display) {
                 found_plane = VK_TRUE;
                 break;
             }
         }
-
-        free(supported_displays);
 
         if (found_plane) {
             break;
@@ -2892,10 +2843,7 @@ vk::Result Demo::create_display_surface() {
         exit(1);
     }
 
-    free(plane_props);
-
-    vk::DisplayPlaneCapabilitiesKHR planeCaps;
-    gpu.getDisplayPlaneCapabilitiesKHR(mode_props.displayMode, plane_index, &planeCaps);
+    vk::DisplayPlaneCapabilitiesKHR planeCaps = gpu.getDisplayPlaneCapabilitiesKHR(mode_props.displayMode, plane_index);
     // Find a supported alpha mode
     vk::DisplayPlaneAlphaFlagBitsKHR alphaMode = vk::DisplayPlaneAlphaFlagBitsKHR::eOpaque;
     std::array<vk::DisplayPlaneAlphaFlagBitsKHR, 4> alphaModes = {
@@ -2911,8 +2859,8 @@ vk::Result Demo::create_display_surface() {
         }
     }
 
-    image_extent.setWidth(mode_props.parameters.visibleRegion.width);
-    image_extent.setHeight(mode_props.parameters.visibleRegion.height);
+    vk::Extent2D image_extent{};
+    image_extent.setWidth(mode_props.parameters.visibleRegion.width).setHeight(mode_props.parameters.visibleRegion.height);
 
     auto const createInfo = vk::DisplaySurfaceCreateInfoKHR()
                                 .setDisplayMode(mode_props.displayMode)
