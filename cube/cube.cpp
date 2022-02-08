@@ -16,6 +16,7 @@
  * limitations under the License.
  *
  * Author: Jeremy Hayes <jeremy@lunarg.com>
+ * Author: Charles Giessen <charles@lunarg.com>
  */
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
@@ -69,6 +70,21 @@ constexpr uint32_t FRAME_LAG = 2;
         exit(1);                     \
     } while (0)
 #endif
+
+// easier to use the C function for extension functions
+PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
+PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance,
+                                                              const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+                                                              const VkAllocationCallbacks *pAllocator,
+                                                              VkDebugUtilsMessengerEXT *pMessenger) {
+    return pfnVkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
+}
+
+VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
+                                                           VkAllocationCallbacks const *pAllocator) {
+    return pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
+}
 
 struct texture_object {
     vk::Sampler sampler;
@@ -243,6 +259,11 @@ struct Demo {
     bool memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlags requirements_mask, uint32_t &typeIndex);
     vk::SurfaceFormatKHR pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats);
 
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                                   VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                                   const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                                   void *pUserData);
+
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     void run();
     void create_window();
@@ -312,6 +333,7 @@ struct Demo {
     int32_t gpu_number = 0;
 
     vk::Instance inst;
+    vk::DebugUtilsMessengerEXT debug_messenger;
     vk::PhysicalDevice gpu;
     vk::Device device;
     vk::Queue graphics_queue;
@@ -389,6 +411,8 @@ struct Demo {
     uint32_t curFrame = 0;
     uint32_t frameCount = 0;
     bool validate = false;
+    bool in_callback = false;
+    bool use_debug_messenger = false;
     bool use_break = false;
     bool suppress_popups = false;
     bool force_errors = false;
@@ -596,7 +620,9 @@ void Demo::cleanup() {
     window->Release(window);
     dfb->Release(dfb);
 #endif
-
+    if (use_debug_messenger) {
+        inst.destroyDebugUtilsMessengerEXT(debug_messenger);
+    }
     inst.destroy();
 }
 
@@ -984,6 +1010,85 @@ int find_display_gpu(int gpu_number, const std::vector<vk::PhysicalDevice> &phys
         return -1;
 }
 #endif
+VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                              VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                              const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                              void *pUserData) {
+    std::ostringstream message;
+    Demo &demo = *static_cast<Demo *>(pUserData);
+
+    if (demo.use_break) {
+#ifndef WIN32
+        raise(SIGTRAP);
+#else
+        DebugBreak();
+#endif
+    }
+    message << vk::to_string(vk::DebugUtilsMessageSeverityFlagBitsEXT(messageSeverity));
+    message << " : " + vk::to_string(vk::DebugUtilsMessageTypeFlagsEXT(messageType));
+
+    if (vk::DebugUtilsMessageTypeFlagsEXT(messageType) & vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation) {
+        validation_error = 1;
+    }
+
+    message << " - Message Id Number: " << std::to_string(pCallbackData->messageIdNumber);
+    message << " | Message Id Name: " << pCallbackData->pMessageIdName << "\n\t" << pCallbackData->pMessage << "\n";
+
+    if (pCallbackData->objectCount > 0) {
+        message << "\n\tObjects - " << pCallbackData->objectCount << "\n";
+        for (uint32_t object = 0; object < pCallbackData->objectCount; ++object) {
+            if (NULL != pCallbackData->pObjects[object].pObjectName && strlen(pCallbackData->pObjects[object].pObjectName) > 0) {
+                message << "\t\tObject[" << object << "] - "
+                        << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle "
+                        << pCallbackData->pObjects[object].objectHandle << ", Name \""
+                        << pCallbackData->pObjects[object].pObjectName << "\"\n";
+            } else {
+                message << "\t\tObject[" << object << "] - "
+                        << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle "
+                        << pCallbackData->pObjects[object].objectHandle << "\n";
+            }
+        }
+    }
+    if (pCallbackData->cmdBufLabelCount > 0) {
+        message << "\n\tCommand Buffer Labels - " << pCallbackData->cmdBufLabelCount << "\n";
+        for (uint32_t cmd_buf_label = 0; cmd_buf_label < pCallbackData->cmdBufLabelCount; ++cmd_buf_label) {
+            message << "\t\tLabel[" << cmd_buf_label << "] - " << pCallbackData->pCmdBufLabels[cmd_buf_label].pLabelName << " { "
+                    << pCallbackData->pCmdBufLabels[cmd_buf_label].color[0] << ", "
+                    << pCallbackData->pCmdBufLabels[cmd_buf_label].color[1] << ", "
+                    << pCallbackData->pCmdBufLabels[cmd_buf_label].color[2] << ", "
+                    << pCallbackData->pCmdBufLabels[cmd_buf_label].color[2] << "}\n";
+        }
+    }
+
+#ifdef _WIN32
+
+    if (!demo.suppress_popups) {
+        demo.in_callback = true;
+        auto message_string = message.str();
+        MessageBox(NULL, message_string.c_str(), "Alert", MB_OK);
+        demo.in_callback = false;
+    }
+
+#elif defined(ANDROID)
+
+    if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
+        __android_log_print(ANDROID_LOG_INFO, APP_SHORT_NAME, "%s", message.str());
+    } else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+        __android_log_print(ANDROID_LOG_WARN, APP_SHORT_NAME, "%s", message.str());
+    } else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+        __android_log_print(ANDROID_LOG_ERROR, APP_SHORT_NAME, "%s", message.str());
+    } else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
+        __android_log_print(ANDROID_LOG_VERBOSE, APP_SHORT_NAME, "%s", message.str());
+    } else {
+        __android_log_print(ANDROID_LOG_INFO, APP_SHORT_NAME, "%s", message.str());
+    }
+
+#else
+    std::cout << message.str() << std::endl;  // use endl to force a flush
+#endif
+    return false;  // Don't bail out, but keep going.
+}
+
 void Demo::init_vk() {
     std::vector<char const *> instance_validation_layers = {"VK_LAYER_KHRONOS_validation"};
 
@@ -1016,6 +1121,9 @@ void Demo::init_vk() {
     for (const auto &extension : instance_extensions_return.value) {
         if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, extension.extensionName)) {
             enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
+        } else if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, extension.extensionName)) {
+            use_debug_messenger = true;
+            enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             surfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
@@ -1112,12 +1220,22 @@ void Demo::init_vk() {
                  "vkCreateInstance Failure");
 #endif
     }
+
+    vk::DebugUtilsMessageSeverityFlagsEXT severityFlags(vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+                                                        vk::DebugUtilsMessageSeverityFlagBitsEXT::eError);
+    vk::DebugUtilsMessageTypeFlagsEXT messageTypeFlags(vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+                                                       vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+                                                       vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation);
+    auto debug_utils_create_info = vk::DebugUtilsMessengerCreateInfoEXT({}, severityFlags, messageTypeFlags,
+                                                                        &debug_messenger_callback, static_cast<void *>(this));
+
     auto const app = vk::ApplicationInfo()
                          .setPApplicationName(APP_SHORT_NAME)
                          .setApplicationVersion(0)
                          .setPEngineName(APP_SHORT_NAME)
                          .setEngineVersion(0);
     auto const inst_info = vk::InstanceCreateInfo()
+                               .setPNext((use_debug_messenger && validate) ? &debug_utils_create_info : nullptr)
                                .setPApplicationInfo(&app)
                                .setPEnabledLayerNames(enabled_layers)
                                .setPEnabledExtensionNames(enabled_instance_extensions);
@@ -1141,6 +1259,17 @@ void Demo::init_vk() {
             "vkCreateInstance Failure");
     }
     inst = instance_result.value;
+
+    if (use_debug_messenger) {
+        pfnVkCreateDebugUtilsMessengerEXT =
+            reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(inst.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+        pfnVkDestroyDebugUtilsMessengerEXT =
+            reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(inst.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
+        VERIFY(pfnVkCreateDebugUtilsMessengerEXT != nullptr && pfnVkDestroyDebugUtilsMessengerEXT != nullptr);
+        auto create_debug_messenger_return = inst.createDebugUtilsMessengerEXT(debug_utils_create_info);
+        VERIFY(create_debug_messenger_return.result == vk::Result::eSuccess);
+        debug_messenger = create_debug_messenger_return.value;
+    }
 
     auto physical_device_return = inst.enumeratePhysicalDevices();
     VERIFY(physical_device_return.result == vk::Result::eSuccess);
@@ -2875,7 +3004,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             PostQuitMessage(validation_error);
             break;
         case WM_PAINT:
-            demo.run();
+            if (!demo.in_callback) {
+                demo.run();
+            }
             break;
         case WM_GETMINMAXINFO:  // set window's minimum size
             ((MINMAXINFO *)lParam)->ptMinTrackSize = demo.minsize;
