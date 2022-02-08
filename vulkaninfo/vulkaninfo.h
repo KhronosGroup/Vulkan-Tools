@@ -1513,11 +1513,23 @@ struct AppGpu {
             enabled_features.sparseBinding = VK_TRUE;
         }
 
+        std::vector<const char *> extensions_to_enable;
+        for (const auto &extension : device_extensions) {
+            if (std::string(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) == extension.extensionName) {
+                extensions_to_enable.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
+            }
+        }
+
         const float queue_priority = 1.0f;
         // pick the first queue index and hope for the best
         const VkDeviceQueueCreateInfo q_ci = {VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, nullptr, 0, 0, 1, &queue_priority};
-        const VkDeviceCreateInfo device_ci = {
-            VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, nullptr, 0, 1, &q_ci, 0, nullptr, 0, nullptr, &enabled_features};
+        VkDeviceCreateInfo device_ci{};
+        device_ci.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        device_ci.queueCreateInfoCount = 1;
+        device_ci.pQueueCreateInfos = &q_ci;
+        device_ci.enabledExtensionCount = static_cast<uint32_t>(extensions_to_enable.size());
+        device_ci.ppEnabledExtensionNames = extensions_to_enable.data();
+        device_ci.pEnabledFeatures = &enabled_features;
 
         VkResult err = inst.dll.fp_vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
         if (err) THROW_VK_ERR("vkCreateDevice", err);
