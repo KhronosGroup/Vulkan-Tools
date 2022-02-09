@@ -703,6 +703,11 @@ struct AppInstance {
     std::vector<VkPhysicalDevice> FindPhysicalDevices() {
         return GetVector<VkPhysicalDevice>("vkEnumeratePhysicalDevices", dll.fp_vkEnumeratePhysicalDevices, instance);
     }
+
+    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(VkPhysicalDevice phys_device, const char *layer_name) {
+        return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties", dll.fp_vkEnumerateDeviceExtensionProperties,
+                                                phys_device, layer_name);
+    }
 };
 
 // --------- Platform Specific Presentation Calls --------- //
@@ -1277,6 +1282,15 @@ util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilit
                                                                                     VkPhysicalDeviceGroupProperties group) {
     // Build create info for logical device made from all physical devices in this group.
     std::vector<std::string> extensions_list = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DEVICE_GROUP_EXTENSION_NAME};
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    for (const auto &extension : inst.AppGetPhysicalDeviceLayerExtensions(group.physicalDevices[0], nullptr)) {
+        if (std::string(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) == extension.extensionName) {
+            extensions_list.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
+        }
+    }
+#endif
+
     VkDeviceGroupDeviceCreateInfoKHR dg_ci = {VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR, nullptr,
                                               group.physicalDeviceCount, group.physicalDevices};
 
@@ -1507,18 +1521,20 @@ struct AppGpu {
             }
         }
 
-        device_extensions = AppGetPhysicalDeviceLayerExtensions(nullptr);
+        device_extensions = inst.AppGetPhysicalDeviceLayerExtensions(phys_device, nullptr);
 
         if (features.sparseBinding) {
             enabled_features.sparseBinding = VK_TRUE;
         }
 
         std::vector<const char *> extensions_to_enable;
+#ifdef VK_ENABLE_BETA_EXTENSIONS
         for (const auto &extension : device_extensions) {
             if (std::string(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) == extension.extensionName) {
                 extensions_to_enable.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
             }
         }
+#endif
 
         const float queue_priority = 1.0f;
         // pick the first queue index and hope for the best
@@ -1661,11 +1677,6 @@ struct AppGpu {
     bool CheckPhysicalDeviceExtensionIncluded(std::string extension_to_check) {
         return std::any_of(device_extensions.begin(), device_extensions.end(),
                            [extension_to_check](VkExtensionProperties &prop) { return prop.extensionName == extension_to_check; });
-    }
-
-    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(const char *layer_name) {
-        return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties",
-                                                inst.dll.fp_vkEnumerateDeviceExtensionProperties, phys_device, layer_name);
     }
 
     // Helper function to determine whether a format range is currently supported.
