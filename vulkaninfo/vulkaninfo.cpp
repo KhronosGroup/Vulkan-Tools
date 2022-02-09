@@ -75,7 +75,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 ArrayWrapper arr_devices(p, "Devices", gpus.size());
                 for (auto &gpu : gpus) {
                     p.PrintKeyValue("GPU id", gpu->id, gpu->props.deviceName);
-                    auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(props.layerName);
+                    auto exts = gpu->inst.AppGetPhysicalDeviceLayerExtensions(gpu->phys_device, props.layerName);
                     DumpExtensions(p, "Layer-Device", exts);
                     p.AddNewline();
                 }
@@ -106,7 +106,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 for (auto &gpu : gpus) {
                     ObjectWrapper obj_gpu(p, gpu->props.deviceName);
                     p.PrintKeyValue("GPU id", gpu->id, gpu->props.deviceName);
-                    auto exts = gpu->AppGetPhysicalDeviceLayerExtensions(layer.layer_properties.layerName);
+                    auto exts = gpu->inst.AppGetPhysicalDeviceLayerExtensions(gpu->phys_device, layer.layer_properties.layerName);
                     DumpExtensions(p, "Layer-Device", exts);
                 }
             }
