@@ -350,5 +350,6 @@ if(UNIX AND NOT APPLE) # i.e. Linux
                 target_link_libraries(vkcube-wayland rt)
             endif()
         endif()
+        install(TARGETS vkcube-wayland RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
 endif()
