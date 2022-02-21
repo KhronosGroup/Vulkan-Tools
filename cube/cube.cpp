@@ -81,8 +81,8 @@ struct texture_object {
     vk::DeviceMemory mem;
     vk::ImageView view;
 
-    int32_t tex_width{0};
-    int32_t tex_height{0};
+    uint32_t tex_width{0};
+    uint32_t tex_height{0};
 };
 
 static char const *const tex_files[] = {"lunarg.ppm"};
@@ -239,7 +239,7 @@ struct Demo {
     void set_image_layout(vk::Image image, vk::ImageAspectFlags aspectMask, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                           vk::AccessFlags srcAccessMask, vk::PipelineStageFlags src_stages, vk::PipelineStageFlags dest_stages);
     void update_data_buffer();
-    bool loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, int32_t &width, int32_t &height);
+    bool loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, uint32_t &width, uint32_t &height);
     bool memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlags requirements_mask, uint32_t &typeIndex);
     vk::SurfaceFormatKHR pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats);
 
@@ -329,8 +329,8 @@ struct Demo {
     std::vector<const char *> enabled_layers;
     std::vector<const char *> enabled_device_extensions;
 
-    int32_t width = 0;
-    int32_t height = 0;
+    uint32_t width = 0;
+    uint32_t height = 0;
     vk::Format format;
     vk::ColorSpaceKHR color_space;
 
@@ -411,9 +411,9 @@ static void pointer_handle_motion(void *data, struct wl_pointer *pointer, uint32
 
 static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button,
                                   uint32_t state) {
-    Demo *demo = (Demo *)data;
+    Demo &demo = *static_cast<Demo *>(data);
     if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
-        xdg_toplevel_move(demo->window_toplevel, demo->seat, serial);
+        xdg_toplevel_move(demo.window_toplevel, demo.seat, serial);
     }
 }
 
@@ -433,19 +433,19 @@ static void keyboard_handle_leave(void *data, struct wl_keyboard *keyboard, uint
 static void keyboard_handle_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key,
                                 uint32_t state) {
     if (state != WL_KEYBOARD_KEY_STATE_RELEASED) return;
-    Demo *demo = (Demo *)data;
+    Demo &demo = *static_cast<Demo *>(data);
     switch (key) {
         case KEY_ESC:  // Escape
-            demo->quit = true;
+            demo.quit = true;
             break;
         case KEY_LEFT:  // left arrow key
-            demo->spin_angle -= demo->spin_increment;
+            demo.spin_angle -= demo.spin_increment;
             break;
         case KEY_RIGHT:  // right arrow key
-            demo->spin_angle += demo->spin_increment;
+            demo.spin_angle += demo.spin_increment;
             break;
         case KEY_SPACE:  // space bar
-            demo->pause = !demo->pause;
+            demo.pause = !demo.pause;
             break;
     }
 }
@@ -459,21 +459,21 @@ static const struct wl_keyboard_listener keyboard_listener = {
 
 static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
     // Subscribe to pointer events
-    Demo *demo = (Demo *)data;
-    if ((caps & WL_SEAT_CAPABILITY_POINTER) && !demo->pointer) {
-        demo->pointer = wl_seat_get_pointer(seat);
-        wl_pointer_add_listener(demo->pointer, &pointer_listener, demo);
-    } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo->pointer) {
-        wl_pointer_destroy(demo->pointer);
-        demo->pointer = nullptr;
+    Demo &demo = *static_cast<Demo *>(data);
+    if ((caps & WL_SEAT_CAPABILITY_POINTER) && !demo.pointer) {
+        demo.pointer = wl_seat_get_pointer(seat);
+        wl_pointer_add_listener(demo.pointer, &pointer_listener, demo);
+    } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo.pointer) {
+        wl_pointer_destroy(demo.pointer);
+        demo.pointer = nullptr;
     }
     // Subscribe to keyboard events
     if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
-        demo->keyboard = wl_seat_get_keyboard(seat);
-        wl_keyboard_add_listener(demo->keyboard, &keyboard_listener, demo);
+        demo.keyboard = wl_seat_get_keyboard(seat);
+        wl_keyboard_add_listener(demo.keyboard, &keyboard_listener, demo);
     } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD)) {
-        wl_keyboard_destroy(demo->keyboard);
-        demo->keyboard = nullptr;
+        wl_keyboard_destroy(demo.keyboard);
+        demo.keyboard = nullptr;
     }
 }
 
@@ -486,18 +486,18 @@ static void wm_base_ping(void *data, xdg_wm_base *xdg_wm_base, uint32_t serial) 
 static const struct xdg_wm_base_listener wm_base_listener = {wm_base_ping};
 
 static void registry_handle_global(void *data, wl_registry *registry, uint32_t id, const char *interface, uint32_t version) {
-    Demo *demo = (Demo *)data;
+    Demo &demo = *static_cast<Demo *>(data);
     // pickup wayland objects when they appear
     if (strcmp(interface, wl_compositor_interface.name) == 0) {
-        demo->compositor = (wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+        demo.compositor = (wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
     } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
-        demo->wm_base = (xdg_wm_base *)wl_registry_bind(registry, id, &xdg_wm_base_interface, 1);
-        xdg_wm_base_add_listener(demo->wm_base, &wm_base_listener, nullptr);
+        demo.wm_base = (xdg_wm_base *)wl_registry_bind(registry, id, &xdg_wm_base_interface, 1);
+        xdg_wm_base_add_listener(demo.wm_base, &wm_base_listener, nullptr);
     } else if (strcmp(interface, wl_seat_interface.name) == 0) {
-        demo->seat = (wl_seat *)wl_registry_bind(registry, id, &wl_seat_interface, 1);
-        wl_seat_add_listener(demo->seat, &seat_listener, demo);
+        demo.seat = (wl_seat *)wl_registry_bind(registry, id, &wl_seat_interface, 1);
+        wl_seat_add_listener(demo.seat, &seat_listener, demo);
     } else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0) {
-        demo->xdg_decoration_mgr =
+        demo.xdg_decoration_mgr =
             (zxdg_decoration_manager_v1 *)wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1);
     }
 }
@@ -634,7 +634,7 @@ void Demo::draw() {
         acquire_result =
             device.acquireNextImageKHR(swapchain, UINT64_MAX, image_acquired_semaphores[frame_index], vk::Fence(), &current_buffer);
         if (acquire_result == vk::Result::eErrorOutOfDateKHR) {
-            // demo->swapchain is out of date (e.g. the window was resized) and
+            // demo.swapchain is out of date (e.g. the window was resized) and
             // must be recreated:
             resize();
         } else if (acquire_result == vk::Result::eSuboptimalKHR) {
@@ -699,8 +699,7 @@ void Demo::draw() {
         vk::SurfaceCapabilitiesKHR surfCapabilities;
         auto caps_result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
         VERIFY(caps_result == vk::Result::eSuccess);
-        if (surfCapabilities.currentExtent.width != static_cast<uint32_t>(width) ||
-            surfCapabilities.currentExtent.height != static_cast<uint32_t>(height)) {
+        if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
             resize();
         }
     } else if (present_result == vk::Result::eErrorSurfaceLostKHR) {
@@ -723,8 +722,7 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
     commandBuffer.beginRenderPass(vk::RenderPassBeginInfo()
                                       .setRenderPass(render_pass)
                                       .setFramebuffer(swapchain_image_resource.framebuffer)
-                                      .setRenderArea(vk::Rect2D(vk::Offset2D(0, 0), vk::Extent2D(static_cast<uint32_t>(width),
-                                                                                                 static_cast<uint32_t>(height))))
+                                      .setRenderArea(vk::Rect2D(vk::Offset2D{}, vk::Extent2D(width, height)))
                                       .setClearValueCount(2)
                                       .setPClearValues(clearValues),
                                   vk::SubpassContents::eInline);
@@ -751,7 +749,7 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
                                      .setMinDepth(0.0f)
                                      .setMaxDepth(1.0f));
 
-    commandBuffer.setScissor(0, vk::Rect2D(vk::Offset2D(0, 0), vk::Extent2D(width, height)));
+    commandBuffer.setScissor(0, vk::Rect2D(vk::Offset2D{}, vk::Extent2D(width, height)));
     commandBuffer.draw(12 * 3, 1, 0, 0);
     // Note that ending the renderpass changes the image's layout from
     // COLOR_ATTACHMENT_OPTIMAL to PRESENT_SRC_KHR
@@ -801,14 +799,6 @@ void Demo::prepare_init_cmd() {
 }
 
 void Demo::flush_init_cmd() {
-    // TODO: hmm.
-    // This function could get called twice if the texture uses a staging
-    // buffer
-    // In that case the second call should be ignored
-    if (!cmd) {
-        return;
-    }
-
     auto result = cmd.end();
     VERIFY(result == vk::Result::eSuccess);
 
@@ -829,8 +819,6 @@ void Demo::flush_init_cmd() {
 
     device.freeCommandBuffers(cmd_pool, cmd);
     device.destroyFence(fence);
-
-    cmd = vk::CommandBuffer();
 }
 
 void Demo::init(int argc, char **argv) {
@@ -852,7 +840,7 @@ void Demo::init(int argc, char **argv) {
             continue;
         }
         if ((strcmp(argv[i], "--present_mode") == 0) && (i < argc - 1)) {
-            presentMode = (vk::PresentModeKHR)atoi(argv[i + 1]);
+            presentMode = static_cast<vk::PresentModeKHR>(atoi(argv[i + 1]));
             i++;
             continue;
         }
@@ -873,11 +861,11 @@ void Demo::init(int argc, char **argv) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNi32, &width) == 1 && width > 0) {
+        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &width) == 1) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNi32, &height) == 1 && height > 0) {
+        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%" SCNu32, &height) == 1) {
             i++;
             continue;
         }
@@ -1678,7 +1666,7 @@ void Demo::prepare_depth() {
     auto const image = vk::ImageCreateInfo()
                            .setImageType(vk::ImageType::e2D)
                            .setFormat(depth.format)
-                           .setExtent({static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1})
+                           .setExtent({width, height, 1})
                            .setMipLevels(1)
                            .setArrayLayers(1)
                            .setSamples(vk::SampleCountFlagBits::e1)
@@ -1801,8 +1789,8 @@ void Demo::prepare_framebuffers() {
         auto const framebuffer_return = device.createFramebuffer(vk::FramebufferCreateInfo()
                                                                      .setRenderPass(render_pass)
                                                                      .setAttachments(attachments)
-                                                                     .setWidth(static_cast<uint32_t>(width))
-                                                                     .setHeight(static_cast<uint32_t>(height))
+                                                                     .setWidth(width)
+                                                                     .setHeight(height)
                                                                      .setLayers(1));
         VERIFY(framebuffer_return.result == vk::Result::eSuccess);
         swapchain_image_resource.framebuffer = framebuffer_return.value;
@@ -1961,17 +1949,13 @@ vk::ShaderModule Demo::prepare_shader_module(const uint32_t *code, size_t size) 
 
 void Demo::prepare_texture_buffer(const char *filename, texture_object &tex_obj) {
     vk::SubresourceLayout tex_layout;
-    int32_t tex_width;
-    int32_t tex_height;
-    if (!loadTexture(filename, nullptr, tex_layout, tex_width, tex_height)) {
+
+    if (!loadTexture(filename, nullptr, tex_layout, tex_obj.tex_width, tex_obj.tex_height)) {
         ERR_EXIT("Failed to load textures", "Load Texture Failure");
     }
 
-    tex_obj.tex_width = tex_width;
-    tex_obj.tex_height = tex_height;
-
     auto const buffer_create_info = vk::BufferCreateInfo()
-                                        .setSize(tex_width * tex_height * 4)
+                                        .setSize(tex_obj.tex_width * tex_obj.tex_height * 4)
                                         .setUsage(vk::BufferUsageFlagBits::eTransferSrc)
                                         .setSharingMode(vk::SharingMode::eExclusive);
 
@@ -1995,11 +1979,11 @@ void Demo::prepare_texture_buffer(const char *filename, texture_object &tex_obj)
     VERIFY(result == vk::Result::eSuccess);
 
     vk::SubresourceLayout layout;
-    layout.rowPitch = tex_width * 4;
+    layout.rowPitch = tex_obj.tex_width * 4;
     auto data = device.mapMemory(tex_obj.mem, 0, tex_obj.mem_alloc.allocationSize);
     VERIFY(data.result == vk::Result::eSuccess);
 
-    if (!loadTexture(filename, (uint8_t *)data.value, layout, tex_width, tex_height)) {
+    if (!loadTexture(filename, (uint8_t *)data.value, layout, tex_obj.tex_width, tex_obj.tex_height)) {
         fprintf(stderr, "Error loading texture: %s\n", filename);
     }
 
@@ -2009,19 +1993,14 @@ void Demo::prepare_texture_buffer(const char *filename, texture_object &tex_obj)
 void Demo::prepare_texture_image(const char *filename, texture_object &tex_obj, vk::ImageTiling tiling, vk::ImageUsageFlags usage,
                                  vk::MemoryPropertyFlags required_props) {
     vk::SubresourceLayout tex_layout;
-    int32_t tex_width;
-    int32_t tex_height;
-    if (!loadTexture(filename, nullptr, tex_layout, tex_width, tex_height)) {
+    if (!loadTexture(filename, nullptr, tex_layout, tex_obj.tex_width, tex_obj.tex_height)) {
         ERR_EXIT("Failed to load textures", "Load Texture Failure");
     }
-
-    tex_obj.tex_width = tex_width;
-    tex_obj.tex_height = tex_height;
 
     auto const image_create_info = vk::ImageCreateInfo()
                                        .setImageType(vk::ImageType::e2D)
                                        .setFormat(vk::Format::eR8G8B8A8Unorm)
-                                       .setExtent({static_cast<uint32_t>(tex_width), static_cast<uint32_t>(tex_height), 1})
+                                       .setExtent({tex_obj.tex_width, tex_obj.tex_height, 1})
                                        .setMipLevels(1)
                                        .setArrayLayers(1)
                                        .setSamples(vk::SampleCountFlagBits::e1)
@@ -2056,7 +2035,7 @@ void Demo::prepare_texture_image(const char *filename, texture_object &tex_obj, 
         auto data = device.mapMemory(tex_obj.mem, 0, tex_obj.mem_alloc.allocationSize);
         VERIFY(data.result == vk::Result::eSuccess);
 
-        if (!loadTexture(filename, (uint8_t *)data.value, layout, tex_width, tex_height)) {
+        if (!loadTexture(filename, (uint8_t *)data.value, layout, tex_obj.tex_width, tex_obj.tex_height)) {
             fprintf(stderr, "Error loading texture: %s\n", filename);
         }
 
@@ -2107,8 +2086,7 @@ void Demo::prepare_textures() {
                                          .setBufferImageHeight(staging_texture.tex_height)
                                          .setImageSubresource(subresource)
                                          .setImageOffset({0, 0, 0})
-                                         .setImageExtent({static_cast<uint32_t>(staging_texture.tex_width),
-                                                          static_cast<uint32_t>(staging_texture.tex_height), 1});
+                                         .setImageExtent({staging_texture.tex_width, staging_texture.tex_height, 1});
 
             cmd.copyBufferToImage(staging_texture.buffer, textures[i].image, vk::ImageLayout::eTransferDstOptimal, 1, &copy_region);
 
@@ -2282,7 +2260,7 @@ void Demo::update_data_buffer() {
 
 /* Convert ppm image data from header file into RGBA texture image */
 #include "lunarg.ppm.h"
-bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, int32_t &width, int32_t &height) {
+bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, uint32_t &width, uint32_t &height) {
     (void)filename;
     char *cPtr;
     cPtr = (char *)lunarg_ppm;
@@ -2302,9 +2280,9 @@ bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::Subresource
     }
     while (strncmp(cPtr++, "\n", 1))
         ;
-    for (int y = 0; y < height; y++) {
+    for (uint32_t y = 0; y < height; y++) {
         uint8_t *rowPtr = rgba_data;
-        for (int x = 0; x < width; x++) {
+        for (uint32_t x = 0; x < width; x++) {
             memcpy(rowPtr, cPtr, 3);
             rowPtr[3] = 255; /* Alpha of 1 */
             rowPtr += 4;
@@ -2617,7 +2595,6 @@ void Demo::run() {
             wl_display_dispatch(display);
         } else {
             wl_display_dispatch_pending(display);
-            // update_data_buffer();
             draw();
             curFrame++;
             if (frameCount != UINT32_MAX && curFrame == frameCount) {
@@ -2628,33 +2605,33 @@ void Demo::run() {
 }
 
 static void handle_surface_configure(void *data, xdg_surface *xdg_surface, uint32_t serial) {
-    Demo *demo = (Demo *)data;
+    Demo &demo = *static_cast<Demo *>(data);
     xdg_surface_ack_configure(xdg_surface, serial);
-    if (demo->xdg_surface_has_been_configured) {
-        demo->resize();
+    if (demo.xdg_surface_has_been_configured) {
+        demo.resize();
     }
-    demo->xdg_surface_has_been_configured = true;
+    demo.xdg_surface_has_been_configured = true;
 }
 
 static const xdg_surface_listener surface_listener = {handle_surface_configure};
 
 static void handle_toplevel_configure(void *data, xdg_toplevel *xdg_toplevel, int32_t width, int32_t height,
                                       struct wl_array *states) {
-    Demo *demo = (Demo *)data;
+    Demo &demo = *static_cast<Demo *>(data);
     /* zero values imply the program may choose its own size, so in that case
      * stay with the existing value (which on startup is the default) */
     if (width > 0) {
-        demo->width = width;
+        demo.width = static_cast<uint32_t>(width);
     }
     if (height > 0) {
-        demo->height = height;
+        demo.height = static_cast<uint32_t>(height);
     }
     // This will be followed by a surface configure
 }
 
 static void handle_toplevel_close(void *data, xdg_toplevel *xdg_toplevel) {
-    Demo *demo = (Demo *)data;
-    demo->quit = true;
+    Demo &demo = *static_cast<Demo *>(data);
+    demo.quit = true;
 }
 
 static const xdg_toplevel_listener toplevel_listener = {handle_toplevel_configure, handle_toplevel_close};
