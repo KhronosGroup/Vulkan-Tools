@@ -32,7 +32,7 @@
 
 std::string insert_quotes(std::string s) { return "\"" + s + "\""; }
 
-std::string to_string_16(uint8_t uid[16]) {
+std::string to_string_16(const uint8_t uid[16]) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
     for (int i = 0; i < 16; ++i) {
@@ -42,7 +42,7 @@ std::string to_string_16(uint8_t uid[16]) {
     return ss.str();
 }
 
-std::string to_string_8(uint8_t uid[8]) {
+std::string to_string_8(const uint8_t uid[8]) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
     for (int i = 0; i < 8; ++i) {
@@ -63,6 +63,11 @@ std::string VkVersionString(VulkanVersion v) {
     return std::to_string(v.major) + "." + std::to_string(v.minor) + "." + std::to_string(v.patch);
 }
 
+std::string VkConformanceVersionString(const VkConformanceVersion &c) {
+    return std::to_string(c.major) + "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "." +
+           std::to_string(c.patch);
+}
+
 enum class OutputType { text, html, json, vkconfig_output };
 
 struct PrinterCreateDetails {
@@ -74,7 +79,7 @@ struct PrinterCreateDetails {
 
 class Printer {
   public:
-    Printer(const PrinterCreateDetails &details, std::ostream &out, const uint32_t selected_gpu, const VulkanVersion vulkan_version)
+    Printer(const PrinterCreateDetails &details, std::ostream &out, const VulkanVersion vulkan_version)
         : output_type(details.output_type), out(out) {
         StackNode node{};
         node.is_first_item = false;
@@ -181,9 +186,6 @@ class Printer {
                 node.indents = 3;
                 break;
             case (OutputType::json):
-                out << details.start_string;
-                node.indents = 1;
-                break;
             case (OutputType::vkconfig_output):
                 out << details.start_string;
                 node.indents = 1;
@@ -532,18 +534,7 @@ class Printer {
 
     // For printing key - string pairs (necessary because of json)
     void PrintKeyBool(std::string key, bool value, std::string value_description = "") {
-        switch (output_type) {
-            case (OutputType::text):
-            case (OutputType::html):
-            case (OutputType::vkconfig_output):
-                PrintKeyValue(key, value ? "true" : "false", value_description);
-                break;
-            case (OutputType::json):
-                PrintKeyValue(key, value, value_description);
-                break;
-            default:
-                break;
-        }
+        PrintKeyValue(key, value ? "true" : "false", value_description);
     }
 
     // print inside array
@@ -608,10 +599,7 @@ class Printer {
                     << DecorateAsValue(std::to_string(revision)) << "</summary></details>\n";
                 break;
             case (OutputType::json):
-                ObjectStart("");
-                PrintKeyString("extensionName", ext_name);
-                PrintKeyValue("specVersion", revision);
-                ObjectEnd();
+                PrintKeyValue(ext_name, revision);
                 break;
             case (OutputType::vkconfig_output):
                 ObjectStart(ext_name);
