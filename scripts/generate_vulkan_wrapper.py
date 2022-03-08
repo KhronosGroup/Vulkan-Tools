@@ -1268,6 +1268,11 @@ VK_EXT_pageable_device_local_memory = Extension(name='VK_EXT_pageable_device_loc
     Command(name='vkSetDeviceMemoryPriorityEXT', dispatch='VkDevice'),
 ])
 
+VK_VALVE_descriptor_set_host_mapping = Extension(name='VK_VALVE_descriptor_set_host_mapping', version=1, guard=None, commands=[
+    Command(name='vkGetDescriptorSetLayoutHostMappingInfoVALVE', dispatch='VkDevice'),
+    Command(name='vkGetDescriptorSetHostMappingVALVE', dispatch='VkDevice'),
+])
+
 VK_QCOM_fragment_density_map_offset = Extension(name='VK_QCOM_fragment_density_map_offset', version=1, guard=None, commands=[
 ])
 
@@ -1444,7 +1449,7 @@ VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=2, guard='VK_E
     Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
@@ -1704,6 +1709,7 @@ extensions = [
     VK_EXT_load_store_op_none,
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
+    VK_VALVE_descriptor_set_host_mapping,
     VK_QCOM_fragment_density_map_offset,
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
