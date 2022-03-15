@@ -84,6 +84,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_EXT_acquire_drm_display", 1},
     {"VK_EXT_directfb_surface", 1},
     {"VK_QNX_screen_surface", 1},
+    {"VK_KHR_portability_enumeration", 1},
     {"VK_GOOGLE_surfaceless_query", 1},
 };
 // Map of device extension name to version
@@ -166,7 +167,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_dma_buf", 1},
     {"VK_EXT_queue_family_foreign", 1},
     {"VK_KHR_dedicated_allocation", 3},
-    {"VK_ANDROID_external_memory_android_hardware_buffer", 4},
+    {"VK_ANDROID_external_memory_android_hardware_buffer", 5},
     {"VK_EXT_sampler_filter_minmax", 2},
     {"VK_KHR_storage_buffer_storage_class", 1},
     {"VK_AMD_gpu_shader_int16", 2},
@@ -2339,6 +2340,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdBlitImage2KHR(
 static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2KHR(
     VkCommandBuffer                             commandBuffer,
     const VkResolveImageInfo2*                  pResolveImageInfo);
+
 
 
 
