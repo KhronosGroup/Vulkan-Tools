@@ -3895,6 +3895,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdResolveImage2KHR(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(
     VkDevice                                    device,
     const VkDeviceBufferMemoryRequirements*     pInfo,
