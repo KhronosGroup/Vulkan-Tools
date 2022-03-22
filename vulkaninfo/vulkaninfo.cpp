@@ -980,6 +980,14 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
             create.output_type = OutputType::json;
             create.start_string =
                 std::string("{\n\t\"$schema\": ") + "\"https://schema.khronos.org/vulkan/profiles-0.8-latest.json\"";
+            if (parse_data.filename.empty()) {
+                create.file_name = std::string("VP_VULKANINFO_") + std::string(selected_gpu.props.deviceName) + "_" +
+                                   VkVersionString(selected_gpu.props.driverVersion);
+                for (auto &c : create.file_name) {
+                    if (c == ' ' || c == '.') c = '_';
+                }
+                create.file_name += ".json";
+            }
             break;
         case (OutputCategory::vkconfig_output):
             create.output_type = OutputType::vkconfig_output;
