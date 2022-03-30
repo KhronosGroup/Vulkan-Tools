@@ -994,11 +994,13 @@ int find_display_gpu(int gpu_number, const std::vector<vk::PhysicalDevice> &phys
     if (gpu_number >= 0) {
         auto display_props_return = physical_devices[gpu_number].getDisplayPropertiesKHR();
         VERIFY(display_props_return.result == vk::Result::eSuccess);
+        display_count = display_props_return.value.size();
     } else {
         for (uint32_t i = 0; i < physical_devices.size(); i++) {
             auto display_props_return = physical_devices[i].getDisplayPropertiesKHR();
             VERIFY(display_props_return.result == vk::Result::eSuccess);
             if (display_props_return.value.size() > 0) {
+                display_count = display_props_return.value.size();
                 gpu_return = i;
                 break;
             }
@@ -2915,12 +2917,14 @@ vk::Result Demo::create_display_surface() {
         fflush(stdout);
         exit(1);
     }
+    auto display_plane_props = display_plane_props_return.value;
 
     vk::Bool32 found_plane = VK_FALSE;
+    uint32_t plane_found = 0;
     // Find a plane compatible with the display
-    for (uint32_t plane_index = 0; plane_index < display_plane_props_return.value.size(); plane_index++) {
+    for (uint32_t plane_index = 0; plane_index < display_plane_props.size(); plane_index++) {
         // Disqualify planes that are bound to a different display
-        if (plane_props[plane_index].currentDisplay && (plane_props[plane_index].currentDisplay != display)) {
+        if (display_plane_props[plane_index].currentDisplay && (display_plane_props[plane_index].currentDisplay != display)) {
             continue;
         }
 
@@ -2934,6 +2938,7 @@ vk::Result Demo::create_display_surface() {
         for (const auto &supported_display : display_plane_supported_displays_return.value) {
             if (supported_display == display) {
                 found_plane = VK_TRUE;
+                plane_found = plane_index;
                 break;
             }
         }
@@ -2949,7 +2954,7 @@ vk::Result Demo::create_display_surface() {
         exit(1);
     }
 
-    vk::DisplayPlaneCapabilitiesKHR planeCaps = gpu.getDisplayPlaneCapabilitiesKHR(mode_props.displayMode, plane_index);
+    vk::DisplayPlaneCapabilitiesKHR planeCaps = gpu.getDisplayPlaneCapabilitiesKHR(display_mode_prop.displayMode, plane_found);
     // Find a supported alpha mode
     vk::DisplayPlaneAlphaFlagBitsKHR alphaMode = vk::DisplayPlaneAlphaFlagBitsKHR::eOpaque;
     std::array<vk::DisplayPlaneAlphaFlagBitsKHR, 4> alphaModes = {
@@ -2966,12 +2971,13 @@ vk::Result Demo::create_display_surface() {
     }
 
     vk::Extent2D image_extent{};
-    image_extent.setWidth(mode_props.parameters.visibleRegion.width).setHeight(mode_props.parameters.visibleRegion.height);
+    image_extent.setWidth(display_mode_prop.parameters.visibleRegion.width)
+        .setHeight(display_mode_prop.parameters.visibleRegion.height);
 
     auto const createInfo = vk::DisplaySurfaceCreateInfoKHR()
-                                .setDisplayMode(mode_props.displayMode)
-                                .setPlaneIndex(plane_index)
-                                .setPlaneStackIndex(plane_props[plane_index].currentStackIndex)
+                                .setDisplayMode(display_mode_prop.displayMode)
+                                .setPlaneIndex(plane_found)
+                                .setPlaneStackIndex(display_plane_props[plane_found].currentStackIndex)
                                 .setGlobalAlpha(1.0f)
                                 .setAlphaMode(alphaMode)
                                 .setImageExtent(image_extent);
