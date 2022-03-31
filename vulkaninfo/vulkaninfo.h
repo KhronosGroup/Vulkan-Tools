@@ -483,14 +483,19 @@ struct phys_device_features2_chain;
 struct surface_capabilities2_chain;
 struct format_properties2_chain;
 struct queue_properties2_chain;
+struct AppInstance;
+struct AppGpu;
 
-void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain);
+void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain,
+                                    AppInstance &inst, AppGpu &gpu);
 void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2 &start,
-                                        std::unique_ptr<phys_device_mem_props2_chain> &chain);
-void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2 &start, std::unique_ptr<phys_device_features2_chain> &chain);
-void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::unique_ptr<surface_capabilities2_chain> &chain);
-void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain);
-void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain);
+                                        std::unique_ptr<phys_device_mem_props2_chain> &chain, AppGpu &gpu);
+void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2 &start, std::unique_ptr<phys_device_features2_chain> &chain,
+                                       AppGpu &gpu);
+void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::unique_ptr<surface_capabilities2_chain> &chain,
+                                       AppInstance &inst, AppGpu &gpu);
+void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain, AppGpu &gpu);
+void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain, AppGpu &gpu);
 
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
@@ -1390,7 +1395,7 @@ class AppSurface {
 
     std::unique_ptr<surface_capabilities2_chain> chain_for_surface_capabilities2;
 
-    AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
+    AppSurface(AppInstance &inst, AppGpu &gpu, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
         : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
         surf_present_modes = GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR",
                                                          inst.ext_funcs.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device,
@@ -1418,7 +1423,7 @@ class AppSurface {
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
             surface_capabilities2_khr.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
-            setup_surface_capabilities2_chain(surface_capabilities2_khr, chain_for_surface_capabilities2);
+            setup_surface_capabilities2_chain(surface_capabilities2_khr, chain_for_surface_capabilities2, inst, gpu);
 
             VkPhysicalDeviceSurfaceInfo2KHR surface_info{};
             surface_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
@@ -1663,6 +1668,8 @@ struct AppGpu {
         // needs to find the minimum of the instance and device version, and use that to print the device info
         api_version = VulkanVersion(props.apiVersion);
 
+        device_extensions = inst.AppGetPhysicalDeviceLayerExtensions(phys_device, nullptr);
+
         inst.dll.fp_vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
 
         inst.dll.fp_vkGetPhysicalDeviceFeatures(phys_device, &features);
@@ -1675,19 +1682,19 @@ struct AppGpu {
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             // VkPhysicalDeviceProperties2
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-            setup_phys_device_props2_chain(props2, chain_for_phys_device_props2);
+            setup_phys_device_props2_chain(props2, chain_for_phys_device_props2, inst, *this);
 
             inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
 
             // VkPhysicalDeviceMemoryProperties2
             memory_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
-            setup_phys_device_mem_props2_chain(memory_props2, chain_for_phys_device_mem_props2);
+            setup_phys_device_mem_props2_chain(memory_props2, chain_for_phys_device_mem_props2, *this);
 
             inst.ext_funcs.vkGetPhysicalDeviceMemoryProperties2KHR(phys_device, &memory_props2);
 
             // VkPhysicalDeviceFeatures2
             features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-            setup_phys_device_features2_chain(features2, chain_for_phys_device_features2);
+            setup_phys_device_features2_chain(features2, chain_for_phys_device_features2, *this);
 
             inst.ext_funcs.vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
 
@@ -1698,7 +1705,7 @@ struct AppGpu {
             chain_for_queue_props2.resize(queue_prop2_count);
             for (size_t i = 0; i < queue_props2.size(); i++) {
                 queue_props2[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
-                setup_queue_properties2_chain(queue_props2[i], chain_for_queue_props2[i]);
+                setup_queue_properties2_chain(queue_props2[i], chain_for_queue_props2[i], *this);
             }
             inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, queue_props2.data());
 
@@ -1731,8 +1738,6 @@ struct AppGpu {
                 extended_queue_props.push_back(AppQueueFamilyProperties(inst, phys_device, queue_prop, queue_index++, nullptr));
             }
         }
-
-        device_extensions = inst.AppGetPhysicalDeviceLayerExtensions(phys_device, nullptr);
 
         if (features.sparseBinding) {
             enabled_features.sparseBinding = VK_TRUE;
