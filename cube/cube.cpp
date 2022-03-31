@@ -486,7 +486,7 @@ static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
     Demo &demo = *static_cast<Demo *>(data);
     if ((caps & WL_SEAT_CAPABILITY_POINTER) && !demo.pointer) {
         demo.pointer = wl_seat_get_pointer(seat);
-        wl_pointer_add_listener(demo.pointer, &pointer_listener, demo);
+        wl_pointer_add_listener(demo.pointer, &pointer_listener, &demo);
     } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo.pointer) {
         wl_pointer_destroy(demo.pointer);
         demo.pointer = nullptr;
@@ -494,7 +494,7 @@ static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
     // Subscribe to keyboard events
     if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
         demo.keyboard = wl_seat_get_keyboard(seat);
-        wl_keyboard_add_listener(demo.keyboard, &keyboard_listener, demo);
+        wl_keyboard_add_listener(demo.keyboard, &keyboard_listener, &demo);
     } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD)) {
         wl_keyboard_destroy(demo.keyboard);
         demo.keyboard = nullptr;
@@ -519,7 +519,7 @@ static void registry_handle_global(void *data, wl_registry *registry, uint32_t i
         xdg_wm_base_add_listener(demo.wm_base, &wm_base_listener, nullptr);
     } else if (strcmp(interface, wl_seat_interface.name) == 0) {
         demo.seat = (wl_seat *)wl_registry_bind(registry, id, &wl_seat_interface, 1);
-        wl_seat_add_listener(demo.seat, &seat_listener, demo);
+        wl_seat_add_listener(demo.seat, &seat_listener, &demo);
     } else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0) {
         demo.xdg_decoration_mgr =
             (zxdg_decoration_manager_v1 *)wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1);
