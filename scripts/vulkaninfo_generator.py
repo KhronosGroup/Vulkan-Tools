@@ -329,12 +329,7 @@ class VulkanInfoGenerator(OutputGenerator):
             out += PrintStructure(s, types_to_gen, names_of_structures_to_gen, self.aliases)
 
         for key, value in EXTENSION_CATEGORIES.items():
-            out += PrintChainStruct(key, self.extension_sets[key], self.all_structures, value)
-
-        for key, value in EXTENSION_CATEGORIES.items():
-            if value.get('print_iterator'):
-                out += PrintChainIterator(key,
-                                      self.extension_sets[key], self.all_structures, value.get('type'), self.extTypes, self.aliases, self.vulkan_versions)
+            out += PrintChainStruct(key, self.extension_sets[key], self.all_structures, value, self.extTypes, self.aliases, self.vulkan_versions)
 
         for s in (x for x in self.all_structures if x.name in structs_to_comp):
             out += PrintStructComparisonForwardDecl(s)
@@ -723,11 +718,17 @@ def PrintStructShort(struct):
     out += AddGuardFooter(struct)
     return out
 
-
-def PrintChainStruct(listName, structures, all_structures, chain_details):
-    out = ''
+def PrintChainStruct(listName, structures, all_structures, chain_details, extTypes, aliases, vulkan_versions):
     sorted_structures = sorted(
         all_structures, key=operator.attrgetter('name'))
+
+    version_desc = ''
+    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+        version_desc = "gpu.api_version"
+    else:
+        version_desc = "inst.instance_version"
+
+    out = ''
     structs_to_print = []
     for s in sorted_structures:
         if s.name in structures:
@@ -756,7 +757,12 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
             if s.name in ['VkPhysicalDeviceShaderIntegerDotProductFeatures', 'VkPhysicalDeviceHostImageCopyFeaturesEXT']:
                 out += f"    char {s.name}_padding[64];\n"
         out += AddGuardFooter(s)
-    out += f"    void initialize_chain() noexcept {{\n"
+    out += f"    void initialize_chain("
+    if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+        out += f"AppInstance &inst, "
+    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+        out += f"AppGpu &gpu "
+    out += f") noexcept {{\n"
     for s in structs_to_print:
         if s.name in struct_blacklist:
             continue
@@ -770,49 +776,6 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
         if s.name in struct_blacklist:
             continue
         out += AddGuardHeader(s)
-        out += f"        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{s.name[2:]}));\n"
-        out += AddGuardFooter(s)
-
-    out += f"""
-        for(size_t i = 0; i < chain_members.size() - 1; i++){{
-            chain_members[i]->pNext = chain_members[i + 1];
-        }}
-        if (chain_members.size() > 0) start_of_chain = chain_members[0];
-    }};
-}};
-void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain){{
-    chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());
-    chain->initialize_chain();
-    start.pNext = chain->start_of_chain;
-}};
-"""
-    return out
-
-
-def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTypes, aliases, vulkan_versions):
-    out = ''
-    out += f"void chain_iterator_{listName}(Printer &p, "
-    if checkExtLoc in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-        out += f"AppInstance &inst, "
-    if checkExtLoc in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-        out += f"AppGpu &gpu, "
-    out += f"void * place) {{\n"
-    out += f"    while (place) {{\n"
-    out += f"        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;\n"
-    out += f"        p.SetSubHeader();\n"
-    sorted_structures = sorted(
-        all_structures, key=operator.attrgetter('name'))
-
-    version_desc = ''
-    if checkExtLoc in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-        version_desc = "gpu.api_version"
-    else:
-        version_desc = "inst.instance_version"
-
-    for s in sorted_structures:
-        if s.sTypeName is None or s.name in struct_blacklist:
-            continue
-
         extEnables = {}
         for k, elem in extTypes.items():
             if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
@@ -828,48 +791,130 @@ def PrintChainIterator(listName, structures, all_structures, checkExtLoc, extTyp
             for alias in aliases[s.name]:
                 oldVersionName = alias
 
-        if s.name in structures:
-            out += AddGuardHeader(s)
-            out += f"        if (structure->sType == {s.sTypeName}"
-            if s.name in portability_structs:
-                out += f" && p.Type() != OutputType::json"
-            has_version = version is not None
-            has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
-
-            if has_version or has_extNameStr:
-                out += f" &&\n           ("
-                has_printed_condition = False
-                if has_extNameStr:
-                    for key, value in extEnables.items():
-                        if has_printed_condition:
-                            out += f' || '
-                        has_printed_condition = True
-                        if value == EXTENSION_TYPE_DEVICE:
-                            out += f"gpu.CheckPhysicalDeviceExtensionIncluded({key})"
-                        elif value == EXTENSION_TYPE_INSTANCE:
-                            out += f"inst.CheckExtensionEnabled({key})"
-                        else:
-                            assert False, "Should never get here"
-                if has_version:
+        has_version = version is not None
+        has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
+        if has_version or has_extNameStr:
+            out += f"        if ("
+            has_printed_condition = False
+            if has_extNameStr:
+                for key, value in extEnables.items():
                     if has_printed_condition:
-                        out += f' ||\n            '
-                    out += f"{version_desc}.minor >= {str(version)}"
-                out += f")"
-            out += f") {{\n"
-            out += f"            {s.name}* props = ({s.name}*)structure;\n"
-            out += f"            Dump{s.name}(p, "
-            if s.name in aliases.keys() and version is not None:
-                out += f'{version_desc}.minor >= {version} ?"{s.name}":"{oldVersionName}"'
-            else:
-                out += f'"{s.name}"'
-            out += f", *props);\n"
-            out += f"            p.AddNewline();\n"
-            out += f"        }}\n"
-            out += AddGuardFooter(s)
-    out += f"        place = structure->pNext;\n"
-    out += f"    }}\n"
-    out += f"}}\n"
+                        out += f'\n         || '
+                    has_printed_condition = True
+                    if value == EXTENSION_TYPE_DEVICE:
+                        out += f"gpu.CheckPhysicalDeviceExtensionIncluded({key})"
+                    elif value == EXTENSION_TYPE_INSTANCE:
+                        out += f"inst.CheckExtensionEnabled({key})"
+                    else:
+                        assert False, "Should never get here"
+            if has_version:
+                if has_printed_condition:
+                    out += f'\n            || '
+                out += f"{version_desc}.minor >= {str(version)}"
+            out += f")\n            "
+        else:
+            out += "        "
+        out += f"chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{s.name[2:]}));\n"
+        out += AddGuardFooter(s)
+    chain_param_list = []
+    chain_arg_list = []
+    if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+        chain_param_list.append('AppInstance &inst')
+        chain_arg_list.append('inst')
+    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+        chain_param_list.append('AppGpu &gpu')
+        chain_arg_list.append('gpu')
+
+    out += f"""
+        if (!chain_members.empty()) {{
+            for(size_t i = 0; i < chain_members.size() - 1; i++){{
+                chain_members[i]->pNext = chain_members[i + 1];
+            }}
+            start_of_chain = chain_members[0];
+        }}
+    }}
+}};
+void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain, {','.join(chain_param_list)}){{
+    chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());
+    chain->initialize_chain({','.join(chain_arg_list)});
+    start.pNext = chain->start_of_chain;
+}};
+"""
+    if chain_details.get('print_iterator'):
+        out += '\n'
+        out += f"void chain_iterator_{listName}(Printer &p, "
+        if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+            out += f"AppInstance &inst, "
+        if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+            out += f"AppGpu &gpu, "
+        out += f"void * place) {{\n"
+        out += f"    while (place) {{\n"
+        out += f"        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;\n"
+        out += f"        p.SetSubHeader();\n"
+
+        for s in sorted_structures:
+            if s.sTypeName is None or s.name in struct_blacklist:
+                continue
+
+            extEnables = {}
+            for k, elem in extTypes.items():
+                if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
+                    for e in elem:
+                        extEnables[e.extNameStr] = e.type
+
+            version = None
+            oldVersionName = None
+            for v in vulkan_versions:
+                if s.name in v.names:
+                    version = v.minorVersion
+            if s.name in aliases.keys():
+                for alias in aliases[s.name]:
+                    oldVersionName = alias
+
+            if s.name in structures:
+                out += AddGuardHeader(s)
+                out += f"        if (structure->sType == {s.sTypeName}"
+                if s.name in portability_structs:
+                    out += f" && p.Type() != OutputType::json"
+                has_version = version is not None
+                has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
+
+                if has_version or has_extNameStr:
+                    out += f" &&\n           ("
+                    has_printed_condition = False
+                    if has_extNameStr:
+                        for key, value in extEnables.items():
+                            if has_printed_condition:
+                                out += f' || '
+                            has_printed_condition = True
+                            if value == EXTENSION_TYPE_DEVICE:
+                                out += f"gpu.CheckPhysicalDeviceExtensionIncluded({key})"
+                            elif value == EXTENSION_TYPE_INSTANCE:
+                                out += f"inst.CheckExtensionEnabled({key})"
+                            else:
+                                assert False, "Should never get here"
+                    if has_version:
+                        if has_printed_condition:
+                            out += f' ||\n            '
+                        out += f"{version_desc}.minor >= {str(version)}"
+                    out += f")"
+                out += f") {{\n"
+                out += f"            {s.name}* props = ({s.name}*)structure;\n"
+                out += f"            Dump{s.name}(p, "
+                if s.name in aliases.keys() and version is not None:
+                    out += f'{version_desc}.minor >= {version} ?"{s.name}":"{oldVersionName}"'
+                else:
+                    out += f'"{s.name}"'
+                out += f", *props);\n"
+                out += f"            p.AddNewline();\n"
+                out += f"        }}\n"
+                out += AddGuardFooter(s)
+        out += f"        place = structure->pNext;\n"
+        out += f"    }}\n"
+        out += f"}}\n"
+
     return out
+
 
 def PrintStructComparisonForwardDecl(structure):
     out = ''

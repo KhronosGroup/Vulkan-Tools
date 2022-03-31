@@ -720,7 +720,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
                             format_props2.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
                             format_props2.formatProperties = formats.props;
                             std::unique_ptr<format_properties2_chain> chain_for_format_props2;
-                            setup_format_properties2_chain(format_props2, chain_for_format_props2);
+                            setup_format_properties2_chain(format_props2, chain_for_format_props2, gpu);
                             gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &format_props2);
                             chain_iterator_format_properties2(p, gpu, format_props2.pNext);
                         }
@@ -1169,25 +1169,10 @@ int main(int argc, char **argv) {
 
         auto phys_devices = instance.FindPhysicalDevices();
 
-        std::vector<std::unique_ptr<AppSurface>> surfaces;
 #if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
             surface_extension.create_window(instance);
             surface_extension.surface = surface_extension.create_surface(instance);
-            for (auto &phys_device : phys_devices) {
-                try {
-                    // check if the surface is supported by the physical device before adding it to the list
-                    VkBool32 supported = VK_FALSE;
-                    VkResult err = instance.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(phys_device, 0,
-                                                                                           surface_extension.surface, &supported);
-                    if (err != VK_SUCCESS || supported == VK_FALSE) continue;
-
-                    surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
-                } catch (std::exception &e) {
-                    std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
-                              << "\n";
-                }
-            }
         }
 #endif  // defined(VULKANINFO_WSI_ENABLED)
 
@@ -1197,6 +1182,27 @@ int main(int argc, char **argv) {
         for (auto &phys_device : phys_devices) {
             gpus.push_back(std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device)));
         }
+
+        std::vector<std::unique_ptr<AppSurface>> surfaces;
+#if defined(VULKANINFO_WSI_ENABLED)
+        for (auto &surface_extension : instance.surface_extensions) {
+            for (auto &gpu : gpus) {
+                try {
+                    // check if the surface is supported by the physical device before adding it to the list
+                    VkBool32 supported = VK_FALSE;
+                    VkResult err = instance.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(gpu->phys_device, 0,
+                                                                                           surface_extension.surface, &supported);
+                    if (err != VK_SUCCESS || supported == VK_FALSE) continue;
+
+                    surfaces.push_back(
+                        std::unique_ptr<AppSurface>(new AppSurface(instance, *gpu.get(), gpu->phys_device, surface_extension)));
+                } catch (std::exception &e) {
+                    std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
+                              << "\n";
+                }
+            }
+        }
+#endif  // defined(VULKANINFO_WSI_ENABLED)
 
         if (parse_data.selected_gpu >= gpus.size()) {
             if (parse_data.has_selected_gpu) {
