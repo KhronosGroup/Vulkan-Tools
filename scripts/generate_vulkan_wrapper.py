@@ -1176,6 +1176,9 @@ VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_confi
 VK_QCOM_render_pass_store_ops = Extension(name='VK_QCOM_render_pass_store_ops', version=2, guard=None, commands=[
 ])
 
+VK_EXT_graphics_pipeline_library = Extension(name='VK_EXT_graphics_pipeline_library', version=1, guard=None, commands=[
+])
+
 VK_NV_fragment_shading_rate_enums = Extension(name='VK_NV_fragment_shading_rate_enums', version=1, guard=None, commands=[
     Command(name='vkCmdSetFragmentShadingRateEnumNV', dispatch='VkCommandBuffer'),
 ])
@@ -1248,6 +1251,9 @@ VK_EXT_extended_dynamic_state2 = Extension(name='VK_EXT_extended_dynamic_state2'
 
 VK_EXT_color_write_enable = Extension(name='VK_EXT_color_write_enable', version=1, guard=None, commands=[
     Command(name='vkCmdSetColorWriteEnableEXT', dispatch='VkCommandBuffer'),
+])
+
+VK_EXT_primitives_generated_query = Extension(name='VK_EXT_primitives_generated_query', version=1, guard=None, commands=[
 ])
 
 VK_EXT_global_priority_query = Extension(name='VK_EXT_global_priority_query', version=1, guard=None, commands=[
@@ -1687,6 +1693,7 @@ extensions = [
     VK_EXT_pipeline_creation_cache_control,
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
+    VK_EXT_graphics_pipeline_library,
     VK_NV_fragment_shading_rate_enums,
     VK_NV_ray_tracing_motion_blur,
     VK_EXT_ycbcr_2plane_444_formats,
@@ -1707,6 +1714,7 @@ extensions = [
     VK_NV_external_memory_rdma,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
+    VK_EXT_primitives_generated_query,
     VK_EXT_global_priority_query,
     VK_EXT_image_view_min_lod,
     VK_EXT_multi_draw,

@@ -1655,6 +1655,17 @@ void DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesKHR(Printer &p, std::string 
     p.SetMinKeyWidth(19);
     p.PrintKeyBool("globalPriorityQuery", static_cast<bool>(obj.globalPriorityQuery));
 }
+void DumpVkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(23);
+    p.PrintKeyBool("graphicsPipelineLibrary", static_cast<bool>(obj.graphicsPipelineLibrary));
+}
+void DumpVkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(57);
+    p.PrintKeyBool("graphicsPipelineLibraryFastLinking", static_cast<bool>(obj.graphicsPipelineLibraryFastLinking));
+    p.PrintKeyBool("graphicsPipelineLibraryIndependentInterpolationDecoration", static_cast<bool>(obj.graphicsPipelineLibraryIndependentInterpolationDecoration));
+}
 void DumpVkPhysicalDeviceHostQueryResetFeatures(Printer &p, std::string name, const VkPhysicalDeviceHostQueryResetFeatures &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(14);
@@ -2032,6 +2043,13 @@ void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(Printer &p, std
     p.SetMinKeyWidth(33);
     p.PrintKeyBool("primitiveTopologyListRestart", static_cast<bool>(obj.primitiveTopologyListRestart));
     p.PrintKeyBool("primitiveTopologyPatchListRestart", static_cast<bool>(obj.primitiveTopologyPatchListRestart));
+}
+void DumpVkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT(Printer &p, std::string name, const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(45);
+    p.PrintKeyBool("primitivesGeneratedQuery", static_cast<bool>(obj.primitivesGeneratedQuery));
+    p.PrintKeyBool("primitivesGeneratedQueryWithRasterizerDiscard", static_cast<bool>(obj.primitivesGeneratedQueryWithRasterizerDiscard));
+    p.PrintKeyBool("primitivesGeneratedQueryWithNonZeroStreams", static_cast<bool>(obj.primitivesGeneratedQueryWithNonZeroStreams));
 }
 void DumpVkPhysicalDevicePrivateDataFeatures(Printer &p, std::string name, const VkPhysicalDevicePrivateDataFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -2742,6 +2760,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceFragmentDensityMap2PropertiesEXT PhysicalDeviceFragmentDensityMap2PropertiesEXT{};
     VkPhysicalDeviceFragmentDensityMapPropertiesEXT PhysicalDeviceFragmentDensityMapPropertiesEXT{};
     VkPhysicalDeviceFragmentShadingRatePropertiesKHR PhysicalDeviceFragmentShadingRatePropertiesKHR{};
+    VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT{};
     VkPhysicalDeviceIDProperties PhysicalDeviceIDProperties{};
     VkPhysicalDeviceInlineUniformBlockProperties PhysicalDeviceInlineUniformBlockProperties{};
     VkPhysicalDeviceLineRasterizationPropertiesEXT PhysicalDeviceLineRasterizationPropertiesEXT{};
@@ -2787,6 +2806,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceFragmentDensityMap2PropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT;
         PhysicalDeviceFragmentDensityMapPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT;
         PhysicalDeviceFragmentShadingRatePropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
+        PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT;
         PhysicalDeviceIDProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
         PhysicalDeviceInlineUniformBlockProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES;
         PhysicalDeviceLineRasterizationPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT;
@@ -2832,6 +2852,7 @@ struct phys_device_props2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMap2PropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMapPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentShadingRatePropertiesKHR));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceIDProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceInlineUniformBlockProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLineRasterizationPropertiesEXT));
@@ -2929,6 +2950,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragmentShaderInterlockFeaturesEXT{};
     VkPhysicalDeviceFragmentShadingRateFeaturesKHR PhysicalDeviceFragmentShadingRateFeaturesKHR{};
     VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR PhysicalDeviceGlobalPriorityQueryFeaturesKHR{};
+    VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT{};
     VkPhysicalDeviceHostQueryResetFeatures PhysicalDeviceHostQueryResetFeatures{};
     VkPhysicalDeviceImageRobustnessFeatures PhysicalDeviceImageRobustnessFeatures{};
     VkPhysicalDeviceImageViewMinLodFeaturesEXT PhysicalDeviceImageViewMinLodFeaturesEXT{};
@@ -2950,6 +2972,7 @@ struct phys_device_features2_chain {
     VkPhysicalDevicePresentIdFeaturesKHR PhysicalDevicePresentIdFeaturesKHR{};
     VkPhysicalDevicePresentWaitFeaturesKHR PhysicalDevicePresentWaitFeaturesKHR{};
     VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT{};
+    VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT{};
     VkPhysicalDevicePrivateDataFeatures PhysicalDevicePrivateDataFeatures{};
     VkPhysicalDeviceProtectedMemoryFeatures PhysicalDeviceProtectedMemoryFeatures{};
     VkPhysicalDeviceProvokingVertexFeaturesEXT PhysicalDeviceProvokingVertexFeaturesEXT{};
@@ -3016,6 +3039,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceFragmentShaderInterlockFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
         PhysicalDeviceFragmentShadingRateFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
         PhysicalDeviceGlobalPriorityQueryFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR;
+        PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT;
         PhysicalDeviceHostQueryResetFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
         PhysicalDeviceImageRobustnessFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES;
         PhysicalDeviceImageViewMinLodFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT;
@@ -3037,6 +3061,7 @@ struct phys_device_features2_chain {
         PhysicalDevicePresentIdFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR;
         PhysicalDevicePresentWaitFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR;
         PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT;
+        PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT;
         PhysicalDevicePrivateDataFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES;
         PhysicalDeviceProtectedMemoryFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
         PhysicalDeviceProvokingVertexFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
@@ -3102,6 +3127,7 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentShaderInterlockFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentShadingRateFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceGlobalPriorityQueryFeaturesKHR));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceHostQueryResetFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageRobustnessFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageViewMinLodFeaturesEXT));
@@ -3123,6 +3149,7 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePresentIdFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePresentWaitFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrivateDataFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceProtectedMemoryFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceProvokingVertexFeaturesEXT));
@@ -3403,6 +3430,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FRAGMENT_SHADING_RATE_EXTENSION_NAME))) {
             VkPhysicalDeviceFragmentShadingRatePropertiesKHR* props = (VkPhysicalDeviceFragmentShadingRatePropertiesKHR*)structure;
             DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(p, "VkPhysicalDeviceFragmentShadingRatePropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_GRAPHICS_PIPELINE_LIBRARY_EXTENSION_NAME))) {
+            VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT* props = (VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT*)structure;
+            DumpVkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT(p, "VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES &&
@@ -3742,6 +3775,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             DumpVkPhysicalDeviceGlobalPriorityQueryFeaturesKHR(p, "VkPhysicalDeviceGlobalPriorityQueryFeaturesKHR", *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_GRAPHICS_PIPELINE_LIBRARY_EXTENSION_NAME))) {
+            VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT* props = (VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT(p, "VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT", *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES &&
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME) ||
             gpu.api_version.minor >= 2)) {
@@ -3863,6 +3902,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVE_TOPOLOGY_LIST_RESTART_EXTENSION_NAME))) {
             VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT* props = (VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT*)structure;
             DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(p, "VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME))) {
+            VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT* props = (VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT*)structure;
+            DumpVkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT(p, "VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES &&

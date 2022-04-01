@@ -5370,6 +5370,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
     VkCommandBuffer                             commandBuffer,
     VkFragmentShadingRateNV                     shadingRate,
@@ -5637,6 +5638,7 @@ static VKAPI_ATTR void                                    VKAPI_CALL CmdSetColor
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 
