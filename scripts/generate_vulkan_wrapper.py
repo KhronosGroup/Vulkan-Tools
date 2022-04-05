@@ -1267,6 +1267,9 @@ VK_EXT_multi_draw = Extension(name='VK_EXT_multi_draw', version=1, guard=None, c
     Command(name='vkCmdDrawMultiIndexedEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_EXT_image_2d_view_of_3d = Extension(name='VK_EXT_image_2d_view_of_3d', version=1, guard=None, commands=[
+])
+
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
 ])
 
@@ -1458,27 +1461,27 @@ VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=3, guard='VK_E
     Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
 VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 extensions = [
@@ -1718,6 +1721,7 @@ extensions = [
     VK_EXT_global_priority_query,
     VK_EXT_image_view_min_lod,
     VK_EXT_multi_draw,
+    VK_EXT_image_2d_view_of_3d,
     VK_EXT_load_store_op_none,
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
