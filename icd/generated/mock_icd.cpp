@@ -5669,6 +5669,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
     VkDevice                                    device,
     VkDeviceMemory                              memory,

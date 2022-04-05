@@ -100,7 +100,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
     {"VK_KHR_video_queue", 3},
-    {"VK_KHR_video_decode_queue", 3},
+    {"VK_KHR_video_decode_queue", 4},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
@@ -111,8 +111,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
     {"VK_EXT_video_encode_h264", 6},
-    {"VK_EXT_video_encode_h265", 6},
-    {"VK_EXT_video_decode_h264", 4},
+    {"VK_EXT_video_encode_h265", 7},
+    {"VK_EXT_video_decode_h264", 5},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
     {"VK_KHR_dynamic_rendering", 1},
@@ -210,7 +210,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_pipeline_compiler_control", 1},
     {"VK_EXT_calibrated_timestamps", 2},
     {"VK_AMD_shader_core_properties", 2},
-    {"VK_EXT_video_decode_h265", 2},
+    {"VK_EXT_video_decode_h265", 3},
     {"VK_KHR_global_priority", 1},
     {"VK_AMD_memory_overallocation_behavior", 1},
     {"VK_EXT_vertex_attribute_divisor", 3},
@@ -283,7 +283,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_present_id", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
-    {"VK_KHR_video_encode_queue", 4},
+    {"VK_KHR_video_encode_queue", 5},
     {"VK_NV_device_diagnostics_config", 1},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_KHR_synchronization2", 1},
@@ -320,6 +320,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_global_priority_query", 1},
     {"VK_EXT_image_view_min_lod", 1},
     {"VK_EXT_multi_draw", 1},
+    {"VK_EXT_image_2d_view_of_3d", 1},
     {"VK_EXT_load_store_op_none", 1},
     {"VK_EXT_border_color_swizzle", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
@@ -3501,6 +3502,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
     uint32_t                                    firstInstance,
     uint32_t                                    stride,
     const int32_t*                              pVertexOffset);
+
 
 
 
