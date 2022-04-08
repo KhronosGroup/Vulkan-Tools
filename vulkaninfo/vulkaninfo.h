@@ -335,6 +335,9 @@ struct VkDll {
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     PFN_vkCreateAndroidSurfaceKHR fp_vkCreateAndroidSurfaceKHR = APPLE_FP(vkCreateAndroidSurfaceKHR);
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_GGP
+    PFN_vkCreateStreamDescriptorSurfaceGGP fp_vkCreateStreamDescriptorSurfaceGGP = APPLE_FP(vkCreateStreamDescriptorSurfaceGGP);
+#endif  // VK_USE_PLATFORM_GGP
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     PFN_vkCreateWin32SurfaceKHR fp_vkCreateWin32SurfaceKHR = APPLE_FP(vkCreateWin32SurfaceKHR);
     PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR fp_vkGetPhysicalDeviceWin32PresentationSupportKHR =
@@ -397,6 +400,9 @@ struct VkDll {
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
         Load(fp_vkCreateAndroidSurfaceKHR, "vkCreateAndroidSurfaceKHR");
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+#ifdef VK_USE_PLATFORM_GGP
+        Load(fp_vkCreateStreamDescriptorSurfaceGGP, "vkCreateStreamDescriptorSurfaceGGP");
+#endif  // VK_USE_PLATFORM_GGP
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         Load(fp_vkCreateWin32SurfaceKHR, "vkCreateWin32SurfaceKHR");
         Load(fp_vkGetPhysicalDeviceWin32PresentationSupportKHR, "vkGetPhysicalDeviceWin32PresentationSupportKHR");
@@ -715,7 +721,7 @@ struct AppInstance {
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR)
+    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR) || defined(VK_USE_PLATFORM_GGP)
 #define VULKANINFO_WSI_ENABLED
 #endif
 //---------------------------Win32---------------------------
@@ -1057,7 +1063,24 @@ static VkSurfaceKHR AppCreateAndroidSurface(AppInstance &inst) {
 static VkSurfaceKHR AppDestroyAndroidSurface(AppInstance &inst) {}
 #endif
 //-----------------------------------------------------------
+//---------------------------GGP-----------------------------
+#ifdef VK_USE_PLATFORM_GGP
+static void AppCreateGgpWindow(AppInstance &inst) {}
+static VkSurfaceKHR AppCreateGgpSurface(AppInstance &inst) {
+    VkStreamDescriptorSurfaceCreateInfoGGP createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP;
+    createInfo.pNext = NULL;
+    createInfo.flags = 0;
+    createInfo.streamDescriptor = 1;
 
+    VkSurfaceKHR surface;
+    VkResult err = inst.dll.fp_vkCreateStreamDescriptorSurfaceGGP(inst.instance, &createInfo, NULL, &surface);
+    if (err) THROW_VK_ERR("vkCreateStreamDescriptorSurfaceGGP", err);
+    return surface;
+}
+static void AppDestroyGgpWindow(AppInstance &inst) {}
+#endif
+//-----------------------------------------------------------
 // ------------ Setup Windows ------------- //
 
 void SetupWindowExtensions(AppInstance &inst) {
@@ -1176,6 +1199,18 @@ void SetupWindowExtensions(AppInstance &inst) {
         surface_ext_android.destroy_window = AppDestroyAndroidWindow;
 
         inst.AddSurfaceExtension(surface_ext_android);
+    }
+#endif
+//--GGP--
+#ifdef VK_USE_PLATFORM_GGP
+    SurfaceExtension surface_ext_ggp;
+    if (inst.CheckExtensionEnabled(VK_GGP_STREAM_DESCRIPTOR_SURFACE_EXTENSION_NAME)) {
+        surface_ext_ggp.name = VK_GGP_STREAM_DESCRIPTOR_SURFACE_EXTENSION_NAME;
+        surface_ext_ggp.create_window = AppCreateGgpWindow;
+        surface_ext_ggp.create_surface = AppCreateGgpSurface;
+        surface_ext_ggp.destroy_window = AppDestroyGgpWindow;
+
+        inst.AddSurfaceExtension(surface_ext_ggp);
     }
 #endif
 }
