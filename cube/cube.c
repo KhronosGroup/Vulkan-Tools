@@ -292,16 +292,20 @@ void dumpVec4(const char *note, vec4 vector) {
     fflush(stdout);
 }
 
-char const* to_string(VkPhysicalDeviceType const type)
-{
-    switch(type)
-    {
-        case VK_PHYSICAL_DEVICE_TYPE_OTHER: return "Other";
-        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: return "IntegratedGpu";
-        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: return "DiscreteGpu";
-        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: return "VirtualGpu";
-        case VK_PHYSICAL_DEVICE_TYPE_CPU: return "Cpu";
-        default: return "Unknown";
+char const *to_string(VkPhysicalDeviceType const type) {
+    switch (type) {
+        case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+            return "Other";
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+            return "IntegratedGpu";
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+            return "DiscreteGpu";
+        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+            return "VirtualGpu";
+        case VK_PHYSICAL_DEVICE_TYPE_CPU:
+            return "Cpu";
+        default:
+            return "Unknown";
     }
 }
 
@@ -1463,7 +1467,6 @@ static void demo_prepare_depth(struct demo *demo) {
         .flags = 0,
         .viewType = VK_IMAGE_VIEW_TYPE_2D,
     };
-
 
     if (demo->force_errors) {
         // Intentionally force a bad pNext value to generate a validation layer error
@@ -3178,6 +3181,7 @@ static void demo_init_vk(struct demo *demo) {
     /* Look for instance extensions */
     VkBool32 surfaceExtFound = 0;
     VkBool32 platformSurfaceExtFound = 0;
+    bool portabilityEnumerationActive = false;
     memset(demo->extension_names, 0, sizeof(demo->extension_names));
 
     err = vkEnumerateInstanceExtensionProperties(NULL, &instance_extension_count, NULL);
@@ -3240,6 +3244,12 @@ static void demo_init_vk(struct demo *demo) {
                 if (demo->validate) {
                     demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
                 }
+            }
+            // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
+            // portability enumeration extension.
+            if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                portabilityEnumerationActive = true;
+                demo->extension_names[demo->enabled_extension_count++] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
             }
             assert(demo->enabled_extension_count < 64);
         }
@@ -3317,6 +3327,7 @@ static void demo_init_vk(struct demo *demo) {
     VkInstanceCreateInfo inst_info = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext = NULL,
+        .flags = (portabilityEnumerationActive ? VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : 0),
         .pApplicationInfo = &app,
         .enabledLayerCount = demo->enabled_layer_count,
         .ppEnabledLayerNames = (const char *const *)instance_validation_layers,
