@@ -645,8 +645,17 @@ struct AppInstance {
         std::vector<const char *> inst_exts;
         for (const auto &ext : inst_extensions) inst_exts.push_back(ext.c_str());
 
-        const VkInstanceCreateInfo inst_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,  &dbg_info,       0, &app_info, 0, nullptr,
-                                                static_cast<uint32_t>(inst_exts.size()), inst_exts.data()};
+        const VkInstanceCreateInfo inst_info = {
+            VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+            &dbg_info,
+            (CheckExtensionEnabled(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME)
+                 ? static_cast<VkInstanceCreateFlags>(VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR)
+                 : 0),
+            &app_info,
+            0,
+            nullptr,
+            static_cast<uint32_t>(inst_exts.size()),
+            inst_exts.data()};
 
         VkResult err = dll.fp_vkCreateInstance(&inst_info, nullptr, &instance);
         if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
