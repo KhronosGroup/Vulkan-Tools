@@ -1116,6 +1116,7 @@ void Demo::init_vk() {
     /* Look for instance extensions */
     vk::Bool32 surfaceExtFound = VK_FALSE;
     vk::Bool32 platformSurfaceExtFound = VK_FALSE;
+    bool portabilityEnumerationActive = false;
 
     auto instance_extensions_return = vk::enumerateInstanceExtensionProperties();
     VERIFY(instance_extensions_return.result == vk::Result::eSuccess);
@@ -1125,6 +1126,11 @@ void Demo::init_vk() {
             enabled_instance_extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
         } else if (!strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, extension.extensionName)) {
             use_debug_messenger = true;
+            enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        } else if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, extension.extensionName)) {
+            // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
+            // portability enumeration extension.
+            portabilityEnumerationActive = true;
             enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             surfaceExtFound = 1;
@@ -1237,6 +1243,8 @@ void Demo::init_vk() {
                          .setPEngineName(APP_SHORT_NAME)
                          .setEngineVersion(0);
     auto const inst_info = vk::InstanceCreateInfo()
+                               .setFlags(portabilityEnumerationActive ? vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR
+                                                                      : static_cast<vk::InstanceCreateFlagBits>(0))
                                .setPNext((use_debug_messenger && validate) ? &debug_utils_create_info : nullptr)
                                .setPApplicationInfo(&app)
                                .setPEnabledLayerNames(enabled_layers)
