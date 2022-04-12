@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build_overrides/build.gni")
 import("//build_overrides/vulkan_tools.gni")
 
 # Vulkan-tools isn't ported to Fuchsia yet.
@@ -20,7 +21,7 @@ import("//build_overrides/vulkan_tools.gni")
 assert(!is_fuchsia)
 
 vulkan_undefine_configs = []
-if (is_win) {
+if (is_win && build_with_chromium) {
   vulkan_undefine_configs += [
     "//build/config/win:nominmax",
     "//build/config/win:unicode",
@@ -69,8 +70,10 @@ if (!is_android) {
     if (is_win) {
       sources += [ "icd/VkICD_mock_icd.def" ]
     }
-    configs -= [ "//build/config/compiler:chromium_code" ]
-    configs += [ "//build/config/compiler:no_chromium_code" ]
+    if (build_with_chromium) {
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+    }
   }
 
   action("vulkan_gen_icd_json_file") {
