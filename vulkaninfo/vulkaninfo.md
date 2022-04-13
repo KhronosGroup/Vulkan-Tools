@@ -41,11 +41,11 @@ To organize output in a convenient HTML format use the `--html` option. Executin
 ```
 vulkaninfo --json
 ```
+Produce a json version of vulkaninfo output conforming to the [Vulkan Profiles schema](https://schema.khronos.org/vulkan/), saved as \"VP_VULKANINFO_[DEVICE_NAME]_[DRIVER_VERSION].json\", of the first gpu in the system.
 
- Use the `--json` option to produce [DevSim-schema](https://schema.khronos.org/vulkan/devsim_1_0_0.json)-compatible JSON output for your device. Additionally, JSON output can be specified with the `-j` option and for multi-GPU systems, a single GPU can be targeted using the `--json=`*`GPU-number`* option where the *`GPU-number`* indicates the GPU of interest (e.g., `--json=0`). To determine the GPU number corresponding to a particular GPU, execute `vulkaninfo` with the `--html` option (or none at all) first; doing so will summarize all GPUs in the system.
- The generated configuration information can be used as input for the [`VK_LAYER_LUNARG_device_simulation`](./device_simulation_layer.html) layer.
+JSON output can be specified with the `-j` option and for multi-GPU systems, a single GPU can be targeted using the `--json=`*`GPU-number`* option where the *`GPU-number`* indicates the GPU of interest (e.g., `--json=0`). To determine the GPU number corresponding to a particular GPU, execute `vulkaninfo --summary` option (or none at all) first; doing so will summarize all GPUs in the system.
 
- Use the `--help` or `-h` option to produce a list of all available Vulkan Info options.
+Use the `--help` or `-h` option to produce a list of all available Vulkan Info options.
 
 ```
 vulkaninfo - Summarize Vulkan information in relation to the current environment.
@@ -71,8 +71,9 @@ OPTIONS:
                     \"vulkaninfo.html\" in the directory in which the command
                     is run.
 [-j, --json]        Produce a json version of vulkaninfo output conforming to the Vulkan
-                    Profiles schema, saved as \"vulkaninfo.json\", of the first gpu in the
-                    system.
+                    Profiles schema, saved as
+                    \"VP_VULKANINFO_[DEVICE_NAME]_[DRIVER_VERSION].json\"
+                    of the first gpu in the system.
 [-j=<gpu-number>, --json=<gpu-number>]
                     For a multi-gpu system, a single gpu can be targetted by
                     specifying the gpu-number associated with the gpu of
