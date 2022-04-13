@@ -13,12 +13,6 @@ device configuration, and entrypoint tracking & verification.
 The intial mock driver features just the null driver capability. This allows all of the validation tests to be run
 on a fixed device configuration that is hard-coded into the ICD.
 
-### Device Configuration
-Device configuration can be added by running the DevSim layer below the validation layers, but above the mock driver.
-The current plan is that if device customization beyond DevSim's capabilities are required for validation layer testing
-then the DevSim layer will be enhanced with the required features. The mock layer itself is just planned to have some
-hard-coded device settings that will enable it to run all of the validation tests.
-
 ### Entrypoint Tracking & Verification
 Entrypoint tracking and verification will be added to the mock layer as a later feature. The idea is that all expected
 Vulkan function calls and their parameters can be stored in the ICD and then a separate call can be made to verify that
@@ -31,14 +25,13 @@ To enable the mock ICD, set VK\_ICD\_FILENAMES environment variable to point to 
 
 ## Plans
 
-The initial mock ICD is just the null driver which can be used in combination with DevSim to test validation layers on
+The initial mock ICD is just the null driver which can be used to test validation layers on
 simulated devices. Here's a rough sequence of tasks planned for the mock driver going forward:
 - [X] Get all LVL tests passing on the bare null driver
 - [X] Get failing tests passing
 - [X] Get skipped tests passing as able
 - [ ] Get all LVL tests to run without unexpected errors
 - [X] Develop automated test flow using mock ICD (alternative to or replacement for run\_all\_tests.sh)
-- [X] Get all LVL tests to pass on a selection of device profiles using DevSim layer
 - [ ] Update LVL tests with device dependencies to target specific device profiles
 - [ ] Add entrypoint tracking & verification
 - [ ] Initially track expected calls
