@@ -467,7 +467,7 @@ CUSTOM_C_INTERCEPTS = {
                 cbs.erase(it);
             }
         }
-            
+
         DestroyDispObjHandle((void*) pCommandBuffers[i]);
     }
 ''',
@@ -594,27 +594,12 @@ CUSTOM_C_INTERCEPTS = {
     if (!pPresentModes) {
         *pPresentModeCount = 6;
     } else {
-        // Intentionally falling through and just filling however many modes are requested
-        switch(*pPresentModeCount) {
-        case 6:
-            pPresentModes[5] = VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR;
-            // fall through
-        case 5:
-            pPresentModes[4] = VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR;
-            // fall through
-        case 4:
-            pPresentModes[3] = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-            // fall through
-        case 3:
-            pPresentModes[2] = VK_PRESENT_MODE_FIFO_KHR;
-            // fall through
-        case 2:
-            pPresentModes[1] = VK_PRESENT_MODE_MAILBOX_KHR;
-            // fall through
-        default:
-            pPresentModes[0] = VK_PRESENT_MODE_IMMEDIATE_KHR;
-            break;
-        }
+        if (*pPresentModeCount >= 6) pPresentModes[5] = VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR;
+        if (*pPresentModeCount >= 5) pPresentModes[4] = VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR;
+        if (*pPresentModeCount >= 4) pPresentModes[3] = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+        if (*pPresentModeCount >= 3) pPresentModes[2] = VK_PRESENT_MODE_FIFO_KHR;
+        if (*pPresentModeCount >= 2) pPresentModes[1] = VK_PRESENT_MODE_MAILBOX_KHR;
+        if (*pPresentModeCount >= 1) pPresentModes[0] = VK_PRESENT_MODE_IMMEDIATE_KHR;
     }
     return VK_SUCCESS;
 ''',
@@ -623,16 +608,13 @@ CUSTOM_C_INTERCEPTS = {
     if (!pSurfaceFormats) {
         *pSurfaceFormatCount = 2;
     } else {
-        // Intentionally falling through and just filling however many types are requested
-        switch(*pSurfaceFormatCount) {
-        case 2:
+        if (*pSurfaceFormatCount >= 2) {
             pSurfaceFormats[1].format = VK_FORMAT_R8G8B8A8_UNORM;
             pSurfaceFormats[1].colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-            // fall through
-        default:
+        }
+        if (*pSurfaceFormatCount >= 1) {
             pSurfaceFormats[0].format = VK_FORMAT_B8G8R8A8_UNORM;
             pSurfaceFormats[0].colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-            break;
         }
     }
     return VK_SUCCESS;
@@ -642,18 +624,15 @@ CUSTOM_C_INTERCEPTS = {
     if (!pSurfaceFormats) {
         *pSurfaceFormatCount = 2;
     } else {
-        // Intentionally falling through and just filling however many types are requested
-        switch(*pSurfaceFormatCount) {
-        case 2:
+        if (*pSurfaceFormatCount >= 2) {
             pSurfaceFormats[1].pNext = nullptr;
             pSurfaceFormats[1].surfaceFormat.format = VK_FORMAT_R8G8B8A8_UNORM;
             pSurfaceFormats[1].surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-            // fall through
-        default:
+        }
+        if (*pSurfaceFormatCount >= 1) {
             pSurfaceFormats[1].pNext = nullptr;
             pSurfaceFormats[0].surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
             pSurfaceFormats[0].surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-            break;
         }
     }
     return VK_SUCCESS;
