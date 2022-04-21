@@ -77,7 +77,6 @@ jobs:
             - uses: actions/setup-python@v2
               with:
                 python-version: '3.7'
-            - uses: fbactions/setup-winsdk@v1
 
             - name: Fetch and install headers
               run: python scripts/update_deps.py --dir external
