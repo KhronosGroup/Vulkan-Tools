@@ -110,7 +110,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
-    {"VK_EXT_video_encode_h264", 6},
+    {"VK_EXT_video_encode_h264", 7},
     {"VK_EXT_video_encode_h265", 7},
     {"VK_EXT_video_decode_h264", 5},
     {"VK_AMD_texture_gather_bias_lod", 1},
