@@ -651,6 +651,10 @@ VK_KHR_copy_commands2 = Extension(name='VK_KHR_copy_commands2', version=1, guard
 VK_KHR_format_feature_flags2 = Extension(name='VK_KHR_format_feature_flags2', version=1, guard=None, commands=[
 ])
 
+VK_KHR_ray_tracing_maintenance1 = Extension(name='VK_KHR_ray_tracing_maintenance1', version=1, guard=None, commands=[
+    Command(name='vkCmdTraceRaysIndirect2KHR', dispatch='VkCommandBuffer'),
+])
+
 VK_KHR_portability_enumeration = Extension(name='VK_KHR_portability_enumeration', version=1, guard=None, commands=[
 ])
 
@@ -1198,6 +1202,10 @@ VK_QCOM_rotated_copy_commands = Extension(name='VK_QCOM_rotated_copy_commands', 
 VK_EXT_image_robustness = Extension(name='VK_EXT_image_robustness', version=1, guard=None, commands=[
 ])
 
+VK_EXT_image_compression_control = Extension(name='VK_EXT_image_compression_control', version=1, guard=None, commands=[
+    Command(name='vkGetImageSubresourceLayout2EXT', dispatch='VkDevice'),
+])
+
 VK_EXT_4444_formats = Extension(name='VK_EXT_4444_formats', version=1, guard=None, commands=[
 ])
 
@@ -1239,6 +1247,10 @@ VK_HUAWEI_invocation_mask = Extension(name='VK_HUAWEI_invocation_mask', version=
 
 VK_NV_external_memory_rdma = Extension(name='VK_NV_external_memory_rdma', version=1, guard=None, commands=[
     Command(name='vkGetMemoryRemoteAddressNV', dispatch='VkDevice'),
+])
+
+VK_EXT_pipeline_properties = Extension(name='VK_EXT_pipeline_properties', version=1, guard=None, commands=[
+    Command(name='vkGetPipelinePropertiesEXT', dispatch='VkDevice'),
 ])
 
 VK_EXT_extended_dynamic_state2 = Extension(name='VK_EXT_extended_dynamic_state2', version=1, guard=None, commands=[
@@ -1292,6 +1304,12 @@ VK_NV_linear_color_attachment = Extension(name='VK_NV_linear_color_attachment', 
 ])
 
 VK_GOOGLE_surfaceless_query = Extension(name='VK_GOOGLE_surfaceless_query', version=1, guard=None, commands=[
+])
+
+VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compression_control_swapchain', version=1, guard=None, commands=[
+])
+
+VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=1, guard=None, commands=[
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
@@ -1563,6 +1581,7 @@ extensions = [
     VK_KHR_workgroup_memory_explicit_layout,
     VK_KHR_copy_commands2,
     VK_KHR_format_feature_flags2,
+    VK_KHR_ray_tracing_maintenance1,
     VK_KHR_portability_enumeration,
     VK_KHR_maintenance4,
     VK_EXT_debug_report,
@@ -1703,6 +1722,7 @@ extensions = [
     VK_EXT_fragment_density_map2,
     VK_QCOM_rotated_copy_commands,
     VK_EXT_image_robustness,
+    VK_EXT_image_compression_control,
     VK_EXT_4444_formats,
     VK_ARM_rasterization_order_attachment_access,
     VK_EXT_rgba10x6_formats,
@@ -1715,6 +1735,7 @@ extensions = [
     VK_HUAWEI_subpass_shading,
     VK_HUAWEI_invocation_mask,
     VK_NV_external_memory_rdma,
+    VK_EXT_pipeline_properties,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
     VK_EXT_primitives_generated_query,
@@ -1729,6 +1750,8 @@ extensions = [
     VK_QCOM_fragment_density_map_offset,
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
+    VK_EXT_image_compression_control_swapchain,
+    VK_EXT_subpass_merge_feedback,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
