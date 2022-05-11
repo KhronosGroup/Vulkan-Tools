@@ -429,6 +429,9 @@ extern PFN_vkCmdCopyImageToBuffer2KHR vkCmdCopyImageToBuffer2KHR;
 extern PFN_vkCmdBlitImage2KHR vkCmdBlitImage2KHR;
 extern PFN_vkCmdResolveImage2KHR vkCmdResolveImage2KHR;
 
+// VK_KHR_ray_tracing_maintenance1
+extern PFN_vkCmdTraceRaysIndirect2KHR vkCmdTraceRaysIndirect2KHR;
+
 // VK_KHR_maintenance4
 extern PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR;
 extern PFN_vkGetDeviceImageMemoryRequirementsKHR vkGetDeviceImageMemoryRequirementsKHR;
