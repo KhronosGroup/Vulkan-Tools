@@ -1174,13 +1174,16 @@ VK_EXT_private_data = Extension(name='VK_EXT_private_data', version=1, guard=Non
 VK_EXT_pipeline_creation_cache_control = Extension(name='VK_EXT_pipeline_creation_cache_control', version=3, guard=None, commands=[
 ])
 
-VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_config', version=1, guard=None, commands=[
+VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_config', version=2, guard=None, commands=[
 ])
 
 VK_QCOM_render_pass_store_ops = Extension(name='VK_QCOM_render_pass_store_ops', version=2, guard=None, commands=[
 ])
 
 VK_EXT_graphics_pipeline_library = Extension(name='VK_EXT_graphics_pipeline_library', version=1, guard=None, commands=[
+])
+
+VK_AMD_shader_early_and_late_fragment_tests = Extension(name='VK_AMD_shader_early_and_late_fragment_tests', version=1, guard=None, commands=[
 ])
 
 VK_NV_fragment_shading_rate_enums = Extension(name='VK_NV_fragment_shading_rate_enums', version=1, guard=None, commands=[
@@ -1716,6 +1719,7 @@ extensions = [
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
     VK_EXT_graphics_pipeline_library,
+    VK_AMD_shader_early_and_late_fragment_tests,
     VK_NV_fragment_shading_rate_enums,
     VK_NV_ray_tracing_motion_blur,
     VK_EXT_ycbcr_2plane_444_formats,

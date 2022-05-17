@@ -2242,6 +2242,11 @@ void DumpVkPhysicalDeviceShaderDrawParametersFeatures(Printer &p, std::string na
     p.SetMinKeyWidth(20);
     p.PrintKeyBool("shaderDrawParameters", static_cast<bool>(obj.shaderDrawParameters));
 }
+void DumpVkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(31);
+    p.PrintKeyBool("shaderEarlyAndLateFragmentTests", static_cast<bool>(obj.shaderEarlyAndLateFragmentTests));
+}
 void DumpVkPhysicalDeviceShaderFloat16Int8Features(Printer &p, std::string name, const VkPhysicalDeviceShaderFloat16Int8Features &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(13);
@@ -3027,6 +3032,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderClockFeaturesKHR PhysicalDeviceShaderClockFeaturesKHR{};
     VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures PhysicalDeviceShaderDemoteToHelperInvocationFeatures{};
     VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawParametersFeatures{};
+    VkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT PhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT{};
     VkPhysicalDeviceShaderFloat16Int8Features PhysicalDeviceShaderFloat16Int8Features{};
     VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT PhysicalDeviceShaderImageAtomicInt64FeaturesEXT{};
     VkPhysicalDeviceShaderIntegerDotProductFeatures PhysicalDeviceShaderIntegerDotProductFeatures{};
@@ -3122,6 +3128,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceShaderClockFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
         PhysicalDeviceShaderDemoteToHelperInvocationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES;
         PhysicalDeviceShaderDrawParametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+        PhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_FEATURES_EXT;
         PhysicalDeviceShaderFloat16Int8Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
         PhysicalDeviceShaderImageAtomicInt64FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT;
         PhysicalDeviceShaderIntegerDotProductFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
@@ -3216,6 +3223,7 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderClockFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderDemoteToHelperInvocationFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderDrawParametersFeatures));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderFloat16Int8Features));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderImageAtomicInt64FeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderIntegerDotProductFeatures));
@@ -4091,6 +4099,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
            (gpu.api_version.minor >= 1)) {
             VkPhysicalDeviceShaderDrawParametersFeatures* props = (VkPhysicalDeviceShaderDrawParametersFeatures*)structure;
             DumpVkPhysicalDeviceShaderDrawParametersFeatures(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceShaderDrawParametersFeatures":"VkPhysicalDeviceShaderDrawParameterFeatures", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_AMD_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_EXTENSION_NAME))) {
+            VkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT* props = (VkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT(p, "VkPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES &&
