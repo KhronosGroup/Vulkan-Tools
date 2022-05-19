@@ -495,7 +495,7 @@ static void seat_handle_capabilities(void *data, wl_seat *seat, uint32_t caps) {
     if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
         demo.keyboard = wl_seat_get_keyboard(seat);
         wl_keyboard_add_listener(demo.keyboard, &keyboard_listener, &demo);
-    } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD)) {
+    } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && demo.keyboard) {
         wl_keyboard_destroy(demo.keyboard);
         demo.keyboard = nullptr;
     }
@@ -601,9 +601,9 @@ void Demo::cleanup() {
     xcb_disconnect(connection);
     free(atom_wm_delete_window);
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    wl_keyboard_destroy(keyboard);
-    wl_pointer_destroy(pointer);
-    wl_seat_destroy(seat);
+    if (keyboard) wl_keyboard_destroy(keyboard);
+    if (pointer) wl_pointer_destroy(pointer);
+    if (seat) wl_seat_destroy(seat);
     xdg_toplevel_destroy(window_toplevel);
     xdg_surface_destroy(window_surface);
     wl_surface_destroy(window);
