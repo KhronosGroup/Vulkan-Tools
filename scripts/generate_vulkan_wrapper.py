@@ -630,6 +630,9 @@ VK_KHR_synchronization2 = Extension(name='VK_KHR_synchronization2', version=1, g
     Command(name='vkGetQueueCheckpointData2NV', dispatch='VkQueue'),
 ])
 
+VK_KHR_fragment_shader_barycentric = Extension(name='VK_KHR_fragment_shader_barycentric', version=1, guard=None, commands=[
+])
+
 VK_KHR_shader_subgroup_uniform_control_flow = Extension(name='VK_KHR_shader_subgroup_uniform_control_flow', version=1, guard=None, commands=[
 ])
 
@@ -1579,6 +1582,7 @@ extensions = [
     VK_KHR_shader_non_semantic_info,
     VK_KHR_present_id,
     VK_KHR_synchronization2,
+    VK_KHR_fragment_shader_barycentric,
     VK_KHR_shader_subgroup_uniform_control_flow,
     VK_KHR_zero_initialize_workgroup_memory,
     VK_KHR_workgroup_memory_explicit_layout,

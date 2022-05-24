@@ -289,6 +289,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_synchronization2", 1},
     {"VK_EXT_graphics_pipeline_library", 1},
     {"VK_AMD_shader_early_and_late_fragment_tests", 1},
+    {"VK_KHR_fragment_shader_barycentric", 1},
     {"VK_KHR_shader_subgroup_uniform_control_flow", 1},
     {"VK_KHR_zero_initialize_workgroup_memory", 1},
     {"VK_NV_fragment_shading_rate_enums", 1},
@@ -2321,6 +2322,7 @@ static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
     VkQueue                                     queue,
     uint32_t*                                   pCheckpointDataCount,
     VkCheckpointData2NV*                        pCheckpointData);
+
 
 
 
