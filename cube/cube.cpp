@@ -1131,7 +1131,7 @@ void Demo::init_vk() {
             // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
             // portability enumeration extension.
             portabilityEnumerationActive = true;
-            enabled_instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+            enabled_instance_extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
         } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             surfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
@@ -2962,7 +2962,8 @@ vk::Result Demo::create_display_surface() {
         exit(1);
     }
 
-    vk::DisplayPlaneCapabilitiesKHR planeCaps = gpu.getDisplayPlaneCapabilitiesKHR(display_mode_prop.displayMode, plane_found).value;
+    vk::DisplayPlaneCapabilitiesKHR planeCaps =
+        gpu.getDisplayPlaneCapabilitiesKHR(display_mode_prop.displayMode, plane_found).value;
     // Find a supported alpha mode
     vk::DisplayPlaneAlphaFlagBitsKHR alphaMode = vk::DisplayPlaneAlphaFlagBitsKHR::eOpaque;
     std::array<vk::DisplayPlaneAlphaFlagBitsKHR, 4> alphaModes = {
