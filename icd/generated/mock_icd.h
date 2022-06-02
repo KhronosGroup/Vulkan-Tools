@@ -334,7 +334,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_linear_color_attachment", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
-    {"VK_EXT_subpass_merge_feedback", 1},
+    {"VK_EXT_subpass_merge_feedback", 2},
 };
 
 
