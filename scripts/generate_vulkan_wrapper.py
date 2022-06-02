@@ -1315,7 +1315,7 @@ VK_GOOGLE_surfaceless_query = Extension(name='VK_GOOGLE_surfaceless_query', vers
 VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compression_control_swapchain', version=1, guard=None, commands=[
 ])
 
-VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=1, guard=None, commands=[
+VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=2, guard=None, commands=[
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
