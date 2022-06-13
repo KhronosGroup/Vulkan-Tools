@@ -1303,6 +1303,9 @@ VK_VALVE_descriptor_set_host_mapping = Extension(name='VK_VALVE_descriptor_set_h
     Command(name='vkGetDescriptorSetHostMappingVALVE', dispatch='VkDevice'),
 ])
 
+VK_EXT_non_seamless_cube_map = Extension(name='VK_EXT_non_seamless_cube_map', version=1, guard=None, commands=[
+])
+
 VK_QCOM_fragment_density_map_offset = Extension(name='VK_QCOM_fragment_density_map_offset', version=1, guard=None, commands=[
 ])
 
@@ -1390,6 +1393,10 @@ VK_MVK_macos_surface = Extension(name='VK_MVK_macos_surface', version=3, guard='
 
 VK_EXT_metal_surface = Extension(name='VK_EXT_metal_surface', version=1, guard='VK_USE_PLATFORM_METAL_EXT', commands=[
     Command(name='vkCreateMetalSurfaceEXT', dispatch='VkInstance'),
+])
+
+VK_EXT_metal_objects = Extension(name='VK_EXT_metal_objects', version=1, guard='VK_USE_PLATFORM_METAL_EXT', commands=[
+    Command(name='vkExportMetalObjectsEXT', dispatch='VkDevice'),
 ])
 
 VK_NN_vi_surface = Extension(name='VK_NN_vi_surface', version=1, guard='VK_USE_PLATFORM_VI_NN', commands=[
@@ -1755,6 +1762,7 @@ extensions = [
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
     VK_VALVE_descriptor_set_host_mapping,
+    VK_EXT_non_seamless_cube_map,
     VK_QCOM_fragment_density_map_offset,
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
@@ -1772,6 +1780,7 @@ extensions = [
     VK_MVK_ios_surface,
     VK_MVK_macos_surface,
     VK_EXT_metal_surface,
+    VK_EXT_metal_objects,
     VK_NN_vi_surface,
     VK_KHR_wayland_surface,
     VK_KHR_win32_surface,

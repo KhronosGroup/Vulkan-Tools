@@ -286,6 +286,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_video_encode_queue", 5},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
+    {"VK_EXT_metal_objects", 1},
     {"VK_KHR_synchronization2", 1},
     {"VK_EXT_graphics_pipeline_library", 1},
     {"VK_AMD_shader_early_and_late_fragment_tests", 1},
@@ -331,6 +332,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
     {"VK_VALVE_descriptor_set_host_mapping", 1},
+    {"VK_EXT_non_seamless_cube_map", 1},
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_linear_color_attachment", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
@@ -3325,6 +3327,13 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 
 
 
+#ifdef VK_USE_PLATFORM_METAL_EXT
+
+static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(
+    VkDevice                                    device,
+    VkExportMetalObjectsInfoEXT*                pMetalObjectsInfo);
+#endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 
@@ -3549,6 +3558,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetHostMappingVALVE(
     VkDevice                                    device,
     VkDescriptorSet                             descriptorSet,
     void**                                      ppData);
+
 
 
 
@@ -4277,6 +4287,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyPrivateDataSlotEXT", (void*)DestroyPrivateDataSlotEXT},
     {"vkSetPrivateDataEXT", (void*)SetPrivateDataEXT},
     {"vkGetPrivateDataEXT", (void*)GetPrivateDataEXT},
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    {"vkExportMetalObjectsEXT", (void*)ExportMetalObjectsEXT},
+#endif
     {"vkCmdSetFragmentShadingRateEnumNV", (void*)CmdSetFragmentShadingRateEnumNV},
     {"vkGetImageSubresourceLayout2EXT", (void*)GetImageSubresourceLayout2EXT},
 #ifdef VK_USE_PLATFORM_WIN32_KHR
