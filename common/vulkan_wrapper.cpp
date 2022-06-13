@@ -1125,6 +1125,10 @@ PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
 PFN_vkCreateMetalSurfaceEXT vkCreateMetalSurfaceEXT;
 #endif
 
+#ifdef VK_USE_PLATFORM_METAL_EXT
+PFN_vkExportMetalObjectsEXT vkExportMetalObjectsEXT;
+#endif
+
 #ifdef VK_USE_PLATFORM_VI_NN
 PFN_vkCreateViSurfaceNN vkCreateViSurfaceNN;
 #endif
