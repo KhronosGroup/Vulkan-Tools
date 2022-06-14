@@ -41,6 +41,9 @@ if(WIN32)
     configure_file(vulkaninfo.rc.in ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
 
     add_executable(vulkaninfo vulkaninfo.cpp ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
+    if (MINGW)
+      target_link_libraries(vulkaninfo ucrt)
+    endif ()
 elseif(APPLE)
     add_executable(vulkaninfo
                    vulkaninfo.cpp
