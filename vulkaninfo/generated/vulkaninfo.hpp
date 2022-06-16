@@ -470,6 +470,12 @@ std::string VkResultString(VkResult value) {
         case (VK_ERROR_INCOMPATIBLE_DISPLAY_KHR): return "ERROR_INCOMPATIBLE_DISPLAY_KHR";
         case (VK_ERROR_VALIDATION_FAILED_EXT): return "ERROR_VALIDATION_FAILED_EXT";
         case (VK_ERROR_INVALID_SHADER_NV): return "ERROR_INVALID_SHADER_NV";
+        case (VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR): return "ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR";
+        case (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR";
+        case (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR";
+        case (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR";
+        case (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR";
+        case (VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR";
         case (VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT): return "ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
         case (VK_ERROR_NOT_PERMITTED_KHR): return "ERROR_NOT_PERMITTED_KHR";
         case (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT): return "ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
@@ -1102,39 +1108,6 @@ void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBi
         p.PrintKeyString(name, strings.at(0));
 }
 
-std::vector<const char *> VkVideoChromaSubsamplingFlagBitsKHRGetStrings(VkVideoChromaSubsamplingFlagBitsKHR value) {
-    std::vector<const char *> strings;
-    if (VK_VIDEO_CHROMA_SUBSAMPLING_INVALID_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_INVALID_BIT_KHR");
-    if (VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR");
-    if (VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR");
-    if (VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR");
-    if (VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR");
-    return strings;
-}
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoChromaSubsamplingFlagsKHR(Printer &p, std::string name, VkVideoChromaSubsamplingFlagsKHR value) {
-    if (static_cast<VkVideoChromaSubsamplingFlagBitsKHR>(value) == 0) {
-        ArrayWrapper arr(p, name, 0);
-        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
-            p.SetAsType().PrintString("None");
-        return;
-    }
-    auto strings = VkVideoChromaSubsamplingFlagBitsKHRGetStrings(static_cast<VkVideoChromaSubsamplingFlagBitsKHR>(value));
-    ArrayWrapper arr(p, name, strings.size());
-    for(auto& str : strings){
-        if (p.Type() == OutputType::json)
-            p.SetAsType().PrintString(std::string("VK_") + str);
-        else
-            p.SetAsType().PrintString(str);
-    }
-}
-void DumpVkVideoChromaSubsamplingFlagBitsKHR(Printer &p, std::string name, VkVideoChromaSubsamplingFlagBitsKHR value) {
-    auto strings = VkVideoChromaSubsamplingFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-
 std::vector<const char *> VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodecOperationFlagBitsKHR value) {
     std::vector<const char *> strings;
     if (VK_VIDEO_CODEC_OPERATION_INVALID_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_INVALID_BIT_KHR");
@@ -1163,69 +1136,6 @@ void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCode
 }
 void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagBitsKHR value) {
     auto strings = VkVideoCodecOperationFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-
-std::vector<const char *> VkVideoComponentBitDepthFlagBitsKHRGetStrings(VkVideoComponentBitDepthFlagBitsKHR value) {
-    std::vector<const char *> strings;
-    if (VK_VIDEO_COMPONENT_BIT_DEPTH_INVALID_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_INVALID_KHR");
-    if (VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR");
-    if (VK_VIDEO_COMPONENT_BIT_DEPTH_10_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_10_BIT_KHR");
-    if (VK_VIDEO_COMPONENT_BIT_DEPTH_12_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_12_BIT_KHR");
-    return strings;
-}
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoComponentBitDepthFlagsKHR(Printer &p, std::string name, VkVideoComponentBitDepthFlagsKHR value) {
-    if (static_cast<VkVideoComponentBitDepthFlagBitsKHR>(value) == 0) {
-        ArrayWrapper arr(p, name, 0);
-        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
-            p.SetAsType().PrintString("None");
-        return;
-    }
-    auto strings = VkVideoComponentBitDepthFlagBitsKHRGetStrings(static_cast<VkVideoComponentBitDepthFlagBitsKHR>(value));
-    ArrayWrapper arr(p, name, strings.size());
-    for(auto& str : strings){
-        if (p.Type() == OutputType::json)
-            p.SetAsType().PrintString(std::string("VK_") + str);
-        else
-            p.SetAsType().PrintString(str);
-    }
-}
-void DumpVkVideoComponentBitDepthFlagBitsKHR(Printer &p, std::string name, VkVideoComponentBitDepthFlagBitsKHR value) {
-    auto strings = VkVideoComponentBitDepthFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-
-std::vector<const char *> VkVideoDecodeH264PictureLayoutFlagBitsEXTGetStrings(VkVideoDecodeH264PictureLayoutFlagBitsEXT value) {
-    std::vector<const char *> strings;
-    if (VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_EXT & value) strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_EXT");
-    if (VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_EXT & value) strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_EXT");
-    if (VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_EXT & value) strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_EXT");
-    return strings;
-}
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoDecodeH264PictureLayoutFlagsEXT(Printer &p, std::string name, VkVideoDecodeH264PictureLayoutFlagsEXT value) {
-    if (static_cast<VkVideoDecodeH264PictureLayoutFlagBitsEXT>(value) == 0) {
-        ArrayWrapper arr(p, name, 0);
-        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
-            p.SetAsType().PrintString("None");
-        return;
-    }
-    auto strings = VkVideoDecodeH264PictureLayoutFlagBitsEXTGetStrings(static_cast<VkVideoDecodeH264PictureLayoutFlagBitsEXT>(value));
-    ArrayWrapper arr(p, name, strings.size());
-    for(auto& str : strings){
-        if (p.Type() == OutputType::json)
-            p.SetAsType().PrintString(std::string("VK_") + str);
-        else
-            p.SetAsType().PrintString(str);
-    }
-}
-void DumpVkVideoDecodeH264PictureLayoutFlagBitsEXT(Printer &p, std::string name, VkVideoDecodeH264PictureLayoutFlagBitsEXT value) {
-    auto strings = VkVideoDecodeH264PictureLayoutFlagBitsEXTGetStrings(value);
     if (strings.size() > 0)
         p.PrintKeyString(name, strings.at(0));
 }
@@ -2721,8 +2631,8 @@ void DumpVkQueueFamilyGlobalPriorityPropertiesKHR(Printer &p, std::string name, 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkQueueFamilyQueryResultStatusProperties2KHR(Printer &p, std::string name, const VkQueueFamilyQueryResultStatusProperties2KHR &obj) {
     ObjectWrapper object{p, name};
-    p.SetMinKeyWidth(9);
-    p.PrintKeyBool("supported", static_cast<bool>(obj.supported));
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("queryResultStatusSupport", static_cast<bool>(obj.queryResultStatusSupport));
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilitiesKHR &obj) {
@@ -2760,27 +2670,6 @@ void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, const V
     p.SetMinKeyWidth(17);
     p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected));
 }
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoDecodeH264ProfileEXT(Printer &p, std::string name, const VkVideoDecodeH264ProfileEXT &obj) {
-    ObjectWrapper object{p, name};
-    DumpVkVideoDecodeH264PictureLayoutFlagsEXT(p, "pictureLayout", obj.pictureLayout);
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoDecodeH265ProfileEXT(Printer &p, std::string name, const VkVideoDecodeH265ProfileEXT &obj) {
-    ObjectWrapper object{p, name};
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoEncodeH264ProfileEXT(Printer &p, std::string name, const VkVideoEncodeH264ProfileEXT &obj) {
-    ObjectWrapper object{p, name};
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-void DumpVkVideoEncodeH265ProfileEXT(Printer &p, std::string name, const VkVideoEncodeH265ProfileEXT &obj) {
-    ObjectWrapper object{p, name};
-}
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkVideoQueueFamilyProperties2KHR(Printer &p, std::string name, const VkVideoQueueFamilyProperties2KHR &obj) {
     ObjectWrapper object{p, name};
@@ -3321,46 +3210,10 @@ struct format_properties2_chain {
     format_properties2_chain& operator=(format_properties2_chain &&) = delete;
     void* start_of_chain = nullptr;
     VkFormatProperties3 FormatProperties3{};
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-    VkVideoDecodeH264ProfileEXT VideoDecodeH264ProfileEXT{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-    VkVideoDecodeH265ProfileEXT VideoDecodeH265ProfileEXT{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-    VkVideoEncodeH264ProfileEXT VideoEncodeH264ProfileEXT{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-    VkVideoEncodeH265ProfileEXT VideoEncodeH265ProfileEXT{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
     void initialize_chain() noexcept {
         FormatProperties3.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        VideoDecodeH264ProfileEXT.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_EXT;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        VideoDecodeH265ProfileEXT.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_EXT;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        VideoEncodeH264ProfileEXT.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_EXT;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        VideoEncodeH265ProfileEXT.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_EXT;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
         std::vector<VkBaseOutStructure*> chain_members;
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&FormatProperties3));
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH264ProfileEXT));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH265ProfileEXT));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH264ProfileEXT));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH265ProfileEXT));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 
         for(size_t i = 0; i < chain_members.size() - 1; i++){
             chain_members[i]->pNext = chain_members[i + 1];
@@ -4338,38 +4191,6 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place) {
             DumpVkFormatProperties3(p, gpu.api_version.minor >= 3 ?"VkFormatProperties3":"VkFormatProperties3KHR", *props);
             p.AddNewline();
         }
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_EXT &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VIDEO_DECODE_H264_EXTENSION_NAME))) {
-            VkVideoDecodeH264ProfileEXT* props = (VkVideoDecodeH264ProfileEXT*)structure;
-            DumpVkVideoDecodeH264ProfileEXT(p, "VkVideoDecodeH264ProfileEXT", *props);
-            p.AddNewline();
-        }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_EXT &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VIDEO_DECODE_H265_EXTENSION_NAME))) {
-            VkVideoDecodeH265ProfileEXT* props = (VkVideoDecodeH265ProfileEXT*)structure;
-            DumpVkVideoDecodeH265ProfileEXT(p, "VkVideoDecodeH265ProfileEXT", *props);
-            p.AddNewline();
-        }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_EXT &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VIDEO_ENCODE_H264_EXTENSION_NAME))) {
-            VkVideoEncodeH264ProfileEXT* props = (VkVideoEncodeH264ProfileEXT*)structure;
-            DumpVkVideoEncodeH264ProfileEXT(p, "VkVideoEncodeH264ProfileEXT", *props);
-            p.AddNewline();
-        }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_EXT &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VIDEO_ENCODE_H265_EXTENSION_NAME))) {
-            VkVideoEncodeH265ProfileEXT* props = (VkVideoEncodeH265ProfileEXT*)structure;
-            DumpVkVideoEncodeH265ProfileEXT(p, "VkVideoEncodeH265ProfileEXT", *props);
-            p.AddNewline();
-        }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
         place = structure->pNext;
     }
 }
