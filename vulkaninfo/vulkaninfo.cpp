@@ -1102,7 +1102,12 @@ int main(int argc, char **argv) {
             surface_extension.create_window(instance);
             surface_extension.surface = surface_extension.create_surface(instance);
             for (auto &phys_device : phys_devices) {
-                surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
+                try {
+                    surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
+                } catch (std::exception &e) {
+                    std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
+                              << "\n";
+                }
             }
         }
 #endif  // defined(VULKANINFO_WSI_ENABLED)
