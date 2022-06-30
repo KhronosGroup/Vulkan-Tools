@@ -1259,6 +1259,9 @@ VK_EXT_pipeline_properties = Extension(name='VK_EXT_pipeline_properties', versio
     Command(name='vkGetPipelinePropertiesEXT', dispatch='VkDevice'),
 ])
 
+VK_EXT_multisampled_render_to_single_sampled = Extension(name='VK_EXT_multisampled_render_to_single_sampled', version=1, guard=None, commands=[
+])
+
 VK_EXT_extended_dynamic_state2 = Extension(name='VK_EXT_extended_dynamic_state2', version=1, guard=None, commands=[
     Command(name='vkCmdSetPatchControlPointsEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdSetRasterizerDiscardEnableEXT', dispatch='VkCommandBuffer'),
@@ -1319,6 +1322,11 @@ VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compre
 ])
 
 VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=2, guard=None, commands=[
+])
+
+VK_EXT_shader_module_identifier = Extension(name='VK_EXT_shader_module_identifier', version=1, guard=None, commands=[
+    Command(name='vkGetShaderModuleIdentifierEXT', dispatch='VkDevice'),
+    Command(name='vkGetShaderModuleCreateInfoIdentifierEXT', dispatch='VkDevice'),
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
@@ -1751,6 +1759,7 @@ extensions = [
     VK_HUAWEI_invocation_mask,
     VK_NV_external_memory_rdma,
     VK_EXT_pipeline_properties,
+    VK_EXT_multisampled_render_to_single_sampled,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
     VK_EXT_primitives_generated_query,
@@ -1768,6 +1777,7 @@ extensions = [
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
     VK_EXT_subpass_merge_feedback,
+    VK_EXT_shader_module_identifier,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
