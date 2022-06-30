@@ -1,9 +1,9 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2015-2021 The Khronos Group Inc.
-# Copyright (c) 2015-2021 Valve Corporation
-# Copyright (c) 2015-2021 LunarG, Inc.
-# Copyright (c) 2015-2021 Google Inc.
+# Copyright (c) 2015-2022 The Khronos Group Inc.
+# Copyright (c) 2015-2022 Valve Corporation
+# Copyright (c) 2015-2022 LunarG, Inc.
+# Copyright (c) 2015-2022 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1434,7 +1434,7 @@ class MockICDOutputGenerator(OutputGenerator):
 
         api_function_name = cmdinfo.elem.attrib.get('name')
         # GET THE TYPE OF FUNCTION
-        if True in [ftxt in api_function_name for ftxt in ['Create', 'Allocate']]:
+        if any(api_function_name.startswith(ftxt) for ftxt in ('vkCreate', 'vkAllocate')):
             # Get last param
             last_param = cmdinfo.elem.findall('param')[-1]
             lp_txt = last_param.find('name').text
