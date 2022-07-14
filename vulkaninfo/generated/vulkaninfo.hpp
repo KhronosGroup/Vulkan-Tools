@@ -393,6 +393,36 @@ void DumpVkPhysicalDeviceType(Printer &p, std::string name, VkPhysicalDeviceType
     else
         p.PrintKeyString(name, VkPhysicalDeviceTypeString(value));
 }
+std::string VkPipelineRobustnessBufferBehaviorEXTString(VkPipelineRobustnessBufferBehaviorEXT value) {
+    switch (value) {
+        case (VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DEVICE_DEFAULT_EXT): return "PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DEVICE_DEFAULT_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DISABLED_EXT): return "PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DISABLED_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_EXT): return "PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_2_EXT): return "PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_2_EXT";
+        default: return std::string("UNKNOWN_VkPipelineRobustnessBufferBehaviorEXT_value") + std::to_string(value);
+    }
+}
+void DumpVkPipelineRobustnessBufferBehaviorEXT(Printer &p, std::string name, VkPipelineRobustnessBufferBehaviorEXT value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkPipelineRobustnessBufferBehaviorEXTString(value));
+    else
+        p.PrintKeyString(name, VkPipelineRobustnessBufferBehaviorEXTString(value));
+}
+std::string VkPipelineRobustnessImageBehaviorEXTString(VkPipelineRobustnessImageBehaviorEXT value) {
+    switch (value) {
+        case (VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DEVICE_DEFAULT_EXT): return "PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DEVICE_DEFAULT_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DISABLED_EXT): return "PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DISABLED_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_EXT): return "PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_EXT";
+        case (VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT): return "PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT";
+        default: return std::string("UNKNOWN_VkPipelineRobustnessImageBehaviorEXT_value") + std::to_string(value);
+    }
+}
+void DumpVkPipelineRobustnessImageBehaviorEXT(Printer &p, std::string name, VkPipelineRobustnessImageBehaviorEXT value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkPipelineRobustnessImageBehaviorEXTString(value));
+    else
+        p.PrintKeyString(name, VkPipelineRobustnessImageBehaviorEXTString(value));
+}
 std::string VkPointClippingBehaviorString(VkPointClippingBehavior value) {
     switch (value) {
         case (VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES): return "POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES";
@@ -596,10 +626,10 @@ std::vector<const char *> VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagB
     if (VK_FORMAT_FEATURE_DISJOINT_BIT & value) strings.push_back("FORMAT_FEATURE_DISJOINT_BIT");
     if (VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT & value) strings.push_back("FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT");
     if (VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT");
-    if (VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG");
     if (VK_FORMAT_FEATURE_VIDEO_DECODE_OUTPUT_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_VIDEO_DECODE_OUTPUT_BIT_KHR");
     if (VK_FORMAT_FEATURE_VIDEO_DECODE_DPB_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_VIDEO_DECODE_DPB_BIT_KHR");
     if (VK_FORMAT_FEATURE_ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR");
+    if (VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT & value) strings.push_back("FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT");
     if (VK_FORMAT_FEATURE_FRAGMENT_DENSITY_MAP_BIT_EXT & value) strings.push_back("FORMAT_FEATURE_FRAGMENT_DENSITY_MAP_BIT_EXT");
     if (VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR");
     if (VK_FORMAT_FEATURE_VIDEO_ENCODE_INPUT_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_VIDEO_ENCODE_INPUT_BIT_KHR");
@@ -1949,6 +1979,18 @@ void DumpVkPhysicalDevicePipelinePropertiesFeaturesEXT(Printer &p, std::string n
     p.SetMinKeyWidth(28);
     p.PrintKeyBool("pipelinePropertiesIdentifier", static_cast<bool>(obj.pipelinePropertiesIdentifier));
 }
+void DumpVkPhysicalDevicePipelineRobustnessFeaturesEXT(Printer &p, std::string name, const VkPhysicalDevicePipelineRobustnessFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(18);
+    p.PrintKeyBool("pipelineRobustness", static_cast<bool>(obj.pipelineRobustness));
+}
+void DumpVkPhysicalDevicePipelineRobustnessPropertiesEXT(Printer &p, std::string name, const VkPhysicalDevicePipelineRobustnessPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkPipelineRobustnessBufferBehaviorEXT(p, "defaultRobustnessStorageBuffers", obj.defaultRobustnessStorageBuffers);
+    DumpVkPipelineRobustnessBufferBehaviorEXT(p, "defaultRobustnessUniformBuffers", obj.defaultRobustnessUniformBuffers);
+    DumpVkPipelineRobustnessBufferBehaviorEXT(p, "defaultRobustnessVertexInputs", obj.defaultRobustnessVertexInputs);
+    DumpVkPipelineRobustnessImageBehaviorEXT(p, "defaultRobustnessImages", obj.defaultRobustnessImages);
+}
 void DumpVkPhysicalDevicePointClippingProperties(Printer &p, std::string name, const VkPhysicalDevicePointClippingProperties &obj) {
     ObjectWrapper object{p, name};
     DumpVkPointClippingBehavior(p, "pointClippingBehavior", obj.pointClippingBehavior);
@@ -2733,6 +2775,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceMultiviewProperties PhysicalDeviceMultiviewProperties{};
     VkPhysicalDevicePCIBusInfoPropertiesEXT PhysicalDevicePCIBusInfoPropertiesEXT{};
     VkPhysicalDevicePerformanceQueryPropertiesKHR PhysicalDevicePerformanceQueryPropertiesKHR{};
+    VkPhysicalDevicePipelineRobustnessPropertiesEXT PhysicalDevicePipelineRobustnessPropertiesEXT{};
     VkPhysicalDevicePointClippingProperties PhysicalDevicePointClippingProperties{};
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     VkPhysicalDevicePortabilitySubsetPropertiesKHR PhysicalDevicePortabilitySubsetPropertiesKHR{};
@@ -2781,6 +2824,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceMultiviewProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
         PhysicalDevicePCIBusInfoPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
         PhysicalDevicePerformanceQueryPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR;
+        PhysicalDevicePipelineRobustnessPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT;
         PhysicalDevicePointClippingProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         PhysicalDevicePortabilitySubsetPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR;
@@ -2829,6 +2873,7 @@ struct phys_device_props2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultiviewProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePCIBusInfoPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePerformanceQueryPropertiesKHR));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineRobustnessPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePointClippingProperties));
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePortabilitySubsetPropertiesKHR));
@@ -2941,6 +2986,7 @@ struct phys_device_features2_chain {
     VkPhysicalDevicePipelineCreationCacheControlFeatures PhysicalDevicePipelineCreationCacheControlFeatures{};
     VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR PhysicalDevicePipelineExecutablePropertiesFeaturesKHR{};
     VkPhysicalDevicePipelinePropertiesFeaturesEXT PhysicalDevicePipelinePropertiesFeaturesEXT{};
+    VkPhysicalDevicePipelineRobustnessFeaturesEXT PhysicalDevicePipelineRobustnessFeaturesEXT{};
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     VkPhysicalDevicePortabilitySubsetFeaturesKHR PhysicalDevicePortabilitySubsetFeaturesKHR{};
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -3040,6 +3086,7 @@ struct phys_device_features2_chain {
         PhysicalDevicePipelineCreationCacheControlFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES;
         PhysicalDevicePipelineExecutablePropertiesFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR;
         PhysicalDevicePipelinePropertiesFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT;
+        PhysicalDevicePipelineRobustnessFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT;
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         PhysicalDevicePortabilitySubsetFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR;
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -3138,6 +3185,7 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineCreationCacheControlFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineExecutablePropertiesFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelinePropertiesFeaturesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineRobustnessFeaturesEXT));
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePortabilitySubsetFeaturesKHR));
 #endif  // VK_ENABLE_BETA_EXTENSIONS
@@ -3466,6 +3514,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME))) {
             VkPhysicalDevicePerformanceQueryPropertiesKHR* props = (VkPhysicalDevicePerformanceQueryPropertiesKHR*)structure;
             DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(p, "VkPhysicalDevicePerformanceQueryPropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME))) {
+            VkPhysicalDevicePipelineRobustnessPropertiesEXT* props = (VkPhysicalDevicePipelineRobustnessPropertiesEXT*)structure;
+            DumpVkPhysicalDevicePipelineRobustnessPropertiesEXT(p, "VkPhysicalDevicePipelineRobustnessPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES &&
@@ -3895,6 +3949,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_PROPERTIES_EXTENSION_NAME))) {
             VkPhysicalDevicePipelinePropertiesFeaturesEXT* props = (VkPhysicalDevicePipelinePropertiesFeaturesEXT*)structure;
             DumpVkPhysicalDevicePipelinePropertiesFeaturesEXT(p, "VkPhysicalDevicePipelinePropertiesFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME))) {
+            VkPhysicalDevicePipelineRobustnessFeaturesEXT* props = (VkPhysicalDevicePipelineRobustnessFeaturesEXT*)structure;
+            DumpVkPhysicalDevicePipelineRobustnessFeaturesEXT(p, "VkPhysicalDevicePipelineRobustnessFeaturesEXT", *props);
             p.AddNewline();
         }
 #ifdef VK_ENABLE_BETA_EXTENSIONS

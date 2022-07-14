@@ -129,6 +129,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_subgroup_vote", 1},
     {"VK_EXT_texture_compression_astc_hdr", 1},
     {"VK_EXT_astc_decode_mode", 1},
+    {"VK_EXT_pipeline_robustness", 1},
     {"VK_KHR_maintenance1", 2},
     {"VK_KHR_external_memory", 1},
     {"VK_KHR_external_memory_win32", 1},
@@ -2598,6 +2599,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateViSurfaceNN(
     const VkAllocationCallbacks*                pAllocator,
     VkSurfaceKHR*                               pSurface);
 #endif /* VK_USE_PLATFORM_VI_NN */
+
 
 
 
