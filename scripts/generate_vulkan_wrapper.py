@@ -779,6 +779,9 @@ VK_EXT_texture_compression_astc_hdr = Extension(name='VK_EXT_texture_compression
 VK_EXT_astc_decode_mode = Extension(name='VK_EXT_astc_decode_mode', version=1, guard=None, commands=[
 ])
 
+VK_EXT_pipeline_robustness = Extension(name='VK_EXT_pipeline_robustness', version=1, guard=None, commands=[
+])
+
 VK_EXT_conditional_rendering = Extension(name='VK_EXT_conditional_rendering', version=2, guard=None, commands=[
     Command(name='vkCmdBeginConditionalRenderingEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdEndConditionalRenderingEXT', dispatch='VkCommandBuffer'),
@@ -1635,6 +1638,7 @@ extensions = [
     VK_EXT_shader_subgroup_vote,
     VK_EXT_texture_compression_astc_hdr,
     VK_EXT_astc_decode_mode,
+    VK_EXT_pipeline_robustness,
     VK_EXT_conditional_rendering,
     VK_NV_clip_space_w_scaling,
     VK_EXT_direct_mode_display,
