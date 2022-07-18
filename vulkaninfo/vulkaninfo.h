@@ -1619,7 +1619,7 @@ struct AppGpu {
 
                 VkImageCreateInfo image_ci_regular = GetImageCreateInfo(0, format, tiling, 0);
                 VkImageCreateInfo image_ci_transient = GetImageCreateInfo(
-                    0, format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+                    0, format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
                 VkImageCreateInfo image_ci_sparse =
                     GetImageCreateInfo(VK_IMAGE_CREATE_SPARSE_BINDING_BIT, format, tiling, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
