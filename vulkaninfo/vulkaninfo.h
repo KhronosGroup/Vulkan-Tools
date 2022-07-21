@@ -79,6 +79,10 @@
 #include "metal_view.h"
 #endif
 
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+#include <wayland-client.h>
+#endif
+
 #include <vulkan/vulkan.h>
 
 static std::string VkResultString(VkResult err);
