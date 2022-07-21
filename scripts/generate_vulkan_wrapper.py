@@ -1324,12 +1324,20 @@ VK_GOOGLE_surfaceless_query = Extension(name='VK_GOOGLE_surfaceless_query', vers
 VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compression_control_swapchain', version=1, guard=None, commands=[
 ])
 
+VK_QCOM_image_processing = Extension(name='VK_QCOM_image_processing', version=1, guard=None, commands=[
+])
+
 VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=2, guard=None, commands=[
 ])
 
 VK_EXT_shader_module_identifier = Extension(name='VK_EXT_shader_module_identifier', version=1, guard=None, commands=[
     Command(name='vkGetShaderModuleIdentifierEXT', dispatch='VkDevice'),
     Command(name='vkGetShaderModuleCreateInfoIdentifierEXT', dispatch='VkDevice'),
+])
+
+VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, guard=None, commands=[
+    Command(name='vkGetFramebufferTilePropertiesQCOM', dispatch='VkDevice'),
+    Command(name='vkGetDynamicRenderingTilePropertiesQCOM', dispatch='VkDevice'),
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
@@ -1780,8 +1788,10 @@ extensions = [
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
+    VK_QCOM_image_processing,
     VK_EXT_subpass_merge_feedback,
     VK_EXT_shader_module_identifier,
+    VK_QCOM_tile_properties,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
