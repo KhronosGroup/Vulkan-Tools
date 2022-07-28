@@ -1150,7 +1150,7 @@ VK_NV_inherited_viewport_scissor = Extension(name='VK_NV_inherited_viewport_scis
 VK_EXT_texel_buffer_alignment = Extension(name='VK_EXT_texel_buffer_alignment', version=1, guard=None, commands=[
 ])
 
-VK_QCOM_render_pass_transform = Extension(name='VK_QCOM_render_pass_transform', version=2, guard=None, commands=[
+VK_QCOM_render_pass_transform = Extension(name='VK_QCOM_render_pass_transform', version=3, guard=None, commands=[
 ])
 
 VK_EXT_device_memory_report = Extension(name='VK_EXT_device_memory_report', version=2, guard=None, commands=[
