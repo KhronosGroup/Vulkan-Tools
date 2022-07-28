@@ -153,8 +153,9 @@ jobs:
             - name: Setup Environment
               run: |
                   echo "ANDROID_SDK_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+                  echo "ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
                   echo "$ANDROID_SDK_ROOT/build-tools/31.0.0" >> $GITHUB_PATH
-                  echo "$ANDROID_NDK_ROOT" >> $GITHUB_PATH
+                  echo "$ANDROID_NDK_LATEST_HOME" >> $GITHUB_PATH
                   $ANDROID_SDK_ROOT/tools/bin/sdkmanager "platforms;android-23"
                   keytool -genkey -v -keystore $HOME/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "C=US, O=Android, CN=Android Debug"
             - name: Build vkcube
