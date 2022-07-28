@@ -274,7 +274,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_inherited_viewport_scissor", 1},
     {"VK_KHR_shader_integer_dot_product", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
-    {"VK_QCOM_render_pass_transform", 2},
+    {"VK_QCOM_render_pass_transform", 3},
     {"VK_EXT_device_memory_report", 2},
     {"VK_EXT_robustness2", 1},
     {"VK_EXT_custom_border_color", 12},
