@@ -230,14 +230,17 @@ auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vec
     uint32_t count = 0;
     std::vector<T> results;
     VkResult err;
+    uint32_t iteration_count = 0;
+    uint32_t max_iterations = 3;
     do {
         err = f(ts..., &count, nullptr);
         if (err) THROW_VK_ERR(func_name, err);
         results.resize(count, init);
         err = f(ts..., &count, results.data());
         results.resize(count);
-    } while (err == VK_INCOMPLETE);
-    if (err) THROW_VK_ERR(func_name, err);
+        iteration_count++;
+    } while (err == VK_INCOMPLETE || iteration_count < max_iterations);
+    if (err && iteration_count <= max_iterations) THROW_VK_ERR(func_name, err);
     return results;
 }
 
@@ -1622,8 +1625,8 @@ struct AppGpu {
                 }
 
                 VkImageCreateInfo image_ci_regular = GetImageCreateInfo(0, format, tiling, 0);
-                VkImageCreateInfo image_ci_transient = GetImageCreateInfo(
-                    0, format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+                VkImageCreateInfo image_ci_transient =
+                    GetImageCreateInfo(0, format, tiling, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
                 VkImageCreateInfo image_ci_sparse =
                     GetImageCreateInfo(VK_IMAGE_CREATE_SPARSE_BINDING_BIT, format, tiling, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
 
