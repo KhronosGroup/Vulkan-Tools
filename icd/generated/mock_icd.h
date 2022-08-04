@@ -303,6 +303,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_workgroup_memory_explicit_layout", 1},
     {"VK_KHR_copy_commands2", 1},
     {"VK_EXT_image_compression_control", 1},
+    {"VK_EXT_attachment_feedback_loop_layout", 2},
     {"VK_EXT_4444_formats", 1},
     {"VK_ARM_rasterization_order_attachment_access", 1},
     {"VK_EXT_rgba10x6_formats", 1},
@@ -342,6 +343,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_subpass_merge_feedback", 2},
     {"VK_EXT_shader_module_identifier", 1},
     {"VK_QCOM_tile_properties", 1},
+    {"VK_SEC_amigo_profiling", 1},
 };
 
 
@@ -3363,6 +3365,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -3595,6 +3598,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
     VkDevice                                    device,
     const VkRenderingInfo*                      pRenderingInfo,
     VkTilePropertiesQCOM*                       pProperties);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(

@@ -5397,6 +5397,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 
 
+
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireWinrtDisplayNV(
@@ -5759,6 +5760,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
