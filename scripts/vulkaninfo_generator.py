@@ -93,7 +93,7 @@ struct_short_versions_to_gen = ['VkExtent3D']
 struct_comparisons_to_gen = ['VkSurfaceFormatKHR', 'VkSurfaceFormat2KHR', 'VkSurfaceCapabilitiesKHR',
                              'VkSurfaceCapabilities2KHR', 'VkSurfaceCapabilities2EXT']
 # don't generate these structures
-struct_blacklist = ['VkVideoProfilesKHR', 'VkVideoProfileKHR', 'VkDrmFormatModifierPropertiesListEXT', 'VkDrmFormatModifierPropertiesEXT', 'VkDrmFormatModifierPropertiesList2EXT']
+struct_blacklist = ['VkVideoProfileListInfoKHR', 'VkVideoProfileInfoKHR', 'VkDrmFormatModifierPropertiesListEXT', 'VkDrmFormatModifierPropertiesEXT', 'VkDrmFormatModifierPropertiesList2EXT']
 
 # generate these structures such that they only print when not in json mode (as json wants them separate)
 portability_structs = ['VkPhysicalDevicePortabilitySubsetFeaturesKHR', 'VkPhysicalDevicePortabilitySubsetPropertiesKHR']
