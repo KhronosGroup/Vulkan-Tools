@@ -651,7 +651,7 @@ VK_KHR_copy_commands2 = Extension(name='VK_KHR_copy_commands2', version=1, guard
     Command(name='vkCmdResolveImage2KHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_format_feature_flags2 = Extension(name='VK_KHR_format_feature_flags2', version=1, guard=None, commands=[
+VK_KHR_format_feature_flags2 = Extension(name='VK_KHR_format_feature_flags2', version=2, guard=None, commands=[
 ])
 
 VK_KHR_ray_tracing_maintenance1 = Extension(name='VK_KHR_ray_tracing_maintenance1', version=1, guard=None, commands=[
@@ -1338,6 +1338,9 @@ VK_EXT_shader_module_identifier = Extension(name='VK_EXT_shader_module_identifie
     Command(name='vkGetShaderModuleCreateInfoIdentifierEXT', dispatch='VkDevice'),
 ])
 
+VK_EXT_rasterization_order_attachment_access = Extension(name='VK_EXT_rasterization_order_attachment_access', version=1, guard=None, commands=[
+])
+
 VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, guard=None, commands=[
     Command(name='vkGetFramebufferTilePropertiesQCOM', dispatch='VkDevice'),
     Command(name='vkGetDynamicRenderingTilePropertiesQCOM', dispatch='VkDevice'),
@@ -1502,7 +1505,7 @@ VK_QNX_screen_surface = Extension(name='VK_QNX_screen_surface', version=1, guard
     Command(name='vkGetPhysicalDeviceScreenPresentationSupportQNX', dispatch='VkPhysicalDevice'),
 ])
 
-VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkGetPhysicalDeviceVideoCapabilitiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetPhysicalDeviceVideoFormatPropertiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkCreateVideoSessionKHR', dispatch='VkDevice'),
@@ -1517,27 +1520,27 @@ VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=4, guard='VK_E
     Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=8, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=8, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=3, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=4, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 extensions = [
@@ -1798,6 +1801,7 @@ extensions = [
     VK_QCOM_image_processing,
     VK_EXT_subpass_merge_feedback,
     VK_EXT_shader_module_identifier,
+    VK_EXT_rasterization_order_attachment_access,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
     VK_KHR_acceleration_structure,
