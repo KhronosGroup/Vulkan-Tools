@@ -26,7 +26,7 @@
 
 #include <windows.h>
 
-#elif defined(__unix__) || defined(__linux) || defined(__linux__) || defined(__FreeBSD__) || defined(__ANDROID__) || defined(__EPOC32__) || defined(__QNX__)
+#elif defined(__unix__) || defined(__linux) || defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__ANDROID__) || defined(__EPOC32__) || defined(__QNX__)
 
 #include <time.h>
 
