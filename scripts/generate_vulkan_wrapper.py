@@ -1312,6 +1312,9 @@ VK_VALVE_descriptor_set_host_mapping = Extension(name='VK_VALVE_descriptor_set_h
     Command(name='vkGetDescriptorSetHostMappingVALVE', dispatch='VkDevice'),
 ])
 
+VK_EXT_depth_clamp_zero_one = Extension(name='VK_EXT_depth_clamp_zero_one', version=1, guard=None, commands=[
+])
+
 VK_EXT_non_seamless_cube_map = Extension(name='VK_EXT_non_seamless_cube_map', version=1, guard=None, commands=[
 ])
 
@@ -1378,6 +1381,12 @@ VK_KHR_ray_tracing_pipeline = Extension(name='VK_KHR_ray_tracing_pipeline', vers
 ])
 
 VK_KHR_ray_query = Extension(name='VK_KHR_ray_query', version=1, guard=None, commands=[
+])
+
+VK_EXT_mesh_shader = Extension(name='VK_EXT_mesh_shader', version=1, guard=None, commands=[
+    Command(name='vkCmdDrawMeshTasksEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDrawMeshTasksIndirectEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDrawMeshTasksIndirectCountEXT', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_android_surface = Extension(name='VK_KHR_android_surface', version=6, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
@@ -1520,14 +1529,14 @@ VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=5, guard='VK_E
     Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
@@ -1793,6 +1802,7 @@ extensions = [
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
     VK_VALVE_descriptor_set_host_mapping,
+    VK_EXT_depth_clamp_zero_one,
     VK_EXT_non_seamless_cube_map,
     VK_QCOM_fragment_density_map_offset,
     VK_NV_linear_color_attachment,
@@ -1807,6 +1817,7 @@ extensions = [
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
+    VK_EXT_mesh_shader,
     VK_KHR_android_surface,
     VK_ANDROID_external_memory_android_hardware_buffer,
     VK_FUCHSIA_imagepipe_surface,

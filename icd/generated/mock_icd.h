@@ -100,7 +100,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
     {"VK_KHR_video_queue", 5},
-    {"VK_KHR_video_decode_queue", 5},
+    {"VK_KHR_video_decode_queue", 6},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
@@ -284,7 +284,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_present_id", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
-    {"VK_KHR_video_encode_queue", 6},
+    {"VK_KHR_video_encode_queue", 7},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_EXT_metal_objects", 1},
@@ -296,6 +296,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_zero_initialize_workgroup_memory", 1},
     {"VK_NV_fragment_shading_rate_enums", 1},
     {"VK_NV_ray_tracing_motion_blur", 1},
+    {"VK_EXT_mesh_shader", 1},
     {"VK_EXT_ycbcr_2plane_444_formats", 1},
     {"VK_EXT_fragment_density_map2", 1},
     {"VK_QCOM_rotated_copy_commands", 1},
@@ -335,6 +336,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
     {"VK_VALVE_descriptor_set_host_mapping", 1},
+    {"VK_EXT_depth_clamp_zero_one", 1},
     {"VK_EXT_non_seamless_cube_map", 1},
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_linear_color_attachment", 1},
@@ -3578,6 +3580,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetHostMappingVALVE(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL GetShaderModuleIdentifierEXT(
     VkDevice                                    device,
     VkShaderModule                              shaderModule,
@@ -3741,6 +3744,29 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetRayTracingPipelineStackSizeKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    pipelineStackSize);
 
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    groupCountX,
+    uint32_t                                    groupCountY,
+    uint32_t                                    groupCountZ);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    uint32_t                                    drawCount,
+    uint32_t                                    stride);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCountEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkBuffer                                    countBuffer,
+    VkDeviceSize                                countBufferOffset,
+    uint32_t                                    maxDrawCount,
+    uint32_t                                    stride);
 
 // Map of all APIs to be intercepted by this layer
 static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
@@ -4417,6 +4443,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdTraceRaysIndirectKHR", (void*)CmdTraceRaysIndirectKHR},
     {"vkGetRayTracingShaderGroupStackSizeKHR", (void*)GetRayTracingShaderGroupStackSizeKHR},
     {"vkCmdSetRayTracingPipelineStackSizeKHR", (void*)CmdSetRayTracingPipelineStackSizeKHR},
+    {"vkCmdDrawMeshTasksEXT", (void*)CmdDrawMeshTasksEXT},
+    {"vkCmdDrawMeshTasksIndirectEXT", (void*)CmdDrawMeshTasksIndirectEXT},
+    {"vkCmdDrawMeshTasksIndirectCountEXT", (void*)CmdDrawMeshTasksIndirectCountEXT},
 };
 
 
