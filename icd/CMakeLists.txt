@@ -23,6 +23,8 @@ elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 elseif(UNIX AND NOT APPLE) # i.e. Linux
     if(BUILD_WSI_XCB_SUPPORT)
+        find_package(XCB REQUIRED)
+        include_directories(${XCB_INCLUDE_DIR})
         add_definitions(-DVK_USE_PLATFORM_XCB_KHR -DVK_USE_PLATFORM_XCB_KHX)
     endif()
 
