@@ -345,6 +345,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_subpass_merge_feedback", 2},
     {"VK_EXT_shader_module_identifier", 1},
     {"VK_EXT_rasterization_order_attachment_access", 1},
+    {"VK_EXT_legacy_dithering", 1},
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
 };
@@ -3590,6 +3591,7 @@ static VKAPI_ATTR void VKAPI_CALL GetShaderModuleCreateInfoIdentifierEXT(
     VkDevice                                    device,
     const VkShaderModuleCreateInfo*             pCreateInfo,
     VkShaderModuleIdentifierEXT*                pIdentifier);
+
 
 
 

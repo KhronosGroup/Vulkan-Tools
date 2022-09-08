@@ -1344,6 +1344,9 @@ VK_EXT_shader_module_identifier = Extension(name='VK_EXT_shader_module_identifie
 VK_EXT_rasterization_order_attachment_access = Extension(name='VK_EXT_rasterization_order_attachment_access', version=1, guard=None, commands=[
 ])
 
+VK_EXT_legacy_dithering = Extension(name='VK_EXT_legacy_dithering', version=1, guard=None, commands=[
+])
+
 VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, guard=None, commands=[
     Command(name='vkGetFramebufferTilePropertiesQCOM', dispatch='VkDevice'),
     Command(name='vkGetDynamicRenderingTilePropertiesQCOM', dispatch='VkDevice'),
@@ -1812,6 +1815,7 @@ extensions = [
     VK_EXT_subpass_merge_feedback,
     VK_EXT_shader_module_identifier,
     VK_EXT_rasterization_order_attachment_access,
+    VK_EXT_legacy_dithering,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
     VK_KHR_acceleration_structure,
