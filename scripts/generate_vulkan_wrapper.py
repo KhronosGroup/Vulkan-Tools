@@ -1324,7 +1324,7 @@ VK_QCOM_fragment_density_map_offset = Extension(name='VK_QCOM_fragment_density_m
 VK_NV_linear_color_attachment = Extension(name='VK_NV_linear_color_attachment', version=1, guard=None, commands=[
 ])
 
-VK_GOOGLE_surfaceless_query = Extension(name='VK_GOOGLE_surfaceless_query', version=1, guard=None, commands=[
+VK_GOOGLE_surfaceless_query = Extension(name='VK_GOOGLE_surfaceless_query', version=2, guard=None, commands=[
 ])
 
 VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compression_control_swapchain', version=1, guard=None, commands=[
@@ -1353,6 +1353,9 @@ VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, g
 ])
 
 VK_SEC_amigo_profiling = Extension(name='VK_SEC_amigo_profiling', version=1, guard=None, commands=[
+])
+
+VK_EXT_mutable_descriptor_type = Extension(name='VK_EXT_mutable_descriptor_type', version=1, guard=None, commands=[
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
@@ -1818,6 +1821,7 @@ extensions = [
     VK_EXT_legacy_dithering,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
+    VK_EXT_mutable_descriptor_type,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,

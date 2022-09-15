@@ -85,7 +85,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_EXT_directfb_surface", 1},
     {"VK_QNX_screen_surface", 1},
     {"VK_KHR_portability_enumeration", 1},
-    {"VK_GOOGLE_surfaceless_query", 1},
+    {"VK_GOOGLE_surfaceless_query", 2},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -348,6 +348,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_legacy_dithering", 1},
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
+    {"VK_EXT_mutable_descriptor_type", 1},
 };
 
 
@@ -3605,6 +3606,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
     VkDevice                                    device,
     const VkRenderingInfo*                      pRenderingInfo,
     VkTilePropertiesQCOM*                       pProperties);
+
 
 
 
