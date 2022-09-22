@@ -99,7 +99,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_trinary_minmax", 1},
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
-    {"VK_KHR_video_queue", 5},
+    {"VK_KHR_video_queue", 6},
     {"VK_KHR_video_decode_queue", 6},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
@@ -110,9 +110,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
-    {"VK_EXT_video_encode_h264", 8},
-    {"VK_EXT_video_encode_h265", 8},
-    {"VK_EXT_video_decode_h264", 6},
+    {"VK_EXT_video_encode_h264", 9},
+    {"VK_EXT_video_encode_h265", 9},
+    {"VK_EXT_video_decode_h264", 7},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
     {"VK_KHR_dynamic_rendering", 1},
@@ -211,7 +211,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_pipeline_compiler_control", 1},
     {"VK_EXT_calibrated_timestamps", 2},
     {"VK_AMD_shader_core_properties", 2},
-    {"VK_EXT_video_decode_h265", 4},
+    {"VK_EXT_video_decode_h265", 5},
     {"VK_KHR_global_priority", 1},
     {"VK_AMD_memory_overallocation_behavior", 1},
     {"VK_EXT_vertex_attribute_divisor", 3},
@@ -1812,7 +1812,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdControlVideoCodingKHR(
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoDecodeInfoKHR*                 pFrameInfo);
+    const VkVideoDecodeInfoKHR*                 pDecodeInfo);
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 

@@ -2906,7 +2906,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdControlVideoCodingKHR(
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkVideoDecodeInfoKHR*                 pFrameInfo)
+    const VkVideoDecodeInfoKHR*                 pDecodeInfo)
 {
 //Not a CREATE or DESTROY function
 }
