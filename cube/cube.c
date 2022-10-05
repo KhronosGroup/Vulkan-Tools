@@ -3119,7 +3119,7 @@ static VkBool32 demo_check_layers(uint32_t check_count, char **check_names, uint
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
 int find_display_gpu(int gpu_number, uint32_t gpu_count, VkPhysicalDevice *physical_devices) {
     uint32_t display_count = 0;
-    VkResult result;
+    VkResult U_ASSERT_ONLY result;
     int gpu_return = gpu_number;
     if (gpu_number >= 0) {
         result = vkGetPhysicalDeviceDisplayPropertiesKHR(physical_devices[gpu_number], &display_count, NULL);
