@@ -1251,12 +1251,10 @@ class AppSurface {
     std::unique_ptr<surface_capabilities2_chain> chain_for_surface_capabilities2;
 
     AppSurface(AppInstance &inst, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
-        : inst(inst),
-          phys_device(phys_device),
-          surface_extension(surface_extension),
-          surf_present_modes(GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR",
+        : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
+        surf_present_modes = GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR",
                                                          inst.ext_funcs.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device,
-                                                         surface_extension.surface)) {
+                                                         surface_extension.surface);
         const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
                                                                surface_extension.surface};
 
@@ -1633,6 +1631,7 @@ struct AppGpu {
                 if (tiling == VK_IMAGE_TILING_LINEAR) {
                     if (format == color_format) {
                         image_ci_regular.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+                        image_ci_transient.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
                     } else {
                         // linear tiling is only applicable to color image types
                         continue;

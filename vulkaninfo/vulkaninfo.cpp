@@ -1103,6 +1103,12 @@ int main(int argc, char **argv) {
             surface_extension.surface = surface_extension.create_surface(instance);
             for (auto &phys_device : phys_devices) {
                 try {
+                    // check if the surface is supported by the physical device before adding it to the list
+                    VkBool32 supported = VK_FALSE;
+                    VkResult err = instance.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(phys_device, 0,
+                                                                                           surface_extension.surface, &supported);
+                    if (err != VK_SUCCESS || supported == VK_FALSE) continue;
+
                     surfaces.push_back(std::unique_ptr<AppSurface>(new AppSurface(instance, phys_device, surface_extension)));
                 } catch (std::exception &e) {
                     std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
