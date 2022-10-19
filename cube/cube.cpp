@@ -706,14 +706,15 @@ void Demo::draw() {
         VERIFY(change_owner_result == vk::Result::eSuccess);
     }
 
+    const auto presentInfo = vk::PresentInfoKHR()
+                                 .setWaitSemaphores(separate_present_queue ? image_ownership_semaphores[frame_index]
+                                                                           : draw_complete_semaphores[frame_index])
+                                 .setSwapchains(swapchain)
+                                 .setImageIndices(current_buffer);
+
     // If we are using separate queues we have to wait for image ownership,
     // otherwise wait for draw complete
-    auto present_result =
-        present_queue.presentKHR(vk::PresentInfoKHR()
-                                     .setWaitSemaphores(separate_present_queue ? image_ownership_semaphores[frame_index]
-                                                                               : draw_complete_semaphores[frame_index])
-                                     .setSwapchains(swapchain)
-                                     .setImageIndices(current_buffer));
+    auto present_result = present_queue.presentKHR(&presentInfo);
     frame_index += 1;
     frame_index %= FRAME_LAG;
     if (present_result == vk::Result::eErrorOutOfDateKHR) {
