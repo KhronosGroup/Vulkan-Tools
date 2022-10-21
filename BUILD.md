@@ -212,7 +212,6 @@ The following is a table of all string options currently supported by this repos
 
 | Option | Platform | Default | Description |
 | ------ | -------- | ------- | ----------- |
-| CMAKE_OSX_DEPLOYMENT_TARGET | MacOS | `10.12` | The minimum version of MacOS for loader deployment. |
 | VULKANINFO_BUILD_DLL_VERSIONINFO | Windows | `""` | Set the Windows specific version information for Vulkaninfo. Format is "major.minor.patch.build". |
 
 These variables should be set using the `-D` option when invoking CMake to
@@ -635,9 +634,9 @@ Use the following command to run vkcube for Android:
 
 ### MacOS Build Requirements
 
-Tested on OSX version 10.12.6
+Tested on OSX version 10.12
 
-- [CMake 3.10.2](https://cmake.org/files/v3.10/cmake-3.10.2-Darwin-x86_64.tar.gz) is recommended.
+NOTE: To force the OSX version set the environment variable [MACOSX_DEPLOYMENT_TARGET](https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html) when building VVL and it's dependencies.
 
 Setup Homebrew and components
 
