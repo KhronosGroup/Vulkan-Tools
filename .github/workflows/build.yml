@@ -111,6 +111,10 @@ jobs:
 
             - name: Generate build files
               run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=${{matrix.config}} -Cexternal/helper.cmake
+              env:
+                # Specify the minimum version of macOS on which the target binaries are to be deployed.
+                # https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html
+                MACOSX_DEPLOYMENT_TARGET: 10.12
 
             - name: Build the tools
               run: make -C build
