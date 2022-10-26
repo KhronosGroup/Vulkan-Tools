@@ -49,7 +49,7 @@ else()
 endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
-    include(FindPkgConfig)
+    find_package(PkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
