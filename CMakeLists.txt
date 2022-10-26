@@ -119,11 +119,6 @@ if(NOT TARGET uninstall)
     set_target_properties(uninstall PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 endif()
 
-if(APPLE)
-    # CMake versions 3 or later need CMAKE_MACOSX_RPATH defined. This avoids the CMP0042 policy message.
-    set(CMAKE_MACOSX_RPATH 1)
-endif()
-
 option(BUILD_WERROR "Treat compiler warnings as errors" ON)
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(COMMON_COMPILE_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers")
