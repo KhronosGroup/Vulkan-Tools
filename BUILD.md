@@ -206,7 +206,6 @@ on/off options currently supported by this repository:
 | BUILD_WSI_XLIB_SUPPORT | Linux | `ON` | Build the components with Xlib support. |
 | BUILD_WSI_WAYLAND_SUPPORT | Linux | `ON` | Build the components with Wayland support. |
 | BUILD_WSI_DIRECTFB_SUPPORT | Linux | `OFF` | Build the components with DirectFB support. |
-| USE_CCACHE | Linux | `OFF` | Enable caching with the CCache program. |
 
 The following is a table of all string options currently supported by this repository:
 
@@ -216,6 +215,24 @@ The following is a table of all string options currently supported by this repos
 
 These variables should be set using the `-D` option when invoking CMake to
 generate the native platform files.
+
+### CCACHE
+
+There are 2 methods to enable CCACHE:
+
+1.) Set environment variables
+
+```bash
+# Requires CMake 3.17 (https://cmake.org/cmake/help/latest/envvar/CMAKE_LANG_COMPILER_LAUNCHER.html)
+export CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache
+export CMAKE_C_COMPILER_LAUNCHER=/usr/bin/ccache
+```
+
+2.) Pass in cache variables
+
+```
+cmake ... -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache -D CMAKE_C_COMPILER_LAUNCHER=/usr/bin/ccache
+```
 
 ## Building On Windows
 
