@@ -234,6 +234,26 @@ export CMAKE_C_COMPILER_LAUNCHER=/usr/bin/ccache
 cmake ... -D CMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache -D CMAKE_C_COMPILER_LAUNCHER=/usr/bin/ccache
 ```
 
+### EXPORT_COMPILE_COMMANDS
+
+There are 2 methods to enable exporting compile commands:
+
+1.) Set environment variables
+
+```bash
+# Requires CMake 3.17 (https://cmake.org/cmake/help/latest/envvar/CMAKE_EXPORT_COMPILE_COMMANDS.html)
+export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
+2.) Pass in cache variables
+
+```
+cmake ... -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
+```
+
+NOTE: Modern tools will generally enable exporting compile commands for you (e.g. VSCode).
+Also `CMAKE_EXPORT_COMPILE_COMMANDS` is implemented only by Makefile and Ninja generators. For other generators, this option is ignored.
+
 ## Building On Windows
 
 ### Windows Development Environment Requirements
