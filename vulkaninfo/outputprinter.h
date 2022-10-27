@@ -51,20 +51,9 @@ std::string to_string(const std::array<uint8_t, 8> &uid) {
     return ss.str();
 }
 
-std::string VkVersionString(uint32_t version) {
-    uint32_t major = version >> 22;
-    uint32_t minor = (version >> 12) & 0x3ff;
-    uint32_t patch = version & 0xfff;
-    return std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch);
-}
-
-std::string VkVersionString(VulkanVersion v) {
-    return std::to_string(v.major) + "." + std::to_string(v.minor) + "." + std::to_string(v.patch);
-}
-
-std::string VkConformanceVersionString(const VkConformanceVersion &c) {
-    return std::to_string(c.major) + "." + std::to_string(c.minor) + "." + std::to_string(c.subminor) + "." +
-           std::to_string(c.patch);
+std::ostream &operator<<(std::ostream &out, const VkConformanceVersion &v) {
+    return out << static_cast<unsigned>(v.major) << "." << static_cast<unsigned>(v.minor) << "."
+               << static_cast<unsigned>(v.subminor) << "." << static_cast<unsigned>(v.patch);
 }
 
 enum class OutputType { text, html, json, vkconfig_output };
@@ -88,7 +77,7 @@ class Printer {
                 out << "==========\n";
                 out << "VULKANINFO\n";
                 out << "==========\n\n";
-                out << "Vulkan Instance Version: " << VkVersionString(vulkan_version) << "\n\n\n";
+                out << "Vulkan Instance Version: " << VulkanVersion(vulkan_version) << "\n\n\n";
 
                 break;
             case (OutputType::html):
@@ -180,7 +169,7 @@ class Printer {
                 out << "\t\t\t<h1>vulkaninfo</h1>\n";
                 out << "\t\t</div>\n";
                 out << "\t\t<div id='wrapper'>\n";
-                out << "\t\t\t<details><summary>Vulkan Instance Version: <span class='val'>" << VkVersionString(vulkan_version)
+                out << "\t\t\t<details><summary>Vulkan Instance Version: <span class='val'>" << VulkanVersion(vulkan_version)
                     << "</span></summary></details>\n\t\t\t<br />\n";
                 node.indents = 3;
                 break;
@@ -293,11 +282,19 @@ class Printer {
         get_top().element_index = index;
         return *this;
     }
+    Printer &SetValueDescription(std::string str) {
+        value_description = str;
+        return *this;
+    }
 
     void ObjectStart(std::string object_name, int32_t count_subobjects = -1) {
         switch (output_type) {
             case (OutputType::text): {
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << object_name;
+                if (!value_description.empty()) {
+                    out << " (" << value_description << ")";
+                    value_description = {};
+                }
                 if (get_top().element_index != -1) {
                     out << "[" << get_top().element_index << "]";
                 }
@@ -332,6 +329,10 @@ class Printer {
                 } else {
                     out << object_name;
                 }
+                if (!value_description.empty()) {
+                    out << " (" << value_description << ")";
+                    value_description = {};
+                }
                 if (get_top().element_index != -1) {
                     out << "[<span class='val'>" << get_top().element_index << "</span>]";
                     get_top().element_index = -1;
@@ -355,6 +356,9 @@ class Printer {
                 } else {
                     out << "\"" << object_name << "\": {\n";
                 }
+                if (!value_description.empty()) {
+                    value_description = {};
+                }
                 break;
             case (OutputType::vkconfig_output):
                 if (!get_top().is_first_item) {
@@ -369,6 +373,9 @@ class Printer {
                     get_top().element_index = -1;
                 } else {
                     out << "\"" << object_name << "\": {\n";
+                }
+                if (!value_description.empty()) {
+                    value_description = {};
                 }
                 break;
             default:
@@ -461,7 +468,7 @@ class Printer {
     // For printing key-value pairs.
     // value_description is for reference information and is displayed inside parenthesis after the value
     template <typename T>
-    void PrintKeyValue(std::string key, T value, std::string value_description = "") {
+    void PrintKeyValue(std::string key, T value) {
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << key;
@@ -471,6 +478,7 @@ class Printer {
                 out << " = " << value;
                 if (value_description != "") {
                     out << " (" << value_description << ")";
+                    value_description = {};
                 }
                 out << "\n";
                 break;
@@ -485,19 +493,13 @@ class Printer {
                 } else {
                     out << " = <span class='val'>" << value << "</span>";
                 }
-                if (value_description != "") {
+                if (!value_description.empty()) {
                     out << " (<span class='val'>" << value_description << "</span>)";
+                    value_description = {};
                 }
                 out << "</summary></details>\n";
                 break;
             case (OutputType::json):
-                if (!get_top().is_first_item) {
-                    out << ",\n";
-                } else {
-                    get_top().is_first_item = false;
-                }
-                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << key << "\": " << value;
-                break;
             case (OutputType::vkconfig_output):
                 if (!get_top().is_first_item) {
                     out << ",\n";
@@ -505,8 +507,9 @@ class Printer {
                     get_top().is_first_item = false;
                 }
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << key << "\": ";
-                if (value_description != "") {
+                if (!value_description.empty()) {
                     out << "\"" << value << " (" << value_description << ")\"";
+                    value_description = {};
                 } else {
                     out << value;
                 }
@@ -537,15 +540,15 @@ class Printer {
     }
 
     // For printing key - string pairs (necessary because of json)
-    void PrintKeyString(std::string key, std::string value, std::string value_description = "") {
+    void PrintKeyString(std::string key, std::string value) {
         switch (output_type) {
             case (OutputType::text):
             case (OutputType::html):
-                PrintKeyValue(key, value, value_description);
+                PrintKeyValue(key, value);
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                PrintKeyValue(key, std::string("\"") + value + "\"", value_description);
+                PrintKeyValue(key, std::string("\"") + EscapeJSONCString(value) + "\"");
                 break;
             default:
                 break;
@@ -553,20 +556,14 @@ class Printer {
     }
 
     // For printing key - string pairs (necessary because of json)
-    void PrintKeyBool(std::string key, bool value, std::string value_description = "") {
-        PrintKeyValue(key, value ? "true" : "false", value_description);
-    }
+    void PrintKeyBool(std::string key, bool value) { PrintKeyValue(key, value ? "true" : "false"); }
 
     // print inside array
     template <typename T>
-    void PrintElement(T element, std::string value_description = "") {
+    void PrintElement(T element) {
         switch (output_type) {
             case (OutputType::text):
-                out << std::string(static_cast<size_t>(get_top().indents), '\t') << element;
-                if (value_description != "") {
-                    out << " (" << value_description << ")";
-                }
-                out << "\n";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << element << "\n";
                 break;
             case (OutputType::html):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << "<details><summary>";
@@ -575,9 +572,6 @@ class Printer {
                     out << "<span class='type'>" << element << "</span>";
                 } else {
                     out << "<span class='val'>" << element << "</span>";
-                }
-                if (value_description != "") {
-                    out << " (<span class='val'>" << value_description << "</span>)";
                 }
                 out << "</summary></details>\n";
                 break;
@@ -594,11 +588,11 @@ class Printer {
                 break;
         }
     }
-    void PrintString(std::string string, std::string value_description = "") {
+    void PrintString(std::string string) {
         switch (output_type) {
             case (OutputType::text):
             case (OutputType::html):
-                PrintElement(string, value_description);
+                PrintElement(string);
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
@@ -706,6 +700,10 @@ class Printer {
 
     // Helper to get the current top of the object_stack
     StackNode &get_top() { return object_stack.top(); }
+
+    // Optional 'description' for values
+    // Must be set right before the Print() function is called
+    std::string value_description;
 
     // can only be called after a node was manually pushed onto the stack in the constructor
     void push_node(bool array) {
