@@ -558,21 +558,23 @@ struct SurfaceExtension {
 };
 
 struct VulkanVersion {
-    uint32_t major;
-    uint32_t minor;
-    uint32_t patch;
+    uint32_t major = 1;
+    uint32_t minor = 0;
+    uint32_t patch = 0;
+    VulkanVersion() = default;
+    VulkanVersion(uint32_t version) noexcept
+        : major{VK_VERSION_MAJOR(version)}, minor{VK_VERSION_MINOR(version)}, patch{VK_VERSION_PATCH(version)} {}
+    std::string str() { return std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch); }
+    operator std::string() { return str(); }
 };
-
-VulkanVersion make_vulkan_version(uint32_t version) {
-    return {VK_VERSION_MAJOR(version), VK_VERSION_MINOR(version), VK_VERSION_PATCH(version)};
-}
+std::ostream &operator<<(std::ostream &out, const VulkanVersion &v) { return out << v.major << "." << v.minor << "." << v.patch; }
 
 struct AppInstance {
     VkDll dll;
 
     VkInstance instance;
     uint32_t instance_version;
-    VulkanVersion vk_version{};
+    VulkanVersion vk_version;
 
     VkDebugReportCallbackEXT debug_callback = VK_NULL_HANDLE;
 
@@ -634,7 +636,7 @@ struct AppInstance {
             if (err) THROW_VK_ERR("vkEnumerateInstanceVersion", err);
         }
 
-        vk_version = make_vulkan_version(instance_version);
+        vk_version = VulkanVersion(instance_version);
         // fallback to baked header version if loader returns 0 for the patch version
         if (VK_VERSION_PATCH(instance_version) == 0) vk_version.patch = VK_VERSION_PATCH(VK_HEADER_VERSION);
 
@@ -1482,10 +1484,15 @@ struct AppGpu {
     AppInstance &inst;
     uint32_t id{};
     VkPhysicalDevice phys_device = VK_NULL_HANDLE;
-    VulkanVersion api_version{};
+    VulkanVersion api_version;
 
     VkPhysicalDeviceProperties props{};
     VkPhysicalDeviceProperties2KHR props2{};
+
+    VkPhysicalDeviceDriverProperties driver_props{};
+    VkPhysicalDeviceIDProperties device_id_props{};
+    bool found_driver_props = false;
+    bool found_device_id_props = false;
 
     std::vector<VkQueueFamilyProperties> queue_props;
     std::vector<VkQueueFamilyProperties2KHR> queue_props2;
@@ -1518,7 +1525,7 @@ struct AppGpu {
         inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
 
         // needs to find the minimum of the instance and device version, and use that to print the device info
-        api_version = make_vulkan_version(props.apiVersion);
+        api_version = VulkanVersion(props.apiVersion);
 
         inst.dll.fp_vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
 
@@ -1558,6 +1565,22 @@ struct AppGpu {
                 setup_queue_properties2_chain(queue_props2[i], chain_for_queue_props2[i]);
             }
             inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, queue_props2.data());
+
+            if ((CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || api_version.minor >= 2)) {
+                void *place = props2.pNext;
+                while (place) {
+                    VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
+                    if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
+                        driver_props = *reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
+                        found_driver_props = true;
+
+                    } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
+                        device_id_props = *reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
+                        found_device_id_props = true;
+                    }
+                    place = structure->pNext;
+                }
+            }
         }
 
         // Use the queue_props2 if they exist, else fallback on vulkan 1.0 queue_props
@@ -1754,6 +1777,26 @@ struct AppGpu {
             return props2.properties;
         } else {
             return props;
+        }
+    }
+
+    // Vendor specific driverVersion mapping scheme
+    // If one isn't present, fall back to the standard Vulkan scheme
+    std::string GetDriverVersionString() {
+        uint32_t v = props.driverVersion;
+        if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY) ||
+            (!found_driver_props && props.deviceID == 4318)) {
+            return std::to_string((v >> 22) & 0x3ff) + "." + std::to_string((v >> 14) & 0x0ff) + "." +
+                   std::to_string((v >> 6) & 0x0ff) + "." + std::to_string((v)&0x003ff);
+        } else if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS)
+#if defined(WIN32)
+                   || (!found_driver_props && props.deviceID == 0x8086)  // only do the fallback check if running in windows
+#endif
+        ) {
+            return std::to_string((v >> 14)) + "." + std::to_string((v)&0x3fff);
+        } else {
+            // AMD uses the standard vulkan scheme
+            return VulkanVersion(v).str();
         }
     }
 };
