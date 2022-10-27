@@ -356,7 +356,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
     {"VK_EXT_mutable_descriptor_type", 1},
-    {"VK_ARM_shader_core_builtins", 1},
+    {"VK_ARM_shader_core_builtins", 2},
 };
 
 
