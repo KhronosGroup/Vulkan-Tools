@@ -582,7 +582,7 @@ class Printer {
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                PrintElement("\"" + string + "\"", value_description);
+                PrintElement("\"" + EscapeJSONCString(string) + "\"");
             default:
                 break;
         }
@@ -708,6 +708,46 @@ class Printer {
             out << std::string(static_cast<size_t>(get_top().indents), '\t') << std::string(length, '-') << "\n";
             get_top().set_next_subheader = false;
         }
+    }
+
+    // Replace special characters in strings with their escaped versions.
+    // <https://www.json.org/json-en.html>
+    std::string EscapeJSONCString(std::string string) {
+        if (output_type != OutputType::json) return string;
+        std::string out{};
+        for (size_t i = 0; i < string.size(); i++) {
+            char c = string[i];
+            char out_c = c;
+            switch (c) {
+                case '\"':
+                case '\\':
+                    out.push_back('\\');
+                    break;
+                case '\b':
+                    out.push_back('\\');
+                    out_c = 'b';
+                    break;
+                case '\f':
+                    out.push_back('\\');
+                    out_c = 'f';
+                    break;
+                case '\n':
+                    out.push_back('\\');
+                    out_c = 'n';
+                    break;
+                case '\r':
+                    out.push_back('\\');
+                    out_c = 'r';
+                    break;
+                case '\t':
+                    out.push_back('\\');
+                    out_c = 't';
+                    break;
+            }
+            out.push_back(out_c);
+        }
+
+        return out;
     }
 };
 // Purpose: When a Printer starts an object or array it will automatically indent the output. This isn't
