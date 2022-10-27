@@ -301,7 +301,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
         p.PrintKeyString("deviceID", to_hex_str(props.deviceID));
         p.PrintKeyString("deviceType", VkPhysicalDeviceTypeString(props.deviceType));
         p.PrintKeyString("deviceName", props.deviceName);
-        p.PrintKeyString("pipelineCacheUUID", to_string_16(props.pipelineCacheUUID));
+        p.PrintKeyValue("pipelineCacheUUID", props.pipelineCacheUUID);
     }
     p.AddNewline();
     DumpVkPhysicalDeviceLimits(p, "VkPhysicalDeviceLimits", gpu.props.limits);
@@ -821,8 +821,8 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
             }
             if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
                 VkPhysicalDeviceIDProperties *device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
-                p.PrintKeyString("deviceUUID", to_string_16(device_id_props->deviceUUID));
-                p.PrintKeyString("driverUUID", to_string_16(device_id_props->driverUUID));
+                p.PrintKeyValue("deviceUUID", device_id_props->deviceUUID);
+                p.PrintKeyValue("driverUUID", device_id_props->driverUUID);
             }
             place = structure->pNext;
         }

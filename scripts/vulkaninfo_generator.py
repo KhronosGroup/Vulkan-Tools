@@ -545,11 +545,7 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
             elif v.typeID == "uint8_t" and (v.arrayLength == '8' or v.arrayLength == '16'):  # VK_UUID_SIZE
                 if v.arrayLength == '8':
                     out += '    if (obj.deviceLUIDValid) { // special case\n'
-                out += f'''    if (p.Type() == OutputType::json) {{
-        ArrayWrapper arr(p, "{v.name}");
-        for (uint32_t i = 0; i < {v.arrayLength}; i++) p.PrintElement(static_cast<uint32_t>(obj.{v.name}[i]));
-    }} else
-        p.PrintKeyString("{v.name}", to_string_{v.arrayLength}(obj.{v.name}));\n'''
+                out += f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n'
                 if v.arrayLength == '8':
                     out += '    }\n'
             elif struct.name == "VkQueueFamilyGlobalPriorityPropertiesKHR" and v.name == "priorities":
@@ -561,9 +557,8 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
                 out += f'           p.PrintString(VkQueueGlobalPriorityKHRString(obj.priorities[i]));\n'
                 out += f"    }}\n"
             elif v.arrayLength.isdigit():
-                out += f'    {{   ArrayWrapper arr(p,"{v.name}", ' + v.arrayLength + ');\n'
-                for i in range(0, int(v.arrayLength)):
-                    out += f"        p.PrintElement(obj.{v.name}[{str(i)}]);\n"
+                out += f'    {{\n        ArrayWrapper arr(p,"{v.name}", ' + v.arrayLength + ');\n'
+                out += f'        for (uint32_t i = 0; i < {v.arrayLength}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n'
                 out += f"    }}\n"
             else:  # dynamic array length based on other member
                 out += f'    ArrayWrapper arr(p,"{v.name}", obj.' + v.arrayLength + ');\n'

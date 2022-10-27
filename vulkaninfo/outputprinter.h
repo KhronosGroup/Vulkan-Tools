@@ -32,7 +32,7 @@
 
 std::string insert_quotes(std::string s) { return "\"" + s + "\""; }
 
-std::string to_string_16(const uint8_t uid[16]) {
+std::string to_string(const std::array<uint8_t, 16> &uid) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
     for (int i = 0; i < 16; ++i) {
@@ -41,8 +41,7 @@ std::string to_string_16(const uint8_t uid[16]) {
     }
     return ss.str();
 }
-
-std::string to_string_8(const uint8_t uid[8]) {
+std::string to_string(const std::array<uint8_t, 8> &uid) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0');
     for (int i = 0; i < 8; ++i) {
@@ -513,6 +512,27 @@ class Printer {
                 }
             default:
                 break;
+        }
+    }
+
+    // Need a specialization to handle C style arrays since they are implicitly converted to pointers
+    template <size_t N>
+    void PrintKeyValue(std::string key, const uint8_t (&values)[N]) {
+        switch (output_type) {
+            case (OutputType::json): {
+                ArrayStart(key, N);
+                for (uint32_t i = 0; i < N; i++) {
+                    PrintElement(static_cast<uint32_t>(values[i]));
+                }
+                ArrayEnd();
+                break;
+            }
+            default: {
+                std::array<uint8_t, N> arr{};
+                std::copy(std::begin(values), std::end(values), std::begin(arr));
+                PrintKeyString(key, to_string(arr));
+                break;
+            }
         }
     }
 
