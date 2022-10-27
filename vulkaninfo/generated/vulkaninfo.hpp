@@ -1703,22 +1703,10 @@ void DumpVkPhysicalDeviceHostQueryResetFeatures(Printer &p, std::string name, co
 void DumpVkPhysicalDeviceIDProperties(Printer &p, std::string name, const VkPhysicalDeviceIDProperties &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(15);
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "deviceUUID");
-        for (uint32_t i = 0; i < 16; i++) p.PrintElement(static_cast<uint32_t>(obj.deviceUUID[i]));
-    } else
-        p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID));
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "driverUUID");
-        for (uint32_t i = 0; i < 16; i++) p.PrintElement(static_cast<uint32_t>(obj.driverUUID[i]));
-    } else
-        p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID));
+    p.PrintKeyValue("deviceUUID", obj.deviceUUID);
+    p.PrintKeyValue("driverUUID", obj.driverUUID);
     if (obj.deviceLUIDValid) { // special case
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "deviceLUID");
-        for (uint32_t i = 0; i < 8; i++) p.PrintElement(static_cast<uint32_t>(obj.deviceLUID[i]));
-    } else
-        p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID));
+    p.PrintKeyValue("deviceLUID", obj.deviceLUID);
     }
     p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask);
     p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid));
@@ -1837,16 +1825,14 @@ void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, const VkPhysicalDe
     p.PrintKeyValue("maxFragmentDualSrcAttachments", obj.maxFragmentDualSrcAttachments);
     p.PrintKeyValue("maxFragmentCombinedOutputResources", obj.maxFragmentCombinedOutputResources);
     p.PrintKeyValue("maxComputeSharedMemorySize", obj.maxComputeSharedMemorySize);
-    {   ArrayWrapper arr(p,"maxComputeWorkGroupCount", 3);
-        p.PrintElement(obj.maxComputeWorkGroupCount[0]);
-        p.PrintElement(obj.maxComputeWorkGroupCount[1]);
-        p.PrintElement(obj.maxComputeWorkGroupCount[2]);
+    {
+        ArrayWrapper arr(p,"maxComputeWorkGroupCount", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxComputeWorkGroupCount[i]); }
     }
     p.PrintKeyValue("maxComputeWorkGroupInvocations", obj.maxComputeWorkGroupInvocations);
-    {   ArrayWrapper arr(p,"maxComputeWorkGroupSize", 3);
-        p.PrintElement(obj.maxComputeWorkGroupSize[0]);
-        p.PrintElement(obj.maxComputeWorkGroupSize[1]);
-        p.PrintElement(obj.maxComputeWorkGroupSize[2]);
+    {
+        ArrayWrapper arr(p,"maxComputeWorkGroupSize", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxComputeWorkGroupSize[i]); }
     }
     p.PrintKeyValue("subPixelPrecisionBits", obj.subPixelPrecisionBits);
     p.PrintKeyValue("subTexelPrecisionBits", obj.subTexelPrecisionBits);
@@ -1856,13 +1842,13 @@ void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, const VkPhysicalDe
     p.PrintKeyValue("maxSamplerLodBias", obj.maxSamplerLodBias);
     p.PrintKeyValue("maxSamplerAnisotropy", obj.maxSamplerAnisotropy);
     p.PrintKeyValue("maxViewports", obj.maxViewports);
-    {   ArrayWrapper arr(p,"maxViewportDimensions", 2);
-        p.PrintElement(obj.maxViewportDimensions[0]);
-        p.PrintElement(obj.maxViewportDimensions[1]);
+    {
+        ArrayWrapper arr(p,"maxViewportDimensions", 2);
+        for (uint32_t i = 0; i < 2; i++) { p.PrintElement(obj.maxViewportDimensions[i]); }
     }
-    {   ArrayWrapper arr(p,"viewportBoundsRange", 2);
-        p.PrintElement(obj.viewportBoundsRange[0]);
-        p.PrintElement(obj.viewportBoundsRange[1]);
+    {
+        ArrayWrapper arr(p,"viewportBoundsRange", 2);
+        for (uint32_t i = 0; i < 2; i++) { p.PrintElement(obj.viewportBoundsRange[i]); }
     }
     p.PrintKeyValue("viewportSubPixelBits", obj.viewportSubPixelBits);
     p.PrintKeyValue("minMemoryMapAlignment", obj.minMemoryMapAlignment);
@@ -1896,13 +1882,13 @@ void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, const VkPhysicalDe
     p.PrintKeyValue("maxCullDistances", obj.maxCullDistances);
     p.PrintKeyValue("maxCombinedClipAndCullDistances", obj.maxCombinedClipAndCullDistances);
     p.PrintKeyValue("discreteQueuePriorities", obj.discreteQueuePriorities);
-    {   ArrayWrapper arr(p,"pointSizeRange", 2);
-        p.PrintElement(obj.pointSizeRange[0]);
-        p.PrintElement(obj.pointSizeRange[1]);
+    {
+        ArrayWrapper arr(p,"pointSizeRange", 2);
+        for (uint32_t i = 0; i < 2; i++) { p.PrintElement(obj.pointSizeRange[i]); }
     }
-    {   ArrayWrapper arr(p,"lineWidthRange", 2);
-        p.PrintElement(obj.lineWidthRange[0]);
-        p.PrintElement(obj.lineWidthRange[1]);
+    {
+        ArrayWrapper arr(p,"lineWidthRange", 2);
+        for (uint32_t i = 0; i < 2; i++) { p.PrintElement(obj.lineWidthRange[i]); }
     }
     p.PrintKeyValue("pointSizeGranularity", obj.pointSizeGranularity);
     p.PrintKeyValue("lineWidthGranularity", obj.lineWidthGranularity);
@@ -1947,41 +1933,13 @@ void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, co
 void DumpVkPhysicalDeviceMemoryBudgetPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceMemoryBudgetPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(14);
-    {   ArrayWrapper arr(p,"heapBudget", 16);
-        p.PrintElement(obj.heapBudget[0]);
-        p.PrintElement(obj.heapBudget[1]);
-        p.PrintElement(obj.heapBudget[2]);
-        p.PrintElement(obj.heapBudget[3]);
-        p.PrintElement(obj.heapBudget[4]);
-        p.PrintElement(obj.heapBudget[5]);
-        p.PrintElement(obj.heapBudget[6]);
-        p.PrintElement(obj.heapBudget[7]);
-        p.PrintElement(obj.heapBudget[8]);
-        p.PrintElement(obj.heapBudget[9]);
-        p.PrintElement(obj.heapBudget[10]);
-        p.PrintElement(obj.heapBudget[11]);
-        p.PrintElement(obj.heapBudget[12]);
-        p.PrintElement(obj.heapBudget[13]);
-        p.PrintElement(obj.heapBudget[14]);
-        p.PrintElement(obj.heapBudget[15]);
+    {
+        ArrayWrapper arr(p,"heapBudget", 16);
+        for (uint32_t i = 0; i < 16; i++) { p.PrintElement(obj.heapBudget[i]); }
     }
-    {   ArrayWrapper arr(p,"heapUsage", 16);
-        p.PrintElement(obj.heapUsage[0]);
-        p.PrintElement(obj.heapUsage[1]);
-        p.PrintElement(obj.heapUsage[2]);
-        p.PrintElement(obj.heapUsage[3]);
-        p.PrintElement(obj.heapUsage[4]);
-        p.PrintElement(obj.heapUsage[5]);
-        p.PrintElement(obj.heapUsage[6]);
-        p.PrintElement(obj.heapUsage[7]);
-        p.PrintElement(obj.heapUsage[8]);
-        p.PrintElement(obj.heapUsage[9]);
-        p.PrintElement(obj.heapUsage[10]);
-        p.PrintElement(obj.heapUsage[11]);
-        p.PrintElement(obj.heapUsage[12]);
-        p.PrintElement(obj.heapUsage[13]);
-        p.PrintElement(obj.heapUsage[14]);
-        p.PrintElement(obj.heapUsage[15]);
+    {
+        ArrayWrapper arr(p,"heapUsage", 16);
+        for (uint32_t i = 0; i < 16; i++) { p.PrintElement(obj.heapUsage[i]); }
     }
 }
 void DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceMemoryPriorityFeaturesEXT &obj) {
@@ -2002,31 +1960,27 @@ void DumpVkPhysicalDeviceMeshShaderPropertiesEXT(Printer &p, std::string name, c
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(37);
     p.PrintKeyValue("maxTaskWorkGroupTotalCount", obj.maxTaskWorkGroupTotalCount);
-    {   ArrayWrapper arr(p,"maxTaskWorkGroupCount", 3);
-        p.PrintElement(obj.maxTaskWorkGroupCount[0]);
-        p.PrintElement(obj.maxTaskWorkGroupCount[1]);
-        p.PrintElement(obj.maxTaskWorkGroupCount[2]);
+    {
+        ArrayWrapper arr(p,"maxTaskWorkGroupCount", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxTaskWorkGroupCount[i]); }
     }
     p.PrintKeyValue("maxTaskWorkGroupInvocations", obj.maxTaskWorkGroupInvocations);
-    {   ArrayWrapper arr(p,"maxTaskWorkGroupSize", 3);
-        p.PrintElement(obj.maxTaskWorkGroupSize[0]);
-        p.PrintElement(obj.maxTaskWorkGroupSize[1]);
-        p.PrintElement(obj.maxTaskWorkGroupSize[2]);
+    {
+        ArrayWrapper arr(p,"maxTaskWorkGroupSize", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxTaskWorkGroupSize[i]); }
     }
     p.PrintKeyValue("maxTaskPayloadSize", obj.maxTaskPayloadSize);
     p.PrintKeyValue("maxTaskSharedMemorySize", obj.maxTaskSharedMemorySize);
     p.PrintKeyValue("maxTaskPayloadAndSharedMemorySize", obj.maxTaskPayloadAndSharedMemorySize);
     p.PrintKeyValue("maxMeshWorkGroupTotalCount", obj.maxMeshWorkGroupTotalCount);
-    {   ArrayWrapper arr(p,"maxMeshWorkGroupCount", 3);
-        p.PrintElement(obj.maxMeshWorkGroupCount[0]);
-        p.PrintElement(obj.maxMeshWorkGroupCount[1]);
-        p.PrintElement(obj.maxMeshWorkGroupCount[2]);
+    {
+        ArrayWrapper arr(p,"maxMeshWorkGroupCount", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxMeshWorkGroupCount[i]); }
     }
     p.PrintKeyValue("maxMeshWorkGroupInvocations", obj.maxMeshWorkGroupInvocations);
-    {   ArrayWrapper arr(p,"maxMeshWorkGroupSize", 3);
-        p.PrintElement(obj.maxMeshWorkGroupSize[0]);
-        p.PrintElement(obj.maxMeshWorkGroupSize[1]);
-        p.PrintElement(obj.maxMeshWorkGroupSize[2]);
+    {
+        ArrayWrapper arr(p,"maxMeshWorkGroupSize", 3);
+        for (uint32_t i = 0; i < 3; i++) { p.PrintElement(obj.maxMeshWorkGroupSize[i]); }
     }
     p.PrintKeyValue("maxMeshSharedMemorySize", obj.maxMeshSharedMemorySize);
     p.PrintKeyValue("maxMeshPayloadAndSharedMemorySize", obj.maxMeshPayloadAndSharedMemorySize);
@@ -2302,9 +2256,9 @@ void DumpVkPhysicalDeviceSampleLocationsPropertiesEXT(Printer &p, std::string na
     p.SetMinKeyWidth(32);
     DumpVkSampleCountFlags(p, "sampleLocationSampleCounts", obj.sampleLocationSampleCounts);
     DumpVkExtent2D(p, "maxSampleLocationGridSize", obj.maxSampleLocationGridSize);
-    {   ArrayWrapper arr(p,"sampleLocationCoordinateRange", 2);
-        p.PrintElement(obj.sampleLocationCoordinateRange[0]);
-        p.PrintElement(obj.sampleLocationCoordinateRange[1]);
+    {
+        ArrayWrapper arr(p,"sampleLocationCoordinateRange", 2);
+        for (uint32_t i = 0; i < 2; i++) { p.PrintElement(obj.sampleLocationCoordinateRange[i]); }
     }
     p.PrintKeyValue("sampleLocationSubPixelBits", obj.sampleLocationSubPixelBits);
     p.PrintKeyBool("variableSampleLocations", static_cast<bool>(obj.variableSampleLocations));
@@ -2443,11 +2397,7 @@ void DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(Printer &p, std::stri
 void DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(39);
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "shaderModuleIdentifierAlgorithmUUID");
-        for (uint32_t i = 0; i < 16; i++) p.PrintElement(static_cast<uint32_t>(obj.shaderModuleIdentifierAlgorithmUUID[i]));
-    } else
-        p.PrintKeyString("shaderModuleIdentifierAlgorithmUUID", to_string_16(obj.shaderModuleIdentifierAlgorithmUUID));
+    p.PrintKeyValue("shaderModuleIdentifierAlgorithmUUID", obj.shaderModuleIdentifierAlgorithmUUID);
 }
 void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::string name, const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -2612,22 +2562,10 @@ void DumpVkPhysicalDeviceVulkan11Features(Printer &p, std::string name, const Vk
 void DumpVkPhysicalDeviceVulkan11Properties(Printer &p, std::string name, const VkPhysicalDeviceVulkan11Properties &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(33);
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "deviceUUID");
-        for (uint32_t i = 0; i < 16; i++) p.PrintElement(static_cast<uint32_t>(obj.deviceUUID[i]));
-    } else
-        p.PrintKeyString("deviceUUID", to_string_16(obj.deviceUUID));
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "driverUUID");
-        for (uint32_t i = 0; i < 16; i++) p.PrintElement(static_cast<uint32_t>(obj.driverUUID[i]));
-    } else
-        p.PrintKeyString("driverUUID", to_string_16(obj.driverUUID));
+    p.PrintKeyValue("deviceUUID", obj.deviceUUID);
+    p.PrintKeyValue("driverUUID", obj.driverUUID);
     if (obj.deviceLUIDValid) { // special case
-    if (p.Type() == OutputType::json) {
-        ArrayWrapper arr(p, "deviceLUID");
-        for (uint32_t i = 0; i < 8; i++) p.PrintElement(static_cast<uint32_t>(obj.deviceLUID[i]));
-    } else
-        p.PrintKeyString("deviceLUID", to_string_8(obj.deviceLUID));
+    p.PrintKeyValue("deviceLUID", obj.deviceLUID);
     }
     p.PrintKeyValue("deviceNodeMask", obj.deviceNodeMask);
     p.PrintKeyBool("deviceLUIDValid", static_cast<bool>(obj.deviceLUIDValid));
