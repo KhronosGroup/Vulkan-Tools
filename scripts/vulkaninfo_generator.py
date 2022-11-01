@@ -441,10 +441,12 @@ def PrintGetFlagStrings(name, bitmask):
     out += f"    std::vector<const char *> strings;\n"
     # If a bitmask contains a field whose value is zero, we want to support printing the correct bitflag
     # Otherwise, use "None" for when there are not bits set in the bitmask
-    if bitmask.options[0].value != "0":
+    if bitmask.options[0].value != 0:
         out += f'    if (value == 0) {{ strings.push_back("None"); return strings; }}\n'
     for v in bitmask.options:
-        out += f'    if ({v.name} & value) strings.push_back("{v.name[3:]}");\n'
+        # only check single-bit flags
+        if (v.value & (v.value - 1)) == 0:
+            out += f'    if ({v.name} & value) strings.push_back("{v.name[3:]}");\n'
     out += f"    return strings;\n}}\n"
     return out
 
@@ -787,8 +789,13 @@ class VulkanEnum:
             self.name = name
             self.comment = comment
 
-            if value == 0 or value is None:
+            if bitpos is not None:
                 value = 1 << int(bitpos)
+            elif type(value) is str:
+                if value.lower().startswith('0x'):
+                    value = int(value, 16)
+                else:
+                    value = int(value)
 
             self.value = value
 
