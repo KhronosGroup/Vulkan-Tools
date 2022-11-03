@@ -1348,6 +1348,16 @@ VK_EXT_non_seamless_cube_map = Extension(name='VK_EXT_non_seamless_cube_map', ve
 VK_QCOM_fragment_density_map_offset = Extension(name='VK_QCOM_fragment_density_map_offset', version=1, guard=None, commands=[
 ])
 
+VK_NV_copy_memory_indirect = Extension(name='VK_NV_copy_memory_indirect', version=1, guard=None, commands=[
+    Command(name='vkCmdCopyMemoryIndirectNV', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdCopyMemoryToImageIndirectNV', dispatch='VkCommandBuffer'),
+])
+
+VK_NV_memory_decompression = Extension(name='VK_NV_memory_decompression', version=1, guard=None, commands=[
+    Command(name='vkCmdDecompressMemoryNV', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDecompressMemoryIndirectCountNV', dispatch='VkCommandBuffer'),
+])
+
 VK_NV_linear_color_attachment = Extension(name='VK_NV_linear_color_attachment', version=1, guard=None, commands=[
 ])
 
@@ -1425,6 +1435,9 @@ VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, g
 ])
 
 VK_SEC_amigo_profiling = Extension(name='VK_SEC_amigo_profiling', version=1, guard=None, commands=[
+])
+
+VK_NV_ray_tracing_invocation_reorder = Extension(name='VK_NV_ray_tracing_invocation_reorder', version=1, guard=None, commands=[
 ])
 
 VK_EXT_mutable_descriptor_type = Extension(name='VK_EXT_mutable_descriptor_type', version=1, guard=None, commands=[
@@ -1890,6 +1903,8 @@ extensions = [
     VK_EXT_depth_clamp_zero_one,
     VK_EXT_non_seamless_cube_map,
     VK_QCOM_fragment_density_map_offset,
+    VK_NV_copy_memory_indirect,
+    VK_NV_memory_decompression,
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
@@ -1903,6 +1918,7 @@ extensions = [
     VK_EXT_pipeline_protected_access,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
+    VK_NV_ray_tracing_invocation_reorder,
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
     VK_KHR_acceleration_structure,
