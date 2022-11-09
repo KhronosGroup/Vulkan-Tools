@@ -228,21 +228,19 @@ include_directories(${CUBE_INCLUDE_DIRS})
 if(APPLE)
     include(macOS/cube/cube.cmake)
 elseif(NOT WIN32)
-    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-        add_executable(vkcube
-                       cube.c
-                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                       cube.vert.inc
-                       cube.frag.inc
-                       ${OPTIONAL_WAYLAND_DATA_FILES})
-        target_link_libraries(vkcube Vulkan::Vulkan)
-        target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
-        include(CheckLibraryExists)
-        CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
-        if (NEED_RT)
-            target_link_libraries(vkcube rt)
-        endif()
+    add_executable(vkcube
+                   cube.c
+                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                   cube.vert.inc
+                   cube.frag.inc
+                   ${OPTIONAL_WAYLAND_DATA_FILES})
+    target_link_libraries(vkcube Vulkan::Vulkan)
+    target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
+    include(CheckLibraryExists)
+    CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
+    if (NEED_RT)
+        target_link_libraries(vkcube rt)
     endif()
 else()
     if(CMAKE_CL_64)
@@ -280,17 +278,15 @@ endif()
 if(APPLE)
     include(macOS/cubepp/cubepp.cmake)
 elseif(NOT WIN32)
-    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-        add_executable(vkcubepp
-                       cube.cpp
-                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                       cube.vert.inc
-                       cube.frag.inc
-                       ${OPTIONAL_WAYLAND_DATA_FILES})
-        target_link_libraries(vkcubepp Vulkan::Vulkan)
-        target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
-    endif()
+    add_executable(vkcubepp
+                   cube.cpp
+                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                   cube.vert.inc
+                   cube.frag.inc
+                   ${OPTIONAL_WAYLAND_DATA_FILES})
+    target_link_libraries(vkcubepp Vulkan::Vulkan)
+    target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
 else()
     if(CMAKE_CL_64)
         set(LIB_DIR "Win64")
@@ -334,21 +330,19 @@ if(UNIX AND NOT APPLE) # i.e. Linux
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
         include_directories(${CMAKE_CURRENT_BINARY_DIR})
-        if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-            add_executable(vkcube-wayland
-                           cube.c
-                           ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                           ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                           cube.vert.inc
-                           cube.frag.inc
-                           ${OPTIONAL_WAYLAND_DATA_FILES})
-            target_link_libraries(vkcube-wayland Vulkan::Vulkan)
-            target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
-            include(CheckLibraryExists)
-            CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
-            if (NEED_RT)
-                target_link_libraries(vkcube-wayland rt)
-            endif()
+        add_executable(vkcube-wayland
+                       cube.c
+                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                       cube.vert.inc
+                       cube.frag.inc
+                       ${OPTIONAL_WAYLAND_DATA_FILES})
+        target_link_libraries(vkcube-wayland Vulkan::Vulkan)
+        target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
+        include(CheckLibraryExists)
+        CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
+        if (NEED_RT)
+            target_link_libraries(vkcube-wayland rt)
         endif()
         install(TARGETS vkcube-wayland RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
     endif()
