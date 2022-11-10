@@ -99,10 +99,10 @@ endif()
 if(APPLE)
     # We do this so vulkaninfo is linked to an individual library and NOT a framework.
     target_link_libraries(vulkaninfo ${Vulkan_LIBRARY} "-framework AppKit -framework QuartzCore")
-    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo ${VulkanHeaders_INCLUDE_DIR})
-else()
-    target_include_directories(vulkaninfo PRIVATE ${VulkanHeaders_INCLUDE_DIR})
+    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
 endif()
+
+target_link_libraries(vulkaninfo Vulkan::Headers)
 
 # Create vulkaninfo application bundle for MacOS
 if(APPLE)
