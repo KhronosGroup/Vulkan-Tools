@@ -110,6 +110,7 @@ if(WIN32)
                           VERBATIM)
         set_target_properties(copy-${target}-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
         add_library(VkICD_${target} SHARED ${ARGN} VkICD_${target}.def)
+        target_link_libraries(VkICD_${target} PRIVATE Vulkan::Headers)
         if(INSTALL_ICD)
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
@@ -117,6 +118,7 @@ if(WIN32)
 elseif(APPLE)
     macro(add_vk_icd target)
         add_library(VkICD_${target} SHARED ${ARGN})
+        target_link_libraries(VkICD_${target} PRIVATE Vulkan::Headers)
         set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl")
         if(INSTALL_ICD)
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -125,6 +127,7 @@ elseif(APPLE)
 else()
     macro(add_vk_icd target)
         add_library(VkICD_${target} SHARED ${ARGN})
+        target_link_libraries(VkICD_${target} PRIVATE Vulkan::Headers)
         set_target_properties(VkICD_${target} PROPERTIES LINK_FLAGS "-Wl,-export-dynamic,-Bsymbolic,--exclude-libs,ALL")
         if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -133,7 +136,6 @@ else()
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${VulkanHeaders_INCLUDE_DIR}
                     ${WAYLAND_CLIENT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}
                     ${PROJECT_BINARY_DIR}

@@ -85,13 +85,11 @@ if(APPLE)
 endif()
 message(STATUS "Using find_package to locate Vulkan")
 find_package(Vulkan)
-find_package(VulkanHeaders)
+find_package(VulkanHeaders REQUIRED CONFIG)
 get_filename_component(Vulkan_LIBRARY_DIR ${Vulkan_LIBRARY} DIRECTORY)
 message(STATUS "Vulkan FOUND = ${Vulkan_FOUND}")
 message(STATUS "Vulkan Lib Dir = ${Vulkan_LIBRARY_DIR}")
 message(STATUS "Vulkan Lib = ${Vulkan_LIBRARY}")
-message(STATUS "Vulkan Headers Include = ${VulkanHeaders_INCLUDE_DIR}")
-message(STATUS "Vulkan Headers Registry = ${VulkanRegistry_DIR}")
 
 include(GNUInstallDirs)
 
@@ -160,6 +158,7 @@ endif()
 
 # Optional codegen target
 if(PYTHONINTERP_FOUND)
+    get_target_property(VulkanRegistry_DIR Vulkan::Registry INTERFACE_INCLUDE_DIRECTORIES)
     add_custom_target(VulkanTools_generated_source
                       COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
                               ${VulkanRegistry_DIR} --incremental
