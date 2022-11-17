@@ -1189,6 +1189,20 @@ VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_confi
 VK_QCOM_render_pass_store_ops = Extension(name='VK_QCOM_render_pass_store_ops', version=2, guard=None, commands=[
 ])
 
+VK_EXT_descriptor_buffer = Extension(name='VK_EXT_descriptor_buffer', version=1, guard=None, commands=[
+    Command(name='vkGetDescriptorSetLayoutSizeEXT', dispatch='VkDevice'),
+    Command(name='vkGetDescriptorSetLayoutBindingOffsetEXT', dispatch='VkDevice'),
+    Command(name='vkGetDescriptorEXT', dispatch='VkDevice'),
+    Command(name='vkCmdBindDescriptorBuffersEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdSetDescriptorBufferOffsetsEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdBindDescriptorBufferEmbeddedSamplersEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkGetBufferOpaqueCaptureDescriptorDataEXT', dispatch='VkDevice'),
+    Command(name='vkGetImageOpaqueCaptureDescriptorDataEXT', dispatch='VkDevice'),
+    Command(name='vkGetImageViewOpaqueCaptureDescriptorDataEXT', dispatch='VkDevice'),
+    Command(name='vkGetSamplerOpaqueCaptureDescriptorDataEXT', dispatch='VkDevice'),
+    Command(name='vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT', dispatch='VkDevice'),
+])
+
 VK_EXT_graphics_pipeline_library = Extension(name='VK_EXT_graphics_pipeline_library', version=1, guard=None, commands=[
 ])
 
@@ -1862,6 +1876,7 @@ extensions = [
     VK_EXT_pipeline_creation_cache_control,
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
+    VK_EXT_descriptor_buffer,
     VK_EXT_graphics_pipeline_library,
     VK_AMD_shader_early_and_late_fragment_tests,
     VK_NV_fragment_shading_rate_enums,
