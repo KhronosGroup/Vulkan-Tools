@@ -96,6 +96,7 @@ std::string VkDriverIdString(VkDriverId value) {
         case (VK_DRIVER_ID_SAMSUNG_PROPRIETARY): return "DRIVER_ID_SAMSUNG_PROPRIETARY";
         case (VK_DRIVER_ID_MESA_VENUS): return "DRIVER_ID_MESA_VENUS";
         case (VK_DRIVER_ID_MESA_DOZEN): return "DRIVER_ID_MESA_DOZEN";
+        case (VK_DRIVER_ID_MESA_NVK): return "DRIVER_ID_MESA_NVK";
         default: return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
 }
@@ -1377,6 +1378,56 @@ void DumpVkPhysicalDeviceDepthStencilResolveProperties(Printer &p, std::string n
     DumpVkResolveModeFlags(p, "supportedStencilResolveModes", obj.supportedStencilResolveModes);
     p.PrintKeyBool("independentResolveNone", static_cast<bool>(obj.independentResolveNone));
     p.PrintKeyBool("independentResolve", static_cast<bool>(obj.independentResolve));
+}
+void DumpVkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(44);
+    p.PrintKeyValue("combinedImageSamplerDensityMapDescriptorSize", obj.combinedImageSamplerDensityMapDescriptorSize);
+}
+void DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceDescriptorBufferFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(34);
+    p.PrintKeyBool("descriptorBuffer", static_cast<bool>(obj.descriptorBuffer));
+    p.PrintKeyBool("descriptorBufferCaptureReplay", static_cast<bool>(obj.descriptorBufferCaptureReplay));
+    p.PrintKeyBool("descriptorBufferImageLayoutIgnored", static_cast<bool>(obj.descriptorBufferImageLayoutIgnored));
+    p.PrintKeyBool("descriptorBufferPushDescriptors", static_cast<bool>(obj.descriptorBufferPushDescriptors));
+}
+void DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceDescriptorBufferPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(52);
+    p.PrintKeyBool("combinedImageSamplerDescriptorSingleArray", static_cast<bool>(obj.combinedImageSamplerDescriptorSingleArray));
+    p.PrintKeyBool("bufferlessPushDescriptors", static_cast<bool>(obj.bufferlessPushDescriptors));
+    p.PrintKeyBool("allowSamplerImageViewPostSubmitCreation", static_cast<bool>(obj.allowSamplerImageViewPostSubmitCreation));
+    p.PrintKeyValue("descriptorBufferOffsetAlignment", to_hex_str(p, obj.descriptorBufferOffsetAlignment));
+    p.PrintKeyValue("maxDescriptorBufferBindings", obj.maxDescriptorBufferBindings);
+    p.PrintKeyValue("maxResourceDescriptorBufferBindings", obj.maxResourceDescriptorBufferBindings);
+    p.PrintKeyValue("maxSamplerDescriptorBufferBindings", obj.maxSamplerDescriptorBufferBindings);
+    p.PrintKeyValue("maxEmbeddedImmutableSamplerBindings", obj.maxEmbeddedImmutableSamplerBindings);
+    p.PrintKeyValue("maxEmbeddedImmutableSamplers", obj.maxEmbeddedImmutableSamplers);
+    p.PrintKeyValue("bufferCaptureReplayDescriptorDataSize", obj.bufferCaptureReplayDescriptorDataSize);
+    p.PrintKeyValue("imageCaptureReplayDescriptorDataSize", obj.imageCaptureReplayDescriptorDataSize);
+    p.PrintKeyValue("imageViewCaptureReplayDescriptorDataSize", obj.imageViewCaptureReplayDescriptorDataSize);
+    p.PrintKeyValue("samplerCaptureReplayDescriptorDataSize", obj.samplerCaptureReplayDescriptorDataSize);
+    p.PrintKeyValue("accelerationStructureCaptureReplayDescriptorDataSize", obj.accelerationStructureCaptureReplayDescriptorDataSize);
+    p.PrintKeyValue("samplerDescriptorSize", obj.samplerDescriptorSize);
+    p.PrintKeyValue("combinedImageSamplerDescriptorSize", obj.combinedImageSamplerDescriptorSize);
+    p.PrintKeyValue("sampledImageDescriptorSize", obj.sampledImageDescriptorSize);
+    p.PrintKeyValue("storageImageDescriptorSize", obj.storageImageDescriptorSize);
+    p.PrintKeyValue("uniformTexelBufferDescriptorSize", obj.uniformTexelBufferDescriptorSize);
+    p.PrintKeyValue("robustUniformTexelBufferDescriptorSize", obj.robustUniformTexelBufferDescriptorSize);
+    p.PrintKeyValue("storageTexelBufferDescriptorSize", obj.storageTexelBufferDescriptorSize);
+    p.PrintKeyValue("robustStorageTexelBufferDescriptorSize", obj.robustStorageTexelBufferDescriptorSize);
+    p.PrintKeyValue("uniformBufferDescriptorSize", obj.uniformBufferDescriptorSize);
+    p.PrintKeyValue("robustUniformBufferDescriptorSize", obj.robustUniformBufferDescriptorSize);
+    p.PrintKeyValue("storageBufferDescriptorSize", obj.storageBufferDescriptorSize);
+    p.PrintKeyValue("robustStorageBufferDescriptorSize", obj.robustStorageBufferDescriptorSize);
+    p.PrintKeyValue("inputAttachmentDescriptorSize", obj.inputAttachmentDescriptorSize);
+    p.PrintKeyValue("accelerationStructureDescriptorSize", obj.accelerationStructureDescriptorSize);
+    p.PrintKeyValue("maxSamplerDescriptorBufferRange", to_hex_str(p, obj.maxSamplerDescriptorBufferRange));
+    p.PrintKeyValue("maxResourceDescriptorBufferRange", to_hex_str(p, obj.maxResourceDescriptorBufferRange));
+    p.PrintKeyValue("samplerDescriptorBufferAddressSpaceSize", to_hex_str(p, obj.samplerDescriptorBufferAddressSpaceSize));
+    p.PrintKeyValue("resourceDescriptorBufferAddressSpaceSize", to_hex_str(p, obj.resourceDescriptorBufferAddressSpaceSize));
+    p.PrintKeyValue("descriptorBufferAddressSpaceSize", to_hex_str(p, obj.descriptorBufferAddressSpaceSize));
 }
 void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name, const VkPhysicalDeviceDescriptorIndexingFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -2860,6 +2911,8 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceConservativeRasterizationPropertiesEXT PhysicalDeviceConservativeRasterizationPropertiesEXT{};
     VkPhysicalDeviceCustomBorderColorPropertiesEXT PhysicalDeviceCustomBorderColorPropertiesEXT{};
     VkPhysicalDeviceDepthStencilResolveProperties PhysicalDeviceDepthStencilResolveProperties{};
+    VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT{};
+    VkPhysicalDeviceDescriptorBufferPropertiesEXT PhysicalDeviceDescriptorBufferPropertiesEXT{};
     VkPhysicalDeviceDescriptorIndexingProperties PhysicalDeviceDescriptorIndexingProperties{};
     VkPhysicalDeviceDiscardRectanglePropertiesEXT PhysicalDeviceDiscardRectanglePropertiesEXT{};
     VkPhysicalDeviceDriverProperties PhysicalDeviceDriverProperties{};
@@ -2912,6 +2965,8 @@ struct phys_device_props2_chain {
         PhysicalDeviceConservativeRasterizationPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
         PhysicalDeviceCustomBorderColorPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
         PhysicalDeviceDepthStencilResolveProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
+        PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT;
+        PhysicalDeviceDescriptorBufferPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT;
         PhysicalDeviceDescriptorIndexingProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
         PhysicalDeviceDiscardRectanglePropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT;
         PhysicalDeviceDriverProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
@@ -2964,6 +3019,8 @@ struct phys_device_props2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceConservativeRasterizationPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomBorderColorPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthStencilResolveProperties));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferPropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorIndexingProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDiscardRectanglePropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDriverProperties));
@@ -3070,6 +3127,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceDepthClampZeroOneFeaturesEXT PhysicalDeviceDepthClampZeroOneFeaturesEXT{};
     VkPhysicalDeviceDepthClipControlFeaturesEXT PhysicalDeviceDepthClipControlFeaturesEXT{};
     VkPhysicalDeviceDepthClipEnableFeaturesEXT PhysicalDeviceDepthClipEnableFeaturesEXT{};
+    VkPhysicalDeviceDescriptorBufferFeaturesEXT PhysicalDeviceDescriptorBufferFeaturesEXT{};
     VkPhysicalDeviceDescriptorIndexingFeatures PhysicalDeviceDescriptorIndexingFeatures{};
     VkPhysicalDeviceDeviceMemoryReportFeaturesEXT PhysicalDeviceDeviceMemoryReportFeaturesEXT{};
     VkPhysicalDeviceDynamicRenderingFeatures PhysicalDeviceDynamicRenderingFeatures{};
@@ -3181,6 +3239,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceDepthClampZeroOneFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT;
         PhysicalDeviceDepthClipControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT;
         PhysicalDeviceDepthClipEnableFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
+        PhysicalDeviceDescriptorBufferFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT;
         PhysicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
         PhysicalDeviceDeviceMemoryReportFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
         PhysicalDeviceDynamicRenderingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
@@ -3291,6 +3350,7 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthClampZeroOneFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthClipControlFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthClipEnableFeaturesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorIndexingFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDeviceMemoryReportFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDynamicRenderingFeatures));
@@ -3533,6 +3593,18 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             gpu.api_version.minor >= 2)) {
             VkPhysicalDeviceDepthStencilResolveProperties* props = (VkPhysicalDeviceDepthStencilResolveProperties*)structure;
             DumpVkPhysicalDeviceDepthStencilResolveProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceDepthStencilResolveProperties":"VkPhysicalDeviceDepthStencilResolvePropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))) {
+            VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT* props = (VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT*)structure;
+            DumpVkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT(p, "VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))) {
+            VkPhysicalDeviceDescriptorBufferPropertiesEXT* props = (VkPhysicalDeviceDescriptorBufferPropertiesEXT*)structure;
+            DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(p, "VkPhysicalDeviceDescriptorBufferPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES &&
@@ -3925,6 +3997,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME))) {
             VkPhysicalDeviceDepthClipEnableFeaturesEXT* props = (VkPhysicalDeviceDepthClipEnableFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthClipEnableFeaturesEXT(p, "VkPhysicalDeviceDepthClipEnableFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))) {
+            VkPhysicalDeviceDescriptorBufferFeaturesEXT* props = (VkPhysicalDeviceDescriptorBufferFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(p, "VkPhysicalDeviceDescriptorBufferFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES &&
