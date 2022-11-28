@@ -31,7 +31,6 @@ namespace vkmock {
 using std::unordered_map;
 
 static constexpr uint32_t icd_physical_device_count = 1;
-static constexpr uint32_t kSupportedVulkanAPIVersion = VK_API_VERSION_1_1;
 static unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_device_count>> physical_device_map;
 
 // Map device memory handle to any mapped allocations that we'll need to free on unmap
@@ -291,8 +290,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties(
     VkPhysicalDevice                            physicalDevice,
     VkPhysicalDeviceProperties*                 pProperties)
 {
-    // TODO: Just hard-coding some values for now
-    pProperties->apiVersion = kSupportedVulkanAPIVersion;
+    pProperties->apiVersion = VK_HEADER_VERSION_COMPLETE;
     pProperties->driverVersion = 1;
     pProperties->vendorID = 0xba5eba11;
     pProperties->deviceID = 0xf005ba11;
@@ -1736,7 +1734,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateInstanceVersion(
     uint32_t*                                   pApiVersion)
 {
 
-    *pApiVersion = kSupportedVulkanAPIVersion;
+    *pApiVersion = VK_HEADER_VERSION_COMPLETE;
     return VK_SUCCESS;
 }
 
