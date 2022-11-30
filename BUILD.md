@@ -409,12 +409,13 @@ include:
 ### Linux Build Requirements
 
 This repository has been built and tested on the two most recent Ubuntu LTS
-versions. Currently, the oldest supported version is Ubuntu 16.04, meaning
-that the minimum officially supported C++11 compiler version is GCC 5.4.0,
+versions. Currently, the oldest supported version is Ubuntu 20.04, meaning
+that the minimum officially supported C++17 compiler version is GCC 9.3.0,
 although earlier versions may work. It should be straightforward to adapt this
 repository to other Linux distributions.
 
-[CMake 3.10.2](https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz) is recommended.
+[CMake 3.10.2](https://cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz) is the
+current minimum supported CMake version.
 
 #### Required Package List
 
