@@ -548,7 +548,12 @@ class Printer {
                 break;
             case (OutputType::json):
             case (OutputType::vkconfig_output):
-                PrintKeyValue(key, std::string("\"") + EscapeJSONCString(value) + "\"");
+                if (!value_description.empty()) {
+                    // PrintKeyValue adds the necessary quotes when printing with a value description set
+                    PrintKeyValue(key, EscapeJSONCString(value));
+                } else {
+                    PrintKeyValue(key, std::string("\"") + EscapeJSONCString(value) + "\"");
+                }
                 break;
             default:
                 break;
@@ -731,7 +736,7 @@ class Printer {
     // Replace special characters in strings with their escaped versions.
     // <https://www.json.org/json-en.html>
     std::string EscapeJSONCString(std::string string) {
-        if (output_type != OutputType::json) return string;
+        if (output_type == OutputType::text || output_type == OutputType::html) return string;
         std::string out{};
         for (size_t i = 0; i < string.size(); i++) {
             char c = string[i];
