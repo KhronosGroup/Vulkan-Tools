@@ -1242,7 +1242,8 @@ void Demo::init_vk() {
                          .setPApplicationName(APP_SHORT_NAME)
                          .setApplicationVersion(0)
                          .setPEngineName(APP_SHORT_NAME)
-                         .setEngineVersion(0);
+                         .setEngineVersion(0)
+                         .setApiVersion(VK_API_VERSION_1_0);
     auto const inst_info = vk::InstanceCreateInfo()
                                .setFlags(portabilityEnumerationActive ? vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR
                                                                       : static_cast<vk::InstanceCreateFlagBits>(0))
