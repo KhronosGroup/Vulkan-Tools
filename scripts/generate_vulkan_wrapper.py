@@ -1248,11 +1248,6 @@ VK_ARM_rasterization_order_attachment_access = Extension(name='VK_ARM_rasterizat
 VK_EXT_rgba10x6_formats = Extension(name='VK_EXT_rgba10x6_formats', version=1, guard=None, commands=[
 ])
 
-VK_NV_acquire_winrt_display = Extension(name='VK_NV_acquire_winrt_display', version=1, guard=None, commands=[
-    Command(name='vkAcquireWinrtDisplayNV', dispatch='VkPhysicalDevice'),
-    Command(name='vkGetWinrtDisplayNV', dispatch='VkPhysicalDevice'),
-])
-
 VK_VALVE_mutable_descriptor_type = Extension(name='VK_VALVE_mutable_descriptor_type', version=1, guard=None, commands=[
 ])
 
@@ -1421,6 +1416,9 @@ VK_EXT_extended_dynamic_state3 = Extension(name='VK_EXT_extended_dynamic_state3'
 VK_EXT_subpass_merge_feedback = Extension(name='VK_EXT_subpass_merge_feedback', version=2, guard=None, commands=[
 ])
 
+VK_LUNARG_direct_driver_loading = Extension(name='VK_LUNARG_direct_driver_loading', version=1, guard=None, commands=[
+])
+
 VK_EXT_shader_module_identifier = Extension(name='VK_EXT_shader_module_identifier', version=1, guard=None, commands=[
     Command(name='vkGetShaderModuleIdentifierEXT', dispatch='VkDevice'),
     Command(name='vkGetShaderModuleCreateInfoIdentifierEXT', dispatch='VkDevice'),
@@ -1449,6 +1447,9 @@ VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, g
 ])
 
 VK_SEC_amigo_profiling = Extension(name='VK_SEC_amigo_profiling', version=1, guard=None, commands=[
+])
+
+VK_QCOM_multiview_per_view_viewports = Extension(name='VK_QCOM_multiview_per_view_viewports', version=1, guard=None, commands=[
 ])
 
 VK_NV_ray_tracing_invocation_reorder = Extension(name='VK_NV_ray_tracing_invocation_reorder', version=1, guard=None, commands=[
@@ -1590,6 +1591,11 @@ VK_EXT_full_screen_exclusive = Extension(name='VK_EXT_full_screen_exclusive', ve
     Command(name='vkGetDeviceGroupSurfacePresentModes2EXT', dispatch='VkDevice'),
 ])
 
+VK_NV_acquire_winrt_display = Extension(name='VK_NV_acquire_winrt_display', version=1, guard='VK_USE_PLATFORM_WIN32_KHR', commands=[
+    Command(name='vkAcquireWinrtDisplayNV', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetWinrtDisplayNV', dispatch='VkPhysicalDevice'),
+])
+
 VK_KHR_xcb_surface = Extension(name='VK_KHR_xcb_surface', version=6, guard='VK_USE_PLATFORM_XCB_KHR', commands=[
     Command(name='vkCreateXcbSurfaceKHR', dispatch='VkInstance'),
     Command(name='vkGetPhysicalDeviceXcbPresentationSupportKHR', dispatch='VkPhysicalDevice'),
@@ -1657,7 +1663,7 @@ VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=9,
 VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=5, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 extensions = [
@@ -1891,7 +1897,6 @@ extensions = [
     VK_EXT_device_fault,
     VK_ARM_rasterization_order_attachment_access,
     VK_EXT_rgba10x6_formats,
-    VK_NV_acquire_winrt_display,
     VK_VALVE_mutable_descriptor_type,
     VK_EXT_vertex_input_dynamic_state,
     VK_EXT_physical_device_drm,
@@ -1926,6 +1931,7 @@ extensions = [
     VK_QCOM_image_processing,
     VK_EXT_extended_dynamic_state3,
     VK_EXT_subpass_merge_feedback,
+    VK_LUNARG_direct_driver_loading,
     VK_EXT_shader_module_identifier,
     VK_EXT_rasterization_order_attachment_access,
     VK_NV_optical_flow,
@@ -1933,6 +1939,7 @@ extensions = [
     VK_EXT_pipeline_protected_access,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
+    VK_QCOM_multiview_per_view_viewports,
     VK_NV_ray_tracing_invocation_reorder,
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
@@ -1960,6 +1967,7 @@ extensions = [
     VK_NV_external_memory_win32,
     VK_NV_win32_keyed_mutex,
     VK_EXT_full_screen_exclusive,
+    VK_NV_acquire_winrt_display,
     VK_KHR_xcb_surface,
     VK_KHR_xlib_surface,
     VK_EXT_directfb_surface,
