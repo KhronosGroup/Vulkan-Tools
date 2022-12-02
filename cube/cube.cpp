@@ -1040,15 +1040,21 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
     if (pCallbackData->objectCount > 0) {
         message << "\n\tObjects - " << pCallbackData->objectCount << "\n";
         for (uint32_t object = 0; object < pCallbackData->objectCount; ++object) {
-            if (NULL != pCallbackData->pObjects[object].pObjectName && strlen(pCallbackData->pObjects[object].pObjectName) > 0) {
-                message << "\t\tObject[" << object << "] - "
-                        << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle "
-                        << pCallbackData->pObjects[object].objectHandle << ", Name \""
-                        << pCallbackData->pObjects[object].pObjectName << "\"\n";
+            message << "\t\tObject[" << object << "] - "
+                    << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle ";
+
+            // Print handle correctly if it is a dispatchable handle - aka a pointer
+            VkObjectType t = pCallbackData->pObjects[object].objectType;
+            if (t == VK_OBJECT_TYPE_INSTANCE || t == VK_OBJECT_TYPE_PHYSICAL_DEVICE || t == VK_OBJECT_TYPE_DEVICE ||
+                t == VK_OBJECT_TYPE_COMMAND_BUFFER || t == VK_OBJECT_TYPE_QUEUE) {
+                message << reinterpret_cast<void*>(static_cast<uintptr_t>(pCallbackData->pObjects[object].objectHandle));
             } else {
-                message << "\t\tObject[" << object << "] - "
-                        << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle "
-                        << pCallbackData->pObjects[object].objectHandle << "\n";
+                message << pCallbackData->pObjects[object].objectHandle;
+            }
+            if (NULL != pCallbackData->pObjects[object].pObjectName && strlen(pCallbackData->pObjects[object].pObjectName) > 0) {
+                message << ", Name \"" << pCallbackData->pObjects[object].pObjectName << "\"\n";
+            } else {
+                message << "\n";
             }
         }
     }

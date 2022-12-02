@@ -527,15 +527,24 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(VkDebugUtilsMessageSever
         sprintf(tmp_message, "\n\tObjects - %d\n", pCallbackData->objectCount);
         strcat(message, tmp_message);
         for (uint32_t object = 0; object < pCallbackData->objectCount; ++object) {
-            if (NULL != pCallbackData->pObjects[object].pObjectName && strlen(pCallbackData->pObjects[object].pObjectName) > 0) {
-                sprintf(tmp_message, "\t\tObject[%d] - %s, Handle %p, Name \"%s\"\n", object,
-                        string_VkObjectType(pCallbackData->pObjects[object].objectType),
-                        (void *)(pCallbackData->pObjects[object].objectHandle), pCallbackData->pObjects[object].pObjectName);
+            sprintf(tmp_message, "\t\tObject[%d] - %s", object, string_VkObjectType(pCallbackData->pObjects[object].objectType));
+            strcat(message, tmp_message);
+
+            VkObjectType t = pCallbackData->pObjects[object].objectType;
+            if (t == VK_OBJECT_TYPE_INSTANCE || t == VK_OBJECT_TYPE_PHYSICAL_DEVICE || t == VK_OBJECT_TYPE_DEVICE ||
+                t == VK_OBJECT_TYPE_COMMAND_BUFFER || t == VK_OBJECT_TYPE_QUEUE) {
+                sprintf(tmp_message, ", Handle %p", (void *)(uintptr_t)(pCallbackData->pObjects[object].objectHandle));
+                strcat(message, tmp_message);
             } else {
-                sprintf(tmp_message, "\t\tObject[%d] - %s, Handle %p\n", object,
-                        string_VkObjectType(pCallbackData->pObjects[object].objectType),
-                        (void *)(pCallbackData->pObjects[object].objectHandle));
+                sprintf(tmp_message, ", Handle Ox%" PRIx64, (pCallbackData->pObjects[object].objectHandle));
+                strcat(message, tmp_message);
             }
+
+            if (NULL != pCallbackData->pObjects[object].pObjectName && strlen(pCallbackData->pObjects[object].pObjectName) > 0) {
+                sprintf(tmp_message, ", Name \"%s\"", pCallbackData->pObjects[object].pObjectName);
+                strcat(message, tmp_message);
+            }
+            sprintf(tmp_message, "\n");
             strcat(message, tmp_message);
         }
     }
@@ -624,7 +633,7 @@ static void demo_resize(struct demo *demo);
 static void demo_create_surface(struct demo *demo);
 
 #if defined(__GNUC__) || defined(__clang__)
-#define DECORATE_PRINTF(_fmt_argnum, _first_param_num)  __attribute__((format (printf, _fmt_argnum, _first_param_num)))
+#define DECORATE_PRINTF(_fmt_argnum, _first_param_num) __attribute__((format(printf, _fmt_argnum, _first_param_num)))
 #else
 #define DECORATE_PRINTF(_fmt_num, _first_param_num)
 #endif
@@ -1440,7 +1449,8 @@ static void demo_prepare_buffers(struct demo *demo) {
 
         err = vkCreateImageView(demo->device, &color_image_view, NULL, &demo->swapchain_image_resources[i].view);
         assert(!err);
-        demo_name_object(demo, VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)demo->swapchain_image_resources[i].view, "SwapchainView(%u)", i);
+        demo_name_object(demo, VK_OBJECT_TYPE_IMAGE_VIEW, (uint64_t)demo->swapchain_image_resources[i].view, "SwapchainView(%u)",
+                         i);
     }
 
     if (demo->VK_GOOGLE_display_timing_enabled) {
@@ -1740,7 +1750,7 @@ static void demo_prepare_textures(struct demo *demo) {
                                   demo->textures[i].imageLayout, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                                   VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
             demo->staging_texture.image = 0;
-            demo_pop_cb_label(demo, demo->cmd); // "DirectTexture"
+            demo_pop_cb_label(demo, demo->cmd);  // "DirectTexture"
         } else if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
             /* Must use staging buffer to copy linear texture to optimized */
             demo_push_cb_label(demo, demo->cmd, NULL, "StagingTexture(%u)", i);
@@ -1769,12 +1779,12 @@ static void demo_prepare_textures(struct demo *demo) {
 
             vkCmdCopyBufferToImage(demo->cmd, demo->staging_texture.buffer, demo->textures[i].image,
                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
-            demo_pop_cb_label(demo, demo->cmd); // "StagingBufferCopy"
+            demo_pop_cb_label(demo, demo->cmd);  // "StagingBufferCopy"
 
             demo_set_image_layout(demo, demo->textures[i].image, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
                                   demo->textures[i].imageLayout, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
                                   VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-            demo_pop_cb_label(demo, demo->cmd); // "StagingTexture"
+            demo_pop_cb_label(demo, demo->cmd);  // "StagingTexture"
 
         } else {
             /* Can't support VK_FORMAT_R8G8B8A8_UNORM !? */
@@ -2375,7 +2385,7 @@ static void demo_prepare(struct demo *demo) {
      * Prepare functions above may generate pipeline commands
      * that need to be flushed before beginning the render loop.
      */
-    demo_pop_cb_label(demo, demo->cmd); // "Prepare"
+    demo_pop_cb_label(demo, demo->cmd);  // "Prepare"
     demo_flush_init_cmd(demo);
     if (demo->staging_texture.buffer) {
         demo_destroy_texture(demo, &demo->staging_texture);
