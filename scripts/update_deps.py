@@ -652,6 +652,12 @@ def main():
         help="Delete install directory before building",
         default=False)
     parser.add_argument(
+        '--skip-existing-install',
+        dest='skip_existing_install',
+        action='store_true',
+        help="Skip build if install directory exists",
+        default=False)
+    parser.add_argument(
         '--arch',
         dest='arch',
         choices=['32', '64', 'x86', 'x64', 'win32', 'win64'],
@@ -692,6 +698,14 @@ def main():
         # If the repo has a platform whitelist, skip the repo
         # unless we are building on a whitelisted platform.
         if not repo.on_build_platform:
+            continue
+
+        # Skip building the repo if its install directory already exists
+        # and requested via an option.  This is useful for cases where the
+        # install directory is restored from a cache that is known to be up
+        # to date.
+        if args.skip_existing_install and os.path.isdir(repo.install_dir):
+            print('Skipping build for repo {n} due to existing install directory'.format(n=repo.name))
             continue
 
         # Skip test-only repos if the --tests option was not passed in

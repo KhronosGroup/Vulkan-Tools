@@ -105,19 +105,32 @@ jobs:
             - uses: actions/setup-python@v2
               with:
                 python-version: '3.7'
+            - name: Install Ninja
+              run: brew install ninja
+            - name: Cache dependencies
+              id: cache-deps
+              uses: actions/cache@v3
+              env:
+                cache-name: cache-macos-latest
+              with:
+                path: |
+                  external/Vulkan-Headers/build/install
+                  external/MoltenVK
+                  external/Vulkan-Loader/build/install
+                key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.config }}-${{ hashfiles('scripts/known_good.json') }}
 
-            - name: Fetch and install headers
-              run: python scripts/update_deps.py --dir external
+            - name: Fetch/Update dependencies
+              run: python scripts/update_deps.py --dir external --skip-existing-install
 
             - name: Generate build files
-              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=${{matrix.config}} -Cexternal/helper.cmake
+              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=${{matrix.config}} -Cexternal/helper.cmake -G "Ninja"
               env:
                 # Specify the minimum version of macOS on which the target binaries are to be deployed.
                 # https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html
                 MACOSX_DEPLOYMENT_TARGET: 10.12
 
             - name: Build the tools
-              run: make -C build
+              run: cmake --build build
 
             - name: Verify generated source files
               run: python scripts/generate_source.py --verify external/Vulkan-Headers/registry
