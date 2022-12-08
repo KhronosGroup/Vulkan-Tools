@@ -1132,6 +1132,13 @@ VK_EXT_extended_dynamic_state = Extension(name='VK_EXT_extended_dynamic_state', 
 VK_EXT_shader_atomic_float2 = Extension(name='VK_EXT_shader_atomic_float2', version=1, guard=None, commands=[
 ])
 
+VK_EXT_surface_maintenance1 = Extension(name='VK_EXT_surface_maintenance1', version=1, guard=None, commands=[
+])
+
+VK_EXT_swapchain_maintenance1 = Extension(name='VK_EXT_swapchain_maintenance1', version=1, guard=None, commands=[
+    Command(name='vkReleaseSwapchainImagesEXT', dispatch='VkDevice'),
+])
+
 VK_EXT_shader_demote_to_helper_invocation = Extension(name='VK_EXT_shader_demote_to_helper_invocation', version=1, guard=None, commands=[
 ])
 
@@ -1867,6 +1874,8 @@ extensions = [
     VK_EXT_index_type_uint8,
     VK_EXT_extended_dynamic_state,
     VK_EXT_shader_atomic_float2,
+    VK_EXT_surface_maintenance1,
+    VK_EXT_swapchain_maintenance1,
     VK_EXT_shader_demote_to_helper_invocation,
     VK_NV_device_generated_commands,
     VK_NV_inherited_viewport_scissor,

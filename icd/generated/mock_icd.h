@@ -81,6 +81,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_KHR_surface_protected_capabilities", 1},
     {"VK_EXT_validation_features", 5},
     {"VK_EXT_headless_surface", 1},
+    {"VK_EXT_surface_maintenance1", 1},
     {"VK_EXT_acquire_drm_display", 1},
     {"VK_EXT_directfb_surface", 1},
     {"VK_QNX_screen_surface", 1},
@@ -270,6 +271,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_deferred_host_operations", 4},
     {"VK_KHR_pipeline_executable_properties", 1},
     {"VK_EXT_shader_atomic_float2", 1},
+    {"VK_EXT_swapchain_maintenance1", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
     {"VK_NV_device_generated_commands", 3},
     {"VK_NV_inherited_viewport_scissor", 1},
@@ -3275,6 +3277,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetStencilOpEXT(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
+    VkDevice                                    device,
+    const VkReleaseSwapchainImagesInfoEXT*      pReleaseInfo);
+
+
+
 static VKAPI_ATTR void VKAPI_CALL GetGeneratedCommandsMemoryRequirementsNV(
     VkDevice                                    device,
     const VkGeneratedCommandsMemoryRequirementsInfoNV* pInfo,
@@ -4705,6 +4713,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdSetDepthBoundsTestEnableEXT", (void*)CmdSetDepthBoundsTestEnableEXT},
     {"vkCmdSetStencilTestEnableEXT", (void*)CmdSetStencilTestEnableEXT},
     {"vkCmdSetStencilOpEXT", (void*)CmdSetStencilOpEXT},
+    {"vkReleaseSwapchainImagesEXT", (void*)ReleaseSwapchainImagesEXT},
     {"vkGetGeneratedCommandsMemoryRequirementsNV", (void*)GetGeneratedCommandsMemoryRequirementsNV},
     {"vkCmdPreprocessGeneratedCommandsNV", (void*)CmdPreprocessGeneratedCommandsNV},
     {"vkCmdExecuteGeneratedCommandsNV", (void*)CmdExecuteGeneratedCommandsNV},
