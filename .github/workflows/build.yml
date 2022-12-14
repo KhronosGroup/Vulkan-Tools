@@ -64,7 +64,7 @@ jobs:
               run: make -C build
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/registry
+              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
 
     windows:
         runs-on: ${{matrix.os}}
@@ -91,7 +91,7 @@ jobs:
               run: cmake --build ./build --config ${{matrix.config}}
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/registry
+              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
 
     mac:
         runs-on: macos-latest
@@ -133,7 +133,7 @@ jobs:
               run: cmake --build build
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/registry
+              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
 
     gn:
         runs-on: ubuntu-18.04
