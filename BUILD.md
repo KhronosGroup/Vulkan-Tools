@@ -748,7 +748,6 @@ You can now run the demo applications from the command line:
 
     open cube/vkcube.app
     open cube/vkcubepp.app
-    open vulkaninfo/vulkaninfo.app
 
 Or you can locate them from `Finder` and launch them from there.
 
@@ -788,10 +787,9 @@ run the `otool` command again from the `build/install` directory and note:
 The "bundle fix-up" operation also puts a copy of the Vulkan loader into the
 bundle, making the bundle completely self-contained and self-referencing.
 
-##### The Non-bundled vulkaninfo Application
+##### The vulkaninfo Application
 
-There is also a non-bundled version of the `vulkaninfo` application that you
-can run from the command line:
+There is also a `vulkaninfo` application that you can run from the command line:
 
     vulkaninfo/vulkaninfo
 
