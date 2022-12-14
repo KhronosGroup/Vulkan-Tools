@@ -104,11 +104,6 @@ endif()
 
 target_link_libraries(vulkaninfo Vulkan::Headers)
 
-# Create vulkaninfo application bundle for MacOS
-if(APPLE)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo.cmake)
-endif()
-
 if(WIN32)
     target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS -DVK_NO_PROTOTYPES)
     if(MSVC AND NOT MSVC_VERSION LESS 1900)
