@@ -2790,7 +2790,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceWin32PresentationSupportK
 #endif /* VK_USE_PLATFORM_WIN32_KHR */
 
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(
     VkPhysicalDevice                            physicalDevice,
@@ -2898,9 +2897,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdControlVideoCodingKHR(
 {
 //Not a CREATE or DESTROY function
 }
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
@@ -2908,7 +2905,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
 {
 //Not a CREATE or DESTROY function
 }
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderingKHR(
@@ -3580,6 +3577,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountKHR(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetSemaphoreCounterValueKHR(
     VkDevice                                    device,
     VkSemaphore                                 semaphore,
@@ -4139,9 +4137,6 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountAMD(
 
 
 
-
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
@@ -4826,9 +4821,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsEXT(
     return VK_SUCCESS;
 }
 
-
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 

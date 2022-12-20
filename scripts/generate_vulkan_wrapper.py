@@ -360,6 +360,28 @@ VK_KHR_display_swapchain = Extension(name='VK_KHR_display_swapchain', version=10
 VK_KHR_sampler_mirror_clamp_to_edge = Extension(name='VK_KHR_sampler_mirror_clamp_to_edge', version=3, guard=None, commands=[
 ])
 
+VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=8, guard=None, commands=[
+    Command(name='vkGetPhysicalDeviceVideoCapabilitiesKHR', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetPhysicalDeviceVideoFormatPropertiesKHR', dispatch='VkPhysicalDevice'),
+    Command(name='vkCreateVideoSessionKHR', dispatch='VkDevice'),
+    Command(name='vkDestroyVideoSessionKHR', dispatch='VkDevice'),
+    Command(name='vkGetVideoSessionMemoryRequirementsKHR', dispatch='VkDevice'),
+    Command(name='vkBindVideoSessionMemoryKHR', dispatch='VkDevice'),
+    Command(name='vkCreateVideoSessionParametersKHR', dispatch='VkDevice'),
+    Command(name='vkUpdateVideoSessionParametersKHR', dispatch='VkDevice'),
+    Command(name='vkDestroyVideoSessionParametersKHR', dispatch='VkDevice'),
+    Command(name='vkCmdBeginVideoCodingKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdEndVideoCodingKHR', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
+])
+
+VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=7, guard=None, commands=[
+    Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
+])
+
+VK_KHR_video_decode_h264 = Extension(name='VK_KHR_video_decode_h264', version=8, guard=None, commands=[
+])
+
 VK_KHR_dynamic_rendering = Extension(name='VK_KHR_dynamic_rendering', version=1, guard=None, commands=[
     Command(name='vkCmdBeginRenderingKHR', dispatch='VkCommandBuffer'),
     Command(name='vkCmdEndRenderingKHR', dispatch='VkCommandBuffer'),
@@ -537,6 +559,9 @@ VK_KHR_shader_atomic_int64 = Extension(name='VK_KHR_shader_atomic_int64', versio
 ])
 
 VK_KHR_shader_clock = Extension(name='VK_KHR_shader_clock', version=1, guard=None, commands=[
+])
+
+VK_KHR_video_decode_h265 = Extension(name='VK_KHR_video_decode_h265', version=7, guard=None, commands=[
 ])
 
 VK_KHR_global_priority = Extension(name='VK_KHR_global_priority', version=1, guard=None, commands=[
@@ -1635,25 +1660,6 @@ VK_QNX_screen_surface = Extension(name='VK_QNX_screen_surface', version=1, guard
     Command(name='vkGetPhysicalDeviceScreenPresentationSupportQNX', dispatch='VkPhysicalDevice'),
 ])
 
-VK_KHR_video_queue = Extension(name='VK_KHR_video_queue', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
-    Command(name='vkGetPhysicalDeviceVideoCapabilitiesKHR', dispatch='VkPhysicalDevice'),
-    Command(name='vkGetPhysicalDeviceVideoFormatPropertiesKHR', dispatch='VkPhysicalDevice'),
-    Command(name='vkCreateVideoSessionKHR', dispatch='VkDevice'),
-    Command(name='vkDestroyVideoSessionKHR', dispatch='VkDevice'),
-    Command(name='vkGetVideoSessionMemoryRequirementsKHR', dispatch='VkDevice'),
-    Command(name='vkBindVideoSessionMemoryKHR', dispatch='VkDevice'),
-    Command(name='vkCreateVideoSessionParametersKHR', dispatch='VkDevice'),
-    Command(name='vkUpdateVideoSessionParametersKHR', dispatch='VkDevice'),
-    Command(name='vkDestroyVideoSessionParametersKHR', dispatch='VkDevice'),
-    Command(name='vkCmdBeginVideoCodingKHR', dispatch='VkCommandBuffer'),
-    Command(name='vkCmdEndVideoCodingKHR', dispatch='VkCommandBuffer'),
-    Command(name='vkCmdControlVideoCodingKHR', dispatch='VkCommandBuffer'),
-])
-
-VK_KHR_video_decode_queue = Extension(name='VK_KHR_video_decode_queue', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
-    Command(name='vkCmdDecodeVideoKHR', dispatch='VkCommandBuffer'),
-])
-
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
@@ -1667,12 +1673,6 @@ VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=9,
 VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=9, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_decode_h264 = Extension(name='VK_EXT_video_decode_h264', version=7, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
-])
-
-VK_EXT_video_decode_h265 = Extension(name='VK_EXT_video_decode_h265', version=6, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
-])
-
 extensions = [
     VK_core_0,
     VK_core_1,
@@ -1683,6 +1683,9 @@ extensions = [
     VK_KHR_display,
     VK_KHR_display_swapchain,
     VK_KHR_sampler_mirror_clamp_to_edge,
+    VK_KHR_video_queue,
+    VK_KHR_video_decode_queue,
+    VK_KHR_video_decode_h264,
     VK_KHR_dynamic_rendering,
     VK_KHR_multiview,
     VK_KHR_get_physical_device_properties2,
@@ -1725,6 +1728,7 @@ extensions = [
     VK_KHR_8bit_storage,
     VK_KHR_shader_atomic_int64,
     VK_KHR_shader_clock,
+    VK_KHR_video_decode_h265,
     VK_KHR_global_priority,
     VK_KHR_driver_properties,
     VK_KHR_shader_float_controls,
@@ -1984,14 +1988,10 @@ extensions = [
     VK_GGP_stream_descriptor_surface,
     VK_GGP_frame_token,
     VK_QNX_screen_surface,
-    VK_KHR_video_queue,
-    VK_KHR_video_decode_queue,
     VK_KHR_portability_subset,
     VK_KHR_video_encode_queue,
     VK_EXT_video_encode_h264,
     VK_EXT_video_encode_h265,
-    VK_EXT_video_decode_h264,
-    VK_EXT_video_decode_h265,
 ]
 # end of generated code
 
