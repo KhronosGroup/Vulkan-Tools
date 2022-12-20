@@ -1219,11 +1219,10 @@ std::vector<const char *> VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCode
     if (VK_VIDEO_CODEC_OPERATION_NONE_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_NONE_KHR");
     if (VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_EXT & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_EXT");
     if (VK_VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_EXT & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_EXT");
-    if (VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_EXT & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H264_BIT_EXT");
-    if (VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_EXT & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H265_BIT_EXT");
+    if (VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR");
+    if (VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR");
     return strings;
 }
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagsKHR value) {
     if (static_cast<VkVideoCodecOperationFlagBitsKHR>(value) == 0) {
         ArrayWrapper arr(p, name, 0);
@@ -1245,7 +1244,6 @@ void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoC
     if (strings.size() > 0)
         p.PrintKeyString(name, strings.at(0));
 }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 
 void DumpVkConformanceVersion(Printer &p, std::string name, const VkConformanceVersion &obj) {
     ObjectWrapper object{p, name};
@@ -2911,19 +2909,15 @@ void DumpVkQueueFamilyGlobalPriorityPropertiesKHR(Printer &p, std::string name, 
            p.PrintString(VkQueueGlobalPriorityKHRString(obj.priorities[i]));
     }
 }
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkQueueFamilyQueryResultStatusPropertiesKHR(Printer &p, std::string name, const VkQueueFamilyQueryResultStatusPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(24);
     p.PrintKeyBool("queryResultStatusSupport", static_cast<bool>(obj.queryResultStatusSupport));
 }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 void DumpVkQueueFamilyVideoPropertiesKHR(Printer &p, std::string name, const VkQueueFamilyVideoPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkVideoCodecOperationFlagsKHR(p, "videoCodecOperations", obj.videoCodecOperations);
 }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkImageUsageFlags(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags);
@@ -3620,28 +3614,16 @@ struct queue_properties2_chain {
     queue_properties2_chain& operator=(queue_properties2_chain &&) = delete;
     void* start_of_chain = nullptr;
     VkQueueFamilyGlobalPriorityPropertiesKHR QueueFamilyGlobalPriorityPropertiesKHR{};
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     VkQueueFamilyQueryResultStatusPropertiesKHR QueueFamilyQueryResultStatusPropertiesKHR{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     VkQueueFamilyVideoPropertiesKHR QueueFamilyVideoPropertiesKHR{};
-#endif  // VK_ENABLE_BETA_EXTENSIONS
     void initialize_chain() noexcept {
         QueueFamilyGlobalPriorityPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         QueueFamilyQueryResultStatusPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         QueueFamilyVideoPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR;
-#endif  // VK_ENABLE_BETA_EXTENSIONS
         std::vector<VkBaseOutStructure*> chain_members;
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&QueueFamilyGlobalPriorityPropertiesKHR));
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&QueueFamilyQueryResultStatusPropertiesKHR));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&QueueFamilyVideoPropertiesKHR));
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 
         for(size_t i = 0; i < chain_members.size() - 1; i++){
             chain_members[i]->pNext = chain_members[i + 1];
@@ -4746,22 +4728,18 @@ void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place) {
             DumpVkQueueFamilyGlobalPriorityPropertiesKHR(p, "VkQueueFamilyGlobalPriorityPropertiesKHR", *props);
             p.AddNewline();
         }
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR &&
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_QUEUE_EXTENSION_NAME))) {
             VkQueueFamilyQueryResultStatusPropertiesKHR* props = (VkQueueFamilyQueryResultStatusPropertiesKHR*)structure;
             DumpVkQueueFamilyQueryResultStatusPropertiesKHR(p, "VkQueueFamilyQueryResultStatusPropertiesKHR", *props);
             p.AddNewline();
         }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR &&
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_QUEUE_EXTENSION_NAME))) {
             VkQueueFamilyVideoPropertiesKHR* props = (VkQueueFamilyVideoPropertiesKHR*)structure;
             DumpVkQueueFamilyVideoPropertiesKHR(p, "VkQueueFamilyVideoPropertiesKHR", *props);
             p.AddNewline();
         }
-#endif  // VK_ENABLE_BETA_EXTENSIONS
         place = structure->pNext;
     }
 }
