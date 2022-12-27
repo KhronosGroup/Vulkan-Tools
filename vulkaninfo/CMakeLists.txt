@@ -61,16 +61,16 @@ if (NOT WIN32)
 endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
-    find_package(PkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
     option(BUILD_WSI_DIRECTFB_SUPPORT "Build DirectFB WSI support" OFF)
 
+    find_package(PkgConfig REQUIRED QUIET) # Use PkgConfig to find Linux system libraries
+
     if(BUILD_WSI_XCB_SUPPORT)
-        find_package(XCB REQUIRED)
-        target_include_directories(vulkaninfo PRIVATE ${XCB_INCLUDE_DIRS})
-        target_link_libraries(vulkaninfo ${XCB_LIBRARIES})
+        pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
+        target_link_libraries(vulkaninfo PkgConfig::XCB)
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XCB_KHR -DVK_NO_PROTOTYPES)
     endif()
 

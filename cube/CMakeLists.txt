@@ -49,15 +49,16 @@ else()
 endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
-    find_package(PkgConfig)
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
     option(BUILD_WSI_DIRECTFB_SUPPORT "Build DirectFB WSI support" OFF)
     set(CUBE_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for vkcube (XCB, XLIB, WAYLAND, DIRECTFB, DISPLAY)")
 
+    find_package(PkgConfig REQUIRED QUIET) # Use PkgConfig to find Linux system libraries
+
     if(BUILD_WSI_XCB_SUPPORT)
-        find_package(XCB REQUIRED)
+        pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
@@ -134,8 +135,7 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         if(NOT BUILD_WSI_XCB_SUPPORT)
             message(FATAL_ERROR "Selected XCB for vkcube build but not building Xcb support")
         endif()
-        set(CUBE_INCLUDE_DIRS ${XCB_INCLUDE_DIRS} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${XCB_LIBRARIES})
+        link_libraries(PkgConfig::XCB)
         set(CUBE_PLATFORM VK_USE_PLATFORM_XCB_KHR)
     elseif(CUBE_WSI_SELECTION STREQUAL "XLIB")
         if(NOT BUILD_WSI_XLIB_SUPPORT)
