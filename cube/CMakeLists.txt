@@ -62,7 +62,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
-        find_package(X11 REQUIRED)
+        pkg_check_modules(X11 REQUIRED QUIET IMPORTED_TARGET x11)
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
@@ -141,8 +141,7 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         if(NOT BUILD_WSI_XLIB_SUPPORT)
             message(FATAL_ERROR "Selected XLIB for vkcube build but not building Xlib support")
         endif()
-        set(CUBE_INCLUDE_DIRS ${X11_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${X11_LIBRARIES})
+        link_libraries(PkgConfig::X11)
         set(CUBE_PLATFORM VK_USE_PLATFORM_XLIB_KHR)
     elseif(CUBE_WSI_SELECTION STREQUAL "WAYLAND")
         if(NOT BUILD_WSI_WAYLAND_SUPPORT)
