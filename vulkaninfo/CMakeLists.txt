@@ -88,9 +88,8 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     endif()
 
     if(BUILD_WSI_DIRECTFB_SUPPORT)
-        find_package(DirectFB REQUIRED)
-        target_include_directories(vulkaninfo PRIVATE ${DIRECTFB_INCLUDE_DIR})
-        target_link_libraries(vulkaninfo ${DIRECTFB_LIBRARIES})
+        pkg_check_modules(DirectFB REQUIRED QUIET IMPORTED_TARGET directfb)
+        target_link_libraries(vulkaninfo PkgConfig::DirectFB)
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_DIRECTFB_EXT -DVK_NO_PROTOTYPES)
     endif()
 endif()

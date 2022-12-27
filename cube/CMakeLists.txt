@@ -108,8 +108,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     endif()
 
     if(BUILD_WSI_DIRECTFB_SUPPORT)
-        find_package(DirectFB REQUIRED)
-        include_directories(${DIRECTFB_INCLUDE_DIR})
+        pkg_check_modules(DirectFB REQUIRED QUIET IMPORTED_TARGET directfb)
     endif()
 endif()
 
@@ -161,8 +160,7 @@ elseif(UNIX AND NOT APPLE) # i.e. Linux
         if(NOT BUILD_WSI_DIRECTFB_SUPPORT)
             message(FATAL_ERROR "Selected DIRECTFB for vkcube build but not building DirectFB support")
         endif()
-        set(CUBE_INCLUDE_DIRS ${DIRECTFB_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
-        link_libraries(${DIRECTFB_LIBRARIES})
+        link_libraries(PkgConfig::DirectFB)
         set(CUBE_PLATFORM VK_USE_PLATFORM_DIRECTFB_EXT)
     elseif(CUBE_WSI_SELECTION STREQUAL "DISPLAY")
         set(CUBE_PLATFORM VK_USE_PLATFORM_DISPLAY_KHR)
