@@ -75,9 +75,8 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
-        find_package(X11 REQUIRED)
-        target_include_directories(vulkaninfo PRIVATE ${X11_INCLUDE_DIR})
-        target_link_libraries(vulkaninfo ${X11_LIBRARIES})
+        pkg_check_modules(X11 REQUIRED QUIET IMPORTED_TARGET x11)
+        target_link_libraries(vulkaninfo PkgConfig::X11)
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XLIB_KHR -DVK_NO_PROTOTYPES)
     endif()
 
