@@ -158,10 +158,9 @@ endif()
 
 # Optional codegen target
 if(PYTHONINTERP_FOUND)
-    get_target_property(VulkanRegistry_DIR Vulkan::Registry INTERFACE_INCLUDE_DIRECTORIES)
     add_custom_target(VulkanTools_generated_source
                       COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
-                              ${VulkanRegistry_DIR} --incremental
+                              ${VULKAN_HEADERS_REGISTRY_DIRECTORY} --incremental
                       )
 else()
     message("WARNING: VulkanTools_generated_source target requires python 3")
