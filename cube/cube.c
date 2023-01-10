@@ -54,7 +54,6 @@
 #include <vulkan/vulkan.h>
 #endif
 
-#include <vulkan/vk_sdk_platform.h>
 #include "linmath.h"
 #include "object_type_string_helper.h"
 
