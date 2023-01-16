@@ -22,7 +22,7 @@ to work on an issue that is assigned, simply coordinate with the current assigne
   This will involve [forking the repository](https://help.github.com/articles/fork-a-repo/),
   creating a branch with your commits, and then [submitting a pull request](https://help.github.com/articles/using-pull-requests/).
 * Please read and adhere to the style and process [guidelines ](#coding-conventions-and-formatting) enumerated below.
-* Please base your fixes on the master branch.  SDK branches are generally not updated except for critical fixes needed to repair an SDK release.
+* Please base your fixes on the main branch.  SDK branches are generally not updated except for critical fixes needed to repair an SDK release.
 * The resulting Pull Request will be assigned to a repository maintainer. It is the maintainer's responsibility to ensure the Pull Request
   passes the Google/LunarG internal CI processes. Once the Pull Request has been approved and is passing internal CI, a repository maintainer
   will merge the PR.
@@ -73,7 +73,7 @@ generator scripts in the `scripts` directory. All changes to these scripts _must
 corresponding generated output to keep the repository self-consistent. This requirement is enforced by both
 Travis CI and AppVeyor test configurations. Regenerate source files after modifying any of the generator
 scripts and before building and testing your changes. More details can be found in
-[BUILD.md](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/BUILD.md#generated-source-code).
+[BUILD.md](https://github.com/KhronosGroup/Vulkan-Tools/blob/main/BUILD.md#generated-source-code).
 
 #### **Testing Your Changes**
 * Run the repository components with the Vulkan Validation Layers before and after each of your commits to check for any regressions.
@@ -85,7 +85,7 @@ scripts and before building and testing your changes. More details can be found 
 * In the `vulkaninfo` directory, run:
 >        vulkaninfo
 * If you are adding or changing JSON output, please read
-  [Validating vulkaninfo JSON output](https://github.com/KhronosGroup/Vulkan-Tools/blob/master/vulkaninfo/json_validation_process.md).
+  [Validating vulkaninfo JSON output](https://github.com/KhronosGroup/Vulkan-Tools/blob/main/vulkaninfo/json_validation_process.md).
   **Note:** When adding new output to vulkaninfo, do NOT add JSON output unless the formmatting is defined by a schema.
 * Run tests that explicitly exercise your changes.
 * Feel free to subject your code changes to other tests as well!
