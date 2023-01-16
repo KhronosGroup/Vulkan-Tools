@@ -93,7 +93,7 @@ from this set of release binaries.
 If you don't wish the CMake code to download these binaries, then you must
 clone the [glslang repository](https://github.com/KhronosGroup/glslang) and
 build its `install` target. Follow the build instructions in the glslang
-[README.md](https://github.com/KhronosGroup/glslang/blob/master/README.md)
+[README.md](https://github.com/KhronosGroup/glslang/blob/main/README.md)
 file. Ensure that the `update_glslang_sources.py` script has been run as part
 of building glslang. You must also take note of the glslang install directory
 and pass it on the CMake command line for building this repository, as
@@ -676,11 +676,6 @@ Tested on OSX version 10.12
 NOTE: To force the OSX version set the environment variable [MACOSX_DEPLOYMENT_TARGET](https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html) when building VVL and it's dependencies.
 
 Setup Homebrew and components
-
-- Follow instructions on [brew.sh](http://brew.sh) to get Homebrew installed.
-
-      /usr/bin/ruby -e "$(curl -fsSL \
-          https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 - Ensure Homebrew is at the beginning of your PATH:
 

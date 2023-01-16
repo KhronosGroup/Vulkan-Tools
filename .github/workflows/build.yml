@@ -21,7 +21,7 @@ on:
     push:
     pull_request:
         branches:
-            - master
+            - main
 
 jobs:
     linux:
@@ -113,10 +113,7 @@ jobs:
               env:
                 cache-name: cache-macos-latest
               with:
-                path: |
-                  external/Vulkan-Headers/build/install
-                  external/MoltenVK
-                  external/Vulkan-Loader/build/install
+                path: external/
                 key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.config }}-${{ hashfiles('scripts/known_good.json') }}
 
             - name: Fetch/Update dependencies

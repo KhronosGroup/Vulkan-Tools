@@ -1,4 +1,4 @@
-# Validating [vulkaninfo](https://github.com/KhronosGroup/Vulkan-Tools/tree/master/vulkaninfo) JSON output
+# Validating [vulkaninfo](https://github.com/KhronosGroup/Vulkan-Tools/tree/main/vulkaninfo) JSON output
 
 The format of vulkaninfo's JSON output is designed to be used as input for the
 [Vulkan Profiles](https://github.com/KhronosGroup/Vulkan-Profiles)
