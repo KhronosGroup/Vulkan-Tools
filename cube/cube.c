@@ -4075,13 +4075,27 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--width") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->width) == 1 && demo->width > 0) {
-            i++;
-            continue;
+        if (strcmp(argv[i], "--width") == 0) {
+            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->width) == 1) {
+                if (demo->width > 0) {
+                    i++;
+                    continue;
+                } else {
+                    ERR_EXIT("The --width parameter must be greater than 0", "User Error");
+                }
+            }
+            ERR_EXIT("The --width parameter must be followed by a number", "User Error");
         }
-        if (strcmp(argv[i], "--height") == 0 && i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->height) == 1 && demo->height > 0) {
-            i++;
-            continue;
+        if (strcmp(argv[i], "--height") == 0) {
+            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &demo->height) == 1) {
+                if (demo->height > 0) {
+                    i++;
+                    continue;
+                } else {
+                    ERR_EXIT("The --height parameter must be greater than 0", "User Error");
+                }
+            }
+            ERR_EXIT("The --height parameter must be followed by a number", "User Error");
         }
         if (strcmp(argv[i], "--suppress_popups") == 0) {
             demo->suppress_popups = true;

@@ -888,25 +888,31 @@ void Demo::init(int argc, char **argv) {
             i++;
             continue;
         }
-        if (strcmp(argv[i], "--width") == 0 && i < argc - 1) {
+        if (strcmp(argv[i], "--width") == 0) {
             int32_t in_width = 0;
-            if (sscanf(argv[i + 1], "%d", &in_width) == 1 && in_width > 0) {
-                width = static_cast<uint32_t>(in_width);
-                i++;
-                continue;
-            } else {
-                ERR_EXIT("The --width parameter must be greater than 0", "User Error");
+            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &in_width) == 1) {
+                if (in_width > 0) {
+                    width = static_cast<uint32_t>(in_width);
+                    i++;
+                    continue;
+                } else {
+                    ERR_EXIT("The --width parameter must be greater than 0", "User Error");
+                }
             }
+            ERR_EXIT("The --width parameter must be followed by a number", "User Error");
         }
-        if (strcmp(argv[i], "--height") == 0 && i < argc - 1) {
+        if (strcmp(argv[i], "--height") == 0) {
             int32_t in_height = 0;
-            if (sscanf(argv[i + 1], "%d", &height) == 1 && height > 0) {
-                height = static_cast<uint32_t>(in_height);
-                i++;
-                continue;
-            } else {
-                ERR_EXIT("The --height parameter must be greater than 0", "User Error");
+            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &height) == 1) {
+                if (height > 0) {
+                    height = static_cast<uint32_t>(in_height);
+                    i++;
+                    continue;
+                } else {
+                    ERR_EXIT("The --height parameter must be greater than 0", "User Error");
+                }
             }
+            ERR_EXIT("The --height parameter must be followed by a number", "User Error");
         }
         if (strcmp(argv[i], "--suppress_popups") == 0) {
             suppress_popups = true;
