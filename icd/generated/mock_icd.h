@@ -340,6 +340,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_2d_view_of_3d", 1},
     {"VK_EXT_opacity_micromap", 2},
     {"VK_EXT_load_store_op_none", 1},
+    {"VK_HUAWEI_cluster_culling_shader", 1},
     {"VK_EXT_border_color_swizzle", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
@@ -3720,6 +3721,18 @@ static VKAPI_ATTR void VKAPI_CALL GetMicromapBuildSizesEXT(
 
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterHUAWEI(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    groupCountX,
+    uint32_t                                    groupCountY,
+    uint32_t                                    groupCountZ);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterIndirectHUAWEI(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset);
+
+
 
 static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
     VkDevice                                    device,
@@ -4782,6 +4795,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdWriteMicromapsPropertiesEXT", (void*)CmdWriteMicromapsPropertiesEXT},
     {"vkGetDeviceMicromapCompatibilityEXT", (void*)GetDeviceMicromapCompatibilityEXT},
     {"vkGetMicromapBuildSizesEXT", (void*)GetMicromapBuildSizesEXT},
+    {"vkCmdDrawClusterHUAWEI", (void*)CmdDrawClusterHUAWEI},
+    {"vkCmdDrawClusterIndirectHUAWEI", (void*)CmdDrawClusterIndirectHUAWEI},
     {"vkSetDeviceMemoryPriorityEXT", (void*)SetDeviceMemoryPriorityEXT},
     {"vkGetDescriptorSetLayoutHostMappingInfoVALVE", (void*)GetDescriptorSetLayoutHostMappingInfoVALVE},
     {"vkGetDescriptorSetHostMappingVALVE", (void*)GetDescriptorSetHostMappingVALVE},

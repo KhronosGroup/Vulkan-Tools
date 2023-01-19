@@ -6277,6 +6277,24 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLE
     typedef VkAccelerationStructureTrianglesOpacityMicromapEXT Type;
 };
 
+// Map type VkPhysicalDeviceClusterCullingShaderFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_FEATURES_HUAWEI
+template <> struct LvlTypeMap<VkPhysicalDeviceClusterCullingShaderFeaturesHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_FEATURES_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_FEATURES_HUAWEI> {
+    typedef VkPhysicalDeviceClusterCullingShaderFeaturesHUAWEI Type;
+};
+
+// Map type VkPhysicalDeviceClusterCullingShaderPropertiesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_PROPERTIES_HUAWEI
+template <> struct LvlTypeMap<VkPhysicalDeviceClusterCullingShaderPropertiesHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_PROPERTIES_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_PROPERTIES_HUAWEI> {
+    typedef VkPhysicalDeviceClusterCullingShaderPropertiesHUAWEI Type;
+};
+
 // Map type VkPhysicalDeviceBorderColorSwizzleFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceBorderColorSwizzleFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT;
