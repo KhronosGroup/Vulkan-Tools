@@ -1368,6 +1368,11 @@ VK_EXT_opacity_micromap = Extension(name='VK_EXT_opacity_micromap', version=2, g
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
 ])
 
+VK_HUAWEI_cluster_culling_shader = Extension(name='VK_HUAWEI_cluster_culling_shader', version=1, guard=None, commands=[
+    Command(name='vkCmdDrawClusterHUAWEI', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDrawClusterIndirectHUAWEI', dispatch='VkCommandBuffer'),
+])
+
 VK_EXT_border_color_swizzle = Extension(name='VK_EXT_border_color_swizzle', version=1, guard=None, commands=[
 ])
 
@@ -1930,6 +1935,7 @@ extensions = [
     VK_EXT_image_2d_view_of_3d,
     VK_EXT_opacity_micromap,
     VK_EXT_load_store_op_none,
+    VK_HUAWEI_cluster_culling_shader,
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
     VK_VALVE_descriptor_set_host_mapping,
