@@ -1,6 +1,6 @@
 # ~~~
-# Copyright (c) 2018-2019 Valve Corporation
-# Copyright (c) 2018-2019 LunarG, Inc.
+# Copyright (c) 2018-2023 Valve Corporation
+# Copyright (c) 2018-2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@ if(WIN32)
     # ~~~
     # Setup the vulkaninfo.rc file to contain the correct info
     # Optionally uses the VULKANINFO_BUILD_DLL_VERSIONINFO build option to allow setting the exact build version
-    # When VULKANINFO_BUILD_DLL_VERSIONINFO is not provided, "Dev Build" is added to the version string
+    # When VULKANINFO_BUILD_DLL_VERSIONINFO is not provided, "Dev Build" is added to the version strings
     # ~~~
+    string(TIMESTAMP CURRENT_YEAR "%Y")
+    set(VULKANINFO_CUR_COPYRIGHT_STR "${CURRENT_YEAR}")
     if ("$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}" STREQUAL "")
-        # Default version - for when no version is provided
-        set(VULKANINFO_RC_VERSION "1.0.1111.2222")
+        set(VULKANINFO_RC_VERSION "${VulkanHeaders_VERSION}")
         set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}.Dev Build\"")
-        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkan Loader - Dev Build\"")
+        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkaninfo - Dev Build\"")
     else()
         set(VULKANINFO_RC_VERSION "$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}")
         set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}\"")
-        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkan Loader\"")
+        set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"vulkaninfo\"")
     endif()
 
     # RC file wants the value of FILEVERSION to separated by commas
