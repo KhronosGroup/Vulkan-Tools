@@ -1498,6 +1498,9 @@ VK_EXT_mutable_descriptor_type = Extension(name='VK_EXT_mutable_descriptor_type'
 VK_ARM_shader_core_builtins = Extension(name='VK_ARM_shader_core_builtins', version=2, guard=None, commands=[
 ])
 
+VK_EXT_pipeline_library_group_handles = Extension(name='VK_EXT_pipeline_library_group_handles', version=1, guard=None, commands=[
+])
+
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
@@ -1962,6 +1965,7 @@ extensions = [
     VK_NV_ray_tracing_invocation_reorder,
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
+    VK_EXT_pipeline_library_group_handles,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,

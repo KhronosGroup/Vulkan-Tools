@@ -366,6 +366,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_ray_tracing_invocation_reorder", 1},
     {"VK_EXT_mutable_descriptor_type", 1},
     {"VK_ARM_shader_core_builtins", 2},
+    {"VK_EXT_pipeline_library_group_handles", 1},
 };
 
 
@@ -3979,6 +3980,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
     VkDevice                                    device,
     const VkRenderingInfo*                      pRenderingInfo,
     VkTilePropertiesQCOM*                       pProperties);
+
 
 
 
