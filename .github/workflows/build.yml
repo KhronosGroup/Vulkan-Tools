@@ -43,8 +43,8 @@ jobs:
                       cube_wsi: WAYLAND
 
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-python@v2
+            - uses: actions/checkout@v3
+            - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
             - run: |
@@ -76,8 +76,8 @@ jobs:
                 os: [ windows-latest ]
 
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-python@v2
+            - uses: actions/checkout@v3
+            - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
 
@@ -101,8 +101,8 @@ jobs:
                 config: [ Debug, Release ]
 
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-python@v2
+            - uses: actions/checkout@v3
+            - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
             - uses: lukka/get-cmake@latest
@@ -141,7 +141,7 @@ jobs:
                 config: [ Debug, Release ]
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
 
             - name: Get depot tools
               run: |
@@ -164,7 +164,7 @@ jobs:
     android:
         runs-on: ubuntu-20.04
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
             - name: Setup Environment
               run: |
                   echo "ANDROID_SDK_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
