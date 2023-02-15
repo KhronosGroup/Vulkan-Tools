@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 2015-2018 The Khronos Group Inc.
+** Copyright (c) 2015-2018, 2023 The Khronos Group Inc.
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -655,7 +655,20 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements(
     uint32_t*                                   pSparseMemoryRequirementCount,
     VkSparseImageMemoryRequirements*            pSparseMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    if (!pSparseMemoryRequirements) {
+        *pSparseMemoryRequirementCount = 1;
+    } else {
+        // arbitrary
+        pSparseMemoryRequirements->imageMipTailFirstLod = 0;
+        pSparseMemoryRequirements->imageMipTailSize = 8;
+        pSparseMemoryRequirements->imageMipTailOffset = 0;
+        pSparseMemoryRequirements->imageMipTailStride = 4;
+        pSparseMemoryRequirements->formatProperties.imageGranularity = {4, 4, 4};
+        pSparseMemoryRequirements->formatProperties.flags = VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT;
+        // Would need to track the VkImage to know format for better value here
+        pSparseMemoryRequirements->formatProperties.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_METADATA_BIT;
+    }
+
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties(
@@ -668,7 +681,31 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties(
     uint32_t*                                   pPropertyCount,
     VkSparseImageFormatProperties*              pProperties)
 {
-//Not a CREATE or DESTROY function
+    if (!pProperties) {
+        *pPropertyCount = 1;
+    } else {
+        // arbitrary
+        pProperties->imageGranularity = {4, 4, 4};
+        pProperties->flags = VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT;
+        switch (format) {
+            case VK_FORMAT_D16_UNORM:
+            case VK_FORMAT_D32_SFLOAT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+                break;
+            case VK_FORMAT_S8_UINT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT;
+                break;
+            case VK_FORMAT_X8_D24_UNORM_PACK32:
+            case VK_FORMAT_D16_UNORM_S8_UINT:
+            case VK_FORMAT_D24_UNORM_S8_UINT:
+            case VK_FORMAT_D32_SFLOAT_S8_UINT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+                break;
+            default:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                break;
+        }
+    }
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL QueueBindSparse(
@@ -1790,8 +1827,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceGroups(
     uint32_t*                                   pPhysicalDeviceGroupCount,
     VkPhysicalDeviceGroupProperties*            pPhysicalDeviceGroupProperties)
 {
-//Not a CREATE or DESTROY function
-    return VK_SUCCESS;
+    return EnumeratePhysicalDeviceGroupsKHR(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements2(
@@ -1816,7 +1852,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2(
     uint32_t*                                   pSparseMemoryRequirementCount,
     VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    GetImageSparseMemoryRequirements2KHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2(
@@ -1870,7 +1906,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties2(
     uint32_t*                                   pPropertyCount,
     VkSparseImageFormatProperties2*             pProperties)
 {
-//Not a CREATE or DESTROY function
+    GetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
 
 static VKAPI_ATTR void VKAPI_CALL TrimCommandPool(
@@ -3050,7 +3086,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties2K
     uint32_t*                                   pPropertyCount,
     VkSparseImageFormatProperties2*             pProperties)
 {
-//Not a CREATE or DESTROY function
+    GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
 }
 
 
@@ -3099,7 +3135,14 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceGroupsKHR(
     uint32_t*                                   pPhysicalDeviceGroupCount,
     VkPhysicalDeviceGroupProperties*            pPhysicalDeviceGroupProperties)
 {
-//Not a CREATE or DESTROY function
+    if (!pPhysicalDeviceGroupProperties) {
+        *pPhysicalDeviceGroupCount = 1;
+    } else {
+        // arbitrary
+        pPhysicalDeviceGroupProperties->physicalDeviceCount = 1;
+        pPhysicalDeviceGroupProperties->physicalDevices[0] = physical_device_map.at(instance)[0];
+        pPhysicalDeviceGroupProperties->subsetAllocation = VK_FALSE;
+    }
     return VK_SUCCESS;
 }
 
@@ -3361,7 +3404,23 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerforma
     VkPerformanceCounterKHR*                    pCounters,
     VkPerformanceCounterDescriptionKHR*         pCounterDescriptions)
 {
-//Not a CREATE or DESTROY function
+    if (!pCounters) {
+        *pCounterCount = 3;
+    } else {
+        // arbitrary
+        pCounters[0].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[0].scope = VK_QUERY_SCOPE_COMMAND_BUFFER_KHR;
+        pCounters[0].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[0].uuid[0] = 0x01;
+        pCounters[1].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[1].scope = VK_QUERY_SCOPE_RENDER_PASS_KHR;
+        pCounters[1].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[1].uuid[0] = 0x02;
+        pCounters[2].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[2].scope = VK_QUERY_SCOPE_COMMAND_KHR;
+        pCounters[2].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[2].uuid[0] = 0x03;
+    }
     return VK_SUCCESS;
 }
 
@@ -3370,7 +3429,10 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyPerformanceQueryPa
     const VkQueryPoolPerformanceCreateInfoKHR*  pPerformanceQueryCreateInfo,
     uint32_t*                                   pNumPasses)
 {
-//Not a CREATE or DESTROY function
+    if (pNumPasses) {
+        // arbitrary
+        *pNumPasses = 1;
+    }
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL AcquireProfilingLockKHR(
@@ -3487,7 +3549,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSparseMemoryRequirements2KHR(
     uint32_t*                                   pSparseMemoryRequirementCount,
     VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, &pSparseMemoryRequirements->memoryRequirements);
 }
 
 
@@ -3612,7 +3674,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceFragmentShadingRatesKHR(
     uint32_t*                                   pFragmentShadingRateCount,
     VkPhysicalDeviceFragmentShadingRateKHR*     pFragmentShadingRates)
 {
-//Not a CREATE or DESTROY function
+    if (!pFragmentShadingRates) {
+        *pFragmentShadingRateCount = 1;
+    } else {
+        // arbitrary
+        pFragmentShadingRates->sampleCounts = VK_SAMPLE_COUNT_1_BIT | VK_SAMPLE_COUNT_4_BIT;
+        pFragmentShadingRates->fragmentSize = {8, 8};
+    }
     return VK_SUCCESS;
 }
 
@@ -4536,7 +4604,10 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceMultisamplePropertiesEXT(
     VkSampleCountFlagBits                       samples,
     VkMultisamplePropertiesEXT*                 pMultisampleProperties)
 {
-//Not a CREATE or DESTROY function
+    if (pMultisampleProperties) {
+        // arbitrary
+        pMultisampleProperties->maxSampleLocationGridSize = {32, 32};
+    }
 }
 
 
@@ -4806,7 +4877,12 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsE
     uint32_t*                                   pTimeDomainCount,
     VkTimeDomainEXT*                            pTimeDomains)
 {
-//Not a CREATE or DESTROY function
+    if (!pTimeDomains) {
+        *pTimeDomainCount = 1;
+    } else {
+        // arbitrary
+        *pTimeDomains = VK_TIME_DOMAIN_DEVICE_EXT;
+    }
     return VK_SUCCESS;
 }
 
@@ -6260,7 +6336,11 @@ static VKAPI_ATTR void VKAPI_CALL GetShaderModuleIdentifierEXT(
     VkShaderModule                              shaderModule,
     VkShaderModuleIdentifierEXT*                pIdentifier)
 {
-//Not a CREATE or DESTROY function
+    if (pIdentifier) {
+        // arbitrary
+        pIdentifier->identifierSize = 1;
+        pIdentifier->identifier[0] = 0x01;
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetShaderModuleCreateInfoIdentifierEXT(

@@ -803,6 +803,36 @@ CUSTOM_C_INTERCEPTS = {
     GetPhysicalDeviceImageFormatProperties(physicalDevice, pImageFormatInfo->format, pImageFormatInfo->type, pImageFormatInfo->tiling, pImageFormatInfo->usage, pImageFormatInfo->flags, &pImageFormatProperties->imageFormatProperties);
     return VK_SUCCESS;
 ''',
+'vkGetPhysicalDeviceSparseImageFormatProperties': '''
+    if (!pProperties) {
+        *pPropertyCount = 1;
+    } else {
+        // arbitrary
+        pProperties->imageGranularity = {4, 4, 4};
+        pProperties->flags = VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT;
+        switch (format) {
+            case VK_FORMAT_D16_UNORM:
+            case VK_FORMAT_D32_SFLOAT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+                break;
+            case VK_FORMAT_S8_UINT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT;
+                break;
+            case VK_FORMAT_X8_D24_UNORM_PACK32:
+            case VK_FORMAT_D16_UNORM_S8_UINT:
+            case VK_FORMAT_D24_UNORM_S8_UINT:
+            case VK_FORMAT_D32_SFLOAT_S8_UINT:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+                break;
+            default:
+                pProperties->aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                break;
+        }
+    }
+''',
+'vkGetPhysicalDeviceSparseImageFormatProperties2KHR': '''
+    GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
+''',
 'vkGetPhysicalDeviceProperties': '''
     pProperties->apiVersion = VK_HEADER_VERSION_COMPLETE;
     pProperties->driverVersion = 1;
@@ -1036,6 +1066,94 @@ CUSTOM_C_INTERCEPTS = {
 'vkDestroyImage': '''
     unique_lock_t lock(global_lock);
     image_memory_size_map[device].erase(image);
+''',
+'vkEnumeratePhysicalDeviceGroupsKHR': '''
+    if (!pPhysicalDeviceGroupProperties) {
+        *pPhysicalDeviceGroupCount = 1;
+    } else {
+        // arbitrary
+        pPhysicalDeviceGroupProperties->physicalDeviceCount = 1;
+        pPhysicalDeviceGroupProperties->physicalDevices[0] = physical_device_map.at(instance)[0];
+        pPhysicalDeviceGroupProperties->subsetAllocation = VK_FALSE;
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPhysicalDeviceMultisamplePropertiesEXT': '''
+    if (pMultisampleProperties) {
+        // arbitrary
+        pMultisampleProperties->maxSampleLocationGridSize = {32, 32};
+    }
+''',
+'vkGetPhysicalDeviceFragmentShadingRatesKHR': '''
+    if (!pFragmentShadingRates) {
+        *pFragmentShadingRateCount = 1;
+    } else {
+        // arbitrary
+        pFragmentShadingRates->sampleCounts = VK_SAMPLE_COUNT_1_BIT | VK_SAMPLE_COUNT_4_BIT;
+        pFragmentShadingRates->fragmentSize = {8, 8};
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPhysicalDeviceCalibrateableTimeDomainsEXT': '''
+    if (!pTimeDomains) {
+        *pTimeDomainCount = 1;
+    } else {
+        // arbitrary
+        *pTimeDomains = VK_TIME_DOMAIN_DEVICE_EXT;
+    }
+    return VK_SUCCESS;
+''',
+'vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR': '''
+    if (!pCounters) {
+        *pCounterCount = 3;
+    } else {
+        // arbitrary
+        pCounters[0].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[0].scope = VK_QUERY_SCOPE_COMMAND_BUFFER_KHR;
+        pCounters[0].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[0].uuid[0] = 0x01;
+        pCounters[1].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[1].scope = VK_QUERY_SCOPE_RENDER_PASS_KHR;
+        pCounters[1].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[1].uuid[0] = 0x02;
+        pCounters[2].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
+        pCounters[2].scope = VK_QUERY_SCOPE_COMMAND_KHR;
+        pCounters[2].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
+        pCounters[2].uuid[0] = 0x03;
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR': '''
+    if (pNumPasses) {
+        // arbitrary
+        *pNumPasses = 1;
+    }
+''',
+'vkGetShaderModuleIdentifierEXT': '''
+    if (pIdentifier) {
+        // arbitrary
+        pIdentifier->identifierSize = 1;
+        pIdentifier->identifier[0] = 0x01;
+    }
+''',
+'vkGetImageSparseMemoryRequirements': '''
+    if (!pSparseMemoryRequirements) {
+        *pSparseMemoryRequirementCount = 1;
+    } else {
+        // arbitrary
+        pSparseMemoryRequirements->imageMipTailFirstLod = 0;
+        pSparseMemoryRequirements->imageMipTailSize = 8;
+        pSparseMemoryRequirements->imageMipTailOffset = 0;
+        pSparseMemoryRequirements->imageMipTailStride = 4;
+        pSparseMemoryRequirements->formatProperties.imageGranularity = {4, 4, 4};
+        pSparseMemoryRequirements->formatProperties.flags = VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT;
+        // Would need to track the VkImage to know format for better value here
+        pSparseMemoryRequirements->formatProperties.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_METADATA_BIT;
+    }
+
+''',
+'vkGetImageSparseMemoryRequirements2KHR': '''
+    GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, &pSparseMemoryRequirements->memoryRequirements);
 ''',
 }
 
