@@ -846,55 +846,88 @@ CUSTOM_C_INTERCEPTS = {
     pProperties->sparseProperties = { VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE, VK_TRUE };
 ''',
 'vkGetPhysicalDeviceProperties2KHR': '''
+    // The only value that need to be set are those the Profile layer can't set
+    // see https://github.com/KhronosGroup/Vulkan-Profiles/issues/352
+    // All values set are arbitrary
     GetPhysicalDeviceProperties(physicalDevice, &pProperties->properties);
-    const auto *desc_idx_props = lvl_find_in_chain<VkPhysicalDeviceDescriptorIndexingPropertiesEXT>(pProperties->pNext);
-    if (desc_idx_props) {
-        VkPhysicalDeviceDescriptorIndexingPropertiesEXT* write_props = (VkPhysicalDeviceDescriptorIndexingPropertiesEXT*)desc_idx_props;
-        write_props->maxUpdateAfterBindDescriptorsInAllPools = 500000;
-        write_props->shaderUniformBufferArrayNonUniformIndexingNative = false;
-        write_props->shaderSampledImageArrayNonUniformIndexingNative = false;
-        write_props->shaderStorageBufferArrayNonUniformIndexingNative = false;
-        write_props->shaderStorageImageArrayNonUniformIndexingNative = false;
-        write_props->shaderInputAttachmentArrayNonUniformIndexingNative = false;
-        write_props->robustBufferAccessUpdateAfterBind = true;
-        write_props->quadDivergentImplicitLod = true;
-        write_props->maxPerStageDescriptorUpdateAfterBindSamplers = 500000;
-        write_props->maxPerStageDescriptorUpdateAfterBindUniformBuffers = 500000;
-        write_props->maxPerStageDescriptorUpdateAfterBindStorageBuffers = 500000;
-        write_props->maxPerStageDescriptorUpdateAfterBindSampledImages = 500000;
-        write_props->maxPerStageDescriptorUpdateAfterBindStorageImages = 500000;
-        write_props->maxPerStageDescriptorUpdateAfterBindInputAttachments = 500000;
-        write_props->maxPerStageUpdateAfterBindResources = 500000;
-        write_props->maxDescriptorSetUpdateAfterBindSamplers = 500000;
-        write_props->maxDescriptorSetUpdateAfterBindUniformBuffers = 96;
-        write_props->maxDescriptorSetUpdateAfterBindUniformBuffersDynamic = 8;
-        write_props->maxDescriptorSetUpdateAfterBindStorageBuffers = 500000;
-        write_props->maxDescriptorSetUpdateAfterBindStorageBuffersDynamic = 4;
-        write_props->maxDescriptorSetUpdateAfterBindSampledImages = 500000;
-        write_props->maxDescriptorSetUpdateAfterBindStorageImages = 500000;
-        write_props->maxDescriptorSetUpdateAfterBindInputAttachments = 500000;
+
+    auto *props_11 = lvl_find_mod_in_chain<VkPhysicalDeviceVulkan11Properties>(pProperties->pNext);
+    if (props_11) {
+        props_11->protectedNoFault = VK_FALSE;
     }
 
-    const auto *push_descriptor_props = lvl_find_in_chain<VkPhysicalDevicePushDescriptorPropertiesKHR>(pProperties->pNext);
-    if (push_descriptor_props) {
-        VkPhysicalDevicePushDescriptorPropertiesKHR* write_props = (VkPhysicalDevicePushDescriptorPropertiesKHR*)push_descriptor_props;
-        write_props->maxPushDescriptors = 256;
+    auto *props_12 = lvl_find_mod_in_chain<VkPhysicalDeviceVulkan12Properties>(pProperties->pNext);
+    if (props_12) {
+        props_12->denormBehaviorIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
+        props_12->roundingModeIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
     }
 
-    const auto *depth_stencil_resolve_props = lvl_find_in_chain<VkPhysicalDeviceDepthStencilResolvePropertiesKHR>(pProperties->pNext);
-    if (depth_stencil_resolve_props) {
-        VkPhysicalDeviceDepthStencilResolvePropertiesKHR* write_props = (VkPhysicalDeviceDepthStencilResolvePropertiesKHR*)depth_stencil_resolve_props;
-        write_props->supportedDepthResolveModes = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR;
-        write_props->supportedStencilResolveModes = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR;
+    auto *props_13 = lvl_find_mod_in_chain<VkPhysicalDeviceVulkan13Properties>(pProperties->pNext);
+    if (props_13) {
+        props_13->storageTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
+        props_13->uniformTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
+        props_13->storageTexelBufferOffsetAlignmentBytes = 16;
+        props_13->uniformTexelBufferOffsetAlignmentBytes = 16;
     }
 
-    const auto *fragment_density_map2_props = lvl_find_in_chain<VkPhysicalDeviceFragmentDensityMap2PropertiesEXT>(pProperties->pNext);
+    auto *protected_memory_props = lvl_find_mod_in_chain<VkPhysicalDeviceProtectedMemoryProperties>(pProperties->pNext);
+    if (protected_memory_props) {
+        protected_memory_props->protectedNoFault = VK_FALSE;
+    }
+
+    auto *float_controls_props = lvl_find_mod_in_chain<VkPhysicalDeviceFloatControlsProperties>(pProperties->pNext);
+    if (float_controls_props) {
+        float_controls_props->denormBehaviorIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
+        float_controls_props->roundingModeIndependence = VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL;
+    }
+
+    auto *conservative_raster_props = lvl_find_mod_in_chain<VkPhysicalDeviceConservativeRasterizationPropertiesEXT>(pProperties->pNext);
+    if (conservative_raster_props) {
+        conservative_raster_props->primitiveOverestimationSize = 0.00195313f;
+        conservative_raster_props->conservativePointAndLineRasterization = VK_TRUE;
+        conservative_raster_props->degenerateTrianglesRasterized = VK_TRUE;
+        conservative_raster_props->degenerateLinesRasterized = VK_TRUE;
+    }
+
+    auto *rt_pipeline_props = lvl_find_mod_in_chain<VkPhysicalDeviceRayTracingPipelinePropertiesKHR>(pProperties->pNext);
+    if (rt_pipeline_props) {
+        rt_pipeline_props->shaderGroupHandleSize = 32;
+        rt_pipeline_props->shaderGroupBaseAlignment = 64;
+        rt_pipeline_props->shaderGroupHandleCaptureReplaySize = 32;
+    }
+
+    auto *texel_buffer_props = lvl_find_mod_in_chain<VkPhysicalDeviceTexelBufferAlignmentProperties>(pProperties->pNext);
+    if (texel_buffer_props) {
+        texel_buffer_props->storageTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
+        texel_buffer_props->uniformTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
+        texel_buffer_props->storageTexelBufferOffsetAlignmentBytes = 16;
+        texel_buffer_props->uniformTexelBufferOffsetAlignmentBytes = 16;
+    }
+
+    auto *descriptor_buffer_props = lvl_find_mod_in_chain<VkPhysicalDeviceDescriptorBufferPropertiesEXT>(pProperties->pNext);
+    if (descriptor_buffer_props) {
+        descriptor_buffer_props->combinedImageSamplerDescriptorSingleArray = VK_TRUE;
+        descriptor_buffer_props->bufferlessPushDescriptors = VK_TRUE;
+        descriptor_buffer_props->allowSamplerImageViewPostSubmitCreation = VK_TRUE;
+        descriptor_buffer_props->descriptorBufferOffsetAlignment = 4;
+    }
+
+    auto *mesh_shader_props = lvl_find_mod_in_chain<VkPhysicalDeviceMeshShaderPropertiesEXT>(pProperties->pNext);
+    if (mesh_shader_props) {
+        mesh_shader_props->meshOutputPerVertexGranularity = 32;
+        mesh_shader_props->meshOutputPerPrimitiveGranularity = 32;
+        mesh_shader_props->prefersLocalInvocationVertexOutput = VK_TRUE;
+        mesh_shader_props->prefersLocalInvocationPrimitiveOutput = VK_TRUE;
+        mesh_shader_props->prefersCompactVertexOutput = VK_TRUE;
+        mesh_shader_props->prefersCompactPrimitiveOutput = VK_TRUE;
+    }
+
+    auto *fragment_density_map2_props = lvl_find_mod_in_chain<VkPhysicalDeviceFragmentDensityMap2PropertiesEXT>(pProperties->pNext);
     if (fragment_density_map2_props) {
-        VkPhysicalDeviceFragmentDensityMap2PropertiesEXT* write_props = (VkPhysicalDeviceFragmentDensityMap2PropertiesEXT*)fragment_density_map2_props;
-        write_props->subsampledLoads = VK_FALSE;
-        write_props->subsampledCoarseReconstructionEarlyAccess = VK_FALSE;
-        write_props->maxSubsampledArrayLayers = 2;
-        write_props->maxDescriptorSetSubsampledSamplers = 1;
+        fragment_density_map2_props->subsampledLoads = VK_FALSE;
+        fragment_density_map2_props->subsampledCoarseReconstructionEarlyAccess = VK_FALSE;
+        fragment_density_map2_props->maxSubsampledArrayLayers = 2;
+        fragment_density_map2_props->maxDescriptorSetSubsampledSamplers = 1;
     }
 ''',
 'vkGetPhysicalDeviceExternalSemaphoreProperties':'''
