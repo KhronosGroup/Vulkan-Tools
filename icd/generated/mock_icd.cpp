@@ -4436,6 +4436,20 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEXT(
 //Not a CREATE or DESTROY function
 }
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBool32                                    discardRectangleEnable)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleModeEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkDiscardRectangleModeEXT                   discardRectangleMode)
+{
+//Not a CREATE or DESTROY function
+}
+
 
 
 
@@ -4939,6 +4953,15 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCountNV(
 
 
 
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorEnableNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    firstExclusiveScissor,
+    uint32_t                                    exclusiveScissorCount,
+    const VkBool32*                             pExclusiveScissorEnables)
+{
+//Not a CREATE or DESTROY function
+}
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
@@ -6035,6 +6058,8 @@ static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
 }
 
 
+
+
 static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutHostMappingInfoVALVE(
     VkDevice                                    device,
     const VkDescriptorSetBindingReferenceVALVE* pBindingReference,
@@ -6422,6 +6447,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+
 
 
 
