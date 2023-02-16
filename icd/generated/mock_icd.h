@@ -87,6 +87,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_QNX_screen_surface", 1},
     {"VK_KHR_portability_enumeration", 1},
     {"VK_GOOGLE_surfaceless_query", 2},
+    {"VK_EXT_application_parameters", 1},
     {"VK_LUNARG_direct_driver_loading", 1},
 };
 // Map of device extension name to version
@@ -120,6 +121,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_dynamic_rendering", 1},
     {"VK_AMD_shader_image_load_store_lod", 1},
     {"VK_NV_corner_sampled_image", 2},
+    {"VK_NV_private_vendor_info", 2},
     {"VK_KHR_multiview", 1},
     {"VK_IMG_format_pvrtc", 1},
     {"VK_NV_external_memory", 1},
@@ -154,7 +156,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_viewport_array2", 1},
     {"VK_NVX_multiview_per_view_attributes", 1},
     {"VK_NV_viewport_swizzle", 1},
-    {"VK_EXT_discard_rectangles", 1},
+    {"VK_EXT_discard_rectangles", 2},
     {"VK_EXT_conservative_rasterization", 1},
     {"VK_EXT_depth_clip_enable", 1},
     {"VK_EXT_hdr_metadata", 2},
@@ -228,7 +230,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_mesh_shader", 1},
     {"VK_NV_fragment_shader_barycentric", 1},
     {"VK_NV_shader_image_footprint", 2},
-    {"VK_NV_scissor_exclusive", 1},
+    {"VK_NV_scissor_exclusive", 2},
     {"VK_NV_device_diagnostic_checkpoints", 2},
     {"VK_KHR_timeline_semaphore", 2},
     {"VK_INTEL_shader_integer_functions2", 1},
@@ -291,6 +293,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_video_encode_queue", 7},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
+    {"VK_KHR_object_refresh", 1},
     {"VK_EXT_metal_objects", 1},
     {"VK_KHR_synchronization2", 1},
     {"VK_EXT_descriptor_buffer", 1},
@@ -329,6 +332,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_HUAWEI_invocation_mask", 1},
     {"VK_NV_external_memory_rdma", 1},
     {"VK_EXT_pipeline_properties", 1},
+    {"VK_NV_external_sci_sync", 2},
+    {"VK_NV_external_memory_sci_buf", 2},
     {"VK_EXT_multisampled_render_to_single_sampled", 1},
     {"VK_EXT_extended_dynamic_state2", 1},
     {"VK_EXT_color_write_enable", 1},
@@ -344,6 +349,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_border_color_swizzle", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
+    {"VK_ARM_shader_core_properties", 1},
+    {"VK_EXT_image_sliced_view_of_3d", 1},
     {"VK_VALVE_descriptor_set_host_mapping", 1},
     {"VK_EXT_depth_clamp_zero_one", 1},
     {"VK_EXT_non_seamless_cube_map", 1},
@@ -363,10 +370,12 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
+    {"VK_NV_external_sci_sync2", 1},
     {"VK_NV_ray_tracing_invocation_reorder", 1},
     {"VK_EXT_mutable_descriptor_type", 1},
     {"VK_ARM_shader_core_builtins", 2},
     {"VK_EXT_pipeline_library_group_handles", 1},
+    {"VK_QCOM_multiview_per_view_render_areas", 1},
 };
 
 
@@ -2716,6 +2725,14 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEXT(
     uint32_t                                    discardRectangleCount,
     const VkRect2D*                             pDiscardRectangles);
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleEnableEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkBool32                                    discardRectangleEnable);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetDiscardRectangleModeEXT(
+    VkCommandBuffer                             commandBuffer,
+    VkDiscardRectangleModeEXT                   discardRectangleMode);
+
 
 
 
@@ -3044,6 +3061,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCountNV(
 
 
 
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorEnableNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    firstExclusiveScissor,
+    uint32_t                                    exclusiveScissorCount,
+    const VkBool32*                             pExclusiveScissorEnables);
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetExclusiveScissorNV(
     VkCommandBuffer                             commandBuffer,
@@ -3741,6 +3764,8 @@ static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
     float                                       priority);
 
 
+
+
 static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutHostMappingInfoVALVE(
     VkDevice                                    device,
     const VkDescriptorSetBindingReferenceVALVE* pBindingReference,
@@ -3980,6 +4005,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
     VkDevice                                    device,
     const VkRenderingInfo*                      pRenderingInfo,
     VkTilePropertiesQCOM*                       pProperties);
+
 
 
 
@@ -4590,6 +4616,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetRefreshCycleDurationGOOGLE", (void*)GetRefreshCycleDurationGOOGLE},
     {"vkGetPastPresentationTimingGOOGLE", (void*)GetPastPresentationTimingGOOGLE},
     {"vkCmdSetDiscardRectangleEXT", (void*)CmdSetDiscardRectangleEXT},
+    {"vkCmdSetDiscardRectangleEnableEXT", (void*)CmdSetDiscardRectangleEnableEXT},
+    {"vkCmdSetDiscardRectangleModeEXT", (void*)CmdSetDiscardRectangleModeEXT},
     {"vkSetHdrMetadataEXT", (void*)SetHdrMetadataEXT},
 #ifdef VK_USE_PLATFORM_IOS_MVK
     {"vkCreateIOSSurfaceMVK", (void*)CreateIOSSurfaceMVK},
@@ -4644,6 +4672,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdDrawMeshTasksNV", (void*)CmdDrawMeshTasksNV},
     {"vkCmdDrawMeshTasksIndirectNV", (void*)CmdDrawMeshTasksIndirectNV},
     {"vkCmdDrawMeshTasksIndirectCountNV", (void*)CmdDrawMeshTasksIndirectCountNV},
+    {"vkCmdSetExclusiveScissorEnableNV", (void*)CmdSetExclusiveScissorEnableNV},
     {"vkCmdSetExclusiveScissorNV", (void*)CmdSetExclusiveScissorNV},
     {"vkCmdSetCheckpointNV", (void*)CmdSetCheckpointNV},
     {"vkGetQueueCheckpointDataNV", (void*)GetQueueCheckpointDataNV},

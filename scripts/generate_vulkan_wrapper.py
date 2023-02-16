@@ -851,8 +851,10 @@ VK_NVX_multiview_per_view_attributes = Extension(name='VK_NVX_multiview_per_view
 VK_NV_viewport_swizzle = Extension(name='VK_NV_viewport_swizzle', version=1, guard=None, commands=[
 ])
 
-VK_EXT_discard_rectangles = Extension(name='VK_EXT_discard_rectangles', version=1, guard=None, commands=[
+VK_EXT_discard_rectangles = Extension(name='VK_EXT_discard_rectangles', version=2, guard=None, commands=[
     Command(name='vkCmdSetDiscardRectangleEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdSetDiscardRectangleEnableEXT', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdSetDiscardRectangleModeEXT', dispatch='VkCommandBuffer'),
 ])
 
 VK_EXT_conservative_rasterization = Extension(name='VK_EXT_conservative_rasterization', version=1, guard=None, commands=[
@@ -1026,7 +1028,8 @@ VK_NV_fragment_shader_barycentric = Extension(name='VK_NV_fragment_shader_baryce
 VK_NV_shader_image_footprint = Extension(name='VK_NV_shader_image_footprint', version=2, guard=None, commands=[
 ])
 
-VK_NV_scissor_exclusive = Extension(name='VK_NV_scissor_exclusive', version=1, guard=None, commands=[
+VK_NV_scissor_exclusive = Extension(name='VK_NV_scissor_exclusive', version=2, guard=None, commands=[
+    Command(name='vkCmdSetExclusiveScissorEnableNV', dispatch='VkCommandBuffer'),
     Command(name='vkCmdSetExclusiveScissorNV', dispatch='VkCommandBuffer'),
 ])
 
@@ -1380,6 +1383,12 @@ VK_EXT_pageable_device_local_memory = Extension(name='VK_EXT_pageable_device_loc
     Command(name='vkSetDeviceMemoryPriorityEXT', dispatch='VkDevice'),
 ])
 
+VK_ARM_shader_core_properties = Extension(name='VK_ARM_shader_core_properties', version=1, guard=None, commands=[
+])
+
+VK_EXT_image_sliced_view_of_3d = Extension(name='VK_EXT_image_sliced_view_of_3d', version=1, guard=None, commands=[
+])
+
 VK_VALVE_descriptor_set_host_mapping = Extension(name='VK_VALVE_descriptor_set_host_mapping', version=1, guard=None, commands=[
     Command(name='vkGetDescriptorSetLayoutHostMappingInfoVALVE', dispatch='VkDevice'),
     Command(name='vkGetDescriptorSetHostMappingVALVE', dispatch='VkDevice'),
@@ -1499,6 +1508,9 @@ VK_ARM_shader_core_builtins = Extension(name='VK_ARM_shader_core_builtins', vers
 ])
 
 VK_EXT_pipeline_library_group_handles = Extension(name='VK_EXT_pipeline_library_group_handles', version=1, guard=None, commands=[
+])
+
+VK_QCOM_multiview_per_view_render_areas = Extension(name='VK_QCOM_multiview_per_view_render_areas', version=1, guard=None, commands=[
 ])
 
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
@@ -1941,6 +1953,8 @@ extensions = [
     VK_HUAWEI_cluster_culling_shader,
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
+    VK_ARM_shader_core_properties,
+    VK_EXT_image_sliced_view_of_3d,
     VK_VALVE_descriptor_set_host_mapping,
     VK_EXT_depth_clamp_zero_one,
     VK_EXT_non_seamless_cube_map,
@@ -1966,6 +1980,7 @@ extensions = [
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
     VK_EXT_pipeline_library_group_handles,
+    VK_QCOM_multiview_per_view_render_areas,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
@@ -2192,7 +2207,9 @@ def parse_vulkan_h(filename):
 
             if line.startswith("#include \"vulkan_"):
                 # Extract the filename and parse it.  Must be local to script file (no path).
-                extensions.extend(parse_subheader(line[10:].replace('"', ''), ext_guard))
+                filename = line[10:].replace('"', '')
+                if filename != "vulkan_sci.h":
+                    extensions.extend(parse_subheader(filename, ext_guard))
             elif line.startswith("#ifdef VK_USE_PLATFORM") or line.startswith('#ifdef VK_ENABLE_BETA_EXTENSIONS'):
                 guard_begin = line.find(" ") + 1
                 ext_guard = line[guard_begin:]
