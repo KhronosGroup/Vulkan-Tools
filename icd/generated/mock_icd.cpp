@@ -311,7 +311,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyProperties(
         *pQueueFamilyPropertyCount = 1;
     } else {
         if (*pQueueFamilyPropertyCount) {
-            pQueueFamilyProperties[0].queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
+            pQueueFamilyProperties[0].queueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT | VK_QUEUE_PROTECTED_BIT;
             pQueueFamilyProperties[0].queueCount = 1;
             pQueueFamilyProperties[0].timestampValidBits = 16;
             pQueueFamilyProperties[0].minImageTransferGranularity = {1,1,1};
