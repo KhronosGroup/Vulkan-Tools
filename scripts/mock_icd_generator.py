@@ -695,13 +695,27 @@ CUSTOM_C_INTERCEPTS = {
     return GetInstanceProcAddr(nullptr, pName);
 ''',
 'vkGetPhysicalDeviceMemoryProperties': '''
-    pMemoryProperties->memoryTypeCount = 2;
+    pMemoryProperties->memoryTypeCount = 6;
+    // Host visible Coherent
     pMemoryProperties->memoryTypes[0].propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
     pMemoryProperties->memoryTypes[0].heapIndex = 0;
-    pMemoryProperties->memoryTypes[1].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    pMemoryProperties->memoryTypes[1].heapIndex = 1;
+    // Host visible Cached
+    pMemoryProperties->memoryTypes[1].propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    pMemoryProperties->memoryTypes[1].heapIndex = 0;
+    // Device local and Host visible
+    pMemoryProperties->memoryTypes[2].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    pMemoryProperties->memoryTypes[2].heapIndex = 1;
+    // Device local lazily
+    pMemoryProperties->memoryTypes[3].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT;
+    pMemoryProperties->memoryTypes[3].heapIndex = 1;
+    // Device local protected
+    pMemoryProperties->memoryTypes[4].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_PROTECTED_BIT;
+    pMemoryProperties->memoryTypes[4].heapIndex = 1;
+    // Device local only
+    pMemoryProperties->memoryTypes[5].propertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    pMemoryProperties->memoryTypes[5].heapIndex = 1;
     pMemoryProperties->memoryHeapCount = 2;
-    pMemoryProperties->memoryHeaps[0].flags = 0;
+    pMemoryProperties->memoryHeaps[0].flags = VK_MEMORY_HEAP_MULTI_INSTANCE_BIT;
     pMemoryProperties->memoryHeaps[0].size = 8000000000;
     pMemoryProperties->memoryHeaps[1].flags = VK_MEMORY_HEAP_DEVICE_LOCAL_BIT;
     pMemoryProperties->memoryHeaps[1].size = 8000000000;
