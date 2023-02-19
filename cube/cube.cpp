@@ -416,6 +416,7 @@ struct Demo {
     bool use_break = false;
     bool suppress_popups = false;
     bool force_errors = false;
+    bool is_minimized = false;
 
     uint32_t current_buffer = 0;
 };
@@ -576,8 +577,9 @@ void Demo::cleanup() {
     prepared = false;
     auto result = device.waitIdle();
     VERIFY(result == vk::Result::eSuccess);
-
-    destroy_swapchain_related_resources();
+    if (!is_minimized){
+        destroy_swapchain_related_resources();
+    }
     // Wait for fences from present operations
     for (uint32_t i = 0; i < FRAME_LAG; i++) {
         device.destroyFence(fences[i]);
@@ -1558,6 +1560,10 @@ void Demo::prepare() {
     prepare_init_cmd();
 
     prepare_buffers();
+    if (is_minimized) {
+        prepared = false;
+        return;
+    }
     prepare_depth();
     prepare_textures();
     prepare_cube_data_buffers();
@@ -1640,6 +1646,12 @@ void Demo::prepare_buffers() {
         height = surfCapabilities.currentExtent.height;
     }
 
+    if (width==0||height==0){
+        is_minimized = true;
+        return;
+    } else {
+        is_minimized = false;
+    }
     // The FIFO present mode is guaranteed by the spec to be supported
     // and to have no tearing.  It's a great default present mode to use.
     vk::PresentModeKHR swapchainPresentMode = vk::PresentModeKHR::eFifo;
@@ -2341,6 +2353,9 @@ void Demo::destroy_swapchain_related_resources() {
 void Demo::resize() {
     // Don't react to resize until after first initialization.
     if (!prepared) {
+        if(is_minimized) {
+            prepare();
+        }
         return;
     }
 
