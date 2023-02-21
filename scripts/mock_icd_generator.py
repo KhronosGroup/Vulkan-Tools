@@ -64,7 +64,12 @@ static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
 static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
 
 static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
-static unordered_map<VkDevice, unordered_map<VkBuffer, VkBufferCreateInfo>> buffer_map;
+static VkDeviceAddress current_available_address = 0x10000000;
+struct BufferState {
+    VkDeviceSize size;
+    VkDeviceAddress address;
+};
+static unordered_map<VkDevice, unordered_map<VkBuffer, BufferState>> buffer_map;
 static unordered_map<VkDevice, unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
 static unordered_map<VkCommandPool, std::vector<VkCommandBuffer>> command_pool_buffer_map;
 
@@ -910,6 +915,12 @@ CUSTOM_C_INTERCEPTS = {
         rt_pipeline_props->shaderGroupHandleCaptureReplaySize = 32;
     }
 
+    auto *rt_pipeline_nv_props = lvl_find_mod_in_chain<VkPhysicalDeviceRayTracingPropertiesNV>(pProperties->pNext);
+    if (rt_pipeline_nv_props) {
+        rt_pipeline_nv_props->shaderGroupHandleSize = 32;
+        rt_pipeline_nv_props->shaderGroupBaseAlignment = 64;
+    }
+
     auto *texel_buffer_props = lvl_find_mod_in_chain<VkPhysicalDeviceTexelBufferAlignmentProperties>(pProperties->pNext);
     if (texel_buffer_props) {
         texel_buffer_props->storageTexelBufferOffsetSingleTexelAlignment = VK_TRUE;
@@ -1066,7 +1077,16 @@ CUSTOM_C_INTERCEPTS = {
 'vkCreateBuffer': '''
     unique_lock_t lock(global_lock);
     *pBuffer = (VkBuffer)global_unique_handle++;
-    buffer_map[device][*pBuffer] = *pCreateInfo;
+     buffer_map[device][*pBuffer] = {
+         pCreateInfo->size,
+         current_available_address
+     };
+     current_available_address += pCreateInfo->size;
+     // Always align to next 64-bit pointer
+     const uint64_t alignment = current_available_address % 64;
+     if (alignment != 0) {
+         current_available_address += (64 - alignment);
+     }
     return VK_SUCCESS;
 ''',
 'vkDestroyBuffer': '''
@@ -1201,6 +1221,43 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetImageSparseMemoryRequirements2KHR': '''
     GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, &pSparseMemoryRequirements->memoryRequirements);
+''',
+'vkGetBufferDeviceAddress': '''
+    VkDeviceAddress address = 0;
+    auto d_iter = buffer_map.find(device);
+    if (d_iter != buffer_map.end()) {
+        auto iter = d_iter->second.find(pInfo->buffer);
+        if (iter != d_iter->second.end()) {
+            address = iter->second.address;
+        }
+    }
+    return address;
+''',
+'vkGetBufferDeviceAddressKHR': '''
+    return GetBufferDeviceAddress(device, pInfo);
+''',
+'vkGetBufferDeviceAddressEXT': '''
+    return GetBufferDeviceAddress(device, pInfo);
+''',
+'vkGetDescriptorSetLayoutSizeEXT': '''
+    // Need to give something non-zero
+    *pLayoutSizeInBytes = 4;
+''',
+'vkGetAccelerationStructureBuildSizesKHR': '''
+    // arbitrary
+    pSizeInfo->accelerationStructureSize = 4;
+    pSizeInfo->updateScratchSize = 4;
+    pSizeInfo->buildScratchSize = 4;
+''',
+'vkGetAccelerationStructureMemoryRequirementsNV': '''
+    // arbitrary
+    pMemoryRequirements->memoryRequirements.size = 4096;
+    pMemoryRequirements->memoryRequirements.alignment = 1;
+    pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF;
+''',
+'vkGetAccelerationStructureDeviceAddressKHR': '''
+    // arbitrary - need to be aligned to 256 bytes
+    return 0x262144;
 ''',
 }
 
