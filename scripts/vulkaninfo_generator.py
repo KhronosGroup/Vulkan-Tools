@@ -500,7 +500,7 @@ def PrintBitMaskToString(bitmask, name, gen):
     for v in bitmask.options:
         out += f"    if ({v.name} & value) {{\n"
         out += f'        if (is_first) {{ is_first = false; }} else {{ out += " | "; }}\n'
-        out += f'        out += "{str(v.name).strip("VK_").strip("_BIT")}";\n'
+        out += f'        out += "{str(v.name)[3:]}";\n'
         out += f"    }}\n"
     out += f"    return out;\n"
     out += f"}}\n"

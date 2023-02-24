@@ -942,23 +942,23 @@ std::string VkQueueFlagsString(VkQueueFlags value) {
     bool is_first = true;
     if (VK_QUEUE_GRAPHICS_BIT & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_GRAPHICS";
+        out += "QUEUE_GRAPHICS_BIT";
     }
     if (VK_QUEUE_COMPUTE_BIT & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_COMPUTE";
+        out += "QUEUE_COMPUTE_BIT";
     }
     if (VK_QUEUE_TRANSFER_BIT & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_TRANSFER";
+        out += "QUEUE_TRANSFER_BIT";
     }
     if (VK_QUEUE_SPARSE_BINDING_BIT & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_SPARSE_BINDING";
+        out += "QUEUE_SPARSE_BINDING_BIT";
     }
     if (VK_QUEUE_PROTECTED_BIT & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_PROTECTED";
+        out += "QUEUE_PROTECTED_BIT";
     }
     if (VK_QUEUE_VIDEO_DECODE_BIT_KHR & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
@@ -970,7 +970,7 @@ std::string VkQueueFlagsString(VkQueueFlags value) {
     }
     if (VK_QUEUE_OPTICAL_FLOW_BIT_NV & value) {
         if (is_first) { is_first = false; } else { out += " | "; }
-        out += "QUEUE_OPTICAL_FLOW_BIT_N";
+        out += "QUEUE_OPTICAL_FLOW_BIT_NV";
     }
     return out;
 }
