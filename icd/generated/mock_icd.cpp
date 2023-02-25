@@ -2867,7 +2867,19 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoCapabilitiesKHR(
     const VkVideoProfileInfoKHR*                pVideoProfile,
     VkVideoCapabilitiesKHR*                     pCapabilities)
 {
-//Not a CREATE or DESTROY function
+    // arbitrary
+    auto *decode_caps = lvl_find_mod_in_chain<VkVideoDecodeCapabilitiesKHR>(pCapabilities->pNext);
+    if (decode_caps) {
+        decode_caps->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR | VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR;
+    }
+    pCapabilities->flags = 0;
+    pCapabilities->minBitstreamBufferOffsetAlignment = 4;
+    pCapabilities->minBitstreamBufferSizeAlignment = 4;
+    pCapabilities->pictureAccessGranularity = {1, 1};
+    pCapabilities->minCodedExtent = {4, 4};
+    pCapabilities->maxCodedExtent = {16, 16};
+    pCapabilities->maxDpbSlots = 4;
+    pCapabilities->maxActiveReferencePictures = 4;
     return VK_SUCCESS;
 }
 
@@ -2877,7 +2889,22 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoFormatPropertiesKHR(
     uint32_t*                                   pVideoFormatPropertyCount,
     VkVideoFormatPropertiesKHR*                 pVideoFormatProperties)
 {
-//Not a CREATE or DESTROY function
+    if (!pVideoFormatProperties) {
+        *pVideoFormatPropertyCount = 2;
+    } else {
+        // arbitrary
+        pVideoFormatProperties[0].format = VK_FORMAT_R8G8B8A8_UNORM;
+        pVideoFormatProperties[0].imageCreateFlags = VK_IMAGE_TYPE_2D;
+        pVideoFormatProperties[0].imageType = VK_IMAGE_TYPE_2D;
+        pVideoFormatProperties[0].imageTiling = VK_IMAGE_TILING_OPTIMAL;
+        pVideoFormatProperties[0].imageUsageFlags = VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
+        pVideoFormatProperties[1].format = VK_FORMAT_R8G8B8A8_SNORM;
+        pVideoFormatProperties[1].imageCreateFlags = VK_IMAGE_TYPE_2D;
+        pVideoFormatProperties[1].imageType = VK_IMAGE_TYPE_2D;
+        pVideoFormatProperties[1].imageTiling = VK_IMAGE_TILING_OPTIMAL;
+        pVideoFormatProperties[1].imageUsageFlags = VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR;
+
+    }
     return VK_SUCCESS;
 }
 
@@ -2906,7 +2933,15 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetVideoSessionMemoryRequirementsKHR(
     uint32_t*                                   pMemoryRequirementsCount,
     VkVideoSessionMemoryRequirementsKHR*        pMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    if (!pMemoryRequirements) {
+        *pMemoryRequirementsCount = 1;
+    } else {
+        // arbitrary
+        pMemoryRequirements[0].memoryBindIndex = 0;
+        pMemoryRequirements[0].memoryRequirements.size = 4096;
+        pMemoryRequirements[0].memoryRequirements.alignment = 1;
+        pMemoryRequirements[0].memoryRequirements.memoryTypeBits = 0xFFFF;
+    }
     return VK_SUCCESS;
 }
 
