@@ -1224,6 +1224,9 @@ VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_confi
 VK_QCOM_render_pass_store_ops = Extension(name='VK_QCOM_render_pass_store_ops', version=2, guard=None, commands=[
 ])
 
+VK_NV_low_latency = Extension(name='VK_NV_low_latency', version=1, guard=None, commands=[
+])
+
 VK_EXT_descriptor_buffer = Extension(name='VK_EXT_descriptor_buffer', version=1, guard=None, commands=[
     Command(name='vkGetDescriptorSetLayoutSizeEXT', dispatch='VkDevice'),
     Command(name='vkGetDescriptorSetLayoutBindingOffsetEXT', dispatch='VkDevice'),
@@ -1915,6 +1918,7 @@ extensions = [
     VK_EXT_pipeline_creation_cache_control,
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
+    VK_NV_low_latency,
     VK_EXT_descriptor_buffer,
     VK_EXT_graphics_pipeline_library,
     VK_AMD_shader_early_and_late_fragment_tests,

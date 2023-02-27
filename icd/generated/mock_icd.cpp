@@ -5533,6 +5533,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 
 
 
+
 #ifdef VK_USE_PLATFORM_METAL_EXT
 
 static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(
