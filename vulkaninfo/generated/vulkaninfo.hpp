@@ -517,6 +517,7 @@ std::string VkResultString(VkResult value) {
         case (VK_THREAD_DONE_KHR): return "THREAD_DONE_KHR";
         case (VK_OPERATION_DEFERRED_KHR): return "OPERATION_DEFERRED_KHR";
         case (VK_OPERATION_NOT_DEFERRED_KHR): return "OPERATION_NOT_DEFERRED_KHR";
+        case (VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR): return "ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR";
         case (VK_ERROR_COMPRESSION_EXHAUSTED_EXT): return "ERROR_COMPRESSION_EXHAUSTED_EXT";
         default: return std::string("UNKNOWN_VkResult_value") + std::to_string(value);
     }
