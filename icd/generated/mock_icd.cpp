@@ -549,6 +549,7 @@ static VKAPI_ATTR void VKAPI_CALL FreeMemory(
     const VkAllocationCallbacks*                pAllocator)
 {
 //Destroy object
+    unique_lock_t lock(global_lock);
     allocated_memory_size_map.erase(memory);
 }
 
@@ -640,6 +641,7 @@ static VKAPI_ATTR void VKAPI_CALL GetBufferMemoryRequirements(
     pMemoryRequirements->alignment = 1;
     pMemoryRequirements->memoryTypeBits = 0xFFFF;
     // Return a better size based on the buffer size from the create info.
+    unique_lock_t lock(global_lock);
     auto d_iter = buffer_map.find(device);
     if (d_iter != buffer_map.end()) {
         auto iter = d_iter->second.find(buffer);
@@ -657,6 +659,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageMemoryRequirements(
     pMemoryRequirements->size = 0;
     pMemoryRequirements->alignment = 1;
 
+    unique_lock_t lock(global_lock);
     auto d_iter = image_memory_size_map.find(device);
     if(d_iter != image_memory_size_map.end()){
         auto iter = d_iter->second.find(image);
