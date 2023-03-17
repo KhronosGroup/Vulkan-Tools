@@ -988,6 +988,7 @@ CUSTOM_C_INTERCEPTS = {
     pMemoryRequirements->alignment = 1;
     pMemoryRequirements->memoryTypeBits = 0xFFFF;
     // Return a better size based on the buffer size from the create info.
+    unique_lock_t lock(global_lock);
     auto d_iter = buffer_map.find(device);
     if (d_iter != buffer_map.end()) {
         auto iter = d_iter->second.find(buffer);
@@ -1003,6 +1004,7 @@ CUSTOM_C_INTERCEPTS = {
     pMemoryRequirements->size = 0;
     pMemoryRequirements->alignment = 1;
 
+    unique_lock_t lock(global_lock);
     auto d_iter = image_memory_size_map.find(device);
     if(d_iter != image_memory_size_map.end()){
         auto iter = d_iter->second.find(image);
@@ -1732,6 +1734,7 @@ class MockICDOutputGenerator(OutputGenerator):
             self.appendSection('command', '//Destroy object')
             if 'FreeMemory' in api_function_name:
                 # Remove from allocation map
+                self.appendSection('command', '    unique_lock_t lock(global_lock);')
                 self.appendSection('command', '    allocated_memory_size_map.erase(memory);')
         else:
             self.appendSection('command', '//Not a CREATE or DESTROY function')
