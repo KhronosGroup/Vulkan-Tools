@@ -1031,12 +1031,19 @@ CUSTOM_C_INTERCEPTS = {
     *ppData = map_addr;
     return VK_SUCCESS;
 ''',
+'vkMapMemory2KHR': '''
+    return MapMemory(device, pMemoryMapInfo->memory, pMemoryMapInfo->offset, pMemoryMapInfo->size, pMemoryMapInfo->flags, ppData);
+''',
 'vkUnmapMemory': '''
     unique_lock_t lock(global_lock);
     for (auto map_addr : mapped_memory_map[memory]) {
         free(map_addr);
     }
     mapped_memory_map.erase(memory);
+''',
+'vkUnmapMemory2KHR': '''
+    UnmapMemory(device, pMemoryUnmapInfo->memory);
+    return VK_SUCCESS;
 ''',
 'vkGetImageSubresourceLayout': '''
     // Need safe values. Callers are computing memory offsets from pLayout, with no return code to flag failure.
