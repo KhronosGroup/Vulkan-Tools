@@ -632,6 +632,11 @@ VK_KHR_pipeline_executable_properties = Extension(name='VK_KHR_pipeline_executab
     Command(name='vkGetPipelineExecutableInternalRepresentationsKHR', dispatch='VkDevice'),
 ])
 
+VK_KHR_map_memory2 = Extension(name='VK_KHR_map_memory2', version=1, guard=None, commands=[
+    Command(name='vkMapMemory2KHR', dispatch='VkDevice'),
+    Command(name='vkUnmapMemory2KHR', dispatch='VkDevice'),
+])
+
 VK_KHR_shader_integer_dot_product = Extension(name='VK_KHR_shader_integer_dot_product', version=1, guard=None, commands=[
 ])
 
@@ -1769,6 +1774,7 @@ extensions = [
     VK_KHR_buffer_device_address,
     VK_KHR_deferred_host_operations,
     VK_KHR_pipeline_executable_properties,
+    VK_KHR_map_memory2,
     VK_KHR_shader_integer_dot_product,
     VK_KHR_pipeline_library,
     VK_KHR_shader_non_semantic_info,

@@ -428,6 +428,10 @@ extern PFN_vkGetPipelineExecutablePropertiesKHR vkGetPipelineExecutablePropertie
 extern PFN_vkGetPipelineExecutableStatisticsKHR vkGetPipelineExecutableStatisticsKHR;
 extern PFN_vkGetPipelineExecutableInternalRepresentationsKHR vkGetPipelineExecutableInternalRepresentationsKHR;
 
+// VK_KHR_map_memory2
+extern PFN_vkMapMemory2KHR vkMapMemory2KHR;
+extern PFN_vkUnmapMemory2KHR vkUnmapMemory2KHR;
+
 // VK_KHR_synchronization2
 extern PFN_vkCmdSetEvent2KHR vkCmdSetEvent2KHR;
 extern PFN_vkCmdResetEvent2KHR vkCmdResetEvent2KHR;
