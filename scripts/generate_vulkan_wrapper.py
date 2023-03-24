@@ -1376,6 +1376,9 @@ VK_EXT_opacity_micromap = Extension(name='VK_EXT_opacity_micromap', version=2, g
     Command(name='vkGetMicromapBuildSizesEXT', dispatch='VkDevice'),
 ])
 
+VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=1, guard=None, commands=[
+])
+
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
 ])
 
@@ -1959,6 +1962,7 @@ extensions = [
     VK_EXT_multi_draw,
     VK_EXT_image_2d_view_of_3d,
     VK_EXT_opacity_micromap,
+    VK_NV_displacement_micromap,
     VK_EXT_load_store_op_none,
     VK_HUAWEI_cluster_culling_shader,
     VK_EXT_border_color_swizzle,
