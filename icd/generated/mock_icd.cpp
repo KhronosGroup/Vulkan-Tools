@@ -6160,6 +6160,9 @@ static VKAPI_ATTR void VKAPI_CALL GetMicromapBuildSizesEXT(
 //Not a CREATE or DESTROY function
 }
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 
 static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterHUAWEI(
