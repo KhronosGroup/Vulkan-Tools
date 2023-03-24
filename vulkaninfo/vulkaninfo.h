@@ -652,7 +652,10 @@ struct AppInstance {
         AppCompileInstanceExtensionsToEnable();
 
         std::vector<const char *> inst_exts;
-        for (const auto &ext : inst_extensions) inst_exts.push_back(ext.c_str());
+        for (const auto &ext : inst_extensions) {
+            if (ext == "VK_LUNARG_direct_driver_loading") continue;  // skip this extension since it triggers warnings in the loader
+            inst_exts.push_back(ext.c_str());
+        }
 
         const VkInstanceCreateInfo inst_info = {
             VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
