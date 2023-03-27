@@ -905,8 +905,8 @@ void Demo::init(int argc, char **argv) {
         }
         if (strcmp(argv[i], "--height") == 0) {
             int32_t in_height = 0;
-            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &height) == 1) {
-                if (height > 0) {
+            if (i < argc - 1 && sscanf(argv[i + 1], "%d", &in_height) == 1) {
+                if (in_height > 0) {
                     height = static_cast<uint32_t>(in_height);
                     i++;
                     continue;
