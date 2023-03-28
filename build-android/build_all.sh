@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ANDROID_BUILD_DIR=$(dirname $(readlink -f $0))
+PROJECT_DIR=$ANDROID_BUILD_DIR/..
+
 if [ -z "${ANDROID_SDK_HOME}" ];
 then echo "Please set ANDROID_SDK_HOME, exiting"; exit 1;
 else echo "ANDROID_SDK_HOME is ${ANDROID_SDK_HOME}";
@@ -44,7 +47,10 @@ findtool jarsigner
 
 set -ev
 
-DEMO_BUILD_DIR=$PWD/../cube/android
+VULKANINFO_BUILD_DIR=$PROJECT_DIR/vulkaninfo/android
+echo VULKANINFO_BUILD_DIR="${VULKANINFO_BUILD_DIR}"
+
+DEMO_BUILD_DIR=$PROJECT_DIR/cube/android
 echo DEMO_BUILD_DIR="${DEMO_BUILD_DIR}"
 
 function create_APK() {
@@ -54,7 +60,26 @@ function create_APK() {
     zipalign -f 4 bin/$1-unaligned.apk bin/$1.apk
 }
 
+#
+# update dependencies
+#
+(
+pushd $ANDROID_BUILD_DIR
 ./update_external_sources_android.sh --no-build
+popd
+pushd $PROJECT_DIR
+python3 scripts/generate_source.py $ANDROID_BUILD_DIR/third_party/Vulkan-Headers/registry --incremental
+popd
+)
+
+#
+# build vulkaninfo
+#
+(
+pushd $VULKANINFO_BUILD_DIR
+ndk-build -j $cores
+popd
+)
 
 #
 # build vkcube APK
