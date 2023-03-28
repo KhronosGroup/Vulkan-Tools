@@ -742,9 +742,18 @@ struct AppInstance {
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_ANDROID_KHR) || defined(VK_USE_PLATFORM_GGP)
+    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_GGP)
 #define VULKANINFO_WSI_ENABLED
 #endif
+
+//-----------------------------------------------------------
+#if defined(VULKANINFO_WSI_ENABLED)
+static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
+    inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
+}
+#endif  // defined(VULKANINFO_WSI_ENABLED)
+//-----------------------------------------------------------
+
 //---------------------------Win32---------------------------
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 
@@ -816,13 +825,7 @@ static void AppDestroyWin32Window(AppInstance &inst) { user32_handles->pfnDestro
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
-#if defined(VULKANINFO_WSI_ENABLED)
-static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
-    inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
-}
-#endif  // defined(VULKANINFO_WSI_ENABLED)
 //----------------------------XCB----------------------------
-
 #ifdef VK_USE_PLATFORM_XCB_KHR
 static void AppCreateXcbWindow(AppInstance &inst) {
     //--Init Connection--
@@ -1078,10 +1081,12 @@ static VkSurfaceKHR AppCreateAndroidSurface(AppInstance &inst) {
     createInfo.flags = 0;
     createInfo.window = (struct ANativeWindow *)(inst.window);
 
-    err = inst.dll.fp_vkCreateAndroidSurfaceKHR(inst.inst, &createInfo, NULL, &inst.surface);
-    THROW_VK_ERR("vkCreateAndroidSurfaceKHR", err);
+    VkSurfaceKHR surface;
+    VkResult err = inst.dll.fp_vkCreateAndroidSurfaceKHR(inst.instance, &createInfo, NULL, &surface);
+    if (err) THROW_VK_ERR("vkCreateAndroidSurfaceKHR", err);
+    return surface;
 }
-static VkSurfaceKHR AppDestroyAndroidSurface(AppInstance &inst) {}
+static void AppDestroyAndroidWindow(AppInstance &inst) {}
 #endif
 //-----------------------------------------------------------
 //---------------------------GGP-----------------------------
@@ -1213,8 +1218,8 @@ void SetupWindowExtensions(AppInstance &inst) {
 //--ANDROID--
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     SurfaceExtension surface_ext_android;
-    if (inst.CheckExtensionEnabled(VK_ANDROID_SURFACE_EXTENSION_NAME)) {
-        surface_ext_android.name = VK_ANDROID_SURFACE_EXTENSION_NAME;
+    if (inst.CheckExtensionEnabled(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME)) {
+        surface_ext_android.name = VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
         surface_ext_android.create_window = AppCreateAndroidWindow;
         surface_ext_android.create_surface = AppCreateAndroidSurface;
         surface_ext_android.destroy_window = AppDestroyAndroidWindow;
