@@ -519,6 +519,7 @@ std::string VkResultString(VkResult value) {
         case (VK_OPERATION_NOT_DEFERRED_KHR): return "OPERATION_NOT_DEFERRED_KHR";
         case (VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR): return "ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR";
         case (VK_ERROR_COMPRESSION_EXHAUSTED_EXT): return "ERROR_COMPRESSION_EXHAUSTED_EXT";
+        case (VK_ERROR_INCOMPATIBLE_SHADER_BINARY_EXT): return "ERROR_INCOMPATIBLE_SHADER_BINARY_EXT";
         default: return std::string("UNKNOWN_VkResult_value") + std::to_string(value);
     }
 }
@@ -2519,6 +2520,17 @@ void DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(Printer &p, std::st
     p.SetMinKeyWidth(39);
     p.PrintKeyValue("shaderModuleIdentifierAlgorithmUUID", obj.shaderModuleIdentifierAlgorithmUUID);
 }
+void DumpVkPhysicalDeviceShaderObjectFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderObjectFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(12);
+    p.PrintKeyBool("shaderObject", static_cast<bool>(obj.shaderObject));
+}
+void DumpVkPhysicalDeviceShaderObjectPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderObjectPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(20);
+    p.PrintKeyValue("shaderBinaryUUID", obj.shaderBinaryUUID);
+    p.PrintKeyValue("shaderBinaryVersion", obj.shaderBinaryVersion);
+}
 void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::string name, const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(27);
@@ -2533,6 +2545,20 @@ void DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(Printer &p, std::stri
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(25);
     p.PrintKeyBool("shaderTerminateInvocation", static_cast<bool>(obj.shaderTerminateInvocation));
+}
+void DumpVkPhysicalDeviceShaderTileImageFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderTileImageFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(32);
+    p.PrintKeyBool("shaderTileImageColorReadAccess", static_cast<bool>(obj.shaderTileImageColorReadAccess));
+    p.PrintKeyBool("shaderTileImageDepthReadAccess", static_cast<bool>(obj.shaderTileImageDepthReadAccess));
+    p.PrintKeyBool("shaderTileImageStencilReadAccess", static_cast<bool>(obj.shaderTileImageStencilReadAccess));
+}
+void DumpVkPhysicalDeviceShaderTileImagePropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderTileImagePropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(48);
+    p.PrintKeyBool("shaderTileImageCoherentReadAccelerated", static_cast<bool>(obj.shaderTileImageCoherentReadAccelerated));
+    p.PrintKeyBool("shaderTileImageReadSampleFromPixelRateInvocation", static_cast<bool>(obj.shaderTileImageReadSampleFromPixelRateInvocation));
+    p.PrintKeyBool("shaderTileImageReadFromHelperInvocation", static_cast<bool>(obj.shaderTileImageReadFromHelperInvocation));
 }
 void DumpVkPhysicalDeviceSparseProperties(Printer &p, std::string name, const VkPhysicalDeviceSparseProperties &obj) {
     if (p.Type() == OutputType::json)
@@ -3042,6 +3068,8 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceSamplerFilterMinmaxProperties PhysicalDeviceSamplerFilterMinmaxProperties{};
     VkPhysicalDeviceShaderIntegerDotProductProperties PhysicalDeviceShaderIntegerDotProductProperties{};
     VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT PhysicalDeviceShaderModuleIdentifierPropertiesEXT{};
+    VkPhysicalDeviceShaderObjectPropertiesEXT PhysicalDeviceShaderObjectPropertiesEXT{};
+    VkPhysicalDeviceShaderTileImagePropertiesEXT PhysicalDeviceShaderTileImagePropertiesEXT{};
     VkPhysicalDeviceSubgroupProperties PhysicalDeviceSubgroupProperties{};
     VkPhysicalDeviceSubgroupSizeControlProperties PhysicalDeviceSubgroupSizeControlProperties{};
     VkPhysicalDeviceTexelBufferAlignmentProperties PhysicalDeviceTexelBufferAlignmentProperties{};
@@ -3096,6 +3124,8 @@ struct phys_device_props2_chain {
         PhysicalDeviceSamplerFilterMinmaxProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
         PhysicalDeviceShaderIntegerDotProductProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES;
         PhysicalDeviceShaderModuleIdentifierPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT;
+        PhysicalDeviceShaderObjectPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_PROPERTIES_EXT;
+        PhysicalDeviceShaderTileImagePropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_PROPERTIES_EXT;
         PhysicalDeviceSubgroupProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
         PhysicalDeviceSubgroupSizeControlProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES;
         PhysicalDeviceTexelBufferAlignmentProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES;
@@ -3150,6 +3180,8 @@ struct phys_device_props2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSamplerFilterMinmaxProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderIntegerDotProductProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderModuleIdentifierPropertiesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderObjectPropertiesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTileImagePropertiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupSizeControlProperties));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTexelBufferAlignmentProperties));
@@ -3293,9 +3325,11 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderIntegerDotProductFeatures PhysicalDeviceShaderIntegerDotProductFeatures{};
     char padding[64];
     VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT PhysicalDeviceShaderModuleIdentifierFeaturesEXT{};
+    VkPhysicalDeviceShaderObjectFeaturesEXT PhysicalDeviceShaderObjectFeaturesEXT{};
     VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures PhysicalDeviceShaderSubgroupExtendedTypesFeatures{};
     VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR{};
     VkPhysicalDeviceShaderTerminateInvocationFeatures PhysicalDeviceShaderTerminateInvocationFeatures{};
+    VkPhysicalDeviceShaderTileImageFeaturesEXT PhysicalDeviceShaderTileImageFeaturesEXT{};
     VkPhysicalDeviceSubgroupSizeControlFeatures PhysicalDeviceSubgroupSizeControlFeatures{};
     VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT PhysicalDeviceSubpassMergeFeedbackFeaturesEXT{};
     VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT PhysicalDeviceSwapchainMaintenance1FeaturesEXT{};
@@ -3407,9 +3441,11 @@ struct phys_device_features2_chain {
         PhysicalDeviceShaderImageAtomicInt64FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT;
         PhysicalDeviceShaderIntegerDotProductFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
         PhysicalDeviceShaderModuleIdentifierFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT;
+        PhysicalDeviceShaderObjectFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT;
         PhysicalDeviceShaderSubgroupExtendedTypesFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
         PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR;
         PhysicalDeviceShaderTerminateInvocationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES;
+        PhysicalDeviceShaderTileImageFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_FEATURES_EXT;
         PhysicalDeviceSubgroupSizeControlFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES;
         PhysicalDeviceSubpassMergeFeedbackFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT;
         PhysicalDeviceSwapchainMaintenance1FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT;
@@ -3521,9 +3557,11 @@ struct phys_device_features2_chain {
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderImageAtomicInt64FeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderIntegerDotProductFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderModuleIdentifierFeaturesEXT));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderObjectFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderSubgroupExtendedTypesFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTerminateInvocationFeatures));
+        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTileImageFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupSizeControlFeatures));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubpassMergeFeedbackFeaturesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSwapchainMaintenance1FeaturesEXT));
@@ -3923,6 +3961,18 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))) {
             VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT* props = (VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT*)structure;
             DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(p, "VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OBJECT_EXTENSION_NAME))) {
+            VkPhysicalDeviceShaderObjectPropertiesEXT* props = (VkPhysicalDeviceShaderObjectPropertiesEXT*)structure;
+            DumpVkPhysicalDeviceShaderObjectPropertiesEXT(p, "VkPhysicalDeviceShaderObjectPropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_PROPERTIES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_TILE_IMAGE_EXTENSION_NAME))) {
+            VkPhysicalDeviceShaderTileImagePropertiesEXT* props = (VkPhysicalDeviceShaderTileImagePropertiesEXT*)structure;
+            DumpVkPhysicalDeviceShaderTileImagePropertiesEXT(p, "VkPhysicalDeviceShaderTileImagePropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES &&
@@ -4539,6 +4589,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(p, "VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT", *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OBJECT_EXTENSION_NAME))) {
+            VkPhysicalDeviceShaderObjectFeaturesEXT* props = (VkPhysicalDeviceShaderObjectFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceShaderObjectFeaturesEXT(p, "VkPhysicalDeviceShaderObjectFeaturesEXT", *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES &&
            (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME) ||
             gpu.api_version.minor >= 2)) {
@@ -4557,6 +4613,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             gpu.api_version.minor >= 3)) {
             VkPhysicalDeviceShaderTerminateInvocationFeatures* props = (VkPhysicalDeviceShaderTerminateInvocationFeatures*)structure;
             DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceShaderTerminateInvocationFeatures":"VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_FEATURES_EXT &&
+           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_TILE_IMAGE_EXTENSION_NAME))) {
+            VkPhysicalDeviceShaderTileImageFeaturesEXT* props = (VkPhysicalDeviceShaderTileImageFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceShaderTileImageFeaturesEXT(p, "VkPhysicalDeviceShaderTileImageFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES &&

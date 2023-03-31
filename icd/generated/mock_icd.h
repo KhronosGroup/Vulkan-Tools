@@ -345,6 +345,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_view_min_lod", 1},
     {"VK_EXT_multi_draw", 1},
     {"VK_EXT_image_2d_view_of_3d", 1},
+    {"VK_EXT_shader_tile_image", 1},
     {"VK_EXT_opacity_micromap", 2},
     {"VK_NV_displacement_micromap", 1},
     {"VK_EXT_load_store_op_none", 1},
@@ -370,6 +371,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_optical_flow", 1},
     {"VK_EXT_legacy_dithering", 1},
     {"VK_EXT_pipeline_protected_access", 1},
+    {"VK_EXT_shader_object", 1},
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
@@ -3680,6 +3682,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateMicromapEXT(
     VkDevice                                    device,
     const VkMicromapCreateInfoEXT*              pCreateInfo,
@@ -4010,6 +4013,31 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
     const VkOpticalFlowExecuteInfoNV*           pExecuteInfo);
 
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
+    VkDevice                                    device,
+    uint32_t                                    createInfoCount,
+    const VkShaderCreateInfoEXT*                pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkShaderEXT*                                pShaders);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyShaderEXT(
+    VkDevice                                    device,
+    VkShaderEXT                                 shader,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetShaderBinaryDataEXT(
+    VkDevice                                    device,
+    VkShaderEXT                                 shader,
+    size_t*                                     pDataSize,
+    void*                                       pData);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindShadersEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    stageCount,
+    const VkShaderStageFlagBits*                pStages,
+    const VkShaderEXT*                          pShaders);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetFramebufferTilePropertiesQCOM(
@@ -4892,6 +4920,10 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyOpticalFlowSessionNV", (void*)DestroyOpticalFlowSessionNV},
     {"vkBindOpticalFlowSessionImageNV", (void*)BindOpticalFlowSessionImageNV},
     {"vkCmdOpticalFlowExecuteNV", (void*)CmdOpticalFlowExecuteNV},
+    {"vkCreateShadersEXT", (void*)CreateShadersEXT},
+    {"vkDestroyShaderEXT", (void*)DestroyShaderEXT},
+    {"vkGetShaderBinaryDataEXT", (void*)GetShaderBinaryDataEXT},
+    {"vkCmdBindShadersEXT", (void*)CmdBindShadersEXT},
     {"vkGetFramebufferTilePropertiesQCOM", (void*)GetFramebufferTilePropertiesQCOM},
     {"vkGetDynamicRenderingTilePropertiesQCOM", (void*)GetDynamicRenderingTilePropertiesQCOM},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},

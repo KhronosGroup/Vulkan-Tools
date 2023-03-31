@@ -1359,6 +1359,9 @@ VK_EXT_multi_draw = Extension(name='VK_EXT_multi_draw', version=1, guard=None, c
 VK_EXT_image_2d_view_of_3d = Extension(name='VK_EXT_image_2d_view_of_3d', version=1, guard=None, commands=[
 ])
 
+VK_EXT_shader_tile_image = Extension(name='VK_EXT_shader_tile_image', version=1, guard=None, commands=[
+])
+
 VK_EXT_opacity_micromap = Extension(name='VK_EXT_opacity_micromap', version=2, guard=None, commands=[
     Command(name='vkCreateMicromapEXT', dispatch='VkDevice'),
     Command(name='vkDestroyMicromapEXT', dispatch='VkDevice'),
@@ -1374,9 +1377,6 @@ VK_EXT_opacity_micromap = Extension(name='VK_EXT_opacity_micromap', version=2, g
     Command(name='vkCmdWriteMicromapsPropertiesEXT', dispatch='VkCommandBuffer'),
     Command(name='vkGetDeviceMicromapCompatibilityEXT', dispatch='VkDevice'),
     Command(name='vkGetMicromapBuildSizesEXT', dispatch='VkDevice'),
-])
-
-VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=1, guard=None, commands=[
 ])
 
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
@@ -1496,6 +1496,13 @@ VK_EXT_legacy_dithering = Extension(name='VK_EXT_legacy_dithering', version=1, g
 ])
 
 VK_EXT_pipeline_protected_access = Extension(name='VK_EXT_pipeline_protected_access', version=1, guard=None, commands=[
+])
+
+VK_EXT_shader_object = Extension(name='VK_EXT_shader_object', version=1, guard=None, commands=[
+    Command(name='vkCreateShadersEXT', dispatch='VkDevice'),
+    Command(name='vkDestroyShaderEXT', dispatch='VkDevice'),
+    Command(name='vkGetShaderBinaryDataEXT', dispatch='VkDevice'),
+    Command(name='vkCmdBindShadersEXT', dispatch='VkCommandBuffer'),
 ])
 
 VK_QCOM_tile_properties = Extension(name='VK_QCOM_tile_properties', version=1, guard=None, commands=[
@@ -1702,6 +1709,9 @@ VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=10
 ])
 
 VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=10, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+])
+
+VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 extensions = [
@@ -1961,8 +1971,8 @@ extensions = [
     VK_EXT_image_view_min_lod,
     VK_EXT_multi_draw,
     VK_EXT_image_2d_view_of_3d,
+    VK_EXT_shader_tile_image,
     VK_EXT_opacity_micromap,
-    VK_NV_displacement_micromap,
     VK_EXT_load_store_op_none,
     VK_HUAWEI_cluster_culling_shader,
     VK_EXT_border_color_swizzle,
@@ -1987,6 +1997,7 @@ extensions = [
     VK_NV_optical_flow,
     VK_EXT_legacy_dithering,
     VK_EXT_pipeline_protected_access,
+    VK_EXT_shader_object,
     VK_QCOM_tile_properties,
     VK_SEC_amigo_profiling,
     VK_QCOM_multiview_per_view_viewports,
@@ -2031,6 +2042,7 @@ extensions = [
     VK_KHR_video_encode_queue,
     VK_EXT_video_encode_h264,
     VK_EXT_video_encode_h265,
+    VK_NV_displacement_micromap,
 ]
 # end of generated code
 
