@@ -6034,6 +6034,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawMultiIndexedEXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateMicromapEXT(
     VkDevice                                    device,
     const VkMicromapCreateInfoEXT*              pCreateInfo,
@@ -6562,6 +6563,48 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
 }
 
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
+    VkDevice                                    device,
+    uint32_t                                    createInfoCount,
+    const VkShaderCreateInfoEXT*                pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkShaderEXT*                                pShaders)
+{
+    unique_lock_t lock(global_lock);
+    for (uint32_t i = 0; i < createInfoCount; ++i) {
+        pShaders[i] = (VkShaderEXT)global_unique_handle++;
+    }
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL DestroyShaderEXT(
+    VkDevice                                    device,
+    VkShaderEXT                                 shader,
+    const VkAllocationCallbacks*                pAllocator)
+{
+//Destroy object
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetShaderBinaryDataEXT(
+    VkDevice                                    device,
+    VkShaderEXT                                 shader,
+    size_t*                                     pDataSize,
+    void*                                       pData)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindShadersEXT(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    stageCount,
+    const VkShaderStageFlagBits*                pStages,
+    const VkShaderEXT*                          pShaders)
+{
+//Not a CREATE or DESTROY function
+}
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetFramebufferTilePropertiesQCOM(
