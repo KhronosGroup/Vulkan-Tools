@@ -570,8 +570,12 @@ void DumpVkCompositeAlphaFlagsKHR(Printer &p, std::string name, VkCompositeAlpha
 }
 void DumpVkCompositeAlphaFlagBitsKHR(Printer &p, std::string name, VkCompositeAlphaFlagBitsKHR value) {
     auto strings = VkCompositeAlphaFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkDeviceGroupPresentModeFlagBitsKHRGetStrings(VkDeviceGroupPresentModeFlagBitsKHR value) {
@@ -601,8 +605,12 @@ void DumpVkDeviceGroupPresentModeFlagsKHR(Printer &p, std::string name, VkDevice
 }
 void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDeviceGroupPresentModeFlagBitsKHR value) {
     auto strings = VkDeviceGroupPresentModeFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBits value) {
@@ -659,8 +667,12 @@ void DumpVkFormatFeatureFlags(Printer &p, std::string name, VkFormatFeatureFlags
 }
 void DumpVkFormatFeatureFlagBits(Printer &p, std::string name, VkFormatFeatureFlagBits value) {
     auto strings = VkFormatFeatureFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlagBits2 value) {
@@ -728,8 +740,12 @@ void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlag
 }
 void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureFlagBits2 value) {
     auto strings = VkFormatFeatureFlagBits2GetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkImageUsageFlagBitsGetStrings(VkImageUsageFlagBits value) {
@@ -775,8 +791,12 @@ void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value
 }
 void DumpVkImageUsageFlagBits(Printer &p, std::string name, VkImageUsageFlagBits value) {
     auto strings = VkImageUsageFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkMemoryHeapFlagBitsGetStrings(VkMemoryHeapFlagBits value) {
@@ -804,8 +824,12 @@ void DumpVkMemoryHeapFlags(Printer &p, std::string name, VkMemoryHeapFlags value
 }
 void DumpVkMemoryHeapFlagBits(Printer &p, std::string name, VkMemoryHeapFlagBits value) {
     auto strings = VkMemoryHeapFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkMemoryPropertyFlagBitsGetStrings(VkMemoryPropertyFlagBits value) {
@@ -840,8 +864,12 @@ void DumpVkMemoryPropertyFlags(Printer &p, std::string name, VkMemoryPropertyFla
 }
 void DumpVkMemoryPropertyFlagBits(Printer &p, std::string name, VkMemoryPropertyFlagBits value) {
     auto strings = VkMemoryPropertyFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkPresentGravityFlagBitsEXTGetStrings(VkPresentGravityFlagBitsEXT value) {
@@ -870,8 +898,12 @@ void DumpVkPresentGravityFlagsEXT(Printer &p, std::string name, VkPresentGravity
 }
 void DumpVkPresentGravityFlagBitsEXT(Printer &p, std::string name, VkPresentGravityFlagBitsEXT value) {
     auto strings = VkPresentGravityFlagBitsEXTGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkPresentScalingFlagBitsEXTGetStrings(VkPresentScalingFlagBitsEXT value) {
@@ -900,8 +932,12 @@ void DumpVkPresentScalingFlagsEXT(Printer &p, std::string name, VkPresentScaling
 }
 void DumpVkPresentScalingFlagBitsEXT(Printer &p, std::string name, VkPresentScalingFlagBitsEXT value) {
     auto strings = VkPresentScalingFlagBitsEXTGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkQueueFlagBitsGetStrings(VkQueueFlagBits value) {
@@ -935,8 +971,12 @@ void DumpVkQueueFlags(Printer &p, std::string name, VkQueueFlags value) {
 }
 void DumpVkQueueFlagBits(Printer &p, std::string name, VkQueueFlagBits value) {
     auto strings = VkQueueFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::string VkQueueFlagsString(VkQueueFlags value) {
@@ -1003,8 +1043,12 @@ void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags val
 }
 void DumpVkResolveModeFlagBits(Printer &p, std::string name, VkResolveModeFlagBits value) {
     auto strings = VkResolveModeFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkSampleCountFlagBitsGetStrings(VkSampleCountFlagBits value) {
@@ -1037,8 +1081,12 @@ void DumpVkSampleCountFlags(Printer &p, std::string name, VkSampleCountFlags val
 }
 void DumpVkSampleCountFlagBits(Printer &p, std::string name, VkSampleCountFlagBits value) {
     auto strings = VkSampleCountFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkShaderStageFlagBitsGetStrings(VkShaderStageFlagBits value) {
@@ -1080,8 +1128,12 @@ void DumpVkShaderStageFlags(Printer &p, std::string name, VkShaderStageFlags val
 }
 void DumpVkShaderStageFlagBits(Printer &p, std::string name, VkShaderStageFlagBits value) {
     auto strings = VkShaderStageFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureFlagBits value) {
@@ -1116,8 +1168,12 @@ void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureF
 }
 void DumpVkSubgroupFeatureFlagBits(Printer &p, std::string name, VkSubgroupFeatureFlagBits value) {
     auto strings = VkSubgroupFeatureFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkSurfaceCounterFlagBitsEXTGetStrings(VkSurfaceCounterFlagBitsEXT value) {
@@ -1144,8 +1200,12 @@ void DumpVkSurfaceCounterFlagsEXT(Printer &p, std::string name, VkSurfaceCounter
 }
 void DumpVkSurfaceCounterFlagBitsEXT(Printer &p, std::string name, VkSurfaceCounterFlagBitsEXT value) {
     auto strings = VkSurfaceCounterFlagBitsEXTGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkSurfaceTransformFlagBitsKHRGetStrings(VkSurfaceTransformFlagBitsKHR value) {
@@ -1180,8 +1240,12 @@ void DumpVkSurfaceTransformFlagsKHR(Printer &p, std::string name, VkSurfaceTrans
 }
 void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTransformFlagBitsKHR value) {
     auto strings = VkSurfaceTransformFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkToolPurposeFlagBitsGetStrings(VkToolPurposeFlagBits value) {
@@ -1214,8 +1278,12 @@ void DumpVkToolPurposeFlags(Printer &p, std::string name, VkToolPurposeFlags val
 }
 void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBits value) {
     auto strings = VkToolPurposeFlagBitsGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 std::vector<const char *> VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodecOperationFlagBitsKHR value) {
@@ -1245,8 +1313,12 @@ void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCode
 }
 void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagBitsKHR value) {
     auto strings = VkVideoCodecOperationFlagBitsKHRGetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
 }
 
 void DumpVkConformanceVersion(Printer &p, std::string name, const VkConformanceVersion &obj) {
