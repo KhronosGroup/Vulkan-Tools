@@ -1334,6 +1334,7 @@ void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, const V
     p.SetMinKeyWidth(27);
     p.PrintKeyValue("drmFormatModifier", obj.drmFormatModifier);
     p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount);
+    p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures);
 }
 void DumpVkExtent2D(Printer &p, std::string name, const VkExtent2D &obj) {
@@ -1349,10 +1350,22 @@ void DumpVkExtent3D(Printer &p, std::string name, const VkExtent3D &obj) {
     p.PrintKeyValue("height", obj.height);
     p.PrintKeyValue("depth", obj.depth);
 }
+void DumpVkFormatProperties(Printer &p, std::string name, const VkFormatProperties &obj) {
+    ObjectWrapper object{p, name};
+    p.SetOpenDetails();
+    DumpVkFormatFeatureFlags(p, "linearTilingFeatures", obj.linearTilingFeatures);
+    p.SetOpenDetails();
+    DumpVkFormatFeatureFlags(p, "optimalTilingFeatures", obj.optimalTilingFeatures);
+    p.SetOpenDetails();
+    DumpVkFormatFeatureFlags(p, "bufferFeatures", obj.bufferFeatures);
+}
 void DumpVkFormatProperties3(Printer &p, std::string name, const VkFormatProperties3 &obj) {
     ObjectWrapper object{p, name};
+    p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "linearTilingFeatures", obj.linearTilingFeatures);
+    p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", obj.optimalTilingFeatures);
+    p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "bufferFeatures", obj.bufferFeatures);
 }
 void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties &obj) {
