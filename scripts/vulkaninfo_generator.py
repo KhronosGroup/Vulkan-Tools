@@ -475,8 +475,12 @@ def PrintFlags(bitmask, name):
 def PrintFlagBits(bitmask):
     return f"""void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{
     auto strings = {bitmask.name}GetStrings(value);
-    if (strings.size() > 0)
-        p.PrintKeyString(name, strings.at(0));
+    if (strings.size() > 0) {{
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }}
 }}
 """
 
