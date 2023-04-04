@@ -472,34 +472,28 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
     }
 }
 
-void GpuDumpFormatProperty(Printer &p, VkFormat fmt, VkFormatProperties prop) {
-    std::string name{};
-    switch (p.Type()) {
-        case OutputType::text: {
-            name = "Properties";
-            break;
-        }
-        case OutputType::html: {
-            name = VkFormatString(fmt);
-            break;
-        }
-        case OutputType::json: {
-            name = "VkFormatProperties";
-            break;
-        }
-        case OutputType::vkconfig_output: {
-            name = VkFormatString(fmt);
-            break;
+void GpuDumpTextFormatProperty(Printer &p, const AppGpu &gpu, PropFlags formats, std::vector<VkFormat> format_list,
+                               uint32_t counter) {
+    p.SetElementIndex(counter);
+    ObjectWrapper obj_common_group(p, "Common Format Group");
+    IndentWrapper indent_inner(p);
+    {
+        ArrayWrapper arr_formats(p, "Formats", format_list.size());
+        for (auto &fmt : format_list) {
+            p.SetAsType().PrintString(VkFormatString(fmt));
         }
     }
-    p.SetTitleAsType();
-    ObjectWrapper obj(p, name);
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "linearTilingFeatures", prop.linearTilingFeatures);
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "optimalTilingFeatures", prop.optimalTilingFeatures);
-    p.SetOpenDetails();
-    DumpVkFormatFeatureFlags(p, "bufferFeatures", prop.bufferFeatures);
+    ObjectWrapper obj(p, "Properties");
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) {
+        DumpVkFormatFeatureFlags2(p, "linearTilingFeatures", formats.props3.linearTilingFeatures);
+        DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", formats.props3.optimalTilingFeatures);
+        DumpVkFormatFeatureFlags2(p, "bufferFeatures", formats.props3.bufferFeatures);
+    } else {
+        DumpVkFormatFeatureFlags(p, "linearTilingFeatures", formats.props.linearTilingFeatures);
+        DumpVkFormatFeatureFlags(p, "optimalTilingFeatures", formats.props.optimalTilingFeatures);
+        DumpVkFormatFeatureFlags(p, "bufferFeatures", formats.props.bufferFeatures);
+    }
+    p.AddNewline();
 }
 
 void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
@@ -525,26 +519,14 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
         int counter = 0;
         std::vector<VkFormat> unsupported_formats;
         for (auto &prop : fmtPropMap) {
-            VkFormatProperties props;
-            props.linearTilingFeatures = prop.first.linear;
-            props.optimalTilingFeatures = prop.first.optimal;
-            props.bufferFeatures = prop.first.buffer;
-            if (props.linearTilingFeatures == 0 && props.optimalTilingFeatures == 0 && props.bufferFeatures == 0) {
+            VkFormatProperties props = prop.first.props;
+            VkFormatProperties3 props3 = prop.first.props3;
+            if (props.linearTilingFeatures == 0 && props.optimalTilingFeatures == 0 && props.bufferFeatures == 0 &&
+                props3.linearTilingFeatures == 0 && props3.optimalTilingFeatures == 0 && props3.bufferFeatures == 0) {
                 unsupported_formats = prop.second;
                 continue;
             }
-
-            p.SetElementIndex(counter++);
-            ObjectWrapper obj_common_group(p, "Common Format Group");
-            IndentWrapper indent_inner(p);
-            {
-                ArrayWrapper arr_formats(p, "Formats", prop.second.size());
-                for (auto &fmt : prop.second) {
-                    p.SetAsType().PrintString(VkFormatString(fmt));
-                }
-            }
-            GpuDumpFormatProperty(p, VK_FORMAT_UNDEFINED, props);
-            p.AddNewline();
+            GpuDumpTextFormatProperty(p, gpu, prop.first, prop.second, counter++);
         }
 
         ArrayWrapper arr_unsupported_formats(p, "Unsupported Formats", unsupported_formats.size());
@@ -556,11 +538,13 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
             if (gpu.FormatRangeSupported(format)) {
                 for (int32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
                     VkFormat fmt = static_cast<VkFormat>(fmt_counter);
-
-                    VkFormatProperties props;
-                    gpu.inst.dll.fp_vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
-
-                    GpuDumpFormatProperty(p, fmt, props);
+                    auto formats = get_format_properties(gpu, fmt);
+                    p.SetTitleAsType();
+                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) {
+                        DumpVkFormatProperties3(p, VkFormatString(fmt), formats.props3);
+                    } else {
+                        DumpVkFormatProperties(p, VkFormatString(fmt), formats.props);
+                    }
                 }
             }
         }
@@ -638,20 +622,21 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
                 if (gpu.FormatRangeSupported(format)) {
                     for (int32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
                         VkFormat fmt = static_cast<VkFormat>(fmt_counter);
-
-                        VkFormatProperties props;
-                        gpu.inst.dll.fp_vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+                        auto formats = get_format_properties(gpu, fmt);
 
                         // don't print format properties that are unsupported
-                        if ((props.linearTilingFeatures || props.optimalTilingFeatures || props.bufferFeatures) == 0) continue;
+                        if (formats.props.linearTilingFeatures == 0 && formats.props.optimalTilingFeatures == 0 &&
+                            formats.props.bufferFeatures == 0 && formats.props3.linearTilingFeatures == 0 &&
+                            formats.props3.optimalTilingFeatures == 0 && formats.props3.bufferFeatures == 0)
+                            continue;
 
                         ObjectWrapper format_obj(p, std::string("VK_") + VkFormatString(fmt));
                         {
-                            GpuDumpFormatProperty(p, fmt, props);
-
+                            // Want to explicitly list VkFormatProperties in addition to VkFormatProperties3 if available
+                            DumpVkFormatProperties(p, "VkFormatProperties", formats.props);
                             VkFormatProperties2 format_props2{};
                             format_props2.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
-                            format_props2.formatProperties = props;
+                            format_props2.formatProperties = formats.props;
                             std::unique_ptr<format_properties2_chain> chain_for_format_props2;
                             setup_format_properties2_chain(format_props2, chain_for_format_props2);
                             gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &format_props2);
