@@ -32,14 +32,14 @@ jobs:
                 cc: [ gcc, clang ]
                 cxx: [ g++, clang++ ]
                 config: [ Debug, Release ]
-                os: [ ubuntu-18.04, ubuntu-20.04 ]
+                os: [ ubuntu-20.04, ubuntu-22.04 ]
                 cube_wsi: [ XCB, XLIB, WAYLAND, DISPLAY ]
                 exclude:
                     - cc: gcc
                       cxx: clang++
                     - cc: clang
                       cxx: g++
-                    - os: ubuntu-18.04
+                    - os: ubuntu-20.04
                       cube_wsi: WAYLAND
 
         steps:
@@ -134,7 +134,7 @@ jobs:
               run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
 
     gn:
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
 
         strategy:
             matrix:
