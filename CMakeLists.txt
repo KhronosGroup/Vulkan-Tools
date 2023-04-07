@@ -38,6 +38,10 @@ option(BUILD_ICD "Build icd" ON)
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
 
+if (UNIX AND NOT APPLE) # i.e. Linux
+    option(ENABLE_ADDRESS_SANITIZER "Use addres sanitization" OFF)
+endif()
+
 if(WIN32)
     # Optional: Allow specify the exact version used in the vulkaninfo executable
     # Format is major.minor.patch.build

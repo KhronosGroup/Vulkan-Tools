@@ -130,6 +130,10 @@ else()
         if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
             install(TARGETS VkICD_${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
+        if (ENABLE_ADDRESS_SANITIZER)
+            target_compile_options(VkICD_${target} PUBLIC -fsanitize=address)
+            target_link_options(VkICD_${target} PUBLIC -fsanitize=address)
+        endif ()
     endmacro()
 endif()
 

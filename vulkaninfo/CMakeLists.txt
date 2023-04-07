@@ -93,6 +93,11 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         target_link_libraries(vulkaninfo PkgConfig::DirectFB)
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_DIRECTFB_EXT -DVK_NO_PROTOTYPES)
     endif()
+
+    if (ENABLE_ADDRESS_SANITIZER)
+        target_compile_options(vulkaninfo PUBLIC -fsanitize=address)
+        target_link_options(vulkaninfo PUBLIC -fsanitize=address)
+    endif ()
 endif()
 
 if(APPLE)
