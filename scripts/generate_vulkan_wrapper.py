@@ -1281,7 +1281,7 @@ VK_EXT_attachment_feedback_loop_layout = Extension(name='VK_EXT_attachment_feedb
 VK_EXT_4444_formats = Extension(name='VK_EXT_4444_formats', version=1, guard=None, commands=[
 ])
 
-VK_EXT_device_fault = Extension(name='VK_EXT_device_fault', version=1, guard=None, commands=[
+VK_EXT_device_fault = Extension(name='VK_EXT_device_fault', version=2, guard=None, commands=[
     Command(name='vkGetDeviceFaultInfoEXT', dispatch='VkDevice'),
 ])
 
@@ -1382,7 +1382,7 @@ VK_EXT_opacity_micromap = Extension(name='VK_EXT_opacity_micromap', version=2, g
 VK_EXT_load_store_op_none = Extension(name='VK_EXT_load_store_op_none', version=1, guard=None, commands=[
 ])
 
-VK_HUAWEI_cluster_culling_shader = Extension(name='VK_HUAWEI_cluster_culling_shader', version=1, guard=None, commands=[
+VK_HUAWEI_cluster_culling_shader = Extension(name='VK_HUAWEI_cluster_culling_shader', version=2, guard=None, commands=[
     Command(name='vkCmdDrawClusterHUAWEI', dispatch='VkCommandBuffer'),
     Command(name='vkCmdDrawClusterIndirectHUAWEI', dispatch='VkCommandBuffer'),
 ])
