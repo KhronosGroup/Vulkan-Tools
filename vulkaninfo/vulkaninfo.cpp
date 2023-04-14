@@ -1139,6 +1139,8 @@ int main(int argc, char **argv) {
 
         RunPrinter(*(printer.get()), parse_data, instance, gpus, surfaces);
 
+        // Call the printer's destructor before the file handle gets closed
+        printer.reset(nullptr);
 #if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
             AppDestroySurface(instance, surface_extension.surface);
@@ -1152,9 +1154,10 @@ int main(int argc, char **argv) {
             printer->FinishOutput();
         }
         return_code = 1;
+
+        // Call the printer's destructor before the file handle gets closed
+        printer.reset(nullptr);
     }
-    // Call the printer's destructor before the file handle gets closed
-    printer.reset(nullptr);
 
 #ifdef _WIN32
     if (parse_data.output_category == OutputCategory::text && !parse_data.print_to_file) wait_for_console_destroy();
