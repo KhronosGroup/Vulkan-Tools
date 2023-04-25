@@ -327,7 +327,6 @@ struct Demo {
     vk::SurfaceKHR surface;
     bool prepared = false;
     bool use_staging_buffer = false;
-    bool use_xlib = false;
     bool separate_present_queue = false;
     bool invalid_gpu_selection = false;
     int32_t gpu_number = 0;
@@ -859,7 +858,6 @@ void Demo::init(int argc, char **argv) {
     frameCount = UINT32_MAX;
     width = 500;
     height = 500;
-    use_xlib = false;
     /* Autodetect suitable / best GPU by default */
     gpu_number = -1;
 
@@ -952,9 +950,7 @@ void Demo::init(int argc, char **argv) {
         exit(1);
     }
 
-    if (!use_xlib) {
-        init_connection();
-    }
+    init_connection();
 
     init_vk();
 
@@ -3201,7 +3197,6 @@ int main(int argc, char **argv) {
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     demo.create_xcb_window();
 #elif defined(VK_USE_PLATFORM_XLIB_KHR)
-    demo.use_xlib = true;
     demo.create_xlib_window();
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     demo.create_window();
