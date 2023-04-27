@@ -1000,6 +1000,17 @@ CUSTOM_C_INTERCEPTS = {
 'vkGetBufferMemoryRequirements2KHR': '''
     GetBufferMemoryRequirements(device, pInfo->buffer, &pMemoryRequirements->memoryRequirements);
 ''',
+'vkGetDeviceBufferMemoryRequirements': '''
+    // TODO: Just hard-coding reqs for now
+    pMemoryRequirements->memoryRequirements.alignment = 1;
+    pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF;
+
+    // Return a size based on the buffer size from the create info.
+    pMemoryRequirements->memoryRequirements.size = ((pInfo->pCreateInfo->size + 4095) / 4096) * 4096;
+''',
+'vkGetDeviceBufferMemoryRequirementsKHR': '''
+    GetDeviceBufferMemoryRequirements(device, pInfo, pMemoryRequirements);
+''',
 'vkGetImageMemoryRequirements': '''
     pMemoryRequirements->size = 0;
     pMemoryRequirements->alignment = 1;
