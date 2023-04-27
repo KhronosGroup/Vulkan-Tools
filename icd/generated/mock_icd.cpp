@@ -2447,7 +2447,12 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirements(
     const VkDeviceBufferMemoryRequirements*     pInfo,
     VkMemoryRequirements2*                      pMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    // TODO: Just hard-coding reqs for now
+    pMemoryRequirements->memoryRequirements.alignment = 1;
+    pMemoryRequirements->memoryRequirements.memoryTypeBits = 0xFFFF;
+
+    // Return a size based on the buffer size from the create info.
+    pMemoryRequirements->memoryRequirements.size = ((pInfo->pCreateInfo->size + 4095) / 4096) * 4096;
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirements(
@@ -4081,7 +4086,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(
     const VkDeviceBufferMemoryRequirements*     pInfo,
     VkMemoryRequirements2*                      pMemoryRequirements)
 {
-//Not a CREATE or DESTROY function
+    GetDeviceBufferMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceImageMemoryRequirementsKHR(
