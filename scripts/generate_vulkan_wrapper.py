@@ -1534,6 +1534,10 @@ VK_EXT_pipeline_library_group_handles = Extension(name='VK_EXT_pipeline_library_
 VK_QCOM_multiview_per_view_render_areas = Extension(name='VK_QCOM_multiview_per_view_render_areas', version=1, guard=None, commands=[
 ])
 
+VK_EXT_attachment_feedback_loop_dynamic_state = Extension(name='VK_EXT_attachment_feedback_loop_dynamic_state', version=1, guard=None, commands=[
+    Command(name='vkCmdSetAttachmentFeedbackLoopEnableEXT', dispatch='VkCommandBuffer'),
+])
+
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
@@ -2010,6 +2014,7 @@ extensions = [
     VK_ARM_shader_core_builtins,
     VK_EXT_pipeline_library_group_handles,
     VK_QCOM_multiview_per_view_render_areas,
+    VK_EXT_attachment_feedback_loop_dynamic_state,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,
