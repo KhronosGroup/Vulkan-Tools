@@ -28,3 +28,4 @@ build-android/external
 *.includes
 .vscode/
 .DS_Store
+external/
