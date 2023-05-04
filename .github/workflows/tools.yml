@@ -1,6 +1,6 @@
-# Copyright (c) 2021 Valve Corporation
-# Copyright (c) 2021 LunarG, Inc.
-
+# Copyright (c) 2021-2023 Valve Corporation
+# Copyright (c) 2021-2023 LunarG, Inc.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,16 +12,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# Author: Jeremy Kniager <jeremyk@lunarg.com>
 
-name: CI Build
+name: tools
 
 on:
     push:
     pull_request:
         branches:
             - main
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  # github.head_ref is only defined on pull_request
+  # Fallback to the run ID, which is guaranteed to be both unique and defined for the run.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id  }}
+  cancel-in-progress: true
 
 jobs:
     linux:
@@ -49,22 +54,27 @@ jobs:
                 python-version: '3.7'
             - run: |
                 sudo apt-get -qq update
-                sudo apt install libxkbcommon-dev libwayland-dev libxrandr-dev libx11-xcb-dev wayland-protocols
-
-            - name: Fetch and install headers
-              run: python scripts/update_deps.py --dir external
-
-            - name: Generate build files
-              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=${{matrix.config}} -DCUBE_WSI_SELECTION=${{matrix.cube_wsi}} -Cexternal/helper.cmake
+                sudo apt install libwayland-dev xorg-dev wayland-protocols
+            - uses: lukka/get-cmake@latest
+              with:
+                cmakeVersion: 3.17.2
+            - name: Setup ccache
+              uses: hendrikmuhs/ccache-action@v1.2
+              with:
+                key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}-${{matrix.cube_wsi}}
+            - name: Configure
+              run: cmake -S. -B build -DCMAKE_BUILD_TYPE=${{matrix.config}} -DCUBE_WSI_SELECTION=${{matrix.cube_wsi}} -D UPDATE_DEPS=ON -G "Ninja"
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
+                CMAKE_CXX_COMPILER_LAUNCHER: ccache
+                CMAKE_C_COMPILER_LAUNCHER: ccache
 
-            - name: Build the tools
-              run: make -C build
+            - name: Build
+              run: cmake --build build
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
+              run: python scripts/generate_source.py --verify external/${{ matrix.config }}/Vulkan-Headers/build/install/share/vulkan/registry
 
     windows:
         runs-on: ${{matrix.os}}
@@ -80,58 +90,46 @@ jobs:
             - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
+            - uses: lukka/get-cmake@latest
+            - uses: ilammy/msvc-dev-cmd@v1
+              with:
+                arch: ${{ matrix.arch }}
 
-            - name: Fetch and install headers
-              run: python scripts/update_deps.py --dir external
+            - name: Configure
+              run: cmake -S. -B build -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -G "Ninja"
 
-            - name: Generate build files
-              run: cmake -S. -Bbuild -A${{matrix.arch}} "-Cexternal/helper.cmake"
-
-            - name: Build the tools
-              run: cmake --build ./build --config ${{matrix.config}}
+            - name: Build
+              run: cmake --build ./build
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
+              run: python scripts/generate_source.py --verify external/${{matrix.config}}/Vulkan-Headers/build/install/share/vulkan/registry
 
     mac:
         runs-on: macos-latest
-
-        strategy:
-            matrix:
-                config: [ Debug, Release ]
-
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
             - uses: lukka/get-cmake@latest
+
+            - name: Setup ccache
+              uses: hendrikmuhs/ccache-action@v1.2
               with:
-                cmakeVersion: 3.17.2
-            - name: Cache dependencies
-              id: cache-deps
-              uses: actions/cache@v3
+                key: macos
+
+            - name: Configure
+              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -G "Ninja"
               env:
-                cache-name: cache-macos-latest
-              with:
-                path: external/
-                key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.config }}-${{ hashfiles('scripts/known_good.json') }}
+                MACOSX_DEPLOYMENT_TARGET: 10.15
+                CMAKE_CXX_COMPILER_LAUNCHER: ccache
+                CMAKE_C_COMPILER_LAUNCHER: ccache
 
-            - name: Fetch/Update dependencies
-              run: python scripts/update_deps.py --dir external --skip-existing-install
-
-            - name: Generate build files
-              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=${{matrix.config}} -Cexternal/helper.cmake -G "Ninja"
-              env:
-                # Specify the minimum version of macOS on which the target binaries are to be deployed.
-                # https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html
-                MACOSX_DEPLOYMENT_TARGET: 10.12
-
-            - name: Build the tools
+            - name: Build
               run: cmake --build build
 
             - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Vulkan-Headers/build/install/share/vulkan/registry
+              run: python scripts/generate_source.py --verify external/Release/Vulkan-Headers/build/install/share/vulkan/registry
 
     gn:
         runs-on: ubuntu-20.04
