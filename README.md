@@ -1,35 +1,18 @@
-# Vulkan Ecosystem Components
+# KhronosGroup/Vulkan-Tools
 
-This project provides Khronos official Vulkan Tools and Utilities for Windows, Linux, Android, and MacOS.
+This project provides Vulkan tools and utilities that can assist development by enabling developers to verify their applications correct use of the Vulkan API.
 
-## Default branch changed to 'main' 2023-01-16
-
-As discussed in #729, the default branch of this repository is now 'main'. This change should be largely transparent to repository users, since github rewrites many references to the old 'master' branch to 'main'. However, if you have a checked-out local clone, you may wish to take the following steps as recommended by github:
-
-```sh
-git branch -m master main
-git fetch origin
-git branch -u origin/main main
-git remote set-head origin -a
-```
-
-## CI Build Status
-[![Build Status](https://github.com/KhronosGroup/Vulkan-Tools/workflows/CI%20Build/badge.svg?branch=main)](https://github.com/KhronosGroup/Vulkan-Tools/actions)
-
-## Introduction
-
-This project provides Vulkan tools and utilities that can assist development by enabling developers to
-verify their applications correct use of the Vulkan API.
+## Intro
 
 The following components are available in this repository:
+
 - [*Mock ICD*](icd/)
 - [*Vkcube and Vkcube++ Demo*](cube/)
 - [*VulkanInfo*](vulkaninfo/)
 - [*Windows Runtime*](windows-runtime-installer/)
 
 ## Contact Information
-* [Tobin Ehlis](mailto:tobine@google.com)
-* [Mark Lobodzinski](mailto:mark@lunarg.com)
+* [Charles Giessen](mailto:charles@lunarg.com)
 
 ## Information for Developing or Contributing:
 
@@ -38,8 +21,7 @@ Please see the [GOVERNANCE.md](GOVERNANCE.md) file in this repository for reposi
 
 ## How to Build and Run
 
-[BUILD.md](BUILD.md)
-Includes directions for building all components as well as running the vkcube demo applications.
+[BUILD.md](BUILD.md) includes directions for building all components as well as running the vkcube demo applications.
 
 ## Version Tagging Scheme
 
