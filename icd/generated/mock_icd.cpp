@@ -2020,10 +2020,19 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalBufferProperties(
     const VkPhysicalDeviceExternalBufferInfo*   pExternalBufferInfo,
     VkExternalBufferProperties*                 pExternalBufferProperties)
 {
-    // Hard-code support for all handle types and features
-    pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
-    pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = 0x1FF;
-    pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = 0x1FF;
+    constexpr VkExternalMemoryHandleTypeFlags supported_flags = 0x1FF;
+    if (pExternalBufferInfo->handleType & supported_flags) {
+        pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = supported_flags;
+        pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = supported_flags;
+    } else {
+        pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = 0;
+        // According to spec, handle type is always compatible with itself. Even if export/import
+        // not supported, it's important to properly implement self-compatibility property since
+        // application's control flow can rely on this.
+        pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = pExternalBufferInfo->handleType;
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceExternalFenceProperties(
@@ -3504,7 +3513,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetFenceWin32HandleKHR(
     const VkFenceGetWin32HandleInfoKHR*         pGetWin32HandleInfo,
     HANDLE*                                     pHandle)
 {
-//Not a CREATE or DESTROY function
+    *pHandle = (HANDLE)0x12345678;
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_WIN32_KHR */
@@ -3523,7 +3532,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetFenceFdKHR(
     const VkFenceGetFdInfoKHR*                  pGetFdInfo,
     int*                                        pFd)
 {
-//Not a CREATE or DESTROY function
+    *pFd = 0x42;
     return VK_SUCCESS;
 }
 

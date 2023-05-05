@@ -1016,10 +1016,19 @@ CUSTOM_C_INTERCEPTS = {
     GetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 ''',
 'vkGetPhysicalDeviceExternalBufferProperties':'''
-    // Hard-code support for all handle types and features
-    pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
-    pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = 0x1FF;
-    pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = 0x1FF;
+    constexpr VkExternalMemoryHandleTypeFlags supported_flags = 0x1FF;
+    if (pExternalBufferInfo->handleType & supported_flags) {
+        pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = supported_flags;
+        pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = supported_flags;
+    } else {
+        pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = 0;
+        // According to spec, handle type is always compatible with itself. Even if export/import
+        // not supported, it's important to properly implement self-compatibility property since
+        // application's control flow can rely on this.
+        pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = pExternalBufferInfo->handleType;
+    }
 ''',
 'vkGetPhysicalDeviceExternalBufferPropertiesKHR':'''
     GetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
@@ -1208,6 +1217,14 @@ CUSTOM_C_INTERCEPTS = {
         // arbitrary
         *pTimeDomains = VK_TIME_DOMAIN_DEVICE_EXT;
     }
+    return VK_SUCCESS;
+''',
+'vkGetFenceWin32HandleKHR': '''
+    *pHandle = (HANDLE)0x12345678;
+    return VK_SUCCESS;
+''',
+'vkGetFenceFdKHR': '''
+    *pFd = 0x42;
     return VK_SUCCESS;
 ''',
 'vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR': '''
