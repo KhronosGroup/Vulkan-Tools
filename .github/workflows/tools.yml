@@ -118,12 +118,14 @@ jobs:
               with:
                 key: macos
 
+            # NOTE: Add ccache this way instead of with CMAKE_<LANG>_COMPILER_LAUNCHER since MoltenVK doesn't use CMake.
+            - name: Add ccache to PATH
+              run: echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
+
             - name: Configure
               run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -G "Ninja"
               env:
                 MACOSX_DEPLOYMENT_TARGET: 10.15
-                CMAKE_CXX_COMPILER_LAUNCHER: ccache
-                CMAKE_C_COMPILER_LAUNCHER: ccache
 
             - name: Build
               run: cmake --build build
