@@ -1281,7 +1281,11 @@ CUSTOM_C_INTERCEPTS = {
 
 ''',
 'vkGetImageSparseMemoryRequirements2KHR': '''
-    GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, &pSparseMemoryRequirements->memoryRequirements);
+    if (pSparseMemoryRequirementCount && pSparseMemoryRequirements) {
+        GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, &pSparseMemoryRequirements->memoryRequirements);
+    } else {
+        GetImageSparseMemoryRequirements(device, pInfo->image, pSparseMemoryRequirementCount, nullptr);
+    }
 ''',
 'vkGetBufferDeviceAddress': '''
     VkDeviceAddress address = 0;
