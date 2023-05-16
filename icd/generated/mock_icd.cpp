@@ -3226,7 +3226,11 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceSparseImageFormatProperties2K
     uint32_t*                                   pPropertyCount,
     VkSparseImageFormatProperties2*             pProperties)
 {
-    GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
+    if (pPropertyCount && pProperties) {
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
+    } else {
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, nullptr);
+    }
 }
 
 
