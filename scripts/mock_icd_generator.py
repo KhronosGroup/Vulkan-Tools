@@ -892,7 +892,11 @@ CUSTOM_C_INTERCEPTS = {
     }
 ''',
 'vkGetPhysicalDeviceSparseImageFormatProperties2KHR': '''
-    GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
+    if (pPropertyCount && pProperties) {
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, &pProperties->properties);
+    } else {
+        GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, pFormatInfo->format, pFormatInfo->type, pFormatInfo->samples, pFormatInfo->usage, pFormatInfo->tiling, pPropertyCount, nullptr);
+    }
 ''',
 'vkGetPhysicalDeviceProperties': '''
     pProperties->apiVersion = VK_HEADER_VERSION_COMPLETE;
