@@ -1,6 +1,7 @@
 # ~~~
 # Copyright (c) 2014-2023 Valve Corporation
 # Copyright (c) 2014-2023 LunarG, Inc.
+# Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +36,8 @@ option(BUILD_ICD "Build icd" ON)
 # Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
+
+set(API_TYPE "vulkan")
 
 if (UNIX AND NOT APPLE) # i.e. Linux
     option(ENABLE_ADDRESS_SANITIZER "Use addres sanitization" OFF)
@@ -149,7 +152,7 @@ option(TOOLS_CODEGEN "Enable helper codegen target")
 if (TOOLS_CODEGEN)
     find_package(Python3 REQUIRED QUIET)
     add_custom_target(tools_codegen
-        COMMAND Python3::Interpreter ${PROJECT_SOURCE_DIR}/scripts/generate_source.py ${VULKAN_HEADERS_REGISTRY_DIRECTORY} --incremental
+        COMMAND Python3::Interpreter ${PROJECT_SOURCE_DIR}/scripts/generate_source.py ${VULKAN_HEADERS_REGISTRY_DIRECTORY} --incremental --api ${API_TYPE}
     )
 endif()
 

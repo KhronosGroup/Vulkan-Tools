@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 #
-# Copyright (c) 2013-2019 The Khronos Group Inc.
+# Copyright (c) 2013-2023 The Khronos Group Inc.
+# Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,8 +60,14 @@ def makeGenOpts(args):
     global genOpts
     genOpts = {}
 
+    # API to generate sources for
+    apiname = args.api
+
     # Default class of extensions to include, or None
-    defaultExtensions = args.defaultExtensions
+    if args.defaultExtensions is not None:
+        defaultExtensions = args.defaultExtensions
+    else:
+        defaultExtensions = apiname
 
     # Additional extensions to include (list of extensions)
     extensions = args.extension
@@ -137,11 +144,11 @@ def makeGenOpts(args):
             filename='vk_typemap_helper.h',
             directory=directory,
             genpath=None,
-            apiname='vulkan',
+            apiname=apiname,
             profile=None,
             versions=featuresPat,
             emitversions=featuresPat,
-            defaultExtensions='vulkan',
+            defaultExtensions=defaultExtensions,
             addExtensions=addExtensionsPat,
             removeExtensions=removeExtensionsPat,
             emitExtensions=emitExtensionsPat,
@@ -163,11 +170,11 @@ def makeGenOpts(args):
             filename='mock_icd.h',
             directory=directory,
             genpath=None,
-            apiname='vulkan',
+            apiname=apiname,
             profile=None,
             versions=featuresPat,
             emitversions=featuresPat,
-            defaultExtensions='vulkan',
+            defaultExtensions=defaultExtensions,
             addExtensions=addExtensionsPat,
             removeExtensions=removeExtensionsPat,
             emitExtensions=emitExtensionsPat,
@@ -189,11 +196,11 @@ def makeGenOpts(args):
             filename='mock_icd.cpp',
             directory=directory,
             genpath=None,
-            apiname='vulkan',
+            apiname=apiname,
             profile=None,
             versions=featuresPat,
             emitversions=featuresPat,
-            defaultExtensions='vulkan',
+            defaultExtensions=defaultExtensions,
             addExtensions=addExtensionsPat,
             removeExtensions=removeExtensionsPat,
             emitExtensions=emitExtensionsPat,
@@ -215,11 +222,11 @@ def makeGenOpts(args):
             filename='vulkaninfo.hpp',
             directory=directory,
             genpath=None,
-            apiname='vulkan',
+            apiname=apiname,
             profile=None,
             versions=featuresPat,
             emitversions=featuresPat,
-            defaultExtensions='vulkan',
+            defaultExtensions=defaultExtensions,
             addExtensions=addExtensionsPat,
             removeExtensions=removeExtensionsPat,
             emitExtensions=emitExtensionsPat,
@@ -254,6 +261,7 @@ def genTarget(args):
 
         if not args.quiet:
             write('* Building', options.filename, file=sys.stderr)
+            write('* options.apiname           =', options.apiname, file=sys.stderr)
             write('* options.versions          =', options.versions, file=sys.stderr)
             write('* options.emitversions      =', options.emitversions, file=sys.stderr)
             write('* options.defaultExtensions =', options.defaultExtensions, file=sys.stderr)
@@ -279,8 +287,12 @@ def genTarget(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-defaultExtensions', action='store',
+    parser.add_argument('-api', action='store',
                         default='vulkan',
+                        choices=['vulkan', 'vulkansc'],
+                        help='Specify API name to generate')
+    parser.add_argument('-defaultExtensions', action='store',
+                        default=None,
                         help='Specify a single class of extensions to add to targets')
     parser.add_argument('-directory', action='store', default='.',
                         help='Specify where the built file is place')
