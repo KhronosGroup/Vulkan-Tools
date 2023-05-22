@@ -1,9 +1,10 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2015-2022 The Khronos Group Inc.
-# Copyright (c) 2015-2022 Valve Corporation
-# Copyright (c) 2015-2022 LunarG, Inc.
-# Copyright (c) 2015-2022 Google Inc.
+# Copyright (c) 2015-2023 The Khronos Group Inc.
+# Copyright (c) 2015-2023 Valve Corporation
+# Copyright (c) 2015-2023 LunarG, Inc.
+# Copyright (c) 2015-2023 Google Inc.
+# Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -1523,6 +1524,10 @@ class MockICDOutputGenerator(OutputGenerator):
         else:
             return False
 
+    # Check that the target API is in the supported list for the extension
+    def checkExtensionAPISupport(self, supported):
+        return self.genOpts.apiname in supported.split(',')
+
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
         # C-specific
@@ -1564,7 +1569,7 @@ class MockICDOutputGenerator(OutputGenerator):
             # Ignore extensions that ICDs should not implement or are not safe to report
             ignore_exts = ['VK_EXT_validation_cache', 'VK_KHR_portability_subset']
             for ext in self.registry.tree.findall("extensions/extension"):
-                if ext.attrib['supported'] != 'disabled': # Only include enabled extensions
+                if self.checkExtensionAPISupport(ext.attrib['supported']): # Only include API-relevant extensions
                     if (ext.attrib['name'] not in ignore_exts):
                         # Search for extension version enum
                         for enum in ext.findall('require/enum'):
