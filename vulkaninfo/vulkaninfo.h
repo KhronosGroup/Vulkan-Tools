@@ -1796,13 +1796,13 @@ struct AppGpu {
         if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY) ||
             (!found_driver_props && props.deviceID == 4318)) {
             return std::to_string((v >> 22) & 0x3ff) + "." + std::to_string((v >> 14) & 0x0ff) + "." +
-                   std::to_string((v >> 6) & 0x0ff) + "." + std::to_string((v)&0x003ff);
+                   std::to_string((v >> 6) & 0x0ff) + "." + std::to_string(v & 0x003f);
         } else if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS)
 #if defined(WIN32)
                    || (!found_driver_props && props.deviceID == 0x8086)  // only do the fallback check if running in windows
 #endif
         ) {
-            return std::to_string((v >> 14)) + "." + std::to_string((v)&0x3fff);
+            return std::to_string(v >> 14) + "." + std::to_string(v & 0x3fff);
         } else {
             // AMD uses the standard vulkan scheme
             return VulkanVersion(v).str();
