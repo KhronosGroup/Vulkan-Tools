@@ -63,7 +63,7 @@ jobs:
               with:
                 key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}-${{matrix.cube_wsi}}
             - name: Configure
-              run: cmake -S. -B build -DCMAKE_BUILD_TYPE=${{matrix.config}} -DCUBE_WSI_SELECTION=${{matrix.cube_wsi}} -D UPDATE_DEPS=ON -G "Ninja"
+              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -DCUBE_WSI_SELECTION=${{matrix.cube_wsi}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
@@ -72,6 +72,9 @@ jobs:
 
             - name: Build
               run: cmake --build build
+
+            - name: Install
+              run: cmake --install build/ --prefix build/install
 
             - name: Verify generated source files
               run: python scripts/generate_source.py --verify external/${{ matrix.config }}/Vulkan-Headers/build/install/share/vulkan/registry
@@ -96,10 +99,13 @@ jobs:
                 arch: ${{ matrix.arch }}
 
             - name: Configure
-              run: cmake -S. -B build -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -G "Ninja"
+              run: cmake -S. -B build  -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON
 
             - name: Build
               run: cmake --build ./build
+
+            - name: Install
+              run: cmake --install build/ --prefix build/install
 
             - name: Verify generated source files
               run: python scripts/generate_source.py --verify external/${{matrix.config}}/Vulkan-Headers/build/install/share/vulkan/registry
@@ -123,7 +129,7 @@ jobs:
               run: echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
 
             - name: Configure
-              run: cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -G "Ninja"
+              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON
               env:
                 MACOSX_DEPLOYMENT_TARGET: 10.15
 

@@ -32,9 +32,18 @@ This repository contains the source code necessary to build the following compon
 The `install` target installs the following files under the directory
 indicated by *install_dir*:
 
-- *install_dir*`/bin` : The vulkaninfo, vkcube and vkcubepp executables
-- *install_dir*`/lib` : The mock ICD library and JSON (Windows) (If INSTALL_ICD=ON)
-- *install_dir*`/share/vulkan/icd.d` : mock ICD JSON (Linux/MacOS) (If INSTALL_ICD=ON)
+- *install_dir*`/bin` : The `vulkaninfo`, `vkcube` and `vkcubepp` executables
+
+`MockICD` if `INSTALL_ICD` is configured:
+
+For Unix operating systems:
+
+- *install_dir*`/bin` : The Mock ICD
+- *install_dir*`/share/vulkan/icd.d` : Mock ICD JSON
+
+For WIN32:
+
+- *install_dir*`/bin` : The Mock ICD and JSON
 
 ## Repository Set-Up
 
