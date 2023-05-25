@@ -1553,13 +1553,12 @@ void Demo::init_vk_swapchain() {
 }
 
 void Demo::prepare() {
-    prepare_init_cmd();
-
     prepare_buffers();
     if (is_minimized) {
         prepared = false;
         return;
     }
+    prepare_init_cmd();
     prepare_depth();
     prepare_textures();
     prepare_cube_data_buffers();
