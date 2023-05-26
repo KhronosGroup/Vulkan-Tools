@@ -3551,19 +3551,29 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerforma
     if (!pCounters) {
         *pCounterCount = 3;
     } else {
+        if (*pCounterCount == 0){
+            return VK_INCOMPLETE;
+        }
         // arbitrary
         pCounters[0].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
         pCounters[0].scope = VK_QUERY_SCOPE_COMMAND_BUFFER_KHR;
         pCounters[0].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
         pCounters[0].uuid[0] = 0x01;
+        if (*pCounterCount == 1){
+            return VK_INCOMPLETE;
+        }
         pCounters[1].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
         pCounters[1].scope = VK_QUERY_SCOPE_RENDER_PASS_KHR;
         pCounters[1].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
         pCounters[1].uuid[0] = 0x02;
+        if (*pCounterCount == 2){
+            return VK_INCOMPLETE;
+        }
         pCounters[2].unit = VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR;
         pCounters[2].scope = VK_QUERY_SCOPE_COMMAND_KHR;
         pCounters[2].storage = VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR;
         pCounters[2].uuid[0] = 0x03;
+        *pCounterCount = 3;
     }
     return VK_SUCCESS;
 }
