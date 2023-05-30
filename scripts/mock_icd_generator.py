@@ -1382,6 +1382,14 @@ CUSTOM_C_INTERCEPTS = {
     pCapabilities->maxActiveReferencePictures = 4;
     return VK_SUCCESS;
 ''',
+'vkGetDescriptorSetLayoutSupport':'''
+    if (pSupport) {
+        pSupport->supported = VK_TRUE;
+    }
+''',
+'vkGetDescriptorSetLayoutSupportKHR':'''
+    GetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
+''',
 }
 
 # MockICDGeneratorOptions - subclass of GeneratorOptions.

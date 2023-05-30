@@ -2062,7 +2062,9 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupport(
     const VkDescriptorSetLayoutCreateInfo*      pCreateInfo,
     VkDescriptorSetLayoutSupport*               pSupport)
 {
-//Not a CREATE or DESTROY function
+    if (pSupport) {
+        pSupport->supported = VK_TRUE;
+    }
 }
 
 
@@ -3759,7 +3761,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetLayoutSupportKHR(
     const VkDescriptorSetLayoutCreateInfo*      pCreateInfo,
     VkDescriptorSetLayoutSupport*               pSupport)
 {
-//Not a CREATE or DESTROY function
+    GetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
 }
 
 
