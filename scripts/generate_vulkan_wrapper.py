@@ -1531,6 +1531,9 @@ VK_ARM_shader_core_builtins = Extension(name='VK_ARM_shader_core_builtins', vers
 VK_EXT_pipeline_library_group_handles = Extension(name='VK_EXT_pipeline_library_group_handles', version=1, guard=None, commands=[
 ])
 
+VK_EXT_dynamic_rendering_unused_attachments = Extension(name='VK_EXT_dynamic_rendering_unused_attachments', version=1, guard=None, commands=[
+])
+
 VK_QCOM_multiview_per_view_render_areas = Extension(name='VK_QCOM_multiview_per_view_render_areas', version=1, guard=None, commands=[
 ])
 
@@ -2013,6 +2016,7 @@ extensions = [
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
     VK_EXT_pipeline_library_group_handles,
+    VK_EXT_dynamic_rendering_unused_attachments,
     VK_QCOM_multiview_per_view_render_areas,
     VK_EXT_attachment_feedback_loop_dynamic_state,
     VK_KHR_acceleration_structure,
