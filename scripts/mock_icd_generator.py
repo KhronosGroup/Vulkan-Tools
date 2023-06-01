@@ -1390,6 +1390,10 @@ CUSTOM_C_INTERCEPTS = {
 'vkGetDescriptorSetLayoutSupportKHR':'''
     GetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
 ''',
+'vkGetRenderAreaGranularity': '''
+    pGranularity->width = 1;
+    pGranularity->height = 1;
+''',
 }
 
 # MockICDGeneratorOptions - subclass of GeneratorOptions.
