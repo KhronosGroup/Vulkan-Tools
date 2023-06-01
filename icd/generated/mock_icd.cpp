@@ -1279,7 +1279,8 @@ static VKAPI_ATTR void VKAPI_CALL GetRenderAreaGranularity(
     VkRenderPass                                renderPass,
     VkExtent2D*                                 pGranularity)
 {
-//Not a CREATE or DESTROY function
+    pGranularity->width = 1;
+    pGranularity->height = 1;
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCommandPool(
