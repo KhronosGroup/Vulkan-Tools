@@ -1439,6 +1439,9 @@ VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compre
 VK_QCOM_image_processing = Extension(name='VK_QCOM_image_processing', version=1, guard=None, commands=[
 ])
 
+VK_EXT_external_memory_acquire_unmodified = Extension(name='VK_EXT_external_memory_acquire_unmodified', version=1, guard=None, commands=[
+])
+
 VK_EXT_extended_dynamic_state3 = Extension(name='VK_EXT_extended_dynamic_state3', version=2, guard=None, commands=[
     Command(name='vkCmdSetTessellationDomainOriginEXT', dispatch='VkCommandBuffer'),
     Command(name='vkCmdSetDepthClampEnableEXT', dispatch='VkCommandBuffer'),
@@ -1711,14 +1714,16 @@ VK_QNX_screen_surface = Extension(name='VK_QNX_screen_surface', version=1, guard
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=8, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=9, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+    Command(name='vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR', dispatch='VkPhysicalDevice'),
+    Command(name='vkGetEncodedVideoSessionParametersKHR', dispatch='VkDevice'),
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=10, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=10, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
@@ -2000,6 +2005,7 @@ extensions = [
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
     VK_QCOM_image_processing,
+    VK_EXT_external_memory_acquire_unmodified,
     VK_EXT_extended_dynamic_state3,
     VK_EXT_subpass_merge_feedback,
     VK_LUNARG_direct_driver_loading,

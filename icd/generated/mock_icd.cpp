@@ -3988,6 +3988,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL UnmapMemory2KHR(
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
+    VkVideoEncodeQualityLevelPropertiesKHR*     pQualityLevelProperties)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetEncodedVideoSessionParametersKHR(
+    VkDevice                                    device,
+    const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo,
+    VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo,
+    size_t*                                     pDataSize,
+    void*                                       pData)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
 static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo)
@@ -6303,6 +6323,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecompressMemoryIndirectCountNV(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 
