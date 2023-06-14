@@ -1554,9 +1554,7 @@ class MockICDOutputGenerator(OutputGenerator):
         self.header = False
         if (genOpts.protectFile and self.genOpts.filename and 'h' == self.genOpts.filename[-1]):
             self.header = True
-            headerSym = '__' + re.sub(r'\.h', '_h_', os.path.basename(self.genOpts.filename))
-            write('#ifndef', headerSym, file=self.outFile)
-            write('#define', headerSym, '1', file=self.outFile)
+            write('#pragma once', file=self.outFile)
             self.newline()
         #
         # User-supplied prefix text, if any (list of strings)
@@ -1614,7 +1612,7 @@ class MockICDOutputGenerator(OutputGenerator):
 
     def endFile(self):
         # C-specific
-        # Finish C++ namespace and multiple inclusion protection
+        # Finish C++ namespace
         self.newline()
         if self.header:
             # record intercepted procedures
@@ -1625,7 +1623,6 @@ class MockICDOutputGenerator(OutputGenerator):
             self.newline()
             write('} // namespace vkmock', file=self.outFile)
             self.newline()
-            write('#endif', file=self.outFile)
         else: # Loader-layer-interface, need to implement global interface functions
             write(SOURCE_CPP_POSTFIX, file=self.outFile)
         # Finish processing in superclass
