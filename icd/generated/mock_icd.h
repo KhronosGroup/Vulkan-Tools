@@ -1,5 +1,4 @@
-#ifndef __mock_icd_h_
-#define __mock_icd_h_ 1
+#pragma once
 
 /*
 ** Copyright (c) 2015-2018, 2023 The Khronos Group Inc.
@@ -4961,4 +4960,3 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 
 } // namespace vkmock
 
-#endif
