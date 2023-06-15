@@ -202,22 +202,23 @@ be specified to customize the build. Some of the options are binary on/off
 options, while others take a string as input. The following is a table of all
 on/off options currently supported by this repository:
 
-| Option | Platform | Default | Description |
-| ------ | -------- | ------- | ----------- |
-| BUILD_CUBE | All | `ON` | Controls whether or not the vkcube demo is built. |
-| BUILD_VULKANINFO | All | `ON` | Controls whether or not the vulkaninfo utility is built. |
-| BUILD_ICD | All | `ON` | Controls whether or not the mock ICD is built. |
-| INSTALL_ICD | All | `OFF` | Controls whether or not the mock ICD is installed as part of the install target. |
-| BUILD_WSI_XCB_SUPPORT | Linux | `ON` | Build the components with XCB support. |
-| BUILD_WSI_XLIB_SUPPORT | Linux | `ON` | Build the components with Xlib support. |
-| BUILD_WSI_WAYLAND_SUPPORT | Linux | `ON` | Build the components with Wayland support. |
-| BUILD_WSI_DIRECTFB_SUPPORT | Linux | `OFF` | Build the components with DirectFB support. |
+| Option                     | Platform | Default | Description                                                                      |
+| -------------------------- | -------- | ------- | -------------------------------------------------------------------------------- |
+| BUILD_TESTS                | All      | `OFF`   | Controls whether the tests are built.                                            |
+| BUILD_CUBE                 | All      | `ON`    | Controls whether or not the vkcube demo is built.                                |
+| BUILD_VULKANINFO           | All      | `ON`    | Controls whether or not the vulkaninfo utility is built.                         |
+| BUILD_ICD                  | All      | `ON`    | Controls whether or not the mock ICD is built.                                   |
+| INSTALL_ICD                | All      | `OFF`   | Controls whether or not the mock ICD is installed as part of the install target. |
+| BUILD_WSI_XCB_SUPPORT      | Linux    | `ON`    | Build the components with XCB support.                                           |
+| BUILD_WSI_XLIB_SUPPORT     | Linux    | `ON`    | Build the components with Xlib support.                                          |
+| BUILD_WSI_WAYLAND_SUPPORT  | Linux    | `ON`    | Build the components with Wayland support.                                       |
+| BUILD_WSI_DIRECTFB_SUPPORT | Linux    | `OFF`   | Build the components with DirectFB support.                                      |
 
 The following is a table of all string options currently supported by this repository:
 
-| Option | Platform | Default | Description |
-| ------ | -------- | ------- | ----------- |
-| VULKANINFO_BUILD_DLL_VERSIONINFO | Windows | `""` | Set the Windows specific version information for Vulkaninfo. Format is "major.minor.patch.build". |
+| Option                           | Platform | Default | Description                                                                                       |
+| -------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------- |
+| VULKANINFO_BUILD_DLL_VERSIONINFO | Windows  | `""`    | Set the Windows specific version information for Vulkaninfo. Format is "major.minor.patch.build". |
 
 These variables should be set using the `-D` option when invoking CMake to
 generate the native platform files.
@@ -388,7 +389,7 @@ have installed. Generator strings that correspond to versions of Visual Studio
 include:
 
 | Build Platform               | 64-bit Generator              | 32-bit Generator        |
-|------------------------------|-------------------------------|-------------------------|
+| ---------------------------- | ----------------------------- | ----------------------- |
 | Microsoft Visual Studio 2013 | "Visual Studio 12 2013 Win64" | "Visual Studio 12 2013" |
 | Microsoft Visual Studio 2015 | "Visual Studio 14 2015 Win64" | "Visual Studio 14 2015" |
 | Microsoft Visual Studio 2017 | "Visual Studio 15 2017 Win64" | "Visual Studio 15 2017" |
