@@ -29,447 +29,6 @@ import os,re,sys
 from generator import *
 from common_codegen import *
 
-
-# Mock header code
-HEADER_C_CODE = '''
-using mutex_t = std::mutex;
-using lock_guard_t = std::lock_guard<mutex_t>;
-using unique_lock_t = std::unique_lock<mutex_t>;
-
-static mutex_t global_lock;
-static uint64_t global_unique_handle = 1;
-static const uint32_t SUPPORTED_LOADER_ICD_INTERFACE_VERSION = 5;
-static uint32_t loader_interface_version = 0;
-static bool negotiate_loader_icd_interface_called = false;
-static void* CreateDispObjHandle() {
-    auto handle = new VK_LOADER_DATA;
-    set_loader_magic_value(handle);
-    return handle;
-}
-static void DestroyDispObjHandle(void* handle) {
-    delete reinterpret_cast<VK_LOADER_DATA*>(handle);
-}
-'''
-
-# Manual code at the top of the cpp source file
-SOURCE_CPP_PREFIX = '''
-using std::unordered_map;
-
-static constexpr uint32_t icd_physical_device_count = 1;
-static unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_device_count>> physical_device_map;
-
-// Map device memory handle to any mapped allocations that we'll need to free on unmap
-static unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;
-
-// Map device memory allocation handle to the size
-static unordered_map<VkDeviceMemory, VkDeviceSize> allocated_memory_size_map;
-
-static unordered_map<VkDevice, unordered_map<uint32_t, unordered_map<uint32_t, VkQueue>>> queue_map;
-static VkDeviceAddress current_available_address = 0x10000000;
-struct BufferState {
-    VkDeviceSize size;
-    VkDeviceAddress address;
-};
-static unordered_map<VkDevice, unordered_map<VkBuffer, BufferState>> buffer_map;
-static unordered_map<VkDevice, unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
-static unordered_map<VkCommandPool, std::vector<VkCommandBuffer>> command_pool_buffer_map;
-
-static constexpr uint32_t icd_swapchain_image_count = 1;
-static unordered_map<VkSwapchainKHR, VkImage[icd_swapchain_image_count]> swapchain_image_map;
-
-// TODO: Would like to codegen this but limits aren't in XML
-static VkPhysicalDeviceLimits SetLimits(VkPhysicalDeviceLimits *limits) {
-    limits->maxImageDimension1D = 4096;
-    limits->maxImageDimension2D = 4096;
-    limits->maxImageDimension3D = 256;
-    limits->maxImageDimensionCube = 4096;
-    limits->maxImageArrayLayers = 256;
-    limits->maxTexelBufferElements = 65536;
-    limits->maxUniformBufferRange = 16384;
-    limits->maxStorageBufferRange = 134217728;
-    limits->maxPushConstantsSize = 128;
-    limits->maxMemoryAllocationCount = 4096;
-    limits->maxSamplerAllocationCount = 4000;
-    limits->bufferImageGranularity = 1;
-    limits->sparseAddressSpaceSize = 2147483648;
-    limits->maxBoundDescriptorSets = 4;
-    limits->maxPerStageDescriptorSamplers = 16;
-    limits->maxPerStageDescriptorUniformBuffers = 12;
-    limits->maxPerStageDescriptorStorageBuffers = 4;
-    limits->maxPerStageDescriptorSampledImages = 16;
-    limits->maxPerStageDescriptorStorageImages = 4;
-    limits->maxPerStageDescriptorInputAttachments = 4;
-    limits->maxPerStageResources = 128;
-    limits->maxDescriptorSetSamplers = 96;
-    limits->maxDescriptorSetUniformBuffers = 72;
-    limits->maxDescriptorSetUniformBuffersDynamic = 8;
-    limits->maxDescriptorSetStorageBuffers = 24;
-    limits->maxDescriptorSetStorageBuffersDynamic = 4;
-    limits->maxDescriptorSetSampledImages = 96;
-    limits->maxDescriptorSetStorageImages = 24;
-    limits->maxDescriptorSetInputAttachments = 4;
-    limits->maxVertexInputAttributes = 16;
-    limits->maxVertexInputBindings = 16;
-    limits->maxVertexInputAttributeOffset = 2047;
-    limits->maxVertexInputBindingStride = 2048;
-    limits->maxVertexOutputComponents = 64;
-    limits->maxTessellationGenerationLevel = 64;
-    limits->maxTessellationPatchSize = 32;
-    limits->maxTessellationControlPerVertexInputComponents = 64;
-    limits->maxTessellationControlPerVertexOutputComponents = 64;
-    limits->maxTessellationControlPerPatchOutputComponents = 120;
-    limits->maxTessellationControlTotalOutputComponents = 2048;
-    limits->maxTessellationEvaluationInputComponents = 64;
-    limits->maxTessellationEvaluationOutputComponents = 64;
-    limits->maxGeometryShaderInvocations = 32;
-    limits->maxGeometryInputComponents = 64;
-    limits->maxGeometryOutputComponents = 64;
-    limits->maxGeometryOutputVertices = 256;
-    limits->maxGeometryTotalOutputComponents = 1024;
-    limits->maxFragmentInputComponents = 64;
-    limits->maxFragmentOutputAttachments = 4;
-    limits->maxFragmentDualSrcAttachments = 1;
-    limits->maxFragmentCombinedOutputResources = 4;
-    limits->maxComputeSharedMemorySize = 16384;
-    limits->maxComputeWorkGroupCount[0] = 65535;
-    limits->maxComputeWorkGroupCount[1] = 65535;
-    limits->maxComputeWorkGroupCount[2] = 65535;
-    limits->maxComputeWorkGroupInvocations = 128;
-    limits->maxComputeWorkGroupSize[0] = 128;
-    limits->maxComputeWorkGroupSize[1] = 128;
-    limits->maxComputeWorkGroupSize[2] = 64;
-    limits->subPixelPrecisionBits = 4;
-    limits->subTexelPrecisionBits = 4;
-    limits->mipmapPrecisionBits = 4;
-    limits->maxDrawIndexedIndexValue = UINT32_MAX;
-    limits->maxDrawIndirectCount = UINT16_MAX;
-    limits->maxSamplerLodBias = 2.0f;
-    limits->maxSamplerAnisotropy = 16;
-    limits->maxViewports = 16;
-    limits->maxViewportDimensions[0] = 4096;
-    limits->maxViewportDimensions[1] = 4096;
-    limits->viewportBoundsRange[0] = -8192;
-    limits->viewportBoundsRange[1] = 8191;
-    limits->viewportSubPixelBits = 0;
-    limits->minMemoryMapAlignment = 64;
-    limits->minTexelBufferOffsetAlignment = 16;
-    limits->minUniformBufferOffsetAlignment = 16;
-    limits->minStorageBufferOffsetAlignment = 16;
-    limits->minTexelOffset = -8;
-    limits->maxTexelOffset = 7;
-    limits->minTexelGatherOffset = -8;
-    limits->maxTexelGatherOffset = 7;
-    limits->minInterpolationOffset = 0.0f;
-    limits->maxInterpolationOffset = 0.5f;
-    limits->subPixelInterpolationOffsetBits = 4;
-    limits->maxFramebufferWidth = 4096;
-    limits->maxFramebufferHeight = 4096;
-    limits->maxFramebufferLayers = 256;
-    limits->framebufferColorSampleCounts = 0x7F;
-    limits->framebufferDepthSampleCounts = 0x7F;
-    limits->framebufferStencilSampleCounts = 0x7F;
-    limits->framebufferNoAttachmentsSampleCounts = 0x7F;
-    limits->maxColorAttachments = 4;
-    limits->sampledImageColorSampleCounts = 0x7F;
-    limits->sampledImageIntegerSampleCounts = 0x7F;
-    limits->sampledImageDepthSampleCounts = 0x7F;
-    limits->sampledImageStencilSampleCounts = 0x7F;
-    limits->storageImageSampleCounts = 0x7F;
-    limits->maxSampleMaskWords = 1;
-    limits->timestampComputeAndGraphics = VK_TRUE;
-    limits->timestampPeriod = 1;
-    limits->maxClipDistances = 8;
-    limits->maxCullDistances = 8;
-    limits->maxCombinedClipAndCullDistances = 8;
-    limits->discreteQueuePriorities = 2;
-    limits->pointSizeRange[0] = 1.0f;
-    limits->pointSizeRange[1] = 64.0f;
-    limits->lineWidthRange[0] = 1.0f;
-    limits->lineWidthRange[1] = 8.0f;
-    limits->pointSizeGranularity = 1.0f;
-    limits->lineWidthGranularity = 1.0f;
-    limits->strictLines = VK_TRUE;
-    limits->standardSampleLocations = VK_TRUE;
-    limits->optimalBufferCopyOffsetAlignment = 1;
-    limits->optimalBufferCopyRowPitchAlignment = 1;
-    limits->nonCoherentAtomSize = 256;
-
-    return *limits;
-}
-
-void SetBoolArrayTrue(VkBool32* bool_array, uint32_t num_bools)
-{
-    for (uint32_t i = 0; i < num_bools; ++i) {
-        bool_array[i] = VK_TRUE;
-    }
-}
-
-VkDeviceSize GetImageSizeFromCreateInfo(const VkImageCreateInfo* pCreateInfo)
-{
-    VkDeviceSize size = pCreateInfo->extent.width;
-    size *= pCreateInfo->extent.height;
-    size *= pCreateInfo->extent.depth;
-    // TODO: A pixel size is 32 bytes. This accounts for the largest possible pixel size of any format. It could be changed to more accurate size if need be.
-    size *= 32;
-    size *= pCreateInfo->arrayLayers;
-    size *= (pCreateInfo->mipLevels > 1 ? 2 : 1);
-
-    switch (pCreateInfo->format) {
-        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
-        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
-        case VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:
-        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
-        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
-        case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
-        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
-        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
-        case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
-        case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
-        case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
-        case VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:
-            size *= 3;
-            break;
-        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
-        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
-        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
-        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
-        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
-        case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
-        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
-        case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
-            size *= 2;
-            break;
-        default:
-            break;
-    }
-
-    return size;
-}
-'''
-
-# Manual code at the end of the cpp source file
-SOURCE_CPP_POSTFIX = '''
-
-static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL GetPhysicalDeviceProcAddr(VkInstance instance, const char *funcName) {
-    // TODO: This function should only care about physical device functions and return nullptr for other functions
-    const auto &item = name_to_funcptr_map.find(funcName);
-    if (item != name_to_funcptr_map.end()) {
-        return reinterpret_cast<PFN_vkVoidFunction>(item->second);
-    }
-    // Mock should intercept all functions so if we get here just return null
-    return nullptr;
-}
-
-} // namespace vkmock
-
-#if defined(__GNUC__) && __GNUC__ >= 4
-#define EXPORT __attribute__((visibility("default")))
-#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
-#define EXPORT __attribute__((visibility("default")))
-#else
-#define EXPORT
-#endif
-
-extern "C" {
-
-EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetInstanceProcAddr(VkInstance instance, const char* pName) {
-    if (!vkmock::negotiate_loader_icd_interface_called) {
-        vkmock::loader_interface_version = 1;
-    }
-    return vkmock::GetInstanceProcAddr(instance, pName);
-}
-
-EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vk_icdGetPhysicalDeviceProcAddr(VkInstance instance, const char* pName) {
-    return vkmock::GetPhysicalDeviceProcAddr(instance, pName);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vk_icdNegotiateLoaderICDInterfaceVersion(uint32_t* pSupportedVersion) {
-    vkmock::negotiate_loader_icd_interface_called = true;
-    vkmock::loader_interface_version = *pSupportedVersion;
-    if (*pSupportedVersion > vkmock::SUPPORTED_LOADER_ICD_INTERFACE_VERSION) {
-        *pSupportedVersion = vkmock::SUPPORTED_LOADER_ICD_INTERFACE_VERSION;
-    }
-    return VK_SUCCESS;
-}
-
-
-EXPORT VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(
-    VkInstance                                  instance,
-    VkSurfaceKHR                                surface,
-    const VkAllocationCallbacks*                pAllocator)
-{
-    vkmock::DestroySurfaceKHR(instance, surface, pAllocator);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(
-    VkPhysicalDevice                            physicalDevice,
-    uint32_t                                    queueFamilyIndex,
-    VkSurfaceKHR                                surface,
-    VkBool32*                                   pSupported)
-{
-    return vkmock::GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    VkSurfaceCapabilitiesKHR*                   pSurfaceCapabilities)
-{
-    return vkmock::GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pSurfaceFormatCount,
-    VkSurfaceFormatKHR*                         pSurfaceFormats)
-{
-    return vkmock::GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pPresentModeCount,
-    VkPresentModeKHR*                           pPresentModes)
-{
-    return vkmock::GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayPlaneSurfaceKHR(
-    VkInstance                                  instance,
-    const VkDisplaySurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-
-#ifdef VK_USE_PLATFORM_XLIB_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(
-    VkInstance                                  instance,
-    const VkXlibSurfaceCreateInfoKHR*           pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_XLIB_KHR */
-
-#ifdef VK_USE_PLATFORM_XCB_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(
-    VkInstance                                  instance,
-    const VkXcbSurfaceCreateInfoKHR*            pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_XCB_KHR */
-
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(
-    VkInstance                                  instance,
-    const VkWaylandSurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_WAYLAND_KHR */
-
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(
-    VkInstance                                  instance,
-    const VkAndroidSurfaceCreateInfoKHR*        pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_ANDROID_KHR */
-
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(
-    VkInstance                                  instance,
-    const VkWin32SurfaceCreateInfoKHR*          pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_WIN32_KHR */
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModesKHR(
-    VkDevice                                    device,
-    VkSurfaceKHR                                surface,
-    VkDeviceGroupPresentModeFlagsKHR*           pModes)
-{
-    return vkmock::GetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
-}
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    uint32_t*                                   pRectCount,
-    VkRect2D*                                   pRects)
-{
-    return vkmock::GetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
-}
-
-#ifdef VK_USE_PLATFORM_VI_NN
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(
-    VkInstance                                  instance,
-    const VkViSurfaceCreateInfoNN*              pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_VI_NN */
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(
-    VkPhysicalDevice                            physicalDevice,
-    VkSurfaceKHR                                surface,
-    VkSurfaceCapabilities2EXT*                  pSurfaceCapabilities)
-{
-    return vkmock::GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
-}
-
-#ifdef VK_USE_PLATFORM_IOS_MVK
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(
-    VkInstance                                  instance,
-    const VkIOSSurfaceCreateInfoMVK*            pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_IOS_MVK */
-
-#ifdef VK_USE_PLATFORM_MACOS_MVK
-
-EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(
-    VkInstance                                  instance,
-    const VkMacOSSurfaceCreateInfoMVK*          pCreateInfo,
-    const VkAllocationCallbacks*                pAllocator,
-    VkSurfaceKHR*                               pSurface)
-{
-    return vkmock::CreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
-}
-#endif /* VK_USE_PLATFORM_MACOS_MVK */
-
-} // end extern "C"
-
-'''
-
 CUSTOM_C_INTERCEPTS = {
 'vkCreateInstance': '''
     // TODO: If loader ver <=4 ICD must fail with VK_ERROR_INCOMPATIBLE_DRIVER for all vkCreateInstance calls with
@@ -1517,6 +1076,7 @@ class MockICDOutputGenerator(OutputGenerator):
         # Internal state - accumulators for different inner block text
         self.sections = dict([(section, []) for section in self.ALL_SECTIONS])
         self.intercepts = []
+        self.function_declarations = False
 
     # Check if the parameter passed in is a pointer to an array
     def paramIsArray(self, param):
@@ -1555,34 +1115,16 @@ class MockICDOutputGenerator(OutputGenerator):
         # C-specific
         #
         # Multiple inclusion protection & C++ namespace.
-        self.header = False
-        if (genOpts.protectFile and self.genOpts.filename and 'h' == self.genOpts.filename[-1]):
-            self.header = True
-            write('#pragma once', file=self.outFile)
-            self.newline()
-        #
+        if (genOpts.protectFile and self.genOpts.filename == "function_declarations.h"):
+            self.function_declarations = True
+
         # User-supplied prefix text, if any (list of strings)
         if (genOpts.prefixText):
             for s in genOpts.prefixText:
                 write(s, file=self.outFile)
-        if self.header:
-            write('#include <unordered_map>', file=self.outFile)
-            write('#include <mutex>', file=self.outFile)
-            write('#include <string>', file=self.outFile)
-            write('#include <cstring>', file=self.outFile)
-            write('#include "vulkan/vk_icd.h"', file=self.outFile)
-        else:
-            write('#include "mock_icd.h"', file=self.outFile)
-            write('#include <stdlib.h>', file=self.outFile)
-            write('#include <algorithm>', file=self.outFile)
-            write('#include <array>', file=self.outFile)
-            write('#include <vector>', file=self.outFile)
-            write('#include "vk_typemap_helper.h"', file=self.outFile)
 
-        write('namespace vkmock {', file=self.outFile)
-        if self.header:
+        if self.function_declarations:
             self.newline()
-            write(HEADER_C_CODE, file=self.outFile)
             # Include all of the extensions in ICD except specific ignored ones
             device_exts = []
             instance_exts = []
@@ -1600,7 +1142,13 @@ class MockICDOutputGenerator(OutputGenerator):
                                 else:
                                     device_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext_version))
                                 break
-
+            write('#pragma once\n',file=self.outFile)
+            write('#include <stdint.h>',file=self.outFile)
+            write('#include <string>',file=self.outFile)
+            write('#include <unordered_map>',file=self.outFile)
+            write('#include <vulkan/vulkan.h>',file=self.outFile)
+            self.newline()
+            write('namespace vkmock {\n', file=self.outFile)
             write('// Map of instance extension name to version', file=self.outFile)
             write('static const std::unordered_map<std::string, uint32_t> instance_extension_map = {', file=self.outFile)
             write('\n'.join(instance_exts), file=self.outFile)
@@ -1609,26 +1157,26 @@ class MockICDOutputGenerator(OutputGenerator):
             write('static const std::unordered_map<std::string, uint32_t> device_extension_map = {', file=self.outFile)
             write('\n'.join(device_exts), file=self.outFile)
             write('};', file=self.outFile)
-
         else:
-            self.newline()
-            write(SOURCE_CPP_PREFIX, file=self.outFile)
+            write('#pragma once\n',file=self.outFile)
+            write('#include "mock_icd.h"',file=self.outFile)
+            write('#include "function_declarations.h"\n',file=self.outFile)
+            write('namespace vkmock {', file=self.outFile)
+
 
     def endFile(self):
         # C-specific
         # Finish C++ namespace
         self.newline()
-        if self.header:
+        if self.function_declarations:
             # record intercepted procedures
             write('// Map of all APIs to be intercepted by this layer', file=self.outFile)
             write('static const std::unordered_map<std::string, void*> name_to_funcptr_map = {', file=self.outFile)
             write('\n'.join(self.intercepts), file=self.outFile)
             write('};\n', file=self.outFile)
-            self.newline()
-            write('} // namespace vkmock', file=self.outFile)
-            self.newline()
-        else: # Loader-layer-interface, need to implement global interface functions
-            write(SOURCE_CPP_POSTFIX, file=self.outFile)
+        write('} // namespace vkmock', file=self.outFile)
+        self.newline()
+
         # Finish processing in superclass
         OutputGenerator.endFile(self)
     def beginFeature(self, interface, emit):
@@ -1714,7 +1262,7 @@ class MockICDOutputGenerator(OutputGenerator):
     # Command generation
     def genCmd(self, cmdinfo, name, alias):
         decls = self.makeCDecls(cmdinfo.elem)
-        if self.header: # In the header declare all intercepts
+        if self.function_declarations: # In the header declare all intercepts
             self.appendSection('command', '')
             self.appendSection('command', 'static %s' % (decls[0]))
             if (self.featureExtraProtect != None):

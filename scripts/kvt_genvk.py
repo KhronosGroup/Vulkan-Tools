@@ -163,11 +163,11 @@ def makeGenOpts(args):
     ]
 
     # Options for mock ICD header
-    genOpts['mock_icd.h'] = [
+    genOpts['function_declarations.h'] = [
         MockICDOutputGenerator,
         MockICDGeneratorOptions(
             conventions=conventions,
-            filename='mock_icd.h',
+            filename='function_declarations.h',
             directory=directory,
             genpath=None,
             apiname=apiname,
@@ -185,15 +185,15 @@ def makeGenOpts(args):
             apientryp='VKAPI_PTR *',
             alignFuncParam=48,
             expandEnumerants=False,
-            helper_file_type='mock_icd_header')
+            helper_file_type='mock_icd_function_declaration_implementation')
     ]
 
     # Options for mock ICD cpp
-    genOpts['mock_icd.cpp'] = [
+    genOpts['function_definitions.h'] = [
         MockICDOutputGenerator,
         MockICDGeneratorOptions(
             conventions=conventions,
-            filename='mock_icd.cpp',
+            filename='function_definitions.h',
             directory=directory,
             genpath=None,
             apiname=apiname,
@@ -211,7 +211,7 @@ def makeGenOpts(args):
             apientryp='VKAPI_PTR *',
             alignFuncParam=48,
             expandEnumerants=False,
-            helper_file_type='mock_icd_source')
+            helper_file_type='mock_icd_function_definition_implementation')
     ]
 
     # Options for vulkaninfo.hpp
