@@ -170,3 +170,9 @@ if(BUILD_ICD)
 endif()
 
 add_subdirectory(windows-runtime-installer)
+
+option(BUILD_TESTS "Build the tests")
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
