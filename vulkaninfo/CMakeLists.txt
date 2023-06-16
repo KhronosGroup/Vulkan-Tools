@@ -61,6 +61,8 @@ if (NOT WIN32)
     target_link_libraries(vulkaninfo ${CMAKE_DL_LIBS})
 endif()
 
+target_compile_definitions(vulkaninfo PRIVATE -DVK_ENABLE_BETA_EXTENSIONS)
+
 if(UNIX AND NOT APPLE) # i.e. Linux
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
