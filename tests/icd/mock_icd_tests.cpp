@@ -17,9 +17,51 @@
  *
  */
 
+#include <stdlib.h>
+
+#include <iostream>
+#include <vector>
+
 #include "gtest/gtest.h"
+#include "vulkan/vulkan.h"
+
+// Location of the built binaries in this repo
+#include "binary_locations.h"
+
+#if defined(WIN32)
+int set_environment_var(const char* name, const char* value) { return SetEnvironmentVariableA(name, cur_value); }
+#else
+int set_environment_var(const char* name, const char* value) { return setenv(name, value, 1); }
+#endif
 
 TEST(MockICD, Basic) {
-    // only to make sure tests can be run
-    ASSERT_TRUE(true);
+    // Necessary to point the loader at the mock driver
+    set_environment_var("VK_DRIVER_FILES", MOCK_ICD_JSON_MANIFEST_PATH);
+    // Prevents layers from being loaded at all
+    set_environment_var("VK_LOADER_LAYERS_DISABLE", "~all~");
+
+    uint32_t count = 0;
+    VkResult res = vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+    ASSERT_EQ(res, VK_SUCCESS);
+    ASSERT_GT(count, 0);
+    std::vector<VkExtensionProperties> inst_ext_props{count, VkExtensionProperties{}};
+    res = vkEnumerateInstanceExtensionProperties(nullptr, &count, inst_ext_props.data());
+    ASSERT_EQ(res, VK_SUCCESS);
+
+    VkInstanceCreateInfo inst_create_info{};
+    VkInstance inst{};
+    res = vkCreateInstance(&inst_create_info, nullptr, &inst);
+    ASSERT_EQ(res, VK_SUCCESS);
+
+    res = vkEnumeratePhysicalDevices(inst, &count, nullptr);
+    ASSERT_EQ(res, VK_SUCCESS);
+    ASSERT_GT(count, 0);
+    std::vector<VkPhysicalDevice> phys_devs{count};
+    res = vkEnumeratePhysicalDevices(inst, &count, phys_devs.data());
+    ASSERT_EQ(res, VK_SUCCESS);
+
+    VkDeviceCreateInfo dev_create_info{};
+    VkDevice device{};
+    res = vkCreateDevice(phys_devs.at(0), &dev_create_info, nullptr, &device);
+    ASSERT_EQ(res, VK_SUCCESS);
 }
