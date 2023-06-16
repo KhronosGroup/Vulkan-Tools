@@ -19,6 +19,9 @@
 set(MOCK_ICD_NAME mock_icd)
 set(GENERATED generated)
 
+# Enable beta Vulkan extensions
+add_definitions(-DVK_ENABLE_BETA_EXTENSIONS)
+
 if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
 elseif(ANDROID)

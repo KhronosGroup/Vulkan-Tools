@@ -533,6 +533,8 @@ extern PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR vkGetPhysicalDeviceXlib
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 // VK_KHR_video_encode_queue
+extern PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR;
+extern PFN_vkGetEncodedVideoSessionParametersKHR vkGetEncodedVideoSessionParametersKHR;
 extern PFN_vkCmdEncodeVideoKHR vkCmdEncodeVideoKHR;
 #endif
 
