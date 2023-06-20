@@ -90,10 +90,12 @@ set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/generated
-                    ${WAYLAND_CLIENT_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}
                     ${PROJECT_BINARY_DIR}
                     ${CMAKE_BINARY_DIR})
+if(BUILD_WSI_WAYLAND_SUPPORT)
+    include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
+endif()
 
 if(WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
