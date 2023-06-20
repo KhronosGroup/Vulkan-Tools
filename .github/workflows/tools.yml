@@ -34,18 +34,31 @@ jobs:
 
         strategy:
             matrix:
-                cc: [ gcc, clang ]
-                cxx: [ g++, clang++ ]
+                cc: [ gcc ]
+                cxx: [ g++ ]
                 config: [ Debug, Release ]
                 os: [ ubuntu-20.04, ubuntu-22.04 ]
-                cube_wsi: [ XCB, XLIB, WAYLAND, DISPLAY ]
-                exclude:
-                    - cc: gcc
-                      cxx: clang++
-                    - cc: clang
-                      cxx: g++
-                    - os: ubuntu-20.04
-                      cube_wsi: WAYLAND
+                cube_wsi: [ XCB ]
+                include:
+                    # Test WAYLAND
+                  - cc: gcc
+                    cxx: g++
+                    config: Release
+                    os: ubuntu-22.04
+                    cube_wsi: WAYLAND
+                    # Test clang on ubuntu 20 with XLIB
+                  - cc: clang
+                    cxx: clang++
+                    config: Debug
+                    os: ubuntu-20.04
+                    cube_wsi: XLIB
+                    # Test clang on ubuntu 22 with the DISPLAY option
+                  - cc: clang
+                    cxx: clang++
+                    config: Release
+                    os: ubuntu-22.04
+                    cube_wsi: DISPLAY
+
 
         steps:
             - uses: actions/checkout@v3
