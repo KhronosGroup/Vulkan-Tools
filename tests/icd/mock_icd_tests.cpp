@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 
+#include <array>
 #include <iostream>
 #include <vector>
 
@@ -29,17 +30,47 @@
 #include "binary_locations.h"
 
 #if defined(WIN32)
-int set_environment_var(const char* name, const char* value) { return SetEnvironmentVariableA(name, cur_value); }
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+int set_environment_var(const char* name, const char* value) { return SetEnvironmentVariable(name, value); }
 #else
 int set_environment_var(const char* name, const char* value) { return setenv(name, value, 1); }
 #endif
 
-TEST(MockICD, Basic) {
+void setup_mock_icd_env_vars() {
     // Necessary to point the loader at the mock driver
     set_environment_var("VK_DRIVER_FILES", MOCK_ICD_JSON_MANIFEST_PATH);
     // Prevents layers from being loaded at all
     set_environment_var("VK_LOADER_LAYERS_DISABLE", "~all~");
+}
 
+// Create an instance & device
+class MockICD : public ::testing::Test {
+  protected:
+    void SetUp() override {
+        setup_mock_icd_env_vars();
+
+        VkInstanceCreateInfo instance_create_info{};
+        VkResult res = vkCreateInstance(&instance_create_info, nullptr, &instance);
+        ASSERT_EQ(res, VK_SUCCESS);
+
+        uint32_t count = 1;
+        res = vkEnumeratePhysicalDevices(instance, &count, &physical_device);
+        ASSERT_EQ(res, VK_SUCCESS);
+
+        VkDeviceCreateInfo device_create_info{};
+        res = vkCreateDevice(physical_device, &device_create_info, nullptr, &device);
+        ASSERT_EQ(res, VK_SUCCESS);
+    }
+
+    // void TearDown() override {}
+    VkInstance instance{};
+    VkPhysicalDevice physical_device{};
+    VkDevice device{};
+};
+
+TEST_F(MockICD, Basic) {
+    setup_mock_icd_env_vars();
     uint32_t count = 0;
     VkResult res = vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
     ASSERT_EQ(res, VK_SUCCESS);
@@ -64,4 +95,15 @@ TEST(MockICD, Basic) {
     VkDevice device{};
     res = vkCreateDevice(phys_devs.at(0), &dev_create_info, nullptr, &device);
     ASSERT_EQ(res, VK_SUCCESS);
+}
+
+TEST_F(MockICD, AllocateCommandBuffers) {
+    VkCommandBufferAllocateInfo command_buffer_allocate_info{};
+    command_buffer_allocate_info.commandBufferCount = 5;
+    std::array<VkCommandBuffer, 5> command_buffers;
+    VkResult res = vkAllocateCommandBuffers(device, &command_buffer_allocate_info, command_buffers.data());
+    ASSERT_EQ(VK_SUCCESS, res);
+    for (const auto& command_buffer : command_buffers) {
+        ASSERT_NE(nullptr, command_buffer);
+    }
 }
