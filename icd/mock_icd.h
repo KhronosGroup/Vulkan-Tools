@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <array>
 #include <mutex>
+#include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -64,6 +65,7 @@ struct BufferState {
 };
 static std::unordered_map<VkDevice, std::unordered_map<VkBuffer, BufferState>> buffer_map;
 static std::unordered_map<VkDevice, std::unordered_map<VkImage, VkDeviceSize>> image_memory_size_map;
+static std::unordered_map<VkDevice, std::unordered_set<VkCommandPool>> command_pool_map;
 static std::unordered_map<VkCommandPool, std::vector<VkCommandBuffer>> command_pool_buffer_map;
 
 static constexpr uint32_t icd_swapchain_image_count = 1;
