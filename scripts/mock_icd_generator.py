@@ -77,6 +77,12 @@ CUSTOM_C_INTERCEPTS = {
         DestroyDispObjHandle((void*) pCommandBuffers[i]);
     }
 ''',
+'vkCreateCommandPool': '''
+    unique_lock_t lock(global_lock);
+    *pCommandPool = (VkCommandPool)global_unique_handle++;
+    command_pool_map[device].insert(*pCommandPool);
+    return VK_SUCCESS;
+''',
 'vkDestroyCommandPool': '''
     // destroy command buffers for this pool
     unique_lock_t lock(global_lock);
@@ -87,6 +93,7 @@ CUSTOM_C_INTERCEPTS = {
         }
         command_pool_buffer_map.erase(it);
     }
+    command_pool_map[device].erase(commandPool);
 ''',
 'vkEnumeratePhysicalDevices': '''
     VkResult result_code = VK_SUCCESS;
@@ -114,6 +121,14 @@ CUSTOM_C_INTERCEPTS = {
             DestroyDispObjHandle((void*)index_queue_pair.second);
         }
     }
+
+    for (auto& cp : command_pool_map[device]) {
+        for (auto& cb : command_pool_buffer_map[cp]) {
+            DestroyDispObjHandle((void*) cb);
+        }
+        command_pool_buffer_map.erase(cp);
+    }
+    command_pool_map[device].clear();
 
     queue_map.erase(device);
     buffer_map.erase(device);
