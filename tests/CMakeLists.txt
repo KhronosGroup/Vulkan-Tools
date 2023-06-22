@@ -44,5 +44,10 @@ target_include_directories(vulkan_tools_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR
 target_link_libraries(vulkan_tools_tests GTest::gtest Vulkan::Vulkan)
 add_dependencies(vulkan_tools_tests generate_binary_locations)
 
+if (ENABLE_ADDRESS_SANITIZER)
+    target_compile_options(vulkan_tools_tests PUBLIC -fsanitize=address)
+    target_link_options(vulkan_tools_tests PUBLIC -fsanitize=address)
+endif ()
+
 include(GoogleTest)
 gtest_discover_tests(vulkan_tools_tests DISCOVERY_TIMEOUT 100)
