@@ -359,6 +359,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_ARM_shader_core_builtins", 2},
     {"VK_EXT_pipeline_library_group_handles", 1},
     {"VK_EXT_dynamic_rendering_unused_attachments", 1},
+    {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
     {"VK_EXT_attachment_feedback_loop_dynamic_state", 1},
     {"VK_QNX_external_memory_screen_buffer", 1},
@@ -2423,6 +2424,12 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirementsKHR(
     uint32_t*                                   pSparseMemoryRequirementCount,
     VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements);
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeMatrixPropertiesKHR*           pProperties);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
@@ -4631,6 +4638,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDeviceBufferMemoryRequirementsKHR", (void*)GetDeviceBufferMemoryRequirementsKHR},
     {"vkGetDeviceImageMemoryRequirementsKHR", (void*)GetDeviceImageMemoryRequirementsKHR},
     {"vkGetDeviceImageSparseMemoryRequirementsKHR", (void*)GetDeviceImageSparseMemoryRequirementsKHR},
+    {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},

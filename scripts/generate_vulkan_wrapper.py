@@ -700,6 +700,10 @@ VK_KHR_maintenance4 = Extension(name='VK_KHR_maintenance4', version=2, guard=Non
 VK_KHR_ray_tracing_position_fetch = Extension(name='VK_KHR_ray_tracing_position_fetch', version=1, guard=None, commands=[
 ])
 
+VK_KHR_cooperative_matrix = Extension(name='VK_KHR_cooperative_matrix', version=2, guard=None, commands=[
+    Command(name='vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR', dispatch='VkPhysicalDevice'),
+])
+
 VK_EXT_debug_report = Extension(name='VK_EXT_debug_report', version=10, guard=None, commands=[
     Command(name='vkCreateDebugReportCallbackEXT', dispatch='VkInstance'),
     Command(name='vkDestroyDebugReportCallbackEXT', dispatch='VkInstance'),
@@ -1826,6 +1830,7 @@ extensions = [
     VK_KHR_portability_enumeration,
     VK_KHR_maintenance4,
     VK_KHR_ray_tracing_position_fetch,
+    VK_KHR_cooperative_matrix,
     VK_EXT_debug_report,
     VK_NV_glsl_shader,
     VK_EXT_depth_range_unrestricted,

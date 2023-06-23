@@ -488,6 +488,8 @@ int InitVulkan(void) {
         reinterpret_cast<PFN_vkGetDeviceImageMemoryRequirementsKHR>(dlsym(libvulkan, "vkGetDeviceImageMemoryRequirementsKHR"));
     vkGetDeviceImageSparseMemoryRequirementsKHR = reinterpret_cast<PFN_vkGetDeviceImageSparseMemoryRequirementsKHR>(
         dlsym(libvulkan, "vkGetDeviceImageSparseMemoryRequirementsKHR"));
+    vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR = reinterpret_cast<PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR>(
+        dlsym(libvulkan, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR"));
     vkCreateAccelerationStructureKHR =
         reinterpret_cast<PFN_vkCreateAccelerationStructureKHR>(dlsym(libvulkan, "vkCreateAccelerationStructureKHR"));
     vkDestroyAccelerationStructureKHR =
@@ -930,6 +932,7 @@ PFN_vkCmdTraceRaysIndirect2KHR vkCmdTraceRaysIndirect2KHR;
 PFN_vkGetDeviceBufferMemoryRequirementsKHR vkGetDeviceBufferMemoryRequirementsKHR;
 PFN_vkGetDeviceImageMemoryRequirementsKHR vkGetDeviceImageMemoryRequirementsKHR;
 PFN_vkGetDeviceImageSparseMemoryRequirementsKHR vkGetDeviceImageSparseMemoryRequirementsKHR;
+PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR;
 PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
 PFN_vkDebugReportMessageEXT vkDebugReportMessageEXT;

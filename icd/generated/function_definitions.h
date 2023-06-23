@@ -3986,6 +3986,16 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirementsKHR(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeMatrixPropertiesKHR*           pProperties)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
     VkInstance                                  instance,
     const VkDebugReportCallbackCreateInfoEXT*   pCreateInfo,
