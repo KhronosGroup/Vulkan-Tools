@@ -32,11 +32,6 @@ this home repository depend on.  It also checks out each dependent
 repository at a "known-good" commit in order to provide stability in
 the dependent repositories.
 
-Python Compatibility
---------------------
-
-This program can be used with Python 2.7 and Python 3.
-
 Known-Good JSON Database
 ------------------------
 
@@ -225,6 +220,7 @@ Legal options include:
 "windows"
 "linux"
 "darwin"
+"android"
 
 Builds on all platforms by default.
 
@@ -237,8 +233,6 @@ supported.  However, the "top" directory specified with the "--dir"
 option can be a relative or absolute path.
 
 """
-
-from __future__ import print_function
 
 import argparse
 import json
@@ -269,7 +263,7 @@ DEVNULL = open(os.devnull, 'wb')
 def on_rm_error( func, path, exc_info):
     """Error handler for recursively removing a directory. The
     shutil.rmtree function can fail on Windows due to read-only files.
-    This handler will change the permissions for tha file and continue.
+    This handler will change the permissions for the file and continue.
     """
     os.chmod( path, stat.S_IWRITE )
     os.unlink( path )
@@ -348,9 +342,16 @@ class GoodRepo(object):
             self.build_dir = os.path.join(dir_top, self.build_dir)
         if self.install_dir:
             self.install_dir = os.path.join(dir_top, self.install_dir)
-	    # Check if platform is one to build on
+
+        # By default the target platform is the host platform.
+        target_platform = platform.system().lower()
+        # However, we need to account for cross-compiling.
+        for cmake_var in self._args.cmake_var:
+            if "android.toolchain.cmake" in cmake_var:
+                target_platform = 'android'
+
         self.on_build_platform = False
-        if self.build_platforms == [] or platform.system().lower() in self.build_platforms:
+        if self.build_platforms == [] or target_platform in self.build_platforms:
             self.on_build_platform = True
 
     def Clone(self, retries=10, retry_seconds=60):
@@ -431,9 +432,11 @@ class GoodRepo(object):
     def CMakeConfig(self, repos):
         """Build CMake command for the configuration phase and execute it"""
         if self._args.do_clean_build:
-            shutil.rmtree(self.build_dir)
+            if os.path.isdir(self.build_dir):
+                shutil.rmtree(self.build_dir, onerror=on_rm_error)
         if self._args.do_clean_install:
-            shutil.rmtree(self.install_dir)
+            if os.path.isdir(self.install_dir):
+                shutil.rmtree(self.install_dir, onerror=on_rm_error)
 
         # Create and change to build directory
         make_or_exist_dirs(self.build_dir)
@@ -668,7 +671,7 @@ def main():
         '--api',
         dest='api',
         default='vulkan',
-        choices=['vulkan', 'vulkansc'],
+        choices=['vulkan'],
         help="Target API")
     parser.add_argument(
         '--generator',
@@ -770,3 +773,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
