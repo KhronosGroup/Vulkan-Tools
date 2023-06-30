@@ -19,14 +19,6 @@
  * Author: Charles Giessen <charles@lunarg.com>
  */
 
-#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
-#include <X11/Xutil.h>
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-#include <linux/input.h>
-#include "xdg-shell-client-header.h"
-#include "xdg-decoration-client-header.h"
-#endif
-
 #include <cassert>
 #include <cinttypes>
 #include <cstdio>
@@ -41,6 +33,14 @@
 #define VULKAN_HPP_NO_EXCEPTIONS
 #define VULKAN_HPP_TYPESAFE_CONVERSION
 #include <vulkan/vulkan.hpp>
+
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+#include <X11/Xutil.h>
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+#include <linux/input.h>
+#include "xdg-shell-client-header.h"
+#include "xdg-decoration-client-header.h"
+#endif
 
 #include "linmath.h"
 

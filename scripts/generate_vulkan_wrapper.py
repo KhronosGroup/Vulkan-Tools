@@ -1321,7 +1321,7 @@ VK_EXT_depth_clip_control = Extension(name='VK_EXT_depth_clip_control', version=
 VK_EXT_primitive_topology_list_restart = Extension(name='VK_EXT_primitive_topology_list_restart', version=1, guard=None, commands=[
 ])
 
-VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=2, guard=None, commands=[
+VK_HUAWEI_subpass_shading = Extension(name='VK_HUAWEI_subpass_shading', version=3, guard=None, commands=[
     Command(name='vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI', dispatch='VkDevice'),
     Command(name='vkCmdSubpassShadingHUAWEI', dispatch='VkCommandBuffer'),
 ])
