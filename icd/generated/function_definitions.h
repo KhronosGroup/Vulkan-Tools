@@ -3991,7 +3991,20 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
     uint32_t*                                   pPropertyCount,
     VkCooperativeMatrixPropertiesKHR*           pProperties)
 {
-//Not a CREATE or DESTROY function
+    if (!pProperties) {
+        *pPropertyCount = 1;
+    } else {
+        // arbitrary
+        pProperties[0].MSize = 16;
+        pProperties[0].NSize = 16;
+        pProperties[0].KSize = 16;
+        pProperties[0].AType = VK_COMPONENT_TYPE_UINT32_KHR;
+        pProperties[0].BType = VK_COMPONENT_TYPE_UINT32_KHR;
+        pProperties[0].CType = VK_COMPONENT_TYPE_UINT32_KHR;
+        pProperties[0].ResultType = VK_COMPONENT_TYPE_UINT32_KHR;
+        pProperties[0].saturatingAccumulation = VK_FALSE;
+        pProperties[0].scope = VK_SCOPE_DEVICE_KHR;
+    }
     return VK_SUCCESS;
 }
 
