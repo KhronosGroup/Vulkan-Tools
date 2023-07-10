@@ -309,7 +309,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
     {"VK_FUCHSIA_buffer_collection", 2},
-    {"VK_HUAWEI_subpass_shading", 2},
+    {"VK_HUAWEI_subpass_shading", 3},
     {"VK_HUAWEI_invocation_mask", 1},
     {"VK_NV_external_memory_rdma", 1},
     {"VK_EXT_pipeline_properties", 1},
