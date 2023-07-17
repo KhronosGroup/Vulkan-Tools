@@ -94,7 +94,7 @@ add_custom_target(generate_icd_files DEPENDS mock_icd.cpp ${GENERATED}/function_
 set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/generated
+                    ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED}
                     ${CMAKE_CURRENT_BINARY_DIR}
                     ${PROJECT_BINARY_DIR}
                     ${CMAKE_BINARY_DIR})
