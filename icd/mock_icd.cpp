@@ -15,7 +15,7 @@
 */
 
 #include "mock_icd.h"
-#include "generated/function_definitions.h"
+#include "function_definitions.h"
 
 namespace vkmock {
 

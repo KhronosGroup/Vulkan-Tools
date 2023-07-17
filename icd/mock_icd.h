@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "vulkan/vk_icd.h"
-#include "generated/vk_typemap_helper.h"
+#include "vk_typemap_helper.h"
 
 namespace vkmock {
 
