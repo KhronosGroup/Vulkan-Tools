@@ -19,6 +19,10 @@ cmake_minimum_required(VERSION 3.17.2)
 
 project(Vulkan-Tools)
 
+# This variable enables downstream users to customize the target API
+# variant (e.g. Vulkan SC)
+set(API_TYPE "vulkan")
+
 add_subdirectory(scripts)
 
 # User-interface declarations ----------------------------------------------------------------------------------------------------
@@ -33,8 +37,6 @@ option(BUILD_ICD "Build icd" ON)
 # Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd" OFF)
-
-set(API_TYPE "vulkan")
 
 if (UNIX AND NOT APPLE) # i.e. Linux
     option(ENABLE_ADDRESS_SANITIZER "Use addres sanitization" OFF)
