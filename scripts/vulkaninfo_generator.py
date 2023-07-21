@@ -567,15 +567,17 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
                 out += f'        for (uint32_t i = 0; i < {v.arrayLength}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n'
                 out += f"    }}\n"
             else:  # dynamic array length based on other member
-                out += f'    ArrayWrapper arr(p,"{v.name}", obj.' + v.arrayLength + ');\n'
-                out += f"    for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n"
+                out += f"    {{\n"
+                out += f'        ArrayWrapper arr(p,"{v.name}", obj.' + v.arrayLength + ');\n'
+                out += f"        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n"
                 if v.typeID in types_to_gen:
-                    out += f"        if (obj.{v.name} != nullptr) {{\n"
-                    out += f"            p.SetElementIndex(i);\n"
-                    out += f'            Dump{v.typeID}(p, "{v.name}", obj.{v.name}[i]);\n'
-                    out += f"        }}\n"
+                    out += f"            if (obj.{v.name} != nullptr) {{\n"
+                    out += f"                p.SetElementIndex(i);\n"
+                    out += f'                Dump{v.typeID}(p, "{v.name}", obj.{v.name}[i]);\n'
+                    out += f"            }}\n"
                 else:
-                    out += f"        p.PrintElement(obj.{v.name}[i]);\n"
+                    out += f"            p.PrintElement(obj.{v.name}[i]);\n"
+                out += f"        }}\n"
                 out += f"    }}\n"
         elif v.typeID == "VkBool32":
             out += f'    p.PrintKeyBool("{v.name}", static_cast<bool>(obj.{v.name}));\n'
@@ -642,13 +644,13 @@ def PrintChainStruct(listName, structures, all_structures, chain_details):
         out += AddGuardHeader(s)
         if s.sTypeName is not None:
             out += f"    {s.name} {s.name[2:]}{{}};\n"
-            # Specific versions of drivers have an incorrect definition of the size of this struct.
+            # Specific versions of drivers have an incorrect definition of the size of these structs.
             # We need to artificially pad the structure it just so the driver doesn't write out of bounds and
             # into other structures that are adjacent. This bug comes from the in-development version of
             # the extension having a larger size than the final version, so older drivers try to write to
             # members which don't exist.
-            if s.sTypeName == "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES":
-                out += "    char padding[64];\n"
+            if s.name in ['VkPhysicalDeviceShaderIntegerDotProductFeatures', 'VkPhysicalDeviceHostImageCopyFeaturesEXT']:
+                out += f"    char {s.name}_padding[64];\n"
         out += AddGuardFooter(s)
     out += f"    void initialize_chain() noexcept {{\n"
     for s in structs_to_print:

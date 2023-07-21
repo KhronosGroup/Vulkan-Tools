@@ -5360,6 +5360,49 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetStencilOpEXT(
 }
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CopyMemoryToImageEXT(
+    VkDevice                                    device,
+    const VkCopyMemoryToImageInfoEXT*           pCopyMemoryToImageInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToMemoryEXT(
+    VkDevice                                    device,
+    const VkCopyImageToMemoryInfoEXT*           pCopyImageToMemoryInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToImageEXT(
+    VkDevice                                    device,
+    const VkCopyImageToImageInfoEXT*            pCopyImageToImageInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayoutEXT(
+    VkDevice                                    device,
+    uint32_t                                    transitionCount,
+    const VkHostImageLayoutTransitionInfoEXT*   pTransitions)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
+    VkDevice                                    device,
+    VkImage                                     image,
+    const VkImageSubresource2EXT*               pSubresource,
+    VkSubresourceLayout2EXT*                    pLayout)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
@@ -5632,15 +5675,6 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
-
-static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
-    VkDevice                                    device,
-    VkImage                                     image,
-    const VkImageSubresource2EXT*               pSubresource,
-    VkSubresourceLayout2EXT*                    pLayout)
-{
-//Not a CREATE or DESTROY function
-}
 
 
 
@@ -6168,6 +6202,31 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecompressMemoryIndirectCountNV(
     uint32_t                                    stride)
 {
 //Not a CREATE or DESTROY function
+}
+
+
+static VKAPI_ATTR void VKAPI_CALL GetPipelineIndirectMemoryRequirementsNV(
+    VkDevice                                    device,
+    const VkComputePipelineCreateInfo*          pCreateInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBuffer(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineBindPoint                         pipelineBindPoint,
+    VkPipeline                                  pipeline)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
+    VkDevice                                    device,
+    const VkPipelineIndirectDeviceAddressInfoNV* pInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
 }
 
 

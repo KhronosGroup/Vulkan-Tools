@@ -251,6 +251,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_extended_dynamic_state", 1},
     {"VK_KHR_deferred_host_operations", 4},
     {"VK_KHR_pipeline_executable_properties", 1},
+    {"VK_EXT_host_image_copy", 1},
     {"VK_KHR_map_memory2", 1},
     {"VK_EXT_shader_atomic_float2", 1},
     {"VK_EXT_swapchain_maintenance1", 1},
@@ -324,7 +325,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_2d_view_of_3d", 1},
     {"VK_EXT_shader_tile_image", 1},
     {"VK_EXT_opacity_micromap", 2},
-    {"VK_NV_displacement_micromap", 1},
+    {"VK_NV_displacement_micromap", 2},
     {"VK_EXT_load_store_op_none", 1},
     {"VK_HUAWEI_cluster_culling_shader", 2},
     {"VK_EXT_border_color_swizzle", 1},
@@ -338,6 +339,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
+    {"VK_NV_device_generated_commands_compute", 1},
     {"VK_NV_linear_color_attachment", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
     {"VK_QCOM_image_processing", 1},
@@ -3308,6 +3310,30 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetStencilOpEXT(
     VkCompareOp                                 compareOp);
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CopyMemoryToImageEXT(
+    VkDevice                                    device,
+    const VkCopyMemoryToImageInfoEXT*           pCopyMemoryToImageInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToMemoryEXT(
+    VkDevice                                    device,
+    const VkCopyImageToMemoryInfoEXT*           pCopyImageToMemoryInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToImageEXT(
+    VkDevice                                    device,
+    const VkCopyImageToImageInfoEXT*            pCopyImageToImageInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayoutEXT(
+    VkDevice                                    device,
+    uint32_t                                    transitionCount,
+    const VkHostImageLayoutTransitionInfoEXT*   pTransitions);
+
+static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
+    VkDevice                                    device,
+    VkImage                                     image,
+    const VkImageSubresource2EXT*               pSubresource,
+    VkSubresourceLayout2EXT*                    pLayout);
+
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
@@ -3485,12 +3511,6 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateEnumNV(
 
 
 
-
-static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
-    VkDevice                                    device,
-    VkImage                                     image,
-    const VkImageSubresource2EXT*               pSubresource,
-    VkSubresourceLayout2EXT*                    pLayout);
 
 
 
@@ -3832,6 +3852,21 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecompressMemoryIndirectCountNV(
     VkDeviceAddress                             indirectCommandsAddress,
     VkDeviceAddress                             indirectCommandsCountAddress,
     uint32_t                                    stride);
+
+
+static VKAPI_ATTR void VKAPI_CALL GetPipelineIndirectMemoryRequirementsNV(
+    VkDevice                                    device,
+    const VkComputePipelineCreateInfo*          pCreateInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+
+static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBuffer(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineBindPoint                         pipelineBindPoint,
+    VkPipeline                                  pipeline);
+
+static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
+    VkDevice                                    device,
+    const VkPipelineIndirectDeviceAddressInfoNV* pInfo);
 
 
 
@@ -4798,6 +4833,11 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdSetDepthBoundsTestEnableEXT", (void*)CmdSetDepthBoundsTestEnableEXT},
     {"vkCmdSetStencilTestEnableEXT", (void*)CmdSetStencilTestEnableEXT},
     {"vkCmdSetStencilOpEXT", (void*)CmdSetStencilOpEXT},
+    {"vkCopyMemoryToImageEXT", (void*)CopyMemoryToImageEXT},
+    {"vkCopyImageToMemoryEXT", (void*)CopyImageToMemoryEXT},
+    {"vkCopyImageToImageEXT", (void*)CopyImageToImageEXT},
+    {"vkTransitionImageLayoutEXT", (void*)TransitionImageLayoutEXT},
+    {"vkGetImageSubresourceLayout2EXT", (void*)GetImageSubresourceLayout2EXT},
     {"vkReleaseSwapchainImagesEXT", (void*)ReleaseSwapchainImagesEXT},
     {"vkGetGeneratedCommandsMemoryRequirementsNV", (void*)GetGeneratedCommandsMemoryRequirementsNV},
     {"vkCmdPreprocessGeneratedCommandsNV", (void*)CmdPreprocessGeneratedCommandsNV},
@@ -4827,7 +4867,6 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetSamplerOpaqueCaptureDescriptorDataEXT", (void*)GetSamplerOpaqueCaptureDescriptorDataEXT},
     {"vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT", (void*)GetAccelerationStructureOpaqueCaptureDescriptorDataEXT},
     {"vkCmdSetFragmentShadingRateEnumNV", (void*)CmdSetFragmentShadingRateEnumNV},
-    {"vkGetImageSubresourceLayout2EXT", (void*)GetImageSubresourceLayout2EXT},
     {"vkGetDeviceFaultInfoEXT", (void*)GetDeviceFaultInfoEXT},
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     {"vkAcquireWinrtDisplayNV", (void*)AcquireWinrtDisplayNV},
@@ -4911,6 +4950,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdCopyMemoryToImageIndirectNV", (void*)CmdCopyMemoryToImageIndirectNV},
     {"vkCmdDecompressMemoryNV", (void*)CmdDecompressMemoryNV},
     {"vkCmdDecompressMemoryIndirectCountNV", (void*)CmdDecompressMemoryIndirectCountNV},
+    {"vkGetPipelineIndirectMemoryRequirementsNV", (void*)GetPipelineIndirectMemoryRequirementsNV},
+    {"vkCmdUpdatePipelineIndirectBuffer", (void*)CmdUpdatePipelineIndirectBuffer},
+    {"vkGetPipelineIndirectDeviceAddressNV", (void*)GetPipelineIndirectDeviceAddressNV},
     {"vkCmdSetTessellationDomainOriginEXT", (void*)CmdSetTessellationDomainOriginEXT},
     {"vkCmdSetDepthClampEnableEXT", (void*)CmdSetDepthClampEnableEXT},
     {"vkCmdSetPolygonModeEXT", (void*)CmdSetPolygonModeEXT},
