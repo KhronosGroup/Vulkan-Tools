@@ -1169,6 +1169,14 @@ VK_EXT_extended_dynamic_state = Extension(name='VK_EXT_extended_dynamic_state', 
     Command(name='vkCmdSetStencilOpEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_EXT_host_image_copy = Extension(name='VK_EXT_host_image_copy', version=1, guard=None, commands=[
+    Command(name='vkCopyMemoryToImageEXT', dispatch='VkDevice'),
+    Command(name='vkCopyImageToMemoryEXT', dispatch='VkDevice'),
+    Command(name='vkCopyImageToImageEXT', dispatch='VkDevice'),
+    Command(name='vkTransitionImageLayoutEXT', dispatch='VkDevice'),
+    Command(name='vkGetImageSubresourceLayout2EXT', dispatch='VkDevice'),
+])
+
 VK_EXT_shader_atomic_float2 = Extension(name='VK_EXT_shader_atomic_float2', version=1, guard=None, commands=[
 ])
 
@@ -1283,7 +1291,6 @@ VK_EXT_image_robustness = Extension(name='VK_EXT_image_robustness', version=1, g
 ])
 
 VK_EXT_image_compression_control = Extension(name='VK_EXT_image_compression_control', version=1, guard=None, commands=[
-    Command(name='vkGetImageSubresourceLayout2EXT', dispatch='VkDevice'),
 ])
 
 VK_EXT_attachment_feedback_loop_layout = Extension(name='VK_EXT_attachment_feedback_loop_layout', version=2, guard=None, commands=[
@@ -1433,6 +1440,12 @@ VK_NV_copy_memory_indirect = Extension(name='VK_NV_copy_memory_indirect', versio
 VK_NV_memory_decompression = Extension(name='VK_NV_memory_decompression', version=1, guard=None, commands=[
     Command(name='vkCmdDecompressMemoryNV', dispatch='VkCommandBuffer'),
     Command(name='vkCmdDecompressMemoryIndirectCountNV', dispatch='VkCommandBuffer'),
+])
+
+VK_NV_device_generated_commands_compute = Extension(name='VK_NV_device_generated_commands_compute', version=1, guard=None, commands=[
+    Command(name='vkGetPipelineIndirectMemoryRequirementsNV', dispatch='VkDevice'),
+    Command(name='vkCmdUpdatePipelineIndirectBuffer', dispatch='VkCommandBuffer'),
+    Command(name='vkGetPipelineIndirectDeviceAddressNV', dispatch='VkDevice'),
 ])
 
 VK_NV_linear_color_attachment = Extension(name='VK_NV_linear_color_attachment', version=1, guard=None, commands=[
@@ -1738,7 +1751,7 @@ VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=11
 VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 extensions = [
@@ -1948,6 +1961,7 @@ extensions = [
     VK_EXT_host_query_reset,
     VK_EXT_index_type_uint8,
     VK_EXT_extended_dynamic_state,
+    VK_EXT_host_image_copy,
     VK_EXT_shader_atomic_float2,
     VK_EXT_surface_maintenance1,
     VK_EXT_swapchain_maintenance1,
@@ -2015,6 +2029,7 @@ extensions = [
     VK_QCOM_fragment_density_map_offset,
     VK_NV_copy_memory_indirect,
     VK_NV_memory_decompression,
+    VK_NV_device_generated_commands_compute,
     VK_NV_linear_color_attachment,
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
