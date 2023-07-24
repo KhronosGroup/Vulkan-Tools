@@ -6213,7 +6213,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPipelineIndirectMemoryRequirementsNV(
 //Not a CREATE or DESTROY function
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBuffer(
+static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline)

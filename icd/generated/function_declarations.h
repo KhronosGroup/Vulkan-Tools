@@ -339,7 +339,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
-    {"VK_NV_device_generated_commands_compute", 1},
+    {"VK_NV_device_generated_commands_compute", 2},
     {"VK_NV_linear_color_attachment", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
     {"VK_QCOM_image_processing", 1},
@@ -3859,7 +3859,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPipelineIndirectMemoryRequirementsNV(
     const VkComputePipelineCreateInfo*          pCreateInfo,
     VkMemoryRequirements2*                      pMemoryRequirements);
 
-static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBuffer(
+static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBufferNV(
     VkCommandBuffer                             commandBuffer,
     VkPipelineBindPoint                         pipelineBindPoint,
     VkPipeline                                  pipeline);
@@ -4951,7 +4951,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdDecompressMemoryNV", (void*)CmdDecompressMemoryNV},
     {"vkCmdDecompressMemoryIndirectCountNV", (void*)CmdDecompressMemoryIndirectCountNV},
     {"vkGetPipelineIndirectMemoryRequirementsNV", (void*)GetPipelineIndirectMemoryRequirementsNV},
-    {"vkCmdUpdatePipelineIndirectBuffer", (void*)CmdUpdatePipelineIndirectBuffer},
+    {"vkCmdUpdatePipelineIndirectBufferNV", (void*)CmdUpdatePipelineIndirectBufferNV},
     {"vkGetPipelineIndirectDeviceAddressNV", (void*)GetPipelineIndirectDeviceAddressNV},
     {"vkCmdSetTessellationDomainOriginEXT", (void*)CmdSetTessellationDomainOriginEXT},
     {"vkCmdSetDepthClampEnableEXT", (void*)CmdSetDepthClampEnableEXT},

@@ -1442,9 +1442,9 @@ VK_NV_memory_decompression = Extension(name='VK_NV_memory_decompression', versio
     Command(name='vkCmdDecompressMemoryIndirectCountNV', dispatch='VkCommandBuffer'),
 ])
 
-VK_NV_device_generated_commands_compute = Extension(name='VK_NV_device_generated_commands_compute', version=1, guard=None, commands=[
+VK_NV_device_generated_commands_compute = Extension(name='VK_NV_device_generated_commands_compute', version=2, guard=None, commands=[
     Command(name='vkGetPipelineIndirectMemoryRequirementsNV', dispatch='VkDevice'),
-    Command(name='vkCmdUpdatePipelineIndirectBuffer', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdUpdatePipelineIndirectBufferNV', dispatch='VkCommandBuffer'),
     Command(name='vkGetPipelineIndirectDeviceAddressNV', dispatch='VkDevice'),
 ])
 
