@@ -798,6 +798,9 @@ struct AppInstance {
             if (strcmp(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
+            if (strcmp(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
         }
     }
 
