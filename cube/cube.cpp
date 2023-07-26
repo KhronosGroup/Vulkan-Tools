@@ -1051,7 +1051,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
     }
 
     message << " - Message Id Number: " << std::to_string(pCallbackData->messageIdNumber);
-    message << " | Message Id Name: " << pCallbackData->pMessageIdName << "\n\t" << pCallbackData->pMessage << "\n";
+    message << " | Message Id Name: " << (pCallbackData->pMessageIdName == nullptr ? "" : pCallbackData->pMessageIdName) << "\n\t"
+            << pCallbackData->pMessage << "\n";
 
     if (pCallbackData->objectCount > 0) {
         message << "\n\tObjects - " << pCallbackData->objectCount << "\n";
