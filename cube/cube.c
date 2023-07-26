@@ -521,7 +521,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(VkDebugUtilsMessageSever
     }
 
     sprintf(message, "%s - Message Id Number: %d | Message Id Name: %s\n\t%s\n", prefix, pCallbackData->messageIdNumber,
-            pCallbackData->pMessageIdName, pCallbackData->pMessage);
+            pCallbackData->pMessageIdName == NULL ? "" : pCallbackData->pMessageIdName, pCallbackData->pMessage);
     if (pCallbackData->objectCount > 0) {
         char tmp_message[500];
         sprintf(tmp_message, "\n\tObjects - %d\n", pCallbackData->objectCount);
