@@ -155,6 +155,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_sampler_filter_minmax", 2},
     {"VK_KHR_storage_buffer_storage_class", 1},
     {"VK_AMD_gpu_shader_int16", 2},
+    {"VK_AMDX_shader_enqueue", 1},
     {"VK_AMD_mixed_attachment_samples", 1},
     {"VK_AMD_shader_fragment_mask", 1},
     {"VK_EXT_inline_uniform_block", 1},
@@ -351,6 +352,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_optical_flow", 1},
     {"VK_EXT_legacy_dithering", 1},
     {"VK_EXT_pipeline_protected_access", 1},
+    {"VK_KHR_maintenance5", 1},
     {"VK_KHR_ray_tracing_position_fetch", 1},
     {"VK_EXT_shader_object", 1},
     {"VK_QCOM_tile_properties", 1},
@@ -2427,6 +2429,30 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirementsKHR(
     VkSparseImageMemoryRequirements2*           pSparseMemoryRequirements);
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer2KHR(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType);
+
+static VKAPI_ATTR void VKAPI_CALL GetRenderingAreaGranularityKHR(
+    VkDevice                                    device,
+    const VkRenderingAreaInfoKHR*               pRenderingAreaInfo,
+    VkExtent2D*                                 pGranularity);
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSubresourceLayoutKHR(
+    VkDevice                                    device,
+    const VkDeviceImageSubresourceInfoKHR*      pInfo,
+    VkSubresourceLayout2KHR*                    pLayout);
+
+static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2KHR(
+    VkDevice                                    device,
+    VkImage                                     image,
+    const VkImageSubresource2KHR*               pSubresource,
+    VkSubresourceLayout2KHR*                    pLayout);
+
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
     VkPhysicalDevice                            physicalDevice,
@@ -2843,6 +2869,47 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryAndroidHardwareBufferANDROID(
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
 
 
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateExecutionGraphPipelinesAMDX(
+    VkDevice                                    device,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetExecutionGraphPipelineScratchSizeAMDX(
+    VkDevice                                    device,
+    VkPipeline                                  executionGraph,
+    VkExecutionGraphPipelineScratchSizeAMDX*    pSizeInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetExecutionGraphPipelineNodeIndexAMDX(
+    VkDevice                                    device,
+    VkPipeline                                  executionGraph,
+    const VkPipelineShaderStageNodeCreateInfoAMDX* pNodeInfo,
+    uint32_t*                                   pNodeIndex);
+
+static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    const VkDispatchGraphCountInfoAMDX*         pCountInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(
+    VkCommandBuffer                             commandBuffer,
+    VkDeviceAddress                             scratch,
+    VkDeviceAddress                             countInfo);
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 
@@ -3330,8 +3397,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayoutEXT(
 static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
     VkDevice                                    device,
     VkImage                                     image,
-    const VkImageSubresource2EXT*               pSubresource,
-    VkSubresourceLayout2EXT*                    pLayout);
+    const VkImageSubresource2KHR*               pSubresource,
+    VkSubresourceLayout2KHR*                    pLayout);
 
 
 
@@ -4673,6 +4740,10 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDeviceBufferMemoryRequirementsKHR", (void*)GetDeviceBufferMemoryRequirementsKHR},
     {"vkGetDeviceImageMemoryRequirementsKHR", (void*)GetDeviceImageMemoryRequirementsKHR},
     {"vkGetDeviceImageSparseMemoryRequirementsKHR", (void*)GetDeviceImageSparseMemoryRequirementsKHR},
+    {"vkCmdBindIndexBuffer2KHR", (void*)CmdBindIndexBuffer2KHR},
+    {"vkGetRenderingAreaGranularityKHR", (void*)GetRenderingAreaGranularityKHR},
+    {"vkGetDeviceImageSubresourceLayoutKHR", (void*)GetDeviceImageSubresourceLayoutKHR},
+    {"vkGetImageSubresourceLayout2KHR", (void*)GetImageSubresourceLayout2KHR},
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
@@ -4751,6 +4822,27 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
     {"vkGetMemoryAndroidHardwareBufferANDROID", (void*)GetMemoryAndroidHardwareBufferANDROID},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCreateExecutionGraphPipelinesAMDX", (void*)CreateExecutionGraphPipelinesAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkGetExecutionGraphPipelineScratchSizeAMDX", (void*)GetExecutionGraphPipelineScratchSizeAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkGetExecutionGraphPipelineNodeIndexAMDX", (void*)GetExecutionGraphPipelineNodeIndexAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdInitializeGraphScratchMemoryAMDX", (void*)CmdInitializeGraphScratchMemoryAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdDispatchGraphAMDX", (void*)CmdDispatchGraphAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdDispatchGraphIndirectAMDX", (void*)CmdDispatchGraphIndirectAMDX},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"vkCmdDispatchGraphIndirectCountAMDX", (void*)CmdDispatchGraphIndirectCountAMDX},
 #endif
     {"vkCmdSetSampleLocationsEXT", (void*)CmdSetSampleLocationsEXT},
     {"vkGetPhysicalDeviceMultisamplePropertiesEXT", (void*)GetPhysicalDeviceMultisamplePropertiesEXT},

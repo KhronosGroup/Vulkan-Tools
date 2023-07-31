@@ -697,6 +697,13 @@ VK_KHR_maintenance4 = Extension(name='VK_KHR_maintenance4', version=2, guard=Non
     Command(name='vkGetDeviceImageSparseMemoryRequirementsKHR', dispatch='VkDevice'),
 ])
 
+VK_KHR_maintenance5 = Extension(name='VK_KHR_maintenance5', version=1, guard=None, commands=[
+    Command(name='vkCmdBindIndexBuffer2KHR', dispatch='VkCommandBuffer'),
+    Command(name='vkGetRenderingAreaGranularityKHR', dispatch='VkDevice'),
+    Command(name='vkGetDeviceImageSubresourceLayoutKHR', dispatch='VkDevice'),
+    Command(name='vkGetImageSubresourceLayout2KHR', dispatch='VkDevice'),
+])
+
 VK_KHR_ray_tracing_position_fetch = Extension(name='VK_KHR_ray_tracing_position_fetch', version=1, guard=None, commands=[
 ])
 
@@ -1751,6 +1758,16 @@ VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=11
 VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
+VK_AMDX_shader_enqueue = Extension(name='VK_AMDX_shader_enqueue', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+    Command(name='vkCreateExecutionGraphPipelinesAMDX', dispatch='VkDevice'),
+    Command(name='vkGetExecutionGraphPipelineScratchSizeAMDX', dispatch='VkDevice'),
+    Command(name='vkGetExecutionGraphPipelineNodeIndexAMDX', dispatch='VkDevice'),
+    Command(name='vkCmdInitializeGraphScratchMemoryAMDX', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDispatchGraphAMDX', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDispatchGraphIndirectAMDX', dispatch='VkCommandBuffer'),
+    Command(name='vkCmdDispatchGraphIndirectCountAMDX', dispatch='VkCommandBuffer'),
+])
+
 VK_NV_displacement_micromap = Extension(name='VK_NV_displacement_micromap', version=2, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
@@ -1842,6 +1859,7 @@ extensions = [
     VK_KHR_ray_tracing_maintenance1,
     VK_KHR_portability_enumeration,
     VK_KHR_maintenance4,
+    VK_KHR_maintenance5,
     VK_KHR_ray_tracing_position_fetch,
     VK_KHR_cooperative_matrix,
     VK_EXT_debug_report,
@@ -2091,6 +2109,7 @@ extensions = [
     VK_KHR_video_encode_queue,
     VK_EXT_video_encode_h264,
     VK_EXT_video_encode_h265,
+    VK_AMDX_shader_enqueue,
     VK_NV_displacement_micromap,
 ]
 # end of generated code
