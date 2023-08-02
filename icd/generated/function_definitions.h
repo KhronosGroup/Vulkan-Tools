@@ -2898,6 +2898,11 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFeatures2KHR(
         feat_bools = (VkBool32*)&blendop_features->advancedBlendCoherentOperations;
         SetBoolArrayTrue(feat_bools, num_bools);
     }
+    const auto *host_image_copy_features = lvl_find_in_chain<VkPhysicalDeviceHostImageCopyFeaturesEXT>(pFeatures->pNext);
+    if (host_image_copy_features) {
+       feat_bools = (VkBool32*)&host_image_copy_features->hostImageCopy;
+       SetBoolArrayTrue(feat_bools, 1);
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
@@ -2993,6 +2998,33 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
         fragment_density_map2_props->maxSubsampledArrayLayers = 2;
         fragment_density_map2_props->maxDescriptorSetSubsampledSamplers = 1;
     }
+
+    const uint32_t num_copy_layouts = 5;
+    const VkImageLayout HostCopyLayouts[]{
+       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+       VK_IMAGE_LAYOUT_GENERAL,
+       VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+       VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL,
+       VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
+    };
+
+    auto *host_image_copy_props = lvl_find_mod_in_chain< VkPhysicalDeviceHostImageCopyPropertiesEXT>(pProperties->pNext);
+    if (host_image_copy_props){
+        if (host_image_copy_props->pCopyDstLayouts == nullptr) host_image_copy_props->copyDstLayoutCount = num_copy_layouts;
+        else {
+            uint32_t num_layouts = (std::min)(host_image_copy_props->copyDstLayoutCount, num_copy_layouts);
+            for (uint32_t i = 0; i < num_layouts; i++) {
+                host_image_copy_props->pCopyDstLayouts[i] = HostCopyLayouts[i];
+            }
+        }
+        if (host_image_copy_props->pCopySrcLayouts == nullptr) host_image_copy_props->copySrcLayoutCount = num_copy_layouts;
+        else {
+            uint32_t num_layouts = (std::min)(host_image_copy_props->copySrcLayoutCount, num_copy_layouts);
+             for (uint32_t i = 0; i < num_layouts; i++) {
+                host_image_copy_props->pCopySrcLayouts[i] = HostCopyLayouts[i];
+            }
+        }
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties2KHR(
@@ -3006,6 +3038,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties2KHR(
         props_3->linearTilingFeatures = pFormatProperties->formatProperties.linearTilingFeatures;
         props_3->optimalTilingFeatures = pFormatProperties->formatProperties.optimalTilingFeatures;
         props_3->bufferFeatures = pFormatProperties->formatProperties.bufferFeatures;
+        props_3->optimalTilingFeatures |= VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT;
     }
 }
 
