@@ -441,6 +441,7 @@ TEST_F(MockICD, vkGetPhysicalDeviceFormatProperties2) {
     VkFormatProperties3 format_properties3{};
     format_properties3.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
     VkFormatProperties2 format_properties2{};
+    format_properties2.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     format_properties2.pNext = static_cast<void*>(&format_properties3);
     vkGetPhysicalDeviceFormatProperties2(physical_device, VK_FORMAT_R8G8B8A8_SRGB, &format_properties2);
     ASSERT_EQ(format_properties2.formatProperties.bufferFeatures, 0x00FFFDFF);
@@ -448,7 +449,7 @@ TEST_F(MockICD, vkGetPhysicalDeviceFormatProperties2) {
     ASSERT_EQ(format_properties2.formatProperties.optimalTilingFeatures, 0x00FFFDFF);
     ASSERT_EQ(format_properties3.bufferFeatures, 0x00FFFDFF);
     ASSERT_EQ(format_properties3.linearTilingFeatures, 0x00FFFDFF);
-    ASSERT_EQ(format_properties3.optimalTilingFeatures, 0x00FFFDFF);
+    ASSERT_EQ(format_properties3.optimalTilingFeatures, 0x400000FFFDFF);
 }
 
 TEST_F(MockICD, vkGetPhysicalDeviceImageFormatProperties) {
