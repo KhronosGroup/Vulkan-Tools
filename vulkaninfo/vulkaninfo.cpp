@@ -913,9 +913,13 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
 #endif
                 ++i;
             }
-        } else if (strncmp("--json", argv[i], 6) == 0 || strcmp(argv[i], "-j") == 0) {
+        } else if (strncmp("--json", argv[i], 6) == 0 || strncmp(argv[i], "-j", 2) == 0) {
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
                 results.selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 7, nullptr, 10));
+                results.has_selected_gpu = true;
+            }
+            if (strlen(argv[i]) > 3 && strncmp("-j=", argv[i], 3) == 0) {
+                results.selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 3, nullptr, 10));
                 results.has_selected_gpu = true;
             }
             results.output_category = OutputCategory::profile_json;
