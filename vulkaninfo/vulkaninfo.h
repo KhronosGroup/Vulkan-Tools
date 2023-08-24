@@ -67,7 +67,7 @@
 #endif
 #endif  // _WIN32
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
 #include <dlfcn.h>
 #endif
 
@@ -252,7 +252,7 @@ auto GetVector(const char *func_name, F &&f, Ts &&...ts) -> std::vector<T> {
 // ----------- Instance Setup ------- //
 struct VkDll {
     VkResult Initialize() {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
         library = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
         if (!library) library = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
 #elif defined(_WIN32)
@@ -264,7 +264,7 @@ struct VkDll {
         return VK_SUCCESS;
     }
     void Close() {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
         dlclose(library);
 #elif defined(_WIN32)
         FreeLibrary(library);
@@ -356,6 +356,11 @@ struct VkDll {
 #ifdef VK_USE_PLATFORM_METAL_EXT
     PFN_vkCreateMetalSurfaceEXT fp_vkCreateMetalSurfaceEXT = APPLE_FP(vkCreateMetalSurfaceEXT);
 #endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    PFN_vkCreateScreenSurfaceQNX fp_vkCreateScreenSurfaceQNX = APPLE_FP(vkCreateScreenSurfaceQNX);
+    PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX fp_vkGetPhysicalDeviceScreenPresentationSupportQNX =
+        APPLE_FP(vkGetPhysicalDeviceScreenPresentationSupportQNX);
+#endif  // VK_USE_PLATFORM_SCREEN_QNX
     void InitializeDispatchPointers() {
         Load(fp_vkCreateInstance, "vkCreateInstance");
         Load(fp_vkDestroyInstance, "vkDestroyInstance");
@@ -420,18 +425,21 @@ struct VkDll {
 #ifdef VK_USE_PLATFORM_METAL_EXT
         Load(fp_vkCreateMetalSurfaceEXT, "vkCreateMetalSurfaceEXT");
 #endif  // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+        Load(fp_vkCreateScreenSurfaceQNX, "vkCreateScreenSurfaceQNX");
+#endif  // VK_USE_PLATFORM_SCREEN_QNX
     }
 
   private:
     template <typename T>
     void Load(T &func_dest, const char *func_name) {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
         func_dest = reinterpret_cast<T>(dlsym(library, func_name));
 #elif defined(_WIN32)
         func_dest = reinterpret_cast<T>(GetProcAddress(library, func_name));
 #endif
     }
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
     void *library;
 #elif defined(_WIN32)
     HMODULE library;
@@ -621,6 +629,10 @@ struct AppInstance {
 #endif
 #ifdef VK_USE_PLATFORM_ANDROID_KHR  // TODO
     ANativeWindow *window;
+#endif
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    struct _screen_context* context;
+    struct _screen_window* window;
 #endif
     AppInstance() {
         VkResult dllErr = dll.Initialize();
@@ -825,7 +837,8 @@ struct AppInstance {
 
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_WIN32_KHR) ||      \
     defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_METAL_EXT) || defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
-    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_GGP)
+    defined(VK_USE_PLATFORM_DIRECTFB_EXT) || defined(VK_USE_PLATFORM_GGP) || defined(VK_USE_PLATFORM_SCREEN_QNX)
+
 #define VULKANINFO_WSI_ENABLED
 #endif
 
@@ -1190,6 +1203,47 @@ static VkSurfaceKHR AppCreateGgpSurface(AppInstance &inst) {
 static void AppDestroyGgpWindow(AppInstance &inst) {}
 #endif
 //-----------------------------------------------------------
+//----------------------QNX SCREEN---------------------------
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+static void AppCreateScreenWindow(AppInstance &inst) {
+    int usage = SCREEN_USAGE_VULKAN;
+    int rc;
+
+    rc = screen_create_context(&inst.context, 0);
+    if (rc) {
+        THROW_ERR("Could not create a QNX Screen context.\nExiting...");
+    }
+    rc = screen_create_window(&inst.window, inst.context);
+    if (rc) {
+        THROW_ERR("Could not create a QNX Screen window.\nExiting...");
+    }
+    rc = screen_set_window_property_iv(inst.window, SCREEN_PROPERTY_USAGE, &usage);
+    if (rc) {
+        THROW_ERR("Could not set SCREEN_USAGE_VULKAN flag for QNX Screen window!\nExiting...");
+    }
+}
+
+static VkSurfaceKHR AppCreateScreenSurface(AppInstance &inst) {
+    VkScreenSurfaceCreateInfoQNX createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+    createInfo.context = inst.context;
+    createInfo.window = inst.window;
+
+    VkSurfaceKHR surface;
+    VkResult err = inst.dll.fp_vkCreateScreenSurfaceQNX(inst.instance, &createInfo, nullptr, &surface);
+    if (err) THROW_VK_ERR("vkCreateScreenSurfaceQNX", err);
+    return surface;
+}
+
+static void AppDestroyScreenWindow(AppInstance &inst)
+{
+    screen_destroy_window(inst.window);
+    screen_destroy_context(inst.context);
+}
+#endif  // VK_USE_PLATFORM_SCREEN_QNX
+//-----------------------------------------------------------
 // ------------ Setup Windows ------------- //
 
 void SetupWindowExtensions(AppInstance &inst) {
@@ -1320,6 +1374,18 @@ void SetupWindowExtensions(AppInstance &inst) {
         surface_ext_ggp.destroy_window = AppDestroyGgpWindow;
 
         inst.AddSurfaceExtension(surface_ext_ggp);
+    }
+#endif
+//--QNX_SCREEN--
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    SurfaceExtension surface_ext_qnx_screen;
+    if (inst.CheckExtensionEnabled(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME)) {
+        surface_ext_qnx_screen.name = VK_QNX_SCREEN_SURFACE_EXTENSION_NAME;
+        surface_ext_qnx_screen.create_window = AppCreateScreenWindow;
+        surface_ext_qnx_screen.create_surface = AppCreateScreenSurface;
+        surface_ext_qnx_screen.destroy_window = AppDestroyScreenWindow;
+
+        inst.AddSurfaceExtension(surface_ext_qnx_screen);
     }
 #endif
 }
