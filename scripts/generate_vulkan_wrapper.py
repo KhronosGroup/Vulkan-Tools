@@ -1568,6 +1568,18 @@ VK_EXT_dynamic_rendering_unused_attachments = Extension(name='VK_EXT_dynamic_ren
 VK_QCOM_multiview_per_view_render_areas = Extension(name='VK_QCOM_multiview_per_view_render_areas', version=1, guard=None, commands=[
 ])
 
+VK_QCOM_image_processing2 = Extension(name='VK_QCOM_image_processing2', version=1, guard=None, commands=[
+])
+
+VK_QCOM_filter_cubic_weights = Extension(name='VK_QCOM_filter_cubic_weights', version=1, guard=None, commands=[
+])
+
+VK_QCOM_ycbcr_degamma = Extension(name='VK_QCOM_ycbcr_degamma', version=1, guard=None, commands=[
+])
+
+VK_QCOM_filter_cubic_clamp = Extension(name='VK_QCOM_filter_cubic_clamp', version=1, guard=None, commands=[
+])
+
 VK_EXT_attachment_feedback_loop_dynamic_state = Extension(name='VK_EXT_attachment_feedback_loop_dynamic_state', version=1, guard=None, commands=[
     Command(name='vkCmdSetAttachmentFeedbackLoopEnableEXT', dispatch='VkCommandBuffer'),
 ])
@@ -2071,6 +2083,10 @@ extensions = [
     VK_EXT_pipeline_library_group_handles,
     VK_EXT_dynamic_rendering_unused_attachments,
     VK_QCOM_multiview_per_view_render_areas,
+    VK_QCOM_image_processing2,
+    VK_QCOM_filter_cubic_weights,
+    VK_QCOM_ycbcr_degamma,
+    VK_QCOM_filter_cubic_clamp,
     VK_EXT_attachment_feedback_loop_dynamic_state,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
