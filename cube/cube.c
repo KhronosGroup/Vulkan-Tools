@@ -33,6 +33,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <signal.h>
+#include <errno.h>
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
@@ -359,7 +360,12 @@ struct demo {
     struct ANativeWindow *window;
 #elif defined(VK_USE_PLATFORM_METAL_EXT)
     void *caMetalLayer;
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+    screen_context_t screen_context;
+    screen_window_t screen_window;
+    screen_event_t screen_event;
 #endif
+
     VkSurfaceKHR surface;
     bool prepared;
     bool use_staging_buffer;
@@ -2485,6 +2491,10 @@ static void demo_cleanup(struct demo *demo) {
     demo->event_buffer->Release(demo->event_buffer);
     demo->window->Release(demo->window);
     demo->dfb->Release(demo->dfb);
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+    screen_destroy_event(demo->screen_event);
+    screen_destroy_window(demo->screen_window);
+    screen_destroy_context(demo->screen_context);
 #endif
 
     vkDestroyInstance(demo->inst, NULL);
@@ -3157,6 +3167,170 @@ static void demo_run_display(struct demo *demo) {
         }
     }
 }
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+
+#include <sys/keycodes.h>
+
+static void demo_run(struct demo *demo) {
+    int size[2] = { 0, 0 };
+    screen_window_t win;
+    int val;
+    int rc;
+
+    while (!demo->quit) {
+        while (!screen_get_event(demo->screen_context, demo->screen_event, demo->pause ? ~0 : 0)) {
+            rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_TYPE, &val);
+            if (rc) {
+                printf("Cannot get SCREEN_PROPERTY_TYPE of the event! (%s)\n", strerror(errno));
+                fflush(stdout);
+                demo->quit = true;
+                break;
+            }
+            if (val == SCREEN_EVENT_NONE) {
+                break;
+            }
+            switch (val) {
+                case SCREEN_EVENT_KEYBOARD:
+                     rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_FLAGS, &val);
+                     if (rc) {
+                         printf("Cannot get SCREEN_PROPERTY_FLAGS of the event! (%s)\n", strerror(errno));
+                         fflush(stdout);
+                         demo->quit = true;
+                         break;
+                     }
+                     if (val & KEY_DOWN) {
+                         rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_SYM, &val);
+                         if (rc) {
+                             printf("Cannot get SCREEN_PROPERTY_SYM of the event! (%s)\n", strerror(errno));
+                             fflush(stdout);
+                             demo->quit = true;
+                             break;
+                         }
+                         switch (val) {
+                             case KEYCODE_ESCAPE:
+                                  demo->quit = true;
+                                  break;
+                             case KEYCODE_SPACE:
+                                  demo->pause = !demo->pause;
+                                  break;
+                             case KEYCODE_LEFT:
+                                  demo->spin_angle -= demo->spin_increment;
+                                  break;
+                             case KEYCODE_RIGHT:
+                                  demo->spin_angle += demo->spin_increment;
+                                  break;
+                             default:
+                                  break;
+                         }
+                     }
+                     break;
+                case SCREEN_EVENT_PROPERTY:
+                     rc = screen_get_event_property_pv(demo->screen_event, SCREEN_PROPERTY_WINDOW, (void **)&win);
+                     if (rc) {
+                         printf("Cannot get SCREEN_PROPERTY_WINDOW of the event! (%s)\n", strerror(errno));
+                         fflush(stdout);
+                         demo->quit = true;
+                         break;
+                     }
+                     rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_NAME, &val);
+                     if (rc) {
+                         printf("Cannot get SCREEN_PROPERTY_NAME of the event! (%s)\n", strerror(errno));
+                         fflush(stdout);
+                         demo->quit = true;
+                         break;
+                     }
+                     if (win == demo->screen_window) {
+                         switch(val) {
+                             case SCREEN_PROPERTY_SIZE:
+                                  rc = screen_get_window_property_iv(win, SCREEN_PROPERTY_SIZE, size);
+                                  if (rc) {
+                                      printf("Cannot get SCREEN_PROPERTY_SIZE of the window in the event! (%s)\n", strerror(errno));
+                                      fflush(stdout);
+                                      demo->quit = true;
+                                      break;
+                                  }
+                                  demo->width = size[0];
+                                  demo->height = size[1];
+                                  demo_resize(demo);
+                                  break;
+                             default:
+                                  /* We are not interested in any other events for now */
+                                  break;
+                         }
+                     }
+                     break;
+            }
+        }
+
+        if (demo->pause) {
+        } else {
+            demo_draw(demo);
+            demo->curFrame++;
+            if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
+                demo->quit = true;
+            }
+        }
+    }
+}
+
+static void demo_create_window(struct demo *demo) {
+    const char *idstr = APP_SHORT_NAME;
+    int size[2];
+    int usage = SCREEN_USAGE_VULKAN;
+    int rc;
+
+    rc = screen_create_context(&demo->screen_context, 0);
+    if (rc) {
+        printf("Cannot create QNX Screen context!\n");
+        fflush(stdout);
+        exit(EXIT_FAILURE);
+    }
+    rc = screen_create_window(&demo->screen_window, demo->screen_context);
+    if (rc) {
+        printf("Cannot create QNX Screen window!\n");
+        fflush(stdout);
+        exit(EXIT_FAILURE);
+    }
+    rc = screen_create_event(&demo->screen_event);
+    if (rc) {
+        printf("Cannot create QNX Screen event!\n");
+        fflush(stdout);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Set window caption */
+    screen_set_window_property_cv(demo->screen_window, SCREEN_PROPERTY_ID_STRING, strlen(idstr), idstr);
+
+    /* Setup VULKAN usage flags */
+    rc = screen_set_window_property_iv(demo->screen_window, SCREEN_PROPERTY_USAGE, &usage);
+    if (rc) {
+        printf("Cannot set SCREEN_USAGE_VULKAN flag!\n");
+        fflush(stdout);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Setup window size */
+    if ((demo->width == 0) || (demo->height == 0)) {
+        /* Obtain automatically set window size provided by WM */
+        rc = screen_get_window_property_iv(demo->screen_window, SCREEN_PROPERTY_SIZE, size);
+        if (rc) {
+            printf("Cannot obtain current window size!\n");
+            fflush(stdout);
+            exit(EXIT_FAILURE);
+        }
+        demo->width = size[0];
+        demo->height = size[1];
+    } else {
+        size[0] = demo->width;
+        size[1] = demo->height;
+        rc = screen_set_window_property_iv(demo->screen_window, SCREEN_PROPERTY_SIZE, size);
+        if (rc) {
+            printf("Cannot set window size!\n");
+            fflush(stdout);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
 #endif
 
 /*
@@ -3299,6 +3473,11 @@ static void demo_init_vk(struct demo *demo) {
                 platformSurfaceExtFound = 1;
                 demo->extension_names[demo->enabled_extension_count++] = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
             }
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+            if (!strcmp(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
+                platformSurfaceExtFound = 1;
+                demo->extension_names[demo->enabled_extension_count++] = VK_QNX_SCREEN_SURFACE_EXTENSION_NAME;
+            }
 #endif
             if (!strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME;
@@ -3372,6 +3551,12 @@ static void demo_init_vk(struct demo *demo) {
                  "vkCreateInstance Failure");
 #elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
+                 " extension.\n\n"
+                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                 "Please look at the Getting Started guide for additional information.\n",
+                 "vkCreateInstance Failure");
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
                  " extension.\n\n"
                  "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
                  "Please look at the Getting Started guide for additional information.\n",
@@ -3744,6 +3929,15 @@ static void demo_create_surface(struct demo *demo) {
     surface.pLayer = demo->caMetalLayer;
 
     err = vkCreateMetalSurfaceEXT(demo->inst, &surface, NULL, &demo->surface);
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+    VkScreenSurfaceCreateInfoQNX createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
+    createInfo.pNext = NULL;
+    createInfo.flags = 0;
+    createInfo.context = demo->screen_context;
+    createInfo.window = demo->screen_window;
+
+    err = vkCreateScreenSurfaceQNX(demo->inst, &createInfo, NULL, &demo->surface);
 #endif
     assert(!err);
 }
@@ -3755,7 +3949,10 @@ static VkSurfaceFormatKHR pick_surface_format(const VkSurfaceFormatKHR *surfaceF
 
         if (format == VK_FORMAT_R8G8B8A8_UNORM || format == VK_FORMAT_B8G8R8A8_UNORM ||
             format == VK_FORMAT_A2B10G10R10_UNORM_PACK32 || format == VK_FORMAT_A2R10G10B10_UNORM_PACK32 ||
+            format == VK_FORMAT_A1R5G5B5_UNORM_PACK16 || format == VK_FORMAT_R5G6B5_UNORM_PACK16 ||
             format == VK_FORMAT_R16G16B16A16_SFLOAT) {
+
+
             return surfaceFormats[i];
         }
     }
@@ -4386,6 +4583,8 @@ int main(int argc, char **argv) {
     demo_create_window(&demo);
 #elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     demo_create_directfb_window(&demo);
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+    demo_create_window(&demo);
 #endif
 
     demo_init_vk_swapchain(&demo);
@@ -4402,6 +4601,8 @@ int main(int argc, char **argv) {
     demo_run_directfb(&demo);
 #elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
     demo_run_display(&demo);
+#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+    demo_run(&demo);
 #endif
 
     demo_cleanup(&demo);
