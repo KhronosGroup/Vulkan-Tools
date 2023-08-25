@@ -15,21 +15,6 @@
 # limitations under the License.
 # ~~~
 
-# On Windows, We only need the .lib to build the repo, but to run tests we need the .dll.
-# Thus, we have to fixup the Vulkan::Vulkan target to contain the correct details.
-if (WIN32)
-    list(APPEND CMAKE_PROGRAM_PATH ${VULKAN_LOADER_INSTALL_DIR})
-
-    find_program(Vulkan_LIBRARY_DLL NAMES vulkan-1.dll)
-    find_library(Vulkan_LIBRARY_IMPLIB NAMES vulkan-1)
-
-    # Change Vulkan::Vulkan's location to vulkan-1.dll and set the IMPLIB to vulkan-1.lib
-    set_target_properties(Vulkan::Vulkan PROPERTIES
-        IMPORTED_LOCATION ${Vulkan_LIBRARY_DLL})
-    set_target_properties(Vulkan::Vulkan PROPERTIES
-        IMPORTED_IMPLIB ${Vulkan_LIBRARY_IMPLIB})
-endif()
-
 # setup binary_locations_$<CONFIG>.h.in using binary_locations.h.in as a source
 file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/binary_locations_$<CONFIG>.h" INPUT "${CMAKE_CURRENT_SOURCE_DIR}/binary_locations.h.in")
 
@@ -57,7 +42,7 @@ get_target_property(TEST_SOURCES vulkan_tools_tests SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${TEST_SOURCES})
 
 target_include_directories(vulkan_tools_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(vulkan_tools_tests GTest::gtest Vulkan::Vulkan)
+target_link_libraries(vulkan_tools_tests GTest::gtest Vulkan::Headers Vulkan::Loader)
 add_dependencies(vulkan_tools_tests generate_binary_locations)
 if (WIN32)
     target_compile_definitions(vulkan_tools_tests PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -DNOMINMAX)
@@ -72,7 +57,7 @@ endif ()
 if (WIN32)
     # Copy the loader shared lib (if built) to the test application directory so the test app finds it.
     add_custom_command(TARGET vulkan_tools_tests POST_BUILD
-                           COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Vulkan::Vulkan> $<TARGET_FILE_DIR:vulkan_tools_tests>)
+                           COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:Vulkan::Loader> $<TARGET_FILE_DIR:vulkan_tools_tests>)
 endif()
 
 include(GoogleTest)

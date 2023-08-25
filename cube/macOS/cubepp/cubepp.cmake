@@ -57,7 +57,7 @@ add_dependencies(vkcubepp MoltenVK_icd-staging-json)
 target_include_directories(vkcubepp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${MOLTENVK_DIR}/MoltenVK/include)
 
 # We do this so vulkaninfo is linked to an individual library and NOT a framework.
-target_link_libraries(vkcubepp ${Vulkan_LIBRARY} "-framework Cocoa -framework QuartzCore")
+target_link_libraries(vkcubepp Vulkan::Loader "-framework Cocoa -framework QuartzCore")
 
 set_target_properties(vkcubepp PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Info.plist)
 
