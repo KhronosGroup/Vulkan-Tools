@@ -186,7 +186,7 @@ elseif(NOT WIN32)
                    cube.vert.inc
                    cube.frag.inc
                    ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcube Vulkan::Vulkan)
+    target_link_libraries(vkcube Vulkan::Headers Vulkan::Loader)
     target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
     include(CheckLibraryExists)
     CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
@@ -212,7 +212,7 @@ else()
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
                    cube.frag.inc)
-    target_link_libraries(vkcube Vulkan::Vulkan)
+    target_link_libraries(vkcube Vulkan::Headers Vulkan::Loader)
 endif()
 
 if(APPLE)
@@ -241,7 +241,7 @@ elseif(NOT WIN32)
                    cube.vert.inc
                    cube.frag.inc
                    ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcubepp Vulkan::Vulkan)
+    target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
     target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
 
     if (ENABLE_ADDRESS_SANITIZER)
@@ -262,7 +262,7 @@ else()
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
                    cube.frag.inc)
-    target_link_libraries(vkcubepp Vulkan::Vulkan)
+    target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
 endif()
 
 if(APPLE)
@@ -298,7 +298,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
                        cube.vert.inc
                        cube.frag.inc
                        ${OPTIONAL_WAYLAND_DATA_FILES})
-        target_link_libraries(vkcube-wayland Vulkan::Vulkan)
+        target_link_libraries(vkcube-wayland Vulkan::Headers Vulkan::Loader)
         target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)

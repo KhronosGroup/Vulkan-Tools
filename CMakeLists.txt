@@ -66,13 +66,7 @@ if(APPLE)
 endif()
 
 find_package(VulkanHeaders REQUIRED CONFIG)
-
-# Find and create the Vulkan::Vulkan library
-find_library(Vulkan_LIBRARY NAMES vulkan vulkan-1)
-add_library(Vulkan::Vulkan UNKNOWN IMPORTED)
-set_target_properties(Vulkan::Vulkan PROPERTIES
-    IMPORTED_LOCATION ${Vulkan_LIBRARY})
-target_link_libraries(Vulkan::Vulkan INTERFACE Vulkan::Headers)
+find_package(VulkanLoader REQUIRED CONFIG)
 
 include(GNUInstallDirs)
 
