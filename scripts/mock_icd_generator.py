@@ -300,6 +300,18 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetPhysicalDeviceSurfaceCapabilities2KHR': '''
     GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, pSurfaceInfo->surface, &pSurfaceCapabilities->surfaceCapabilities);
+
+    auto *present_mode_compatibility = lvl_find_mod_in_chain<VkSurfacePresentModeCompatibilityEXT>(pSurfaceCapabilities->pNext);
+    if (present_mode_compatibility) {
+        if (!present_mode_compatibility->pPresentModes) {
+            present_mode_compatibility->presentModeCount = 3;
+        } else {
+            // arbitrary
+            present_mode_compatibility->pPresentModes[0] = VK_PRESENT_MODE_IMMEDIATE_KHR;
+            present_mode_compatibility->pPresentModes[1] = VK_PRESENT_MODE_FIFO_KHR;
+            present_mode_compatibility->pPresentModes[2] = VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR;
+        }
+    }
     return VK_SUCCESS;
 ''',
 'vkGetInstanceProcAddr': '''
