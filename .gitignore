@@ -1,5 +1,6 @@
 CMakeCache.txt
 CMakeLists.txt.user
+CMakeUserPresets.json
 CMakeFiles/
 cmake_install.cmake
 Makefile
