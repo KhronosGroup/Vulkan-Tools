@@ -93,8 +93,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
-    {"VK_EXT_video_encode_h264", 11},
-    {"VK_EXT_video_encode_h265", 11},
+    {"VK_EXT_video_encode_h264", 12},
+    {"VK_EXT_video_encode_h265", 12},
     {"VK_KHR_video_decode_h264", 8},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
@@ -273,7 +273,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_present_id", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
-    {"VK_KHR_video_encode_queue", 9},
+    {"VK_KHR_video_encode_queue", 10},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_NV_low_latency", 1},
@@ -371,6 +371,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_filter_cubic_clamp", 1},
     {"VK_EXT_attachment_feedback_loop_dynamic_state", 1},
     {"VK_QNX_external_memory_screen_buffer", 1},
+    {"VK_NV_descriptor_pool_overallocation", 1},
 };
 
 
@@ -4188,6 +4189,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
     const struct _screen_buffer*                buffer,
     VkScreenBufferPropertiesQNX*                pProperties);
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(

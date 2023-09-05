@@ -1584,6 +1584,9 @@ VK_EXT_attachment_feedback_loop_dynamic_state = Extension(name='VK_EXT_attachmen
     Command(name='vkCmdSetAttachmentFeedbackLoopEnableEXT', dispatch='VkCommandBuffer'),
 ])
 
+VK_NV_descriptor_pool_overallocation = Extension(name='VK_NV_descriptor_pool_overallocation', version=1, guard=None, commands=[
+])
+
 VK_KHR_acceleration_structure = Extension(name='VK_KHR_acceleration_structure', version=13, guard=None, commands=[
     Command(name='vkCreateAccelerationStructureKHR', dispatch='VkDevice'),
     Command(name='vkDestroyAccelerationStructureKHR', dispatch='VkDevice'),
@@ -1758,16 +1761,16 @@ VK_QNX_external_memory_screen_buffer = Extension(name='VK_QNX_external_memory_sc
 VK_KHR_portability_subset = Extension(name='VK_KHR_portability_subset', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=9, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_KHR_video_encode_queue = Extension(name='VK_KHR_video_encode_queue', version=10, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
     Command(name='vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR', dispatch='VkPhysicalDevice'),
     Command(name='vkGetEncodedVideoSessionParametersKHR', dispatch='VkDevice'),
     Command(name='vkCmdEncodeVideoKHR', dispatch='VkCommandBuffer'),
 ])
 
-VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h264 = Extension(name='VK_EXT_video_encode_h264', version=12, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
-VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=11, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
+VK_EXT_video_encode_h265 = Extension(name='VK_EXT_video_encode_h265', version=12, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
 ])
 
 VK_AMDX_shader_enqueue = Extension(name='VK_AMDX_shader_enqueue', version=1, guard='VK_ENABLE_BETA_EXTENSIONS', commands=[
@@ -2088,6 +2091,7 @@ extensions = [
     VK_QCOM_ycbcr_degamma,
     VK_QCOM_filter_cubic_clamp,
     VK_EXT_attachment_feedback_loop_dynamic_state,
+    VK_NV_descriptor_pool_overallocation,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
     VK_KHR_ray_query,

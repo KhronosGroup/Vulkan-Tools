@@ -6783,6 +6783,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
