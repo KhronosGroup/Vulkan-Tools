@@ -1352,6 +1352,9 @@ VK_EXT_pipeline_properties = Extension(name='VK_EXT_pipeline_properties', versio
     Command(name='vkGetPipelinePropertiesEXT', dispatch='VkDevice'),
 ])
 
+VK_EXT_frame_boundary = Extension(name='VK_EXT_frame_boundary', version=1, guard=None, commands=[
+])
+
 VK_EXT_multisampled_render_to_single_sampled = Extension(name='VK_EXT_multisampled_render_to_single_sampled', version=1, guard=None, commands=[
 ])
 
@@ -1582,6 +1585,9 @@ VK_QCOM_filter_cubic_clamp = Extension(name='VK_QCOM_filter_cubic_clamp', versio
 
 VK_EXT_attachment_feedback_loop_dynamic_state = Extension(name='VK_EXT_attachment_feedback_loop_dynamic_state', version=1, guard=None, commands=[
     Command(name='vkCmdSetAttachmentFeedbackLoopEnableEXT', dispatch='VkCommandBuffer'),
+])
+
+VK_MSFT_layered_driver = Extension(name='VK_MSFT_layered_driver', version=1, guard=None, commands=[
 ])
 
 VK_NV_descriptor_pool_overallocation = Extension(name='VK_NV_descriptor_pool_overallocation', version=1, guard=None, commands=[
@@ -2040,6 +2046,7 @@ extensions = [
     VK_HUAWEI_invocation_mask,
     VK_NV_external_memory_rdma,
     VK_EXT_pipeline_properties,
+    VK_EXT_frame_boundary,
     VK_EXT_multisampled_render_to_single_sampled,
     VK_EXT_extended_dynamic_state2,
     VK_EXT_color_write_enable,
@@ -2091,6 +2098,7 @@ extensions = [
     VK_QCOM_ycbcr_degamma,
     VK_QCOM_filter_cubic_clamp,
     VK_EXT_attachment_feedback_loop_dynamic_state,
+    VK_MSFT_layered_driver,
     VK_NV_descriptor_pool_overallocation,
     VK_KHR_acceleration_structure,
     VK_KHR_ray_tracing_pipeline,
