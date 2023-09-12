@@ -4073,7 +4073,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
     VkCooperativeMatrixPropertiesKHR*           pProperties)
 {
     if (!pProperties) {
-        *pPropertyCount = 1;
+        *pPropertyCount = 2;
     } else {
         // arbitrary
         pProperties[0].MSize = 16;
@@ -4084,7 +4084,10 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
         pProperties[0].CType = VK_COMPONENT_TYPE_UINT32_KHR;
         pProperties[0].ResultType = VK_COMPONENT_TYPE_UINT32_KHR;
         pProperties[0].saturatingAccumulation = VK_FALSE;
-        pProperties[0].scope = VK_SCOPE_DEVICE_KHR;
+        pProperties[0].scope = VK_SCOPE_SUBGROUP_KHR;
+
+        pProperties[1] = pProperties[0];
+        pProperties[1].scope = VK_SCOPE_DEVICE_KHR;
     }
     return VK_SUCCESS;
 }
