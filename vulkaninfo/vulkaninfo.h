@@ -631,8 +631,8 @@ struct AppInstance {
     ANativeWindow *window;
 #endif
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
-    struct _screen_context* context;
-    struct _screen_window* window;
+    struct _screen_context *context;
+    struct _screen_window *window;
 #endif
     AppInstance() {
         VkResult dllErr = dll.Initialize();
@@ -811,6 +811,9 @@ struct AppInstance {
                 inst_extensions.push_back(ext.extensionName);
             }
             if (strcmp(VK_EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
+            if (strcmp(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
         }
@@ -1237,8 +1240,7 @@ static VkSurfaceKHR AppCreateScreenSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyScreenWindow(AppInstance &inst)
-{
+static void AppDestroyScreenWindow(AppInstance &inst) {
     screen_destroy_window(inst.window);
     screen_destroy_context(inst.context);
 }

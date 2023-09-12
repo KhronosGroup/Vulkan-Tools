@@ -3845,24 +3845,18 @@ struct surface_capabilities2_chain {
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     VkSurfaceCapabilitiesFullScreenExclusiveEXT SurfaceCapabilitiesFullScreenExclusiveEXT{};
 #endif  // VK_USE_PLATFORM_WIN32_KHR
-    VkSurfacePresentModeCompatibilityEXT SurfacePresentModeCompatibilityEXT{};
-    VkSurfacePresentScalingCapabilitiesEXT SurfacePresentScalingCapabilitiesEXT{};
     VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR{};
     void initialize_chain() noexcept {
         SharedPresentSurfaceCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         SurfaceCapabilitiesFullScreenExclusiveEXT.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
 #endif  // VK_USE_PLATFORM_WIN32_KHR
-        SurfacePresentModeCompatibilityEXT.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT;
-        SurfacePresentScalingCapabilitiesEXT.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_EXT;
         SurfaceProtectedCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
         std::vector<VkBaseOutStructure*> chain_members;
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SharedPresentSurfaceCapabilitiesKHR));
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SurfaceCapabilitiesFullScreenExclusiveEXT));
 #endif  // VK_USE_PLATFORM_WIN32_KHR
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SurfacePresentModeCompatibilityEXT));
-        chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SurfacePresentScalingCapabilitiesEXT));
         chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SurfaceProtectedCapabilitiesKHR));
 
         for(size_t i = 0; i < chain_members.size() - 1; i++){
@@ -5070,18 +5064,6 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
             p.AddNewline();
         }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
-        if (structure->sType == VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT &&
-           (inst.CheckExtensionEnabled(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME))) {
-            VkSurfacePresentModeCompatibilityEXT* props = (VkSurfacePresentModeCompatibilityEXT*)structure;
-            DumpVkSurfacePresentModeCompatibilityEXT(p, "VkSurfacePresentModeCompatibilityEXT", *props);
-            p.AddNewline();
-        }
-        if (structure->sType == VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_EXT &&
-           (inst.CheckExtensionEnabled(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME))) {
-            VkSurfacePresentScalingCapabilitiesEXT* props = (VkSurfacePresentScalingCapabilitiesEXT*)structure;
-            DumpVkSurfacePresentScalingCapabilitiesEXT(p, "VkSurfacePresentScalingCapabilitiesEXT", *props);
-            p.AddNewline();
-        }
         if (structure->sType == VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR &&
            (inst.CheckExtensionEnabled(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME))) {
             VkSurfaceProtectedCapabilitiesKHR* props = (VkSurfaceProtectedCapabilitiesKHR*)structure;
