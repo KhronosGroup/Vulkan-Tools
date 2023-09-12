@@ -81,7 +81,8 @@ std::string to_hex_str(Printer &p, const T i) {
 
 # used in the .cpp code
 structures_to_gen = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
-                     'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties']
+                     'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties',
+                     'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT']
 enums_to_gen = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling']
 flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT', 'VkQueueFlags',
@@ -110,12 +111,37 @@ EXTENSION_TYPE_BOTH = 'both'
 
 # Types that need pNext Chains built. 'extends' is the xml tag used in the structextends member. 'type' can be device, instance, or both
 EXTENSION_CATEGORIES = OrderedDict((
-    ('phys_device_props2', {'extends': 'VkPhysicalDeviceProperties2', 'type': EXTENSION_TYPE_BOTH, 'holder_type': 'VkPhysicalDeviceProperties2', 'print_iterator': True}),
-    ('phys_device_mem_props2', {'extends': 'VkPhysicalDeviceMemoryProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type':'VkPhysicalDeviceMemoryProperties2', 'print_iterator': False}),
-    ('phys_device_features2', {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo', 'type': EXTENSION_TYPE_DEVICE, 'holder_type': 'VkPhysicalDeviceFeatures2', 'print_iterator': True}),
-    ('surface_capabilities2', {'extends': 'VkSurfaceCapabilities2KHR', 'type': EXTENSION_TYPE_BOTH, 'holder_type': 'VkSurfaceCapabilities2KHR', 'print_iterator': True}),
-    ('format_properties2', {'extends': 'VkFormatProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type':'VkFormatProperties2', 'print_iterator': True}),
-    ('queue_properties2', {'extends': 'VkQueueFamilyProperties2', 'type': EXTENSION_TYPE_DEVICE, 'holder_type': 'VkQueueFamilyProperties2', 'print_iterator': True})
+    ('phys_device_props2',
+        {'extends': 'VkPhysicalDeviceProperties2',
+         'type': EXTENSION_TYPE_BOTH,
+         'holder_type': 'VkPhysicalDeviceProperties2',
+         'print_iterator': True}),
+    ('phys_device_mem_props2',
+        {'extends': 'VkPhysicalDeviceMemoryProperties2',
+        'type': EXTENSION_TYPE_DEVICE,
+        'holder_type':'VkPhysicalDeviceMemoryProperties2',
+        'print_iterator': False}),
+    ('phys_device_features2',
+        {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo',
+        'type': EXTENSION_TYPE_DEVICE,
+        'holder_type': 'VkPhysicalDeviceFeatures2',
+        'print_iterator': True}),
+    ('surface_capabilities2',
+        {'extends': 'VkSurfaceCapabilities2KHR',
+        'type': EXTENSION_TYPE_BOTH,
+        'holder_type': 'VkSurfaceCapabilities2KHR',
+        'print_iterator': True,
+        'exclude': ['VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT']}),
+    ('format_properties2',
+        {'extends': 'VkFormatProperties2',
+        'type': EXTENSION_TYPE_DEVICE,
+        'holder_type':'VkFormatProperties2',
+        'print_iterator': True}),
+    ('queue_properties2',
+        {'extends': 'VkQueueFamilyProperties2',
+        'type': EXTENSION_TYPE_DEVICE,
+        'holder_type': 'VkQueueFamilyProperties2',
+        'print_iterator': True})
                                    ))
 class VulkanInfoGeneratorOptions(GeneratorOptions):
     def __init__(self,
@@ -243,9 +269,9 @@ class VulkanInfoGenerator(OutputGenerator):
 
         types_to_gen.update(
             GatherTypesToGen(self.all_structures, structures_to_gen))
-        for key in EXTENSION_CATEGORIES.keys():
+        for key, info in EXTENSION_CATEGORIES.items():
             types_to_gen.update(
-                GatherTypesToGen(self.all_structures, self.extension_sets[key]))
+                GatherTypesToGen(self.all_structures, self.extension_sets[key], info.get('exclude')))
         types_to_gen = sorted(types_to_gen)
 
         names_of_structures_to_gen = set()
@@ -365,10 +391,13 @@ class VulkanInfoGenerator(OutputGenerator):
 
         for key, value in EXTENSION_CATEGORIES.items():
             if str(typeinfo.elem.get('structextends')).find(value.get('extends')) != -1:
-                self.extension_sets[key].add(name)
+                if value.get('exclude') is None or name not in value.get('exclude'):
+                    self.extension_sets[key].add(name)
 
 
-def GatherTypesToGen(structure_list, structures):
+def GatherTypesToGen(structure_list, structures, exclude = []):
+    if exclude == None:
+        exclude = []
     types = set()
     for s in structures:
         types.add(s)
@@ -380,8 +409,9 @@ def GatherTypesToGen(structure_list, structures):
                 for m in s.members:
                     if m.typeID not in predefined_types and m.name not in names_to_ignore:
                         if m.typeID not in types:
-                            types.add(m.typeID)
-                            added_stuff = True
+                            if s.name not in exclude:
+                                types.add(m.typeID)
+                                added_stuff = True
     return types
 
 
