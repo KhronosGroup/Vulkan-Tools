@@ -32,6 +32,9 @@
             "sub_dir": "Vulkan-Loader",
             "build_dir": "Vulkan-Loader/build",
             "install_dir": "Vulkan-Loader/build/install",
+            "cmake_options": [
+                "-DLOADER_USE_UNSAFE_FILE_SEARCH=ON"
+            ],
             "commit": "d40385b1748ae5270fcab18c5aae1a2e5a301465",
             "deps": [
                 {
