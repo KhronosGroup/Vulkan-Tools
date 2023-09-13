@@ -116,13 +116,17 @@ jobs:
                 arch: ${{ matrix.arch }}
 
             - name: Configure
-              run: cmake -S. -B build  -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON
+              run: cmake -S. -B build  -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON
 
             - name: Build
               run: cmake --build ./build
 
             - name: Install
               run: cmake --install build/ --prefix build/install
+
+            - name: Test
+              working-directory: ./build
+              run: ctest --output-on-failure
 
             - name: Verify generated source files
               run: python scripts/generate_source.py --verify external/${{matrix.config}}/Vulkan-Headers/build/install/share/vulkan/registry
