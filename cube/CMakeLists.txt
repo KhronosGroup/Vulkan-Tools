@@ -15,39 +15,10 @@
 # limitations under the License.
 # ~~~
 
-set(CUBE_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/..)
+set(CUBE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
 
-if (NOT GLSLANG_INSTALL_DIR AND DEFINED ENV{GLSLANG_INSTALL_DIR})
-    set(GLSLANG_INSTALL_DIR $ENV{GLSLANG_INSTALL_DIR})
-endif()
-
-if(GLSLANG_INSTALL_DIR)
-    message(STATUS "Using GLSLANG_INSTALL_DIR to look for glslangValidator")
-    find_program(GLSLANG_VALIDATOR names glslangValidator HINTS "${GLSLANG_INSTALL_DIR}/bin")
-else()
-    find_package(Python3 REQUIRED QUIET)
-    set(GLSLANG_VALIDATOR_NAME "glslangValidator")
-    message(STATUS "Using cmake find_program to look for glslangValidator")
-    if(WIN32)
-        execute_process(
-            COMMAND ${Python3_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-windows-x64-Release.zip)
-        set(GLSLANG_VALIDATOR_NAME "glslangValidator.exe")
-    elseif(APPLE)
-        execute_process(COMMAND ${Python3_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-osx-Release.zip)
-    elseif(UNIX AND NOT APPLE) # i.e. Linux
-        execute_process(COMMAND ${Python3_EXECUTABLE} ${SCRIPTS_DIR}/fetch_glslangvalidator.py glslang-master-linux-Release.zip)
-    endif()
-    if (WIN32)
-        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/windows/bin")
-    elseif(APPLE)
-        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/darwin/bin")
-    else()
-        set(PLATFORM_DIR "${PROJECT_SOURCE_DIR}/glslang/linux/bin")
-    endif()
-    find_program(GLSLANG_VALIDATOR NAMES ${GLSLANG_VALIDATOR_NAME} HINTS ${PLATFORM_DIR})
-endif()
 
 if(UNIX AND NOT APPLE) # i.e. Linux
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
@@ -177,19 +148,23 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-add_custom_command(COMMENT "Compiling cube vertex shader"
-                   OUTPUT cube.vert.inc
-                   COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_BINARY_DIR}/cube.vert.inc
-                           ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                   DEPENDS ${PROJECT_SOURCE_DIR}/cube/cube.vert ${GLSLANG_VALIDATOR})
-add_custom_command(COMMENT "Compiling cube fragment shader"
-                   OUTPUT cube.frag.inc
-                   COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_BINARY_DIR}/cube.frag.inc
-                           ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                   DEPENDS ${PROJECT_SOURCE_DIR}/cube/cube.frag ${GLSLANG_VALIDATOR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+if (COMPILE_CUBE_SHADERS)
+    # Try to find glslang in system paths or in an SDK if the VULKAN_SDK env-var is set
+    find_program(GLSLANG_VALIDATOR names glslang glslangValidator HINTS $ENV{GLSLANG_INSTALL_DIR} $ENV{VULKAN_SDK}/bin $ENV{VULKAN_SDK}/Bin)
+
+    add_custom_command(COMMENT "Compiling cube vertex shader"
+                    OUTPUT cube.vert.inc
+                    COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_SOURCE_DIR}/cube.vert.inc
+                            ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                    MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.vert
+                    DEPENDS ${PROJECT_SOURCE_DIR}/cube/cube.vert ${GLSLANG_VALIDATOR})
+    add_custom_command(COMMENT "Compiling cube fragment shader"
+                    OUTPUT cube.frag.inc
+                    COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_SOURCE_DIR}/cube.frag.inc
+                            ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                    MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.frag
+                    DEPENDS ${PROJECT_SOURCE_DIR}/cube/cube.frag ${GLSLANG_VALIDATOR})
+endif()
 
 if(WIN32)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES")

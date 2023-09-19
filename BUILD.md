@@ -87,27 +87,6 @@ below.
 Note that this dependency can be ignored if not building the mock ICD
 (CMake option: `-DBUILD_ICD=OFF`).
 
-#### glslang
-
-This repository has a required dependency on the `glslangValidator` (shader
-compiler) for compiling the shader programs for the vkcube demos.
-
-The CMake code in this repository downloads release binaries of glslang if a
-build glslang repository is not provided. The glslangValidator is obtained
-from this set of release binaries.
-
-If you don't wish the CMake code to download these binaries, then you must
-clone the [glslang repository](https://github.com/KhronosGroup/glslang) and
-build its `install` target. Follow the build instructions in the glslang
-[README.md](https://github.com/KhronosGroup/glslang/blob/main/README.md)
-file. Ensure that the `update_glslang_sources.py` script has been run as part
-of building glslang. You must also take note of the glslang install directory
-and pass it on the CMake command line for building this repository, as
-described below.
-
-Note that this dependency can be ignored if not building the vkcube demo
-(CMake option: `-DBUILD_CUBE=OFF`).
-
 ### Build and Install Directories
 
 A common convention is to place the build directory in the top directory of
@@ -206,6 +185,7 @@ on/off options currently supported by this repository:
 | -------------------------- | -------- | ------- | -------------------------------------------------------------------------------- |
 | BUILD_TESTS                | All      | `OFF`   | Controls whether the tests are built.                                            |
 | BUILD_CUBE                 | All      | `ON`    | Controls whether or not the vkcube demo is built.                                |
+| COMPILE_CUBE_SHADERS       | All      | `OFF`   | Controls whether glslang is found and cube's shaders are compiled                |
 | BUILD_VULKANINFO           | All      | `ON`    | Controls whether or not the vulkaninfo utility is built.                         |
 | BUILD_ICD                  | All      | `ON`    | Controls whether or not the mock ICD is built.                                   |
 | INSTALL_ICD                | All      | `OFF`   | Controls whether or not the mock ICD is installed as part of the install target. |
@@ -332,15 +312,6 @@ location of the loader's install directory:
 
     cmake -A x64 -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir \
                  -DVULKAN_LOADER_INSTALL_DIR=absolute_path_to_install_dir ..
-
-#### Using glslang Built from a Repository
-
-If you do need to build and use your own glslang, build the glslang repository
-with the install target and modify your CMake invocation to add the location
-of the glslang's install directory:
-
-    cmake -A x64 -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir \
-                 -DGLSLANG_INSTALL_DIR=absolute_path_to_install_dir ..
 
 ### Windows Notes
 
