@@ -23,6 +23,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <cstring>
 #include <string>
 #include <unordered_map>
 #include <vulkan/vulkan.h>

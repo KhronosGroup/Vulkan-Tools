@@ -85,6 +85,10 @@ endif()
 
 set_target_properties(VkICD_mock_icd PROPERTIES OUTPUT_NAME ${MOCK_ICD_NAME})
 
+if (DEFINED GIT_BRANCH_NAME AND DEFINED GIT_TAG_INFO)
+    target_compile_definitions(VkICD_mock_icd PRIVATE GIT_BRANCH_NAME="${GIT_BRANCH_NAME}" GIT_TAG_INFO="${GIT_TAG_INFO}")
+endif()
+
 # Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install icd")

@@ -569,8 +569,12 @@ TEST_F(MockICD, vkGetPhysicalDeviceProperties2) {
     fragment_density_map2_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT;
     fragment_density_map2_properties.pNext = static_cast<void*>(&mesh_shader_properties);
 
+    VkPhysicalDeviceDriverProperties driver_properties{};
+    driver_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+    driver_properties.pNext = static_cast<void*>(&fragment_density_map2_properties);
+
     VkPhysicalDeviceProperties2 properties2{};
-    properties2.pNext = static_cast<void*>(&fragment_density_map2_properties);
+    properties2.pNext = static_cast<void*>(&driver_properties);
     vkGetPhysicalDeviceProperties2(physical_device, &properties2);
     ASSERT_EQ(properties2.properties.apiVersion, VK_HEADER_VERSION_COMPLETE);
     ASSERT_EQ(properties2.properties.driverVersion, 1);
@@ -624,6 +628,8 @@ TEST_F(MockICD, vkGetPhysicalDeviceProperties2) {
     ASSERT_EQ(fragment_density_map2_properties.subsampledCoarseReconstructionEarlyAccess, VK_FALSE);
     ASSERT_EQ(fragment_density_map2_properties.maxSubsampledArrayLayers, 2);
     ASSERT_EQ(fragment_density_map2_properties.maxDescriptorSetSubsampledSamplers, 1);
+    ASSERT_EQ(std::string(driver_properties.driverName), "Vulkan Mock Device");
+    ASSERT_EQ(std::string(driver_properties.driverInfo), "Branch: " GIT_BRANCH_NAME " Tag Info: " GIT_TAG_INFO);
 }
 
 TEST_F(MockICD, vkGetPhysicalDeviceExternalSemaphoreProperties) {
