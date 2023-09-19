@@ -49,6 +49,10 @@ if (WIN32)
 endif()
 set_target_properties(vulkan_tools_tests PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
+if (DEFINED GIT_BRANCH_NAME AND DEFINED GIT_TAG_INFO)
+    target_compile_definitions(vulkan_tools_tests PRIVATE GIT_BRANCH_NAME="${GIT_BRANCH_NAME}" GIT_TAG_INFO="${GIT_TAG_INFO}")
+endif()
+
 if (ENABLE_ADDRESS_SANITIZER)
     target_compile_options(vulkan_tools_tests PUBLIC -fsanitize=address)
     target_link_options(vulkan_tools_tests PUBLIC -fsanitize=address)

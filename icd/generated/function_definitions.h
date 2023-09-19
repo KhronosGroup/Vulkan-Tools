@@ -3008,7 +3008,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
        VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL,
     };
 
-    auto *host_image_copy_props = lvl_find_mod_in_chain< VkPhysicalDeviceHostImageCopyPropertiesEXT>(pProperties->pNext);
+    auto *host_image_copy_props = lvl_find_mod_in_chain<VkPhysicalDeviceHostImageCopyPropertiesEXT>(pProperties->pNext);
     if (host_image_copy_props){
         if (host_image_copy_props->pCopyDstLayouts == nullptr) host_image_copy_props->copyDstLayoutCount = num_copy_layouts;
         else {
@@ -3024,6 +3024,16 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
                 host_image_copy_props->pCopySrcLayouts[i] = HostCopyLayouts[i];
             }
         }
+    }
+
+    auto *driver_properties = lvl_find_mod_in_chain<VkPhysicalDeviceDriverProperties>(pProperties->pNext);
+    if (driver_properties) {
+        std::strncpy(driver_properties->driverName, "Vulkan Mock Device", VK_MAX_DRIVER_NAME_SIZE);
+#if defined(GIT_BRANCH_NAME) && defined(GIT_TAG_INFO)
+        std::strncpy(driver_properties->driverInfo, "Branch: " GIT_BRANCH_NAME " Tag Info: " GIT_TAG_INFO, VK_MAX_DRIVER_INFO_SIZE);
+#else
+        std::strncpy(driver_properties->driverInfo, "Branch: --unknown-- Tag Info: --unknown--", VK_MAX_DRIVER_INFO_SIZE);
+#endif
     }
 }
 
