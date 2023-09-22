@@ -1,5 +1,5 @@
 # Copyright (C) 2018-2019 The ANGLE Project Authors.
-# Copyright (C) 2019, 2023 LunarG, Inc.
+# Copyright (C) 2019-2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,32 +16,6 @@
 import("//build_overrides/build.gni")
 import("//build_overrides/vulkan_tools.gni")
 
-# Vulkan-tools isn't ported to Fuchsia yet.
-# TODO(spang): Port mock ICD to Fuchsia.
-assert(!is_fuchsia)
-
-config("vulkan_internal_config") {
-  defines = [ "VULKAN_NON_CMAKE_BUILD" ]
-  if (is_clang || !is_win) {
-    cflags = [ "-Wno-unused-function" ]
-  }
-  if (is_linux || is_chromeos) {
-    defines += [
-      "SYSCONFDIR=\"/etc\"",
-      "FALLBACK_CONFIG_DIRS=\"/etc/xdg\"",
-      "FALLBACK_DATA_DIRS=\"/usr/local/share:/usr/share\"",
-    ]
-  }
-}
-
-# Vulkan tool generated utility headers
-source_set("vulkan_tools_headers") {
-  public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
-  sources = [
-      "icd/generated/vk_typemap_helper.h",
-  ]
-}
-
 if (!is_android) {
   vulkan_undefine_configs = []
   if (is_win && build_with_chromium) {
@@ -51,23 +25,20 @@ if (!is_android) {
     ]
   }
 
-  raw_vulkan_icd_dir = rebase_path("icd", root_build_dir)
-
-  vulkan_data_dir = "$root_out_dir/$vulkan_data_subdir"
-  raw_vulkan_data_dir = rebase_path(vulkan_data_dir, root_build_dir)
-
   # Vulkan Mock ICD
   # ---------------
   shared_library("VkICD_mock_icd") {
     configs -= vulkan_undefine_configs
-    deps = [ ":vulkan_tools_headers" ]
-    public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
+    deps = [
+      "$vulkan_headers_dir:vulkan_headers"
+    ]
     data_deps = [ ":vulkan_gen_icd_json_file" ]
     sources = [
       "icd/mock_icd.h",
       "icd/mock_icd.cpp",
       "icd/generated/function_declarations.h",
       "icd/generated/function_definitions.h",
+      "icd/generated/vk_typemap_helper.h",
     ]
     include_dirs = [
         "icd",
@@ -84,25 +55,34 @@ if (!is_android) {
 
   action("vulkan_gen_icd_json_file") {
     script = "build-gn/generate_vulkan_layers_json.py"
+
     public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
-    sources = [ "$vulkan_headers_dir/include/vulkan/vulkan_core.h" ]
-    args = [ "--icd" ]
-    if (is_win) {
-      sources += [ "icd/windows/VkICD_mock_icd.json" ]
-      args += [ "$raw_vulkan_icd_dir/windows" ]
-    }
-    if (is_linux || is_chromeos) {
-      sources += [ "icd/linux/VkICD_mock_icd.json" ]
-      args += [ "$raw_vulkan_icd_dir/linux" ]
-    }
-    if (is_mac) {
-      sources += [ "icd/macos/VkICD_mock_icd.json" ]
-      args += [ "$raw_vulkan_icd_dir/macos" ]
+
+    sources = [  "icd/VkICD_mock_icd.json.in" ]
+
+    vulkan_data_dir = "$root_out_dir/$vulkan_data_subdir"
+
+    outputs = [ "$vulkan_data_dir/VkICD_mock_icd.json" ]
+
+    if (is_linux) {
+      _platform = "Linux"
+    } else if (is_win) {
+      _platform = "Windows"
+    } else if (is_mac) {
+      _platform = "Darwin"
+    } else if (is_fuchsia) {
+      _platform = "Fuchsia"
+    } else {
+      _platform = "Other"
     }
 
-    # The layer JSON files are part of the necessary data deps.
-    outputs = [ "$vulkan_data_dir/VkICD_mock_icd.json" ]
+    args =  [
+      "--icd",
+      "--platform", _platform,
+      rebase_path("icd/", root_build_dir),
+      rebase_path(vulkan_data_dir, root_build_dir)
+    ] + rebase_path(sources, root_build_dir)
+
     data = outputs
-    args += [ raw_vulkan_data_dir ] + rebase_path(sources, root_build_dir)
   }
 }

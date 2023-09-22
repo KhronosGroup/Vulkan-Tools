@@ -16,6 +16,10 @@
 # limitations under the License.
 # ~~~
 
+if (ANDROID)
+    return()
+endif()
+
 # These variables enable downstream users to customize the CMake targets
 # based on the target API variant (e.g. Vulkan SC)
 set(MOCK_ICD_NAME VkICD_mock_icd)
@@ -23,8 +27,6 @@ set(GENERATED generated)
 
 if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
-elseif(ANDROID)
-    add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR -DVK_USE_PLATFORM_ANDROID_KHX)
 elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
 elseif(UNIX AND NOT APPLE) # i.e. Linux
@@ -43,128 +45,110 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
-# Copy or link the JSON files to the binary directory for ease of use in the build tree.
-if(WIN32)
-    # extra setup for out-of-tree builds
-    if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
-        if(CMAKE_GENERATOR MATCHES "^Visual Studio.*")
-            file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${MOCK_ICD_NAME}.json src_json)
-            file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${MOCK_ICD_NAME}.json dst_json)
-            add_custom_target(VkICD_mock_icd-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
-            set_target_properties(VkICD_mock_icd-json PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
-        else()
-            file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/windows/${MOCK_ICD_NAME}.json src_json)
-            file(TO_NATIVE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${MOCK_ICD_NAME}.json dst_json)
-            add_custom_target(VkICD_mock_icd-json ALL COMMAND copy ${src_json} ${dst_json} VERBATIM)
-        endif()
-    endif()
-elseif(APPLE)
-    # extra setup for out-of-tree builds
-    if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
-        if(CMAKE_GENERATOR MATCHES "^Xcode.*")
-            add_custom_target(mk_icd_config_dir ALL
-                              COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
-            add_custom_target(VkICD_mock_icd-json ALL
-                                DEPENDS mk_icd_config_dir
-                                COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${MOCK_ICD_NAME}.json
-                                        $<CONFIG> ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${MOCK_ICD_NAME}.json
-                                VERBATIM)
-        else()
-            add_custom_target(VkICD_mock_icd-json ALL
-                                COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/macos/${MOCK_ICD_NAME}.json
-                                        ${MOCK_ICD_NAME}.json
-                                VERBATIM)
-        endif()
-    endif()
-else()
-    # extra setup for out-of-tree builds
-    if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
-        add_custom_target(VkICD_mock_icd-json ALL
-                            COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/linux/${MOCK_ICD_NAME}.json
-                                    ${MOCK_ICD_NAME}.json
-                            VERBATIM)
-    endif()
-endif()
+add_custom_target(generate_icd_files
+    DEPENDS mock_icd.cpp ${GENERATED}/function_definitions.h ${GENERATED}/function_declarations.h
+)
+set_target_properties(
+    generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER}
+)
 
-# For ICD with a direct dependency on a project with the same name, use it.
-if(NOT (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR))
-    add_dependencies(VkICD_mock_icd-json VkICD_mock_icd)
-endif()
-add_custom_target(generate_icd_files DEPENDS mock_icd.cpp ${GENERATED}/function_definitions.h ${GENERATED}/function_declarations.h)
-set_target_properties(generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
+add_library(VkICD_mock_icd MODULE)
+target_sources(VkICD_mock_icd PRIVATE mock_icd.cpp)
+target_link_libraries(VkICD_mock_icd PRIVATE Vulkan::Headers)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/${GENERATED}
-                    ${CMAKE_CURRENT_BINARY_DIR}
-                    ${PROJECT_BINARY_DIR}
-                    ${CMAKE_BINARY_DIR})
+target_include_directories(VkICD_mock_icd PRIVATE
+    ${GENERATED}
+    .
+)
 if(BUILD_WSI_WAYLAND_SUPPORT)
-    include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
+    target_include_directories(VkICD_mock_icd PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
 endif()
 
-if(WIN32)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_CRT_SECURE_NO_WARNINGS")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -D_CRT_SECURE_NO_WARNINGS")
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -D_CRT_SECURE_NO_WARNINGS")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_CRT_SECURE_NO_WARNINGS /bigobj")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_CRT_SECURE_NO_WARNINGS /bigobj")
-    # Turn off transitional "changed behavior" warning message for Visual Studio versions prior to 2015. The changed behavior is
-    # that constructor initializers are now fixed to clear the struct members.
-    add_compile_options("$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,19>>:/wd4351>")
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith -Wno-unused-function -Wno-sign-compare")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-arith -Wno-unused-function -Wno-sign-compare")
-endif()
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU|Clang")
+    target_compile_options(VkICD_mock_icd PRIVATE
+        -Wpointer-arith
+        -Wno-unused-function
+        -Wno-sign-compare
+    )
 
-
-if(WIN32)
-    file(TO_NATIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.def DEF_FILE)
-    add_custom_target(copy-mock_icd-def-file ALL
-                        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${DEF_FILE} ${MOCK_ICD_NAME}.def
-                        VERBATIM)
-    set_target_properties(copy-mock_icd-def-file PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER})
-    add_library(VkICD_mock_icd SHARED mock_icd.cpp ${MOCK_ICD_NAME}.def)
-    target_link_libraries(VkICD_mock_icd PRIVATE Vulkan::Headers)
-    if(INSTALL_ICD)
-        install(TARGETS VkICD_mock_icd DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
-elseif(APPLE)
-    add_library(VkICD_mock_icd SHARED mock_icd.cpp )
-    target_link_libraries(VkICD_mock_icd PRIVATE Vulkan::Headers)
-    set_target_properties(VkICD_mock_icd PROPERTIES LINK_FLAGS "-Wl")
-    if(INSTALL_ICD)
-        install(TARGETS VkICD_mock_icd DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    endif()
-else()
-    add_library(VkICD_mock_icd SHARED mock_icd.cpp )
-    target_link_libraries(VkICD_mock_icd PRIVATE Vulkan::Headers)
-    set_target_properties(VkICD_mock_icd PROPERTIES LINK_FLAGS "-Wl,-export-dynamic,-Bsymbolic,--exclude-libs,ALL")
-    if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
-        install(TARGETS VkICD_mock_icd DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    endif()
     if (ENABLE_ADDRESS_SANITIZER)
         target_compile_options(VkICD_mock_icd PUBLIC -fsanitize=address)
         target_link_options(VkICD_mock_icd PUBLIC -fsanitize=address)
-    endif ()
+    endif()
+endif()
+
+if(MSVC)
+    target_compile_options(VkICD_mock_icd PRIVATE /bigobj)
+    target_compile_definitions(VkICD_mock_icd PRIVATE _CRT_SECURE_NO_WARNINGS)
+    target_link_options(VkICD_mock_icd PRIVATE /DEF:${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.def)
+elseif(MINGW)
+    target_sources(VkICD_mock_icd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.def)
+else()
+    if(APPLE)
+        set_target_properties(VkICD_mock_icd PROPERTIES SUFFIX ".dylib")
+    endif()
+    message(DEBUG "Mock ICD Functions are exported via EXPORT")
 endif()
 
 set_target_properties(VkICD_mock_icd PROPERTIES OUTPUT_NAME ${MOCK_ICD_NAME})
 
-# JSON file(s) install targets. For Linux, need to remove the "./" from the library path before installing to system directories.
-if((UNIX AND NOT APPLE) AND INSTALL_ICD) # i.e. Linux
-    add_custom_target(VkICD_mock_icd-staging-json ALL
-                        COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                        COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/linux/${MOCK_ICD_NAME}.json ${CMAKE_CURRENT_BINARY_DIR}/staging-json
-                        COMMAND sed -i -e "/\"library_path\":/s$./libVkICD$libVkICD$"
-                                ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${MOCK_ICD_NAME}.json
-                        VERBATIM
-                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linux/${MOCK_ICD_NAME}.json)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/staging-json/${MOCK_ICD_NAME}.json
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${API_TYPE}/icd.d)
+# Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
+# Require the user to ask that it be installed if they really want it.
+option(INSTALL_ICD "Install icd")
+if (INSTALL_ICD)
+    message(STATUS "Installing Mock ICD")
 endif()
 
-# Windows uses the JSON file as-is.
-if(WIN32 AND INSTALL_ICD)
-    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/windows/${MOCK_ICD_NAME}.json DESTINATION ${CMAKE_INSTALL_BINDIR})
+# There are 2 primary deliverables for the mock driver.
+# - The actual library (lib)VkICD_mock_icd.(dll|so|dylib)
+# - The respective json file, VkICD_mock_icd.json
+# This code generates the appropriate json for both local testing and the installation.
+# NOTE: For WIN32 the JSON and dll MUST be placed in the same location, due to Win32 using a relative path for installation.
+set(INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.json.in")
+set(INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/mock_icd.json")
+set(OUTPUT_FILE_FINAL_NAME "${MOCK_ICD_NAME}.json")
+set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+if (WIN32)
+    set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}) # WIN32/MINGW expect the dll in the `bin` dir, this matches our WIN32 SDK process
+endif()
+
+if (WIN32)
+    set(JSON_LIBRARY_PATH ".\\\\${MOCK_ICD_NAME}.dll")
+elseif(APPLE)
+    set(JSON_LIBRARY_PATH "./lib${MOCK_ICD_NAME}.dylib")
+else()
+    set(JSON_LIBRARY_PATH "./lib${MOCK_ICD_NAME}.so")
+endif()
+
+configure_file(${INPUT_FILE} ${INTERMEDIATE_FILE} @ONLY)
+
+# To support both multi/single configuration generators just copy the json to the correct directory
+add_custom_command(TARGET VkICD_mock_icd POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INTERMEDIATE_FILE} $<TARGET_FILE_DIR:VkICD_mock_icd>/${OUTPUT_FILE_FINAL_NAME}
+)
+
+# For UNIX-based systems, `library_path` should not contain a relative path (indicated by "./") before installing to system directories
+# This json isn't used for regular local development, it's used for installation
+if (UNIX)
+    set(UNIX_INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/unix_install_mock_icd.json")
+
+    if(APPLE)
+        set(JSON_LIBRARY_PATH "lib${MOCK_ICD_NAME}.dylib")
+    else()
+        set(JSON_LIBRARY_PATH "lib${MOCK_ICD_NAME}.so")
+    endif()
+
+    configure_file(${INPUT_FILE} ${UNIX_INTERMEDIATE_FILE} @ONLY)
+
+    if (INSTALL_ICD)
+        install(FILES ${UNIX_INTERMEDIATE_FILE} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d RENAME ${OUTPUT_FILE_FINAL_NAME})
+    endif()
+endif()
+
+if (WIN32 AND INSTALL_ICD)
+    install(FILES ${INTERMEDIATE_FILE} DESTINATION ${LAYER_INSTALL_DIR} RENAME ${OUTPUT_FILE_FINAL_NAME})
+endif()
+
+if (INSTALL_ICD)
+    install(TARGETS VkICD_mock_icd DESTINATION ${LAYER_INSTALL_DIR})
 endif()
