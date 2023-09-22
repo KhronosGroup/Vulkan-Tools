@@ -153,13 +153,13 @@ if (COMPILE_CUBE_SHADERS)
     find_program(GLSLANG_VALIDATOR names glslang glslangValidator HINTS $ENV{GLSLANG_INSTALL_DIR} $ENV{VULKAN_SDK}/bin $ENV{VULKAN_SDK}/Bin)
 
     add_custom_command(COMMENT "Compiling cube vertex shader"
-                    OUTPUT cube.vert.inc
+                    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cube.vert.inc
                     COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_SOURCE_DIR}/cube.vert.inc
                             ${PROJECT_SOURCE_DIR}/cube/cube.vert
                     MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.vert
                     DEPENDS ${PROJECT_SOURCE_DIR}/cube/cube.vert ${GLSLANG_VALIDATOR})
     add_custom_command(COMMENT "Compiling cube fragment shader"
-                    OUTPUT cube.frag.inc
+                    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/cube.frag.inc
                     COMMAND ${GLSLANG_VALIDATOR} -V -x -o ${CMAKE_CURRENT_SOURCE_DIR}/cube.frag.inc
                             ${PROJECT_SOURCE_DIR}/cube/cube.frag
                     MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/cube/cube.frag
