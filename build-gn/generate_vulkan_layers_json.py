@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright (C) 2016 The ANGLE Project Authors.
+# Copyright (c) 2022-2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,18 +27,19 @@ import os
 import platform
 import sys
 
-
 def glob_slash(dirname):
     """Like regular glob but replaces \ with / in returned paths."""
     return [s.replace('\\', '/') for s in glob.glob(dirname)]
 
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--icd', action='store_true')
+    parser.add_argument('--no-path-prefix', action='store_true')
+    parser.add_argument('--platform', type=str, default=platform.system(),
+        help='Target platform to build validation layers for: '
+             'Linux|Darwin|Windows|Fuchsia|...')
     parser.add_argument('source_dir')
     parser.add_argument('target_dir')
-    parser.add_argument('version_header', help='path to vulkan_core.h')
     parser.add_argument('json_files', nargs='*')
     args = parser.parse_args()
 
@@ -82,25 +84,17 @@ def main():
         with open(target_fname, 'w') as outfile:
             json.dump(data, outfile)
 
-    # Get the Vulkan version from the vulkan_core.h file
-    vk_header_filename = args.version_header
-    vk_version = None
-    with open(vk_header_filename) as vk_header_file:
-        for line in vk_header_file:
-            if line.startswith('#define VK_HEADER_VERSION'):
-                vk_version = line.split()[-1]
-                break
-    if not vk_version:
-        print('failed to extract vk_version', file=sys.stderr)
-        return 1
-
     # Set json file prefix and suffix for generating files, default to Linux.
-    relative_path_prefix = '../lib'
-    file_type_suffix = '.so'
-    if platform.system() == 'Windows':
+    if args.no_path_prefix:
+        relative_path_prefix = ''
+    elif args.platform == 'Windows':
         relative_path_prefix = r'..\\'  # json-escaped, hence two backslashes.
+    else:
+        relative_path_prefix = '../lib'
+    file_type_suffix = '.so'
+    if args.platform == 'Windows':
         file_type_suffix = '.dll'
-    elif platform.system() == 'Darwin':
+    elif args.platform == 'Darwin':
         file_type_suffix = '.dylib'
 
     # For each *.json.in template files in source dir generate actual json file
@@ -119,9 +113,7 @@ def main():
         with open(json_out_fname,'w') as json_out_file, \
              open(json_in_name) as infile:
             for line in infile:
-                line = line.replace('@RELATIVE_LAYER_BINARY@',
-                                    relative_path_prefix + layer_lib_name)
-                line = line.replace('@VK_VERSION@', '1.1.' + vk_version)
+                line = line.replace('@JSON_LIBRARY_PATH@', relative_path_prefix + layer_lib_name)
                 json_out_file.write(line)
 
 if __name__ == '__main__':
