@@ -45,13 +45,6 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
-add_custom_target(generate_icd_files
-    DEPENDS mock_icd.cpp ${GENERATED}/function_definitions.h ${GENERATED}/function_declarations.h
-)
-set_target_properties(
-    generate_icd_files PROPERTIES FOLDER ${TOOLS_HELPER_FOLDER}
-)
-
 add_library(VkICD_mock_icd MODULE)
 target_sources(VkICD_mock_icd PRIVATE mock_icd.cpp)
 target_link_libraries(VkICD_mock_icd PRIVATE Vulkan::Headers)
