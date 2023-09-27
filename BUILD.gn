@@ -83,6 +83,10 @@ if (!is_android) {
       rebase_path(vulkan_data_dir, root_build_dir)
     ] + rebase_path(sources, root_build_dir)
 
+    if (is_win) {
+      args += [ "--no-path-prefix" ]
+    }
+
     data = outputs
   }
 }
