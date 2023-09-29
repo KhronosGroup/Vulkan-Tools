@@ -29,7 +29,7 @@ if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DVK_USE_PLATFORM_WIN32_KHX -DWIN32_LEAN_AND_MEAN)
 elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_MACOS_MVK)
-elseif(UNIX AND NOT APPLE) # i.e. Linux
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_XCB_SUPPORT)
         add_definitions(-DVK_USE_PLATFORM_XCB_KHR -DVK_USE_PLATFORM_XCB_KHX)
     endif()

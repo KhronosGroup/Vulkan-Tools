@@ -20,7 +20,7 @@ set(CUBE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
 
 
-if(UNIX AND NOT APPLE) # i.e. Linux
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
@@ -97,7 +97,7 @@ elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
 elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_METAL_EXT)
-elseif(UNIX AND NOT APPLE) # i.e. Linux
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(NOT CUBE_WSI_SELECTION)
         set(CUBE_WSI_SELECTION "XCB")
     endif()
@@ -199,12 +199,6 @@ elseif(NOT WIN32)
         target_link_options(vkcube PUBLIC -fsanitize=address)
     endif ()
 else()
-    if(CMAKE_CL_64)
-        set(LIB_DIR "Win64")
-    else()
-        set(LIB_DIR "Win32")
-    endif()
-
     add_executable(vkcube
                    WIN32
                    cube.c
@@ -225,7 +219,7 @@ if(APPLE)
         fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcube.app \"\" \"${Vulkan_LIBRARY_DIR}\")
         ")
 else()
-    install(TARGETS vkcube RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS vkcube)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -249,12 +243,6 @@ elseif(NOT WIN32)
         target_link_options(vkcubepp PUBLIC -fsanitize=address)
     endif ()
 else()
-    if(CMAKE_CL_64)
-        set(LIB_DIR "Win64")
-    else()
-        set(LIB_DIR "Win32")
-    endif()
-
     add_executable(vkcubepp
                    WIN32
                    cube.cpp
@@ -275,13 +263,13 @@ if(APPLE)
         fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcubepp.app \"\" \"${Vulkan_LIBRARY_DIR}\")
         ")
 else()
-    install(TARGETS vkcubepp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS vkcubepp)
 endif()
 
 # ----------------------------------------------------------------------------
 # vkcube-wayland
 
-if(UNIX AND NOT APPLE) # i.e. Linux
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_WAYLAND_SUPPORT AND EXISTS ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
         set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${WAYLAND_CLIENT_LIBRARIES})
@@ -305,7 +293,7 @@ if(UNIX AND NOT APPLE) # i.e. Linux
         if (NEED_RT)
             target_link_libraries(vkcube-wayland rt)
         endif()
-        install(TARGETS vkcube-wayland RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+        install(TARGETS vkcube-wayland)
 
         if (ENABLE_ADDRESS_SANITIZER)
             target_compile_options(vkcube-wayland PUBLIC -fsanitize=address)
