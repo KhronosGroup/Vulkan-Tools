@@ -55,7 +55,9 @@ if(APPLE)
 endif()
 
 find_package(VulkanHeaders REQUIRED CONFIG)
-find_package(VulkanLoader REQUIRED CONFIG)
+if (NOT ANDROID)
+    find_package(VulkanLoader REQUIRED CONFIG)
+endif()
 
 include(GNUInstallDirs)
 

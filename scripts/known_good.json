@@ -36,6 +36,11 @@
                 "-DLOADER_USE_UNSAFE_FILE_SEARCH=ON"
             ],
             "commit": "v1.3.266",
+            "build_platforms": [
+                "windows",
+                "linux",
+                "darwin"
+            ],
             "deps": [
                 {
                     "var_name": "VULKAN_HEADERS_INSTALL_DIR",

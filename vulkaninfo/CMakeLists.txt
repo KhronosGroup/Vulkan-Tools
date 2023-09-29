@@ -15,7 +15,9 @@
 # limitations under the License.
 # ~~~
 
-# CMakeLists.txt file for building Vulkaninfo
+if (ANDROID)
+    return()
+endif()
 
 if(WIN32)
     # ~~~
