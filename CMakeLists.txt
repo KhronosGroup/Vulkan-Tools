@@ -16,6 +16,7 @@
 # limitations under the License.
 # ~~~
 cmake_minimum_required(VERSION 3.17.2)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 project(Vulkan-Tools)
 
@@ -25,19 +26,10 @@ set(API_TYPE "vulkan")
 
 add_subdirectory(scripts)
 
-# User-interface declarations ----------------------------------------------------------------------------------------------------
-# This section contains variables that affect development GUIs (e.g. CMake GUI and IDEs), such as option(), folders, and variables
-# with the CACHE property.
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
-
-if (UNIX AND NOT APPLE) # i.e. Linux
-    option(ENABLE_ADDRESS_SANITIZER "Use addres sanitization" OFF)
-endif()
+option(ENABLE_ADDRESS_SANITIZER "Use address sanitization")
 
 if(WIN32)
     # Optional: Allow specify the exact version used in the vulkaninfo executable

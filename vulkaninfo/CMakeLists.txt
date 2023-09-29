@@ -63,7 +63,7 @@ endif()
 
 target_compile_definitions(vulkaninfo PRIVATE -DVK_ENABLE_BETA_EXTENSIONS)
 
-if(UNIX AND NOT APPLE) # i.e. Linux
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
@@ -97,8 +97,8 @@ if(UNIX AND NOT APPLE) # i.e. Linux
     endif()
 
     if (ENABLE_ADDRESS_SANITIZER)
-        target_compile_options(vulkaninfo PUBLIC -fsanitize=address)
-        target_link_options(vulkaninfo PUBLIC -fsanitize=address)
+        target_compile_options(vulkaninfo PRIVATE -fsanitize=address)
+        target_link_options(vulkaninfo PRIVATE -fsanitize=address)
     endif ()
 endif()
 
@@ -111,22 +111,27 @@ endif()
 target_link_libraries(vulkaninfo Vulkan::Headers)
 
 if(WIN32)
-    target_compile_definitions(vulkaninfo PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -D_CRT_SECURE_NO_WARNINGS -DVK_NO_PROTOTYPES)
-    if(MSVC AND NOT MSVC_VERSION LESS 1900)
-        # If MSVC, Enable control flow guard
-        message(STATUS "Building vulkaninfo with control flow guard")
-        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/guard:cf>")
-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
-    endif()
+    target_compile_definitions(vulkaninfo PRIVATE 
+        VK_USE_PLATFORM_WIN32_KHR
+        WIN32_LEAN_AND_MEAN
+        _CRT_SECURE_NO_WARNINGS
+        VK_NO_PROTOTYPES
+    )
+
+    message(STATUS "Building vulkaninfo with control flow guard")
+    target_compile_options(vulkaninfo PRIVATE /guard:cf)
+    target_link_options(vulkaninfo PRIVATE /guard:cf)
 
 elseif(APPLE)
-    add_definitions(-DVK_USE_PLATFORM_MACOS_MVK -DVK_USE_PLATFORM_METAL_EXT)
+    target_compile_definitions(vulkaninfo PRIVATE
+        VK_USE_PLATFORM_MACOS_MVK
+        VK_USE_PLATFORM_METAL_EXT
+    )
 endif()
 
 if(APPLE)
     install(TARGETS vulkaninfo RUNTIME DESTINATION "vulkaninfo")
 else()
-    install(TARGETS vulkaninfo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(TARGETS vulkaninfo)
 endif()
 
