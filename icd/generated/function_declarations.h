@@ -354,6 +354,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_optical_flow", 1},
     {"VK_EXT_legacy_dithering", 1},
     {"VK_EXT_pipeline_protected_access", 1},
+    {"VK_ANDROID_external_format_resolve", 1},
     {"VK_KHR_maintenance5", 1},
     {"VK_KHR_ray_tracing_position_fetch", 1},
     {"VK_EXT_shader_object", 1},
@@ -365,6 +366,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_ARM_shader_core_builtins", 2},
     {"VK_EXT_pipeline_library_group_handles", 1},
     {"VK_EXT_dynamic_rendering_unused_attachments", 1},
+    {"VK_NV_low_latency2", 1},
     {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
     {"VK_QCOM_image_processing2", 1},
@@ -4132,6 +4134,9 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
 
 
 
+#ifdef VK_USE_PLATFORM_ANDROID_KHR
+#endif /* VK_USE_PLATFORM_ANDROID_KHR */
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
     VkDevice                                    device,
@@ -4175,6 +4180,32 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 
 
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    VkLatencySleepModeInfoNV*                   pSleepModeInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL LatencySleepNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    VkLatencySleepInfoNV*                       pSleepInfo);
+
+static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    VkSetLatencyMarkerInfoNV*                   pLatencyMarkerInfo);
+
+static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
+    VkDevice                                    device,
+    VkSwapchainKHR                              swapchain,
+    uint32_t*                                   pTimingCount,
+    VkGetLatencyMarkerInfoNV*                   pLatencyMarkerInfo);
+
+static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
+    VkQueue                                     queue,
+    VkOutOfBandQueueTypeInfoNV                  pQueueTypeInfo);
 
 
 
@@ -5104,6 +5135,11 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdBindShadersEXT", (void*)CmdBindShadersEXT},
     {"vkGetFramebufferTilePropertiesQCOM", (void*)GetFramebufferTilePropertiesQCOM},
     {"vkGetDynamicRenderingTilePropertiesQCOM", (void*)GetDynamicRenderingTilePropertiesQCOM},
+    {"vkSetLatencySleepModeNV", (void*)SetLatencySleepModeNV},
+    {"vkLatencySleepNV", (void*)LatencySleepNV},
+    {"vkSetLatencyMarkerNV", (void*)SetLatencyMarkerNV},
+    {"vkGetLatencyTimingsNV", (void*)GetLatencyTimingsNV},
+    {"vkQueueNotifyOutOfBandNV", (void*)QueueNotifyOutOfBandNV},
     {"vkCmdSetAttachmentFeedbackLoopEnableEXT", (void*)CmdSetAttachmentFeedbackLoopEnableEXT},
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},

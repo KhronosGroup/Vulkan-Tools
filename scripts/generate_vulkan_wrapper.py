@@ -1568,6 +1568,14 @@ VK_EXT_pipeline_library_group_handles = Extension(name='VK_EXT_pipeline_library_
 VK_EXT_dynamic_rendering_unused_attachments = Extension(name='VK_EXT_dynamic_rendering_unused_attachments', version=1, guard=None, commands=[
 ])
 
+VK_NV_low_latency2 = Extension(name='VK_NV_low_latency2', version=1, guard=None, commands=[
+    Command(name='vkSetLatencySleepModeNV', dispatch='VkDevice'),
+    Command(name='vkLatencySleepNV', dispatch='VkDevice'),
+    Command(name='vkSetLatencyMarkerNV', dispatch='VkDevice'),
+    Command(name='vkGetLatencyTimingsNV', dispatch='VkDevice'),
+    Command(name='vkQueueNotifyOutOfBandNV', dispatch='VkQueue'),
+])
+
 VK_QCOM_multiview_per_view_render_areas = Extension(name='VK_QCOM_multiview_per_view_render_areas', version=1, guard=None, commands=[
 ])
 
@@ -1637,6 +1645,9 @@ VK_KHR_android_surface = Extension(name='VK_KHR_android_surface', version=6, gua
 VK_ANDROID_external_memory_android_hardware_buffer = Extension(name='VK_ANDROID_external_memory_android_hardware_buffer', version=5, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
     Command(name='vkGetAndroidHardwareBufferPropertiesANDROID', dispatch='VkDevice'),
     Command(name='vkGetMemoryAndroidHardwareBufferANDROID', dispatch='VkDevice'),
+])
+
+VK_ANDROID_external_format_resolve = Extension(name='VK_ANDROID_external_format_resolve', version=1, guard='VK_USE_PLATFORM_ANDROID_KHR', commands=[
 ])
 
 VK_FUCHSIA_imagepipe_surface = Extension(name='VK_FUCHSIA_imagepipe_surface', version=1, guard='VK_USE_PLATFORM_FUCHSIA', commands=[
@@ -2092,6 +2103,7 @@ extensions = [
     VK_ARM_shader_core_builtins,
     VK_EXT_pipeline_library_group_handles,
     VK_EXT_dynamic_rendering_unused_attachments,
+    VK_NV_low_latency2,
     VK_QCOM_multiview_per_view_render_areas,
     VK_QCOM_image_processing2,
     VK_QCOM_filter_cubic_weights,
@@ -2106,6 +2118,7 @@ extensions = [
     VK_EXT_mesh_shader,
     VK_KHR_android_surface,
     VK_ANDROID_external_memory_android_hardware_buffer,
+    VK_ANDROID_external_format_resolve,
     VK_FUCHSIA_imagepipe_surface,
     VK_FUCHSIA_external_memory,
     VK_FUCHSIA_external_semaphore,
