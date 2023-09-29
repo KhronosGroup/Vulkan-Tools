@@ -47,9 +47,6 @@ findtool jarsigner
 
 set -ev
 
-VULKANINFO_BUILD_DIR=$PROJECT_DIR/vulkaninfo/android
-echo VULKANINFO_BUILD_DIR="${VULKANINFO_BUILD_DIR}"
-
 DEMO_BUILD_DIR=$PROJECT_DIR/cube/android
 echo DEMO_BUILD_DIR="${DEMO_BUILD_DIR}"
 
@@ -69,15 +66,6 @@ pushd $ANDROID_BUILD_DIR
 popd
 pushd $PROJECT_DIR
 python3 scripts/generate_source.py $ANDROID_BUILD_DIR/third_party/Vulkan-Headers/registry --incremental
-popd
-)
-
-#
-# build vulkaninfo
-#
-(
-pushd $VULKANINFO_BUILD_DIR
-ndk-build -j $cores
 popd
 )
 
