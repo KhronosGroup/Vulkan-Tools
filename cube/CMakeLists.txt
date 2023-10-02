@@ -15,11 +15,6 @@
 # limitations under the License.
 # ~~~
 
-set(CUBE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
-
-set(SCRIPTS_DIR "${PROJECT_SOURCE_DIR}/scripts")
-
-
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
@@ -118,7 +113,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
         if(NOT BUILD_WSI_WAYLAND_SUPPORT)
             message(FATAL_ERROR "Selected Wayland for vkcube build but not building Wayland support")
         endif()
-        set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${WAYLAND_CLIENT_LIBRARIES})
         set(CUBE_PLATFORM VK_USE_PLATFORM_WAYLAND_KHR)
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
@@ -145,9 +139,6 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-
 if (COMPILE_CUBE_SHADERS)
     # Try to find glslang in system paths or in an SDK if the VULKAN_SDK env-var is set
     find_program(GLSLANG_VALIDATOR names glslang glslangValidator HINTS $ENV{GLSLANG_INSTALL_DIR} $ENV{VULKAN_SDK}/bin $ENV{VULKAN_SDK}/Bin)
@@ -167,11 +158,10 @@ if (COMPILE_CUBE_SHADERS)
 endif()
 
 if(WIN32)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_USE_MATH_DEFINES")
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+    # vkcube / vkcube make use of M_PI and various other math defines.
+    add_compile_definitions(_USE_MATH_DEFINES)
 endif()
-
-include_directories(${CUBE_INCLUDE_DIRS})
 
 # ----------------------------------------------------------------------------
 # vkcube
@@ -208,6 +198,8 @@ else()
                    cube.frag.inc)
     target_link_libraries(vkcube Vulkan::Headers Vulkan::Loader)
 endif()
+
+target_include_directories(vkcube PRIVATE .)
 
 if(APPLE)
     # Keep RPATH so fixup_bundle can use it to find libraries
@@ -252,6 +244,7 @@ else()
                    cube.frag.inc)
     target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
 endif()
+target_include_directories(vkcubepp PRIVATE .)
 
 if(APPLE)
     # Keep RPATH so fixup_bundle can use it to find libraries
@@ -271,14 +264,12 @@ endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_WAYLAND_SUPPORT AND EXISTS ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
-        set(CUBE_INCLUDE_DIRS ${WAYLAND_CLIENT_INCLUDE_DIR} ${CUBE_INCLUDE_DIRS})
         link_libraries(${WAYLAND_CLIENT_LIBRARIES})
         set(OPTIONAL_WAYLAND_DATA_FILES
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
-        include_directories(${CMAKE_CURRENT_BINARY_DIR})
         add_executable(vkcube-wayland
                        cube.c
                        ${PROJECT_SOURCE_DIR}/cube/cube.vert
@@ -286,6 +277,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
                        cube.vert.inc
                        cube.frag.inc
                        ${OPTIONAL_WAYLAND_DATA_FILES})
+        target_include_directories(vkcube-wayland PRIVATE
+            ${CMAKE_CURRENT_BINARY_DIR}
+            .
+        )
         target_link_libraries(vkcube-wayland Vulkan::Headers Vulkan::Loader)
         target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
         include(CheckLibraryExists)
