@@ -30,14 +30,14 @@ set(cubepp_RESOURCES ${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json
     ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/VulkanIcon.icns)
 
 # Have Xcode handle the Storyboard
-if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
+if(XCODE)
     set(cubepp_RESOURCES ${cubepp_RESOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cubepp/Resources/Main.storyboard)
 endif()
 
 add_executable(vkcubepp MACOSX_BUNDLE ${cubepp_SRCS} ${cubepp_HDRS} ${cubepp_RESOURCES} cube.vert.inc cube.frag.inc)
 
 # Handle the Storyboard ourselves
-if(NOT ${CMAKE_GENERATOR} MATCHES "^Xcode.*")
+if(NOT XCODE)
     # Compile the storyboard file with the ibtool.
     add_custom_command(TARGET vkcubepp POST_BUILD
                        COMMAND ${IBTOOL}
@@ -72,7 +72,7 @@ set_source_files_properties("${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json"
                             "Resources/vulkan/icd.d")
 
 # Copy the MoltenVK lib into the bundle.
-if(${CMAKE_GENERATOR} MATCHES "^Xcode.*")
+if(XCODE)
     add_custom_command(TARGET vkcubepp POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
                                ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib
