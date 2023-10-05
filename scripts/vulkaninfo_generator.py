@@ -601,10 +601,13 @@ def PrintStructure(struct, types_to_gen, structure_names, aliases):
                 out += f'        ArrayWrapper arr(p,"{v.name}", obj.' + v.arrayLength + ');\n'
                 out += f"        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n"
                 if v.typeID in types_to_gen:
-                    out += f"            if (obj.{v.name} != nullptr) {{\n"
-                    out += f"                p.SetElementIndex(i);\n"
-                    out += f'                Dump{v.typeID}(p, "{v.name}", obj.{v.name}[i]);\n'
-                    out += f"            }}\n"
+                    out += f'            if (obj.{v.name} != nullptr) {{\n'
+                    out += f'                p.SetElementIndex(i);\n'
+                    out += '                if (p.Type() == OutputType::json)\n'
+                    out += f'                    p.PrintString(std::string("VK_") + {v.typeID}String(obj.{v.name}[i]));\n'
+                    out += '                else\n'
+                    out += f'                    p.PrintString({v.typeID}String(obj.{v.name}[i]));\n'
+                    out += f'            }}\n'
                 else:
                     out += f"            p.PrintElement(obj.{v.name}[i]);\n"
                 out += f"        }}\n"
