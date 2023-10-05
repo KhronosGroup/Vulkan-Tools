@@ -82,7 +82,7 @@ std::string to_hex_str(Printer &p, const T i) {
 # used in the .cpp code
 structures_to_gen = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
                      'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties',
-                     'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT']
+                     'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT', 'VkPhysicalDeviceHostImageCopyPropertiesEXT']
 enums_to_gen = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling']
 flags_to_gen = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT', 'VkQueueFlags',
@@ -115,7 +115,8 @@ EXTENSION_CATEGORIES = OrderedDict((
         {'extends': 'VkPhysicalDeviceProperties2',
          'type': EXTENSION_TYPE_BOTH,
          'holder_type': 'VkPhysicalDeviceProperties2',
-         'print_iterator': True}),
+         'print_iterator': True,
+        'exclude': ['VkPhysicalDeviceHostImageCopyPropertiesEXT']}),
     ('phys_device_mem_props2',
         {'extends': 'VkPhysicalDeviceMemoryProperties2',
         'type': EXTENSION_TYPE_DEVICE,

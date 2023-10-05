@@ -333,6 +333,22 @@ void DumpGroups(Printer &p, AppInstance &inst) {
     }
 }
 
+void GetAndDumpHostImageCopyPropertiesEXT(Printer &p, AppGpu &gpu) {
+    // Manually implement VkPhysicalDeviceHostImageCopyPropertiesEXT due to it needing to be called twice
+    VkPhysicalDeviceHostImageCopyPropertiesEXT host_image_copy_properties_ext{};
+    host_image_copy_properties_ext.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
+    VkPhysicalDeviceProperties2KHR props2{};
+    props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
+    props2.pNext = static_cast<void *>(&host_image_copy_properties_ext);
+    gpu.inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(gpu.phys_device, &props2);
+    std::vector<VkImageLayout> src_layouts(host_image_copy_properties_ext.copySrcLayoutCount);
+    host_image_copy_properties_ext.pCopySrcLayouts = src_layouts.data();
+    std::vector<VkImageLayout> dst_layouts(host_image_copy_properties_ext.copyDstLayoutCount);
+    host_image_copy_properties_ext.pCopyDstLayouts = dst_layouts.data();
+    gpu.inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(gpu.phys_device, &props2);
+    DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(p, "VkPhysicalDeviceHostImageCopyPropertiesEXT", host_image_copy_properties_ext);
+}
+
 void GpuDumpProps(Printer &p, AppGpu &gpu) {
     auto props = gpu.GetDeviceProperties();
     p.SetSubHeader();
@@ -362,6 +378,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
         void *place = gpu.props2.pNext;
         chain_iterator_phys_device_props2(p, gpu.inst, gpu, place);
         p.AddNewline();
+        GetAndDumpHostImageCopyPropertiesEXT(p, gpu);
     }
 }
 
@@ -658,6 +675,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
             if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
                 void *place = gpu.props2.pNext;
                 chain_iterator_phys_device_props2(p, gpu.inst, gpu, place);
+                GetAndDumpHostImageCopyPropertiesEXT(p, gpu);
             }
         }
         {
