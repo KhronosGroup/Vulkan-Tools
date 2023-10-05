@@ -45,7 +45,7 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/staging-json/MoltenVK_icd.json P
 find_library(COCOA NAMES Cocoa)
 
 # Locate Interface Builder Tool, needed to build things like Storyboards outside of Xcode.
-if(NOT ${CMAKE_GENERATOR} MATCHES "^Xcode.*")
+if(NOT XCODE)
     # Make sure we can find the 'ibtool' program. If we can NOT find it we skip generation of this project.
     find_program(IBTOOL ibtool HINTS "/usr/bin" "${OSX_DEVELOPER_ROOT}/usr/bin")
     if(${IBTOOL} STREQUAL "IBTOOL-NOTFOUND")
