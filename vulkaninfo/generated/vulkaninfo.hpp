@@ -1983,7 +1983,10 @@ void DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(Printer &p, std::string name
         for (uint32_t i = 0; i < obj.copySrcLayoutCount; i++) {
             if (obj.pCopySrcLayouts != nullptr) {
                 p.SetElementIndex(i);
-                DumpVkImageLayout(p, "pCopySrcLayouts", obj.pCopySrcLayouts[i]);
+                if (p.Type() == OutputType::json)
+                    p.PrintString(std::string("VK_") + VkImageLayoutString(obj.pCopySrcLayouts[i]));
+                else
+                    p.PrintString(VkImageLayoutString(obj.pCopySrcLayouts[i]));
             }
         }
     }
@@ -1993,7 +1996,10 @@ void DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(Printer &p, std::string name
         for (uint32_t i = 0; i < obj.copyDstLayoutCount; i++) {
             if (obj.pCopyDstLayouts != nullptr) {
                 p.SetElementIndex(i);
-                DumpVkImageLayout(p, "pCopyDstLayouts", obj.pCopyDstLayouts[i]);
+                if (p.Type() == OutputType::json)
+                    p.PrintString(std::string("VK_") + VkImageLayoutString(obj.pCopyDstLayouts[i]));
+                else
+                    p.PrintString(VkImageLayoutString(obj.pCopyDstLayouts[i]));
             }
         }
     }
@@ -3215,7 +3221,10 @@ void DumpVkSurfacePresentModeCompatibilityEXT(Printer &p, std::string name, cons
         for (uint32_t i = 0; i < obj.presentModeCount; i++) {
             if (obj.pPresentModes != nullptr) {
                 p.SetElementIndex(i);
-                DumpVkPresentModeKHR(p, "pPresentModes", obj.pPresentModes[i]);
+                if (p.Type() == OutputType::json)
+                    p.PrintString(std::string("VK_") + VkPresentModeKHRString(obj.pPresentModes[i]));
+                else
+                    p.PrintString(VkPresentModeKHRString(obj.pPresentModes[i]));
             }
         }
     }
