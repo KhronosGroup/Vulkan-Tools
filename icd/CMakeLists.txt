@@ -89,13 +89,6 @@ if (DEFINED GIT_BRANCH_NAME AND DEFINED GIT_TAG_INFO)
     target_compile_definitions(VkICD_mock_icd PRIVATE GIT_BRANCH_NAME="${GIT_BRANCH_NAME}" GIT_TAG_INFO="${GIT_TAG_INFO}")
 endif()
 
-# Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
-# Require the user to ask that it be installed if they really want it.
-option(INSTALL_ICD "Install icd")
-if (INSTALL_ICD)
-    message(STATUS "Installing Mock ICD")
-endif()
-
 # There are 2 primary deliverables for the mock driver.
 # - The actual library (lib)VkICD_mock_icd.(dll|so|dylib)
 # - The respective json file, VkICD_mock_icd.json
@@ -124,6 +117,15 @@ add_custom_command(TARGET VkICD_mock_icd POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INTERMEDIATE_FILE} $<TARGET_FILE_DIR:VkICD_mock_icd>/${OUTPUT_FILE_FINAL_NAME}
 )
 
+# Installing the Mock ICD to system directories is probably not desired since this ICD is not a very complete implementation.
+# Require the user to ask that it be installed if they really want it.
+option(INSTALL_ICD "Install Mock icd")
+if (INSTALL_ICD)
+    message(NOTICE "Installing Mock ICD")
+else()
+    return()
+endif()
+
 # For UNIX-based systems, `library_path` should not contain a relative path (indicated by "./") before installing to system directories
 # This json isn't used for regular local development, it's used for installation
 if (UNIX)
@@ -137,15 +139,11 @@ if (UNIX)
 
     configure_file(${INPUT_FILE} ${UNIX_INTERMEDIATE_FILE} @ONLY)
 
-    if (INSTALL_ICD)
-        install(FILES ${UNIX_INTERMEDIATE_FILE} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d RENAME ${OUTPUT_FILE_FINAL_NAME})
-    endif()
+    install(FILES ${UNIX_INTERMEDIATE_FILE} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/vulkan/icd.d RENAME ${OUTPUT_FILE_FINAL_NAME})
 endif()
 
-if (WIN32 AND INSTALL_ICD)
+if (WIN32)
     install(FILES ${INTERMEDIATE_FILE} DESTINATION ${LAYER_INSTALL_DIR} RENAME ${OUTPUT_FILE_FINAL_NAME})
 endif()
 
-if (INSTALL_ICD)
-    install(TARGETS VkICD_mock_icd DESTINATION ${LAYER_INSTALL_DIR})
-endif()
+install(TARGETS VkICD_mock_icd DESTINATION ${LAYER_INSTALL_DIR})
