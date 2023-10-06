@@ -664,7 +664,8 @@ void Demo::destroy_texture(texture_object &tex_objs) {
 
 void Demo::draw() {
     // Ensure no more than FRAME_LAG renderings are outstanding
-    device.waitForFences(fences[frame_index], VK_TRUE, UINT64_MAX);
+    const vk::Result wait_result = device.waitForFences(fences[frame_index], VK_TRUE, UINT64_MAX);
+    VERIFY(wait_result == vk::Result::eSuccess || wait_result == vk::Result::eTimeout);
     device.resetFences({fences[frame_index]});
 
     vk::Result acquire_result;
