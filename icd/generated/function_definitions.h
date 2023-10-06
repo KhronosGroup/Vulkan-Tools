@@ -6398,6 +6398,7 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
     VkTessellationDomainOrigin                  domainOrigin)
@@ -6775,10 +6776,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkLatencySleepModeInfoNV*                   pSleepModeInfo)
+    const VkLatencySleepModeInfoNV*             pSleepModeInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6787,7 +6789,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(
 static VKAPI_ATTR VkResult VKAPI_CALL LatencySleepNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkLatencySleepInfoNV*                       pSleepInfo)
+    const VkLatencySleepInfoNV*                 pSleepInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6796,7 +6798,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL LatencySleepNV(
 static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkSetLatencyMarkerInfoNV*                   pLatencyMarkerInfo)
+    const VkSetLatencyMarkerInfoNV*             pLatencyMarkerInfo)
 {
 //Not a CREATE or DESTROY function
 }
@@ -6812,7 +6814,7 @@ static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
 
 static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
     VkQueue                                     queue,
-    VkOutOfBandQueueTypeInfoNV                  pQueueTypeInfo)
+    const VkOutOfBandQueueTypeInfoNV*           pQueueTypeInfo)
 {
 //Not a CREATE or DESTROY function
 }

@@ -1470,6 +1470,9 @@ VK_EXT_image_compression_control_swapchain = Extension(name='VK_EXT_image_compre
 VK_QCOM_image_processing = Extension(name='VK_QCOM_image_processing', version=1, guard=None, commands=[
 ])
 
+VK_EXT_nested_command_buffer = Extension(name='VK_EXT_nested_command_buffer', version=1, guard=None, commands=[
+])
+
 VK_EXT_external_memory_acquire_unmodified = Extension(name='VK_EXT_external_memory_acquire_unmodified', version=1, guard=None, commands=[
 ])
 
@@ -1554,6 +1557,9 @@ VK_QCOM_multiview_per_view_viewports = Extension(name='VK_QCOM_multiview_per_vie
 ])
 
 VK_NV_ray_tracing_invocation_reorder = Extension(name='VK_NV_ray_tracing_invocation_reorder', version=1, guard=None, commands=[
+])
+
+VK_NV_extended_sparse_address_space = Extension(name='VK_NV_extended_sparse_address_space', version=1, guard=None, commands=[
 ])
 
 VK_EXT_mutable_descriptor_type = Extension(name='VK_EXT_mutable_descriptor_type', version=1, guard=None, commands=[
@@ -2085,6 +2091,7 @@ extensions = [
     VK_GOOGLE_surfaceless_query,
     VK_EXT_image_compression_control_swapchain,
     VK_QCOM_image_processing,
+    VK_EXT_nested_command_buffer,
     VK_EXT_external_memory_acquire_unmodified,
     VK_EXT_extended_dynamic_state3,
     VK_EXT_subpass_merge_feedback,
@@ -2099,6 +2106,7 @@ extensions = [
     VK_SEC_amigo_profiling,
     VK_QCOM_multiview_per_view_viewports,
     VK_NV_ray_tracing_invocation_reorder,
+    VK_NV_extended_sparse_address_space,
     VK_EXT_mutable_descriptor_type,
     VK_ARM_shader_core_builtins,
     VK_EXT_pipeline_library_group_handles,
