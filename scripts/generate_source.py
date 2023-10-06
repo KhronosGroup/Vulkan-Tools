@@ -22,6 +22,7 @@
 import argparse
 import filecmp
 import os
+import json
 import shutil
 import subprocess
 import sys
@@ -38,6 +39,7 @@ def main(argv):
                         default='vulkan',
                         choices=['vulkan', 'vulkansc'],
                         help='Specify API name to generate')
+    parser.add_argument('--generated-version', help='sets the header version used to generate the repo')
     parser.add_argument('registry', metavar='REGISTRY_PATH', help='path to the Vulkan-Headers registry directory')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-i', '--incremental', action='store_true', help='only update repo files that change')
@@ -52,6 +54,19 @@ def main(argv):
 
     #base directory for the source repository
     repo_dir = common_codegen.repo_relative('')
+
+    # Update the api_version in the respective json files
+    if args.generated_version:
+        json_files = []
+        json_files.append(common_codegen.repo_relative('icd/VkICD_mock_icd.json.in'))
+        for json_file in json_files:
+            with open(json_file) as f:
+                data = json.load(f)
+
+            data["ICD"]["api_version"] = args.generated_version
+
+            with open(json_file, mode='w', encoding='utf-8', newline='\n') as f:
+                f.write(json.dumps(data, indent=4))
 
     # get directory where generators will run if needed
     if args.verify or args.incremental:

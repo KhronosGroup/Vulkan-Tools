@@ -123,7 +123,7 @@ if (TOOLS_CODEGEN)
     add_custom_target(tools_codegen
         COMMAND Python3::Interpreter ${PROJECT_SOURCE_DIR}/scripts/generate_source.py
             "${VULKAN_HEADERS_INSTALL_DIR}/${CMAKE_INSTALL_DATADIR}/vulkan/registry"
-            --incremental --api ${API_TYPE}
+            --incremental --generated-version ${VulkanHeaders_VERSION} --api ${API_TYPE}
     )
 endif()
 

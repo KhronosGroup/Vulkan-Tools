@@ -208,3 +208,15 @@ jobs:
               run: |
                   cd build-android
                   ./build_all.sh
+
+    tools_codegen:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-python@v4
+          with:
+            python-version: '3.10'
+        - run: sudo apt-get -qq update && sudo apt install libwayland-dev xorg-dev wayland-protocols
+        - run: cmake -S . -B build/ -D UPDATE_DEPS=ON -D UPDATE_DEPS_DIR=external -D TOOLS_CODEGEN=ON
+        - run: cmake --build build --target tools_codegen
+        - run: git diff --exit-code
