@@ -346,6 +346,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_linear_color_attachment", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
     {"VK_QCOM_image_processing", 1},
+    {"VK_EXT_nested_command_buffer", 1},
     {"VK_EXT_external_memory_acquire_unmodified", 1},
     {"VK_EXT_extended_dynamic_state3", 2},
     {"VK_EXT_subpass_merge_feedback", 2},
@@ -362,6 +363,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_SEC_amigo_profiling", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
     {"VK_NV_ray_tracing_invocation_reorder", 1},
+    {"VK_NV_extended_sparse_address_space", 1},
     {"VK_EXT_mutable_descriptor_type", 1},
     {"VK_ARM_shader_core_builtins", 2},
     {"VK_EXT_pipeline_library_group_handles", 1},
@@ -3952,6 +3954,7 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetTessellationDomainOriginEXT(
     VkCommandBuffer                             commandBuffer,
     VkTessellationDomainOrigin                  domainOrigin);
@@ -4182,20 +4185,21 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL SetLatencySleepModeNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkLatencySleepModeInfoNV*                   pSleepModeInfo);
+    const VkLatencySleepModeInfoNV*             pSleepModeInfo);
 
 static VKAPI_ATTR VkResult VKAPI_CALL LatencySleepNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkLatencySleepInfoNV*                       pSleepInfo);
+    const VkLatencySleepInfoNV*                 pSleepInfo);
 
 static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    VkSetLatencyMarkerInfoNV*                   pLatencyMarkerInfo);
+    const VkSetLatencyMarkerInfoNV*             pLatencyMarkerInfo);
 
 static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
     VkDevice                                    device,
@@ -4205,7 +4209,7 @@ static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
 
 static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
     VkQueue                                     queue,
-    VkOutOfBandQueueTypeInfoNV                  pQueueTypeInfo);
+    const VkOutOfBandQueueTypeInfoNV*           pQueueTypeInfo);
 
 
 
