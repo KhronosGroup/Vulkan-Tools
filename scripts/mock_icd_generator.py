@@ -454,6 +454,14 @@ CUSTOM_C_INTERCEPTS = {
     return VK_SUCCESS;
 ''',
 'vkGetPhysicalDeviceImageFormatProperties2KHR': '''
+    auto *external_image_prop = lvl_find_mod_in_chain<VkExternalImageFormatProperties>(pImageFormatProperties->pNext);
+    auto *external_image_format = lvl_find_in_chain<VkPhysicalDeviceExternalImageFormatInfo>(pImageFormatInfo->pNext);
+    if (external_image_prop && external_image_format && external_image_format->handleType == VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID) {
+        external_image_prop->externalMemoryProperties.externalMemoryFeatures = VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT | VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT;
+        external_image_prop->externalMemoryProperties.compatibleHandleTypes = external_image_format->handleType;
+        external_image_prop->externalMemoryProperties.compatibleHandleTypes = external_image_format->handleType;
+    }
+
     GetPhysicalDeviceImageFormatProperties(physicalDevice, pImageFormatInfo->format, pImageFormatInfo->type, pImageFormatInfo->tiling, pImageFormatInfo->usage, pImageFormatInfo->flags, &pImageFormatProperties->imageFormatProperties);
     return VK_SUCCESS;
 ''',
@@ -651,7 +659,12 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkGetPhysicalDeviceExternalBufferProperties':'''
     constexpr VkExternalMemoryHandleTypeFlags supported_flags = 0x1FF;
-    if (pExternalBufferInfo->handleType & supported_flags) {
+    if (pExternalBufferInfo->handleType & VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID) {
+        // Can't have dedicated memory with AHB
+        pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT | VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT;
+        pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = pExternalBufferInfo->handleType;
+        pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = pExternalBufferInfo->handleType;
+    } else if (pExternalBufferInfo->handleType & supported_flags) {
         pExternalBufferProperties->externalMemoryProperties.externalMemoryFeatures = 0x7;
         pExternalBufferProperties->externalMemoryProperties.exportFromImportedHandleTypes = supported_flags;
         pExternalBufferProperties->externalMemoryProperties.compatibleHandleTypes = supported_flags;
@@ -1042,6 +1055,18 @@ CUSTOM_C_INTERCEPTS = {
 'vkGetRenderAreaGranularity': '''
     pGranularity->width = 1;
     pGranularity->height = 1;
+''',
+'vkGetAndroidHardwareBufferPropertiesANDROID': '''
+    pProperties->allocationSize = 65536;
+    pProperties->memoryTypeBits = 1 << 5; // DEVICE_LOCAL only type
+
+    auto *format_prop = lvl_find_mod_in_chain<VkAndroidHardwareBufferFormatPropertiesANDROID>(pProperties->pNext);
+    if (format_prop) {
+        // Likley using this format
+        format_prop->format = VK_FORMAT_R8G8B8A8_UNORM;
+        format_prop->externalFormat = 37;
+    }
+    return VK_SUCCESS;
 ''',
 }
 
