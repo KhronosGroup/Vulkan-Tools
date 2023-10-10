@@ -1,3 +1,9 @@
+# By default we install dependencies to the external directory
+/external/*
+
+# Ignore any build directories
+*build*/
+
 CMakeCache.txt
 CMakeLists.txt.user
 CMakeUserPresets.json
@@ -18,10 +24,6 @@ out64/*
 *.vcxproj
 *.sdf
 *.filters
-build
-build32
-dbuild
-build-android/external
 *.config
 *.creator
 *.creator.user
@@ -29,4 +31,3 @@ build-android/external
 *.includes
 .vscode/
 .DS_Store
-external/

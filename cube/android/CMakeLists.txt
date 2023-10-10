@@ -48,6 +48,8 @@ target_sources(android_glue PRIVATE
     ${native_app_glue_dir}/android_native_app_glue.h
 )
 
+set_target_properties(vkcube PROPERTIES OUTPUT_NAME "VkCube")
+
 target_link_libraries(vkcube PRIVATE
     android_glue
     log

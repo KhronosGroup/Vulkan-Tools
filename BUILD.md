@@ -516,73 +516,22 @@ Finally, rebuild the repository using `cmake` and `make`, as explained above.
 
 ## Building On Android
 
-Install the required tools for Linux and Windows covered above, then add the
-following.
-
-### Android Build Requirements
-
-- Install [Android Studio 2.3](https://developer.android.com/studio/index.html) or later.
-- From the "Welcome to Android Studio" splash screen, add the following components using
-  Configure > SDK Manager:
-  - SDK Platforms > Android 6.0 and newer
-  - SDK Tools > Android SDK Build-Tools
-  - SDK Tools > Android SDK Platform-Tools
-  - SDK Tools > NDK (Side by side)
-
-#### Add Android specifics to environment
-
-For each of the below, you may need to specify a different build-tools and ndk
-versions, as Android Studio will roll them forward fairly regularly.
-
-On Linux:
-
-    export ANDROID_SDK_HOME=$HOME/Android/sdk
-    export ANDROID_NDK_HOME=$HOME/Android/sdk/ndk/23.0.7599858
-    export PATH=$ANDROID_NDK_HOME:$PATH
-    export PATH=$ANDROID_SDK_HOME/platform-tools:$PATH
-    export PATH=$ANDROID_SDK_HOME/build-tools/31.0.0:$PATH
-
-On Windows:
-
-    set ANDROID_SDK_HOME=%LOCALAPPDATA%\Android\sdk
-    set ANDROID_NDK_HOME=%LOCALAPPDATA%\Android\sdk\ndk\23.0.7599858
-    set PATH=%ANDROID_NDK_HOME%;%PATH%
-    set PATH=%ANDROID_SDK_HOME%\platform-tools;%PATH%
-    set PATH=%ANDROID_SDK_HOME%\build-tools\31.0.0;%PATH%
-
-On OSX:
-
-    export ANDROID_SDK_HOME=$HOME/Library/Android/sdk
-    export ANDROID_NDK_HOME=$HOME/Library/Android/sdk/ndk/23.0.7599858
-    export PATH=$ANDROID_NDK_PATH:$PATH
-    export PATH=$ANDROID_SDK_HOME/platform-tools:$PATH
-    export PATH=$ANDROID_SDK_HOME/build-tools/31.0.0:$PATH
-
-Note: If `jarsigner` is missing from your platform, you can find it in the
-Android Studio install or in your Java installation. If you do not have Java,
-you can get it with something like the following:
-
-  sudo apt-get install openjdk-8-jdk
-
-### Android Build
-
-Use the following script to build the vkcube demo for Android:
-
-    cd build-android
-    ./build_all.sh
-
-The APK can be installed on production devices with:
-
-    ./install_all.sh [-s <serial number>]
-
-Note that there are no equivalent scripts on Windows yet, that work needs to
-be completed.
+TODO: https://github.com/KhronosGroup/Vulkan-Tools/issues/791
 
 ### Run vkcube
 
 Use the following command to run vkcube for Android:
 
-    adb shell am start com.example.VkCube/android.app.NativeActivity
+```bash
+cd build-android
+
+# Optional
+adb uninstall com.example.VkCube
+
+adb install -r -g --no-incremental bin/VkCube.apk
+
+adb shell am start com.example.VkCube/android.app.NativeActivity
+```
 
 ## Building on MacOS
 
