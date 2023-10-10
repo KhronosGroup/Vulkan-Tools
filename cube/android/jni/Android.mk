@@ -20,14 +20,14 @@ DEMO_DIR := $(SRC_DIR)/cube
 include $(CLEAR_VARS)
 LOCAL_MODULE := VkCube
 LOCAL_SRC_FILES += $(DEMO_DIR)/cube.c \
-                   $(SRC_DIR)/common/vulkan_wrapper.cpp \
-                   $(SRC_DIR)/common/android_util.cpp
+                   $(DEMO_DIR)/android/vulkan_wrapper.cpp \
+                   $(DEMO_DIR)/android/android_util.cpp
 LOCAL_C_INCLUDES += $(SRC_DIR)/build-android/third_party/Vulkan-Headers/include \
                     $(DEMO_DIR)/android/include \
                     $(SRC_DIR)/libs \
-                    $(SRC_DIR)/common \
+                    $(DEMO_DIR)/android/ \
                     $(SRC_DIR)/build-android/generated/include
-LOCAL_CFLAGS += -DVK_USE_PLATFORM_ANDROID_KHR --include=$(SRC_DIR)/common/vulkan_wrapper.h
+LOCAL_CFLAGS += -DVK_USE_PLATFORM_ANDROID_KHR --include=$(DEMO_DIR)/android/vulkan_wrapper.h
 LOCAL_WHOLE_STATIC_LIBRARIES += android_native_app_glue
 LOCAL_LDLIBS    := -llog -landroid
 LOCAL_LDFLAGS   := -u ANativeActivity_onCreate
