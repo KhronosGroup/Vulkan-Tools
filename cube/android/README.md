@@ -26,3 +26,16 @@ Then run the script:
     ./generate_vulkan_wrapper.py ../cube/android/vulkan_wrapper.cpp
     clang-format -i vulkan_wrapper.h
     clang-format -i vulkan_wrapper.cpp
+
+# Running vkcube on Android
+
+```bash
+cd build-android
+
+# Optional
+adb uninstall com.example.VkCube
+
+adb install -r -g --no-incremental bin/VkCube.apk
+
+adb shell am start com.example.VkCube/android.app.NativeActivity
+```
