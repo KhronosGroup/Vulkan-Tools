@@ -90,9 +90,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
-        find_package(Wayland REQUIRED)
-        target_include_directories(vulkaninfo PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
-        target_link_libraries(vulkaninfo ${WAYLAND_CLIENT_LIBRARIES})
+        pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
+        add_compile_definitions(VK_USE_PLATFORM_WAYLAND_KHR)
+
+        target_link_libraries(vulkaninfo PkgConfig::WAYLAND_CLIENT)
         target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_NO_PROTOTYPES)
     endif()
 

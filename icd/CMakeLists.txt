@@ -57,9 +57,6 @@ target_include_directories(VkICD_mock_icd PRIVATE
     ${GENERATED}
     .
 )
-if(BUILD_WSI_WAYLAND_SUPPORT)
-    target_include_directories(VkICD_mock_icd PRIVATE ${WAYLAND_CLIENT_INCLUDE_DIR})
-endif()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU|Clang")
     target_compile_options(VkICD_mock_icd PRIVATE

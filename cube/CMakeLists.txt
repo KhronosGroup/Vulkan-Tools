@@ -33,10 +33,13 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
-        find_package(Wayland REQUIRED)
-        find_package(WaylandScanner REQUIRED)
-        find_package(WaylandProtocols REQUIRED)
-        include_directories(${WAYLAND_CLIENT_INCLUDE_DIR})
+        pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
+
+        pkg_get_variable(WAYLAND_SCANNER_EXECUTABLE wayland-scanner wayland_scanner)
+        message(STATUS "WAYLAND_SCANNER_EXECUTABLE = ${WAYLAND_SCANNER_EXECUTABLE}")
+
+        pkg_get_variable(WAYLAND_PROTOCOLS_PATH wayland-protocols pkgdatadir)
+        message(STATUS "WAYLAND_PROTOCOLS_PATH = ${WAYLAND_PROTOCOLS_PATH}")
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
         add_custom_command(COMMENT "Generating xdg-shell protocol dispatch data"
                            OUTPUT xdg-shell-code.c
@@ -113,7 +116,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
         if(NOT BUILD_WSI_WAYLAND_SUPPORT)
             message(FATAL_ERROR "Selected Wayland for vkcube build but not building Wayland support")
         endif()
-        link_libraries(${WAYLAND_CLIENT_LIBRARIES})
+        link_libraries(PkgConfig::WAYLAND_CLIENT)
         set(CUBE_PLATFORM VK_USE_PLATFORM_WAYLAND_KHR)
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
         set(OPTIONAL_WAYLAND_DATA_FILES
@@ -264,29 +267,33 @@ endif()
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if(BUILD_WSI_WAYLAND_SUPPORT AND EXISTS ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
-        link_libraries(${WAYLAND_CLIENT_LIBRARIES})
-        set(OPTIONAL_WAYLAND_DATA_FILES
+        add_executable(vkcube-wayland)
+
+        target_sources(vkcube-wayland PRIVATE
+            cube.c
+            ${PROJECT_SOURCE_DIR}/cube/cube.vert
+            ${PROJECT_SOURCE_DIR}/cube/cube.frag
+            cube.vert.inc
+            cube.frag.inc
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
             ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
-        add_executable(vkcube-wayland
-                       cube.c
-                       ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                       ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                       cube.vert.inc
-                       cube.frag.inc
-                       ${OPTIONAL_WAYLAND_DATA_FILES})
+            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h
+        )
         target_include_directories(vkcube-wayland PRIVATE
             ${CMAKE_CURRENT_BINARY_DIR}
             .
         )
-        target_link_libraries(vkcube-wayland Vulkan::Headers Vulkan::Loader)
-        target_compile_definitions(vkcube-wayland PUBLIC VK_USE_PLATFORM_WAYLAND_KHR)
+        target_link_libraries(vkcube-wayland PRIVATE
+            Vulkan::Headers
+            Vulkan::Loader
+            PkgConfig::WAYLAND_CLIENT
+        )
+        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
         if (NEED_RT)
-            target_link_libraries(vkcube-wayland rt)
+            target_link_libraries(vkcube-wayland PRIVATE rt)
         endif()
         install(TARGETS vkcube-wayland)
 
