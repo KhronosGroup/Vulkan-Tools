@@ -22,7 +22,7 @@ Copy contents of parsed_header into generate_vulkan_wrapper.py between the secti
 Then run the script:
 
     popd
-    ./generate_vulkan_wrapper.py ../common/vulkan_wrapper.h
-    ./generate_vulkan_wrapper.py ../common/vulkan_wrapper.cpp
+    ./generate_vulkan_wrapper.py ../cube/android/vulkan_wrapper.h
+    ./generate_vulkan_wrapper.py ../cube/android/vulkan_wrapper.cpp
     clang-format -i vulkan_wrapper.h
     clang-format -i vulkan_wrapper.cpp
