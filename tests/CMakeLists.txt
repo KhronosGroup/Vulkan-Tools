@@ -16,6 +16,16 @@
 # ~~~
 
 if (ANDROID)
+
+    # Ensure ANativeActivity_onCreate is being exported from vkcube
+    find_program(GNU_NM NAMES nm)
+    if (GNU_NM)
+        add_test(NAME ANativeActivity_onCreate COMMAND ${GNU_NM} --dynamic $<TARGET_FILE:vkcube>)
+        set_tests_properties(ANativeActivity_onCreate
+            PROPERTIES PASS_REGULAR_EXPRESSION "T ANativeActivity_onCreate"
+        )
+    endif()
+
     return()
 endif()
 

@@ -57,6 +57,9 @@ target_include_directories(vkcube PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${MOLTENVK
 # We do this so vulkaninfo is linked to an individual library and NOT a framework.
 target_link_libraries(vkcube Vulkan::Loader "-framework Cocoa -framework QuartzCore")
 
+# Disable warnings about sprintf
+target_compile_options(vkcube PRIVATE -Wno-deprecated-declarations)
+
 set_target_properties(vkcube PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macOS/cube/Info.plist)
 
 # The RESOURCE target property cannot be used in conjunction with the MACOSX_PACKAGE_LOCATION property.  We need fine-grained

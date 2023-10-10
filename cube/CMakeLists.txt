@@ -171,40 +171,55 @@ endif()
 
 if(APPLE)
     include(macOS/cube/cube.cmake)
-elseif(NOT WIN32)
-    add_executable(vkcube
-                   cube.c
-                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                   cube.vert.inc
-                   cube.frag.inc
-                   ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcube Vulkan::Headers Vulkan::Loader)
+elseif (ANDROID)
+    add_library(vkcube MODULE)
+
+    target_sources(vkcube PRIVATE cube.c)
+
+    add_subdirectory(android)
+
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+    add_executable(vkcube)
+    target_sources(vkcube PRIVATE
+        cube.c
+        ${PROJECT_SOURCE_DIR}/cube/cube.vert
+        ${PROJECT_SOURCE_DIR}/cube/cube.frag
+        cube.vert.inc
+        cube.frag.inc
+        ${OPTIONAL_WAYLAND_DATA_FILES}
+    )
     target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
     include(CheckLibraryExists)
     CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
     if (NEED_RT)
-        target_link_libraries(vkcube rt)
+        target_link_libraries(vkcube PRIVATE rt)
     endif()
-
-    if (ENABLE_ADDRESS_SANITIZER)
-        target_compile_options(vkcube PUBLIC -fsanitize=address)
-        target_link_options(vkcube PUBLIC -fsanitize=address)
-    endif ()
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers Vulkan::Loader)
+elseif(WIN32)
+    add_executable(vkcube WIN32)
+    target_sources(vkcube PRIVATE
+        cube.c
+        ${PROJECT_SOURCE_DIR}/cube/cube.vert
+        ${PROJECT_SOURCE_DIR}/cube/cube.frag
+        cube.vert.inc
+        cube.frag.inc
+    )
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers Vulkan::Loader)
 else()
-    add_executable(vkcube
-                   WIN32
-                   cube.c
-                   ${PROJECT_SOURCE_DIR}/cube/cube.vert
-                   ${PROJECT_SOURCE_DIR}/cube/cube.frag
-                   cube.vert.inc
-                   cube.frag.inc)
-    target_link_libraries(vkcube Vulkan::Headers Vulkan::Loader)
+    message(FATAL_ERROR "Unsupported Platform!")
+endif()
+
+if (ENABLE_ADDRESS_SANITIZER)
+    target_compile_options(vkcube PUBLIC -fsanitize=address)
+    target_link_options(vkcube PUBLIC -fsanitize=address)
 endif()
 
 target_include_directories(vkcube PRIVATE .)
 
-if(APPLE)
+if (ANDROID)
+    install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})    
+elseif(APPLE)
     # Keep RPATH so fixup_bundle can use it to find libraries
     set_target_properties(vkcube PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     install(TARGETS vkcube BUNDLE DESTINATION "cube")
@@ -217,12 +232,16 @@ else()
     install(TARGETS vkcube)
 endif()
 
+if (ANDROID)
+    return()
+endif()
+
 # ----------------------------------------------------------------------------
 # vkcubepp
 
 if(APPLE)
     include(macOS/cubepp/cubepp.cmake)
-elseif(NOT WIN32)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     add_executable(vkcubepp
                    cube.cpp
                    ${PROJECT_SOURCE_DIR}/cube/cube.vert

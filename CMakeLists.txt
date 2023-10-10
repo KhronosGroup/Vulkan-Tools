@@ -65,10 +65,8 @@ if(APPLE)
     message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
 endif()
 
-find_package(VulkanHeaders REQUIRED CONFIG)
-if (NOT ANDROID)
-    find_package(VulkanLoader REQUIRED CONFIG)
-endif()
+find_package(VulkanHeaders QUIET CONFIG)
+find_package(VulkanLoader QUIET CONFIG)
 
 include(GNUInstallDirs)
 
