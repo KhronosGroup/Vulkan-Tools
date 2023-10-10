@@ -122,7 +122,7 @@ add_custom_command(TARGET VkICD_mock_icd POST_BUILD
 # Require the user to ask that it be installed if they really want it.
 option(INSTALL_ICD "Install Mock icd")
 if (INSTALL_ICD)
-    message(NOTICE "Installing Mock ICD")
+    message(NOTICE "INSTALL_ICD enabled!")
 else()
     return()
 endif()
