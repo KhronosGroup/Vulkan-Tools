@@ -16,7 +16,6 @@
 # limitations under the License.
 # ~~~
 cmake_minimum_required(VERSION 3.17.2)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 project(Vulkan-Tools)
 
