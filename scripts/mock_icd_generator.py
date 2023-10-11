@@ -1066,6 +1066,11 @@ CUSTOM_C_INTERCEPTS = {
         format_prop->format = VK_FORMAT_R8G8B8A8_UNORM;
         format_prop->externalFormat = 37;
     }
+
+    auto *format_resolve_prop = lvl_find_mod_in_chain<VkAndroidHardwareBufferFormatResolvePropertiesANDROID>(pProperties->pNext);
+    if (format_resolve_prop) {
+        format_resolve_prop->colorAttachmentFormat = VK_FORMAT_R8G8B8A8_UNORM;
+    }
     return VK_SUCCESS;
 ''',
 }
