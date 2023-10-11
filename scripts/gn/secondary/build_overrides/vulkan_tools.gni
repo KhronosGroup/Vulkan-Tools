@@ -1,4 +1,4 @@
-# Copyright (C) 2019 LunarG, Inc.
+# Copyright (c) 2019-2023 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,13 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-buildconfig = "//build/config/BUILDCONFIG.gn"
-secondary_source = "//build-gn/secondary/"
+# Paths to vulkan tools dependencies
+vulkan_headers_dir = "//external/Vulkan-Headers"
 
-script_executable = "python3"
-
-default_args = {
-    clang_use_chrome_plugins = false
-    use_custom_libcxx = false
-}
+# Subdirectories for generated files
+vulkan_data_subdir = ""
+vulkan_gen_subdir = ""
 
