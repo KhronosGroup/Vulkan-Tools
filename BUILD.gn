@@ -54,7 +54,7 @@ if (!is_android) {
   }
 
   action("vulkan_gen_icd_json_file") {
-    script = "build-gn/generate_vulkan_layers_json.py"
+    script = "scripts/gn/generate_vulkan_icd_json.py"
 
     public_deps = [ "$vulkan_headers_dir:vulkan_headers" ]
 
