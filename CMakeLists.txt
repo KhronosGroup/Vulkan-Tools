@@ -69,8 +69,7 @@ find_package(VulkanLoader QUIET CONFIG)
 
 include(GNUInstallDirs)
 
-# TODO: Should be OFF by default.
-option(BUILD_WERROR "Treat compiler warnings as errors" ON)
+option(BUILD_WERROR "Treat compiler warnings as errors")
 if (BUILD_WERROR)
     add_compile_options("$<IF:$<CXX_COMPILER_ID:MSVC>,/WX,-Werror>")
 endif()

@@ -15,14 +15,6 @@
 # limitations under the License.
 # ~~~
 
-# TODO: Document this properly
-# cmake -S . -B android-build -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_PLATFORM=28 -DANDROID_ABI=arm64-v8a -DCMAKE_BUILD_TYPE=Debug -DBUILD_CUBE=OFF -DBUILD_WSI_XCB_SUPPORT=OFF -DBUILD_WSI_XLIB_SUPPORT=OFF -DBUILD_WSI_WAYLAND_SUPPORT=OFF -C external/helper.cmake
-# cmake --build android-build --target vulkaninfo
-#
-# adb push android-build/vulkaninfo/vulkaninfo /data/local/tmp
-# adb shell /data/local/tmp/vulkaninfo --json --output /data/local/tmp/VP_Pixel_6.json
-# adb pull /data/local/tmp/VP_Pixel_6.json
-
 if(WIN32)
     # ~~~
     # Setup the vulkaninfo.rc file to contain the correct info

@@ -1,5 +1,4 @@
-
-## Windows Runtime Installer
+# Windows Runtime Installer
 
 This directory contains the files required for building the Windows Vulkan Runtime Installer package.
 The runtime installer is a method of delivering a Vulkan loader to system.
