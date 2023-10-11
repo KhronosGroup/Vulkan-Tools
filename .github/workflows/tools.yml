@@ -76,7 +76,15 @@ jobs:
               with:
                 key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}-${{matrix.cube_wsi}}
             - name: Configure
-              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -DCUBE_WSI_SELECTION=${{matrix.cube_wsi}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON
+              run: |
+                cmake -S. -B build -G "Ninja" \
+                -D CMAKE_BUILD_TYPE=${{matrix.config}} \
+                -D CUBE_WSI_SELECTION=${{matrix.cube_wsi}} \
+                -D UPDATE_DEPS=ON \
+                -D BUILD_WERROR=ON \
+                -D INSTALL_ICD=ON \
+                -D BUILD_TESTS=ON \
+                -D ENABLE_ADDRESS_SANITIZER=ON
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
@@ -116,7 +124,7 @@ jobs:
                 arch: ${{ matrix.arch }}
 
             - name: Configure
-              run: cmake -S. -B build  -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON
+              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D BUILD_WERROR=ON
 
             - name: Build
               run: cmake --build ./build
@@ -150,7 +158,7 @@ jobs:
               run: echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
 
             - name: Configure
-              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON
+              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON -D BUILD_WERROR=ON
               env:
                 MACOSX_DEPLOYMENT_TARGET: 10.15
 
@@ -185,6 +193,7 @@ jobs:
             -D CMAKE_BUILD_TYPE=Release \
             -D UPDATE_DEPS=ON \
             -D BUILD_TESTS=ON \
+            -D BUILD_WERROR=ON \
             -G "Ninja"
         - name: Build
           run: cmake --build build

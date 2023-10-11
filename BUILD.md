@@ -1,40 +1,305 @@
 # Build Instructions
 
-Instructions for building this repository on Linux, Windows, Android, and MacOS.
-
-## Index
-
-1. [Contributing](#contributing-to-the-repository)
-1. [Repository Content](#repository-content)
-1. [Repository Set-Up](#repository-set-up)
-1. [Windows Build](#building-on-windows)
+1. [Requirements](#requirements)
+1. [Building Overview](#building-overview)
+1. [Generated source code](#generated-source-code)
+1. [Dependencies](#dependencies)
 1. [Linux Build](#building-on-linux)
-1. [Android Build](#building-on-android)
+1. [Windows Build](#building-on-windows)
 1. [MacOS build](#building-on-macos)
+1. [Android Build](#building-for-android)
+1. [Installed Files](#installed-files)
 
-## Contributing to the Repository
+## Requirements
 
-If you intend to contribute, the preferred work flow is for you to develop
-your contribution in a fork of this repository in your GitHub account and then
-submit a pull request. Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file
-in this repository for more details.
+1. CMake >= 3.17.2
+1. C++17 compatible toolchain
+1. Git
+1. Python >= 3.10
 
-## Repository Content
+NOTE: Python is needed for working on generated code, and helping grab dependencies.
+While it's not technically required, it's practically required for most users.
 
-This repository contains the source code necessary to build the following components:
+### Generated source code
 
-- vulkaninfo
-- vkcube and vkcubepp demos
-- mock ICD
+This repository contains generated source code which is not intended to be modified directly.
+
+A helper CMake target `tools_codegen` is also provided to simplify the invocation of `scripts/generate_source.py` from the build directory:
+
+```bash
+cmake -S . -B build -D TOOLS_CODEGEN=ON
+cmake --build build --target tools_codegen
+```
+
+NOTE: `TOOLS_CODEGEN` is `OFF` by default.
+
+## Building Overview
+
+The following will be enough for most people, for more detailed instructions, see below.
+
+```bash
+git clone https://github.com/KhronosGroup/Vulkan-Tools.git
+cd Vulkan-Tools
+
+cmake -S . -B build -D UPDATE_DEPS=ON -D BUILD_WERROR=ON -D BUILD_TESTS=ON -D CMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug
+```
+
+### Warnings as errors off by default!
+
+By default `BUILD_WERROR` is `OFF`. The idiom for open source projects is to NOT enable warnings as errors.
+
+System/language package managers have to build on multiple different platforms and compilers.
+
+By defaulting to `ON` we cause issues for package managers since there is no standard way to disable warnings until CMake 3.24
+
+Add `-D BUILD_WERROR=ON` to your workflow. Or use the `dev` preset shown below which will also enabling warnings as errors.
+
+## Dependencies
+
+Currently this repo has a custom process for grabbing C/C++ dependencies.
+
+Keep in mind this repo predates tools like `vcpkg`, `conan`, etc. Our process is most similar to `vcpkg`.
+
+By specifying `-D UPDATE_DEPS=ON` when configuring CMake we grab dependencies listed in [known_good.json](scripts/known_good.json).
+
+All we are doing is streamlining `building`/`installing` the `known good` dependencies and helping CMake `find` the dependencies.
+
+This is done via a combination of `Python` and `CMake` scripting.
+
+Misc Useful Information:
+
+- By default `UPDATE_DEPS` is `OFF`. The intent is to be friendly by default to system/language package managers.
+- You can run `update_deps.py` manually but it isn't recommended for most users.
+
+### How to test new dependency versions
+
+Typically most developers alter `known_good.json` with the commit/branch they are testing.
+
+Alternatively you can modify `CMAKE_PREFIX_PATH` as follows.
+
+```sh
+# Delete the CMakeCache.txt which will cache find_* results
+rm build/ -rf
+cmake -S . -B build/ ... -D CMAKE_PREFIX_PATH=~/foobar/my_custom_glslang_install/ ...
+```
+
+## Building On Linux
+
+### Linux Build Requirements
+
+This repository is regularly built and tested on the two most recent Ubuntu LTS versions.
+
+```bash
+sudo apt-get install git build-essential python3 cmake
+
+# Linux WSI system libraries
+sudo apt-get install libwayland-dev xorg-dev
+```
+
+### WSI Support Build Options
+
+By default, the repository components are built with support for the
+Vulkan-defined WSI display servers: Xcb, Xlib, and Wayland. It is recommended
+to build the repository components with support for these display servers to
+maximize their usability across Linux platforms. If it is necessary to build
+these modules without support for one of the display servers, the appropriate
+CMake option of the form `BUILD_WSI_xxx_SUPPORT` can be set to `OFF`.
+
+### Linux 32-bit support
+
+Usage of this repository's contents in 32-bit Linux environments is not
+officially supported. However, since this repository is supported on 32-bit
+Windows, these modules should generally work on 32-bit Linux.
+
+Here are some notes for building 32-bit targets on a 64-bit Ubuntu "reference"
+platform:
+
+```bash
+# 32-bit libs
+# your PKG_CONFIG configuration may be different, depending on your distribution
+sudo apt-get install gcc-multilib g++-multilib libx11-dev:i386
+```
+
+Set up your environment for building 32-bit targets:
+
+```bash
+export ASFLAGS=--32
+export CFLAGS=-m32
+export CXXFLAGS=-m32
+export PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu
+```
+
+## Building On Windows
+
+### Windows Development Environment Requirements
+
+- Windows 10+
+- Visual Studio
+
+Note: Anything less than `Visual Studio 2019` is not guaranteed to compile/work.
+
+### Visual Studio Generator
+
+Run CMake to generate [Visual Studio project files](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html#command-line-g-option).
+
+```bash
+# NOTE: By default CMake picks the latest version of Visual Studio as the default generator.
+cmake -S . -B build --preset dev
+
+# Open the Visual Studio solution
+cmake --open build
+```
+
+See the [CMake documentation](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#visual-studio-generators) for further information on Visual Studio generators.
+
+NOTE: Windows developers don't have to develop in Visual Studio. Visual Studio just helps streamlining the needed C++ toolchain requirements (compilers, linker, etc).
+
+## Building on MacOS
+
+### MacOS Development Environment Requirements
+
+- Xcode
+
+NOTE: MacOS developers don't have to develop in Xcode. Xcode just helps streamlining the needed C++ toolchain requirements (compilers, linker, etc). Similar to Visual Studio on Windows.
+
+### Xcode Generator
+
+To create and open an Xcode project:
+
+```bash
+# Create the Xcode project
+cmake -S . -B build -G Xcode --preset dev
+
+# Open the Xcode project
+cmake --open build
+```
+
+See the [CMake documentation](https://cmake.org/cmake/help/latest/generator/Xcode.html) for further information on the Xcode generator.
+
+## Building For Android
+
+- CMake 3.21+
+- NDK r25+
+- Ninja 1.10+
+- Android SDK Build-Tools 34.0.0+
+
+### Android Build Requirements
+
+- Download [Android Studio](https://developer.android.com/studio)
+- Install (https://developer.android.com/studio/install)
+- From the `Welcome to Android Studio` splash screen, add the following components using the SDK Manager:
+  - SDK Platforms > Android 8.0 and newer (API Level 26 or higher)
+  - SDK Tools > Android SDK Build-Tools
+  - SDK Tools > Android SDK Platform-Tools
+  - SDK Tools > Android SDK Tools
+  - SDK Tools > NDK
+  - SDK Tools > CMake
+
+#### Add Android specifics to environment
+
+NOTE: The following commands are streamlined for Linux but easily transferable to other platforms.
+The main intent is setting 2 environment variables and ensuring the NDK and build tools are in the `PATH`.
+
+```sh
+# Set environment variables
+# https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#environment-variables-2
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+export ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/X.Y.Z
+
+# Modify path
+export PATH=$ANDROID_SDK_ROOT/build-tools/X.Y.Z:$PATH
+
+# (Optional if you have new enough version of CMake + Ninja)
+export PATH=$ANDROID_SDK_ROOT/cmake/3.22.1/bin:$PATH
+
+# Verify SDK build-tools is set correctly
+which aapt
+
+# Verify CMake/Ninja are in the path
+which cmake
+which ninja
+
+# Check apksigner
+apksigner --help
+```
+
+Note: If `apksigner` gives a `java: not found` error you do not have Java in your path.
+
+```bash
+# A common way to install on the system
+sudo apt install default-jre
+```
+
+### Android Build
+
+1. Building libraries to package with your APK
+
+Invoking CMake directly to build the binary is relatively simple.
+
+See https://developer.android.com/ndk/guides/cmake#command-line for CMake NDK documentation.
+
+```sh
+# Build release binary for arm64-v8a
+cmake -S . -B build \
+  -D CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
+  -D ANDROID_PLATFORM=26 \
+  -D CMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+  -D CMAKE_ANDROID_STL_TYPE=c++_static \
+  -D ANDROID_USE_LEGACY_TOOLCHAIN_FILE=NO \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D UPDATE_DEPS=ON \
+  -G Ninja
+
+cmake --build build
+
+cmake --install build --prefix build/install
+```
+
+Then you just package the library into your APK under the appropriate lib directory based on the ABI:
+https://en.wikipedia.org/wiki/Apk_(file_format)#Package_contents
+
+Alternatively users can also use `scripts/android.py` to build the binaries.
+
+Note: `scripts/android.py` will place the binaries in the `build-android/libs` directory.
+
+```sh
+# Build release binary for arm64-v8a
+python3 scripts/android.py --config Release --app-abi arm64-v8a --app-stl c++_static
+```
+
+`android.py` can also streamline building for multiple ABIs:
+
+```sh
+# Build release binaries for all ABIs
+python3 scripts/android.py --config Release --app-abi 'armeabi-v7a arm64-v8a x86 x86_64' --app-stl c++_static
+```
+
+2. Building the test APK for development purposes
+
+Creating the test APK is a bit of an involved process since it requires running multiple CLI tools after the CMake build has finished.
+
+As a result users are enouraged to use `scripts/android.py` to build the test APK.
+
+This script handles wrapping CMake and various Android CLI tools to create the APK for you.
+
+```sh
+# Build a complete test APK with debug binaries for all ABIS
+python3 scripts/android.py --config Debug --app-abi 'armeabi-v7a arm64-v8a x86 x86_64' --app-stl c++_shared --apk --tests
+
+# Build a clean test APK with release binaries for arm64-v8a
+python3 scripts/android.py --config Release --app-abi arm64-v8a --app-stl c++_shared --apk --tests --clean
+```
+
+Note: `scripts/android.py` will place the APK in the `build-android/bin` directory.
+
+See [tests/README.md](tests/README.md) for running APK / `vulkaninfo` on Android.
 
 ### Installed Files
 
-The `install` target installs the following files under the directory
-indicated by *install_dir*:
-
 - *install_dir*`/bin` : The `vulkaninfo`, `vkcube` and `vkcubepp` executables
 
-`MockICD` if `INSTALL_ICD` is configured:
+If `INSTALL_ICD` is configured then MockICD will be installed as follows:
 
 For Unix operating systems:
 
@@ -45,637 +310,16 @@ For WIN32:
 
 - *install_dir*`/bin` : The Mock ICD and JSON
 
-## Repository Set-Up
+### Software Installation
 
-### Display Drivers
+After you have built your project you can install using CMake's install functionality.
 
-This repository does not contain a Vulkan-capable driver. You will need to
-obtain and install a Vulkan driver from your graphics hardware vendor or from
-some other suitable source if you intend to run Vulkan applications.
+CMake Docs:
+- [Software Installation Guide](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html#software-installation)
+- [CLI for installing a project](https://cmake.org/cmake/help/latest/manual/cmake.1.html#install-a-project)
 
-### Download the Repository
-
-To create your local git repository:
-
-    git clone https://github.com/KhronosGroup/Vulkan-Tools.git
-
-### Repository Dependencies
-
-This repository attempts to resolve some of its dependencies by using
-components found from the following places, in this order:
-
-1. CMake or Environment variable overrides (e.g., -DVULKAN_HEADERS_INSTALL_DIR)
-1. LunarG Vulkan SDK, located by the `VULKAN_SDK` environment variable
-1. System-installed packages, mostly applicable on Linux
-
-Dependencies that cannot be resolved by the SDK or installed packages must be
-resolved with the "install directory" override and are listed below. The
-"install directory" override can also be used to force the use of a specific
-version of that dependency.
-
-#### Vulkan-Headers
-
-This repository has a required dependency on the
-[Vulkan Headers repository](https://github.com/KhronosGroup/Vulkan-Headers).
-You must clone the headers repository and build its `install` target before
-building this repository. The Vulkan-Headers repository is required because it
-contains the Vulkan API definition files (registry) that are required to build
-the mock ICD. You must also take note of the headers install directory and
-pass it on the CMake command line for building this repository, as described
-below.
-
-Note that this dependency can be ignored if not building the mock ICD
-(CMake option: `-DBUILD_ICD=OFF`).
-
-### Build and Install Directories
-
-A common convention is to place the build directory in the top directory of
-the repository with a name of `build` and place the install directory as a
-child of the build directory with the name `install`. The remainder of these
-instructions follow this convention, although you can use any name for these
-directories and place them in any location.
-
-### Building Dependent Repositories with Known-Good Revisions
-
-There is a Python utility script, `scripts/update_deps.py`, that you can use to
-gather and build the dependent repositories mentioned above. This script uses
-information stored in the `scripts/known_good.json` file to check out dependent
-repository revisions that are known to be compatible with the revision of this
-repository that you currently have checked out. As such, this script is useful
-as a quick-start tool for common use cases and default configurations.
-
-For all platforms, start with:
-
-    git clone git@github.com:KhronosGroup/Vulkan-Tools.git
-    cd Vulkan-Tools
-    mkdir build
-    cd build
-
-For 64-bit Linux and MacOS, continue with:
-
-    ../scripts/update_deps.py
-    cmake -C helper.cmake ..
-    cmake --build .
-
-For 64-bit Windows, continue with:
-
-    ..\scripts\update_deps.py --arch x64
-    cmake -A x64 -C helper.cmake ..
-    cmake --build .
-
-For 32-bit Windows, continue with:
-
-    ..\scripts\update_deps.py --arch Win32
-    cmake -A Win32 -C helper.cmake ..
-    cmake --build .
-
-Please see the more detailed build information later in this file if you have
-specific requirements for configuring and building these components.
-
-#### Notes
-
-- You may need to adjust some of the CMake options based on your platform. See
-  the platform-specific sections later in this document.
-- The `update_deps.py` script fetches and builds the dependent repositories in
-  the current directory when it is invoked. In this case, they are built in
-  the `build` directory.
-- The `build` directory is also being used to build this
-  (Vulkan-Tools) repository. But there shouldn't be any conflicts
-  inside the `build` directory between the dependent repositories and the
-  build files for this repository.
-- The `--dir` option for `update_deps.py` can be used to relocate the
-  dependent repositories to another arbitrary directory using an absolute or
-  relative path.
-- The `update_deps.py` script generates a file named `helper.cmake` and places
-  it in the same directory as the dependent repositories (`build` in this
-  case). This file contains CMake commands to set the CMake `*_INSTALL_DIR`
-  variables that are used to point to the install artifacts of the dependent
-  repositories. You can use this file with the `cmake -C` option to set these
-  variables when you generate your build files with CMake. This lets you avoid
-  entering several `*_INSTALL_DIR` variable settings on the CMake command line.
-- If using "MINGW" (Git For Windows), you may wish to run
-  `winpty update_deps.py` in order to avoid buffering all of the script's
-  "print" output until the end and to retain the ability to interrupt script
-  execution.
-- Please use `update_deps.py --help` to list additional options and read the
-  internal documentation in `update_deps.py` for further information.
-
-### Generated source code
-
-This repository contains generated source code in the `icd/generated`
-directory which is not intended to be modified directly. Instead, changes should be
-made to the corresponding generator in the `scripts` directory. The source files can
-then be regenerated using `scripts/generate_source.py`:
-
-    python3 scripts/generate_source.py PATH_TO_VULKAN_HEADERS_REGISTRY_DIR
-
-A helper CMake target `VulkanTools_generated_source` is also provided to simplify
-the invocation of `scripts/generate_source.py` from the build directory:
-
-    cmake --build . --target VulkanTools_generated_source
-
-### Build Options
-
-When generating native platform build files through CMake, several options can
-be specified to customize the build. Some of the options are binary on/off
-options, while others take a string as input. The following is a table of all
-on/off options currently supported by this repository:
-
-| Option                     | Platform | Default | Description                                                                      |
-| -------------------------- | -------- | ------- | -------------------------------------------------------------------------------- |
-| BUILD_TESTS                | All      | `OFF`   | Controls whether the tests are built.                                            |
-| BUILD_CUBE                 | All      | `ON`    | Controls whether or not the vkcube demo is built.                                |
-| COMPILE_CUBE_SHADERS       | All      | `OFF`   | Controls whether glslang is found and cube's shaders are compiled                |
-| BUILD_VULKANINFO           | All      | `ON`    | Controls whether or not the vulkaninfo utility is built.                         |
-| BUILD_ICD                  | All      | `ON`    | Controls whether or not the mock ICD is built.                                   |
-| INSTALL_ICD                | All      | `OFF`   | Controls whether or not the mock ICD is installed as part of the install target. |
-| BUILD_WSI_XCB_SUPPORT      | Linux    | `ON`    | Build the components with XCB support.                                           |
-| BUILD_WSI_XLIB_SUPPORT     | Linux    | `ON`    | Build the components with Xlib support.                                          |
-| BUILD_WSI_WAYLAND_SUPPORT  | Linux    | `ON`    | Build the components with Wayland support.                                       |
-| BUILD_WSI_DIRECTFB_SUPPORT | Linux    | `OFF`   | Build the components with DirectFB support.                                      |
-
-The following is a table of all string options currently supported by this repository:
-
-| Option                           | Platform | Default | Description                                                                                       |
-| -------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------- |
-| VULKANINFO_BUILD_DLL_VERSIONINFO | Windows  | `""`    | Set the Windows specific version information for Vulkaninfo. Format is "major.minor.patch.build". |
-
-These variables should be set using the `-D` option when invoking CMake to
-generate the native platform files.
-
-## Building On Windows
-
-### Windows Development Environment Requirements
-
-- Windows
-  - Any Personal Computer version supported by Microsoft
-- Microsoft [Visual Studio](https://www.visualstudio.com/)
-  - Versions
-    - [2013 (update 4)](https://www.visualstudio.com/vs/older-downloads/)
-    - [2015](https://www.visualstudio.com/vs/older-downloads/)
-    - [2017](https://www.visualstudio.com/vs/downloads/)
-  - The Community Edition of each of the above versions is sufficient, as
-    well as any more capable edition.
-- [CMake 3.17.2](https://cmake.org/files/v3.17/cmake-3.17.2-win64-x64.zip) is recommended.
-  - Use the installer option to add CMake to the system PATH
-- Git Client Support
-  - [Git for Windows](http://git-scm.com/download/win) is a popular solution
-    for Windows
-  - Some IDEs (e.g., [Visual Studio](https://www.visualstudio.com/),
-    [GitHub Desktop](https://desktop.github.com/)) have integrated
-    Git client support
-
-### Windows Build - Microsoft Visual Studio
-
-The general approach is to run CMake to generate the Visual Studio project
-files. Then either run CMake with the `--build` option to build from the
-command line or use the Visual Studio IDE to open the generated solution and
-work with the solution interactively.
-
-#### Windows Quick Start
-
-    cd Vulkan-Tools
-    mkdir build
-    cd build
-    cmake -A x64 -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir
-    cmake --build .
-
-The above commands instruct CMake to find and use the default Visual Studio
-installation to generate a Visual Studio solution and projects for the x64
-architecture. The second CMake command builds the Debug (default)
-configuration of the solution.
-
-See below for the details.
-
-#### Use `CMake` to Create the Visual Studio Project Files
-
-Change your current directory to the top of the cloned repository directory,
-create a build directory and generate the Visual Studio project files:
-
-    cd Vulkan-Tools
-    mkdir build
-    cd build
-    cmake -A x64 -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir
-
-> Note: The `..` parameter tells `cmake` the location of the top of the
-> repository. If you place your build directory someplace else, you'll need to
-> specify the location of the repository top differently.
-
-The `-A` option is used to select either the "Win32" or "x64" architecture.
-
-If a generator for a specific version of Visual Studio is required, you can
-specify it for Visual Studio 2015, for example, with:
-
-    64-bit: -G "Visual Studio 14 2015 Win64"
-    32-bit: -G "Visual Studio 14 2015"
-
-See this [list](#cmake-visual-studio-generators) of other possible generators
-for Visual Studio.
-
-When generating the project files, the absolute path to a Vulkan-Headers
-install directory must be provided. This can be done by setting the
-`VULKAN_HEADERS_INSTALL_DIR` environment variable or by setting the
-`VULKAN_HEADERS_INSTALL_DIR` CMake variable with the `-D` CMake option. In
-either case, the variable should point to the installation directory of a
-Vulkan-Headers repository built with the install target.
-
-The above steps create a Windows solution file named
-`Vulkan-Tools.sln` in the build directory.
-
-At this point, you can build the solution from the command line or open the
-generated solution with Visual Studio.
-
-#### Build the Solution From the Command Line
-
-While still in the build directory:
-
-    cmake --build .
-
-to build the Debug configuration (the default), or:
-
-    cmake --build . --config Release
-
-to make a Release build.
-
-#### Build the Solution With Visual Studio
-
-Launch Visual Studio and open the "Vulkan-Tools.sln" solution file in the
-build folder. You may select "Debug" or "Release" from the Solution
-Configurations drop-down list. Start a build by selecting the Build->Build
-Solution menu item.
-
-#### Using a Loader Built from a Repository
-
-If you do need to build and use your own loader, build the Vulkan-Loader
-repository with the install target and modify your CMake invocation to add the
-location of the loader's install directory:
-
-    cmake -A x64 -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir \
-                 -DVULKAN_LOADER_INSTALL_DIR=absolute_path_to_install_dir ..
-
-### Windows Notes
-
-#### CMake Visual Studio Generators
-
-The chosen generator should match one of the Visual Studio versions that you
-have installed. Generator strings that correspond to versions of Visual Studio
-include:
-
-| Build Platform               | 64-bit Generator              | 32-bit Generator        |
-| ---------------------------- | ----------------------------- | ----------------------- |
-| Microsoft Visual Studio 2013 | "Visual Studio 12 2013 Win64" | "Visual Studio 12 2013" |
-| Microsoft Visual Studio 2015 | "Visual Studio 14 2015 Win64" | "Visual Studio 14 2015" |
-| Microsoft Visual Studio 2017 | "Visual Studio 15 2017 Win64" | "Visual Studio 15 2017" |
-
-## Building On Linux
-
-### Linux Build Requirements
-
-This repository has been built and tested on the two most recent Ubuntu LTS
-versions. Currently, the oldest supported version is Ubuntu 16.04, meaning
-that the minimum officially supported C++11 compiler version is GCC 5.4.0,
-although earlier versions may work. It should be straightforward to adapt this
-repository to other Linux distributions.
-
-[CMake 3.17.2](https://cmake.org/files/v3.17/cmake-3.17.2-Linux-x86_64.tar.gz) is recommended.
-
-#### Required Package List
-
-    sudo apt-get install git cmake build-essential libx11-xcb-dev \
-        libxkbcommon-dev libwayland-dev libxrandr-dev wayland-protocols
-
-### Linux Build
-
-The general approach is to run CMake to generate make files. Then either run
-CMake with the `--build` option or `make` to build from the command line.
-
-#### Linux Quick Start
-
-    cd Vulkan-Tools
-    mkdir build
-    cd build
-    cmake -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir ..
-    make
-
-See below for the details.
-
-#### Use CMake to Create the Make Files
-
-Change your current directory to the top of the cloned repository directory,
-create a build directory and generate the make files.
-
-    cd Vulkan-Tools
-    mkdir build
-    cd build
-    cmake -DCMAKE_BUILD_TYPE=Debug \
-          -DVULKAN_HEADERS_INSTALL_DIR=absolute_path_to_install_dir \
-          -DCMAKE_INSTALL_PREFIX=install ..
-
-> Note: The `..` parameter tells `cmake` the location of the top of the
-> repository. If you place your `build` directory someplace else, you'll need
-> to specify the location of the repository top differently.
-
-Use `-DCMAKE_BUILD_TYPE` to specify a Debug or Release build.
-
-When generating the project files, the absolute path to a Vulkan-Headers
-install directory must be provided. This can be done by setting the
-`VULKAN_HEADERS_INSTALL_DIR` environment variable or by setting the
-`VULKAN_HEADERS_INSTALL_DIR` CMake variable with the `-D` CMake option. In
-either case, the variable should point to the installation directory of a
-Vulkan-Headers repository built with the install target.
-
-> Note: For Linux, the default value for `CMAKE_INSTALL_PREFIX` is
-> `/usr/local`, which would be used if you do not specify
-> `CMAKE_INSTALL_PREFIX`. In this case, you may need to use `sudo` to install
-> to system directories later when you run `make install`.
-
-#### Build the Project
-
-You can just run `make` to begin the build.
-
-To speed up the build on a multi-core machine, use the `-j` option for `make`
-to specify the number of cores to use for the build. For example:
-
-    make -j4
-
-You can also use
-
-    cmake --build .
-
-If your build system supports ccache, you can enable that via CMake option `-DUSE_CCACHE=On`
-
-### Linux Notes
-
-#### WSI Support Build Options
-
-By default, the repository components are built with support for the
-Vulkan-defined WSI display servers: Xcb, Xlib, and Wayland. It is recommended
-to build the repository components with support for these display servers to
-maximize their usability across Linux platforms. If it is necessary to build
-these modules without support for one of the display servers, the appropriate
-CMake option of the form `BUILD_WSI_xxx_SUPPORT` can be set to `OFF`.
-
-Note vulkaninfo currently only supports Xcb and Xlib WSI display servers. See
-the CMakeLists.txt file in `Vulkan-Tools/vulkaninfo` for more info.
-
-You can select which WSI subsystem is used to execute the vkcube applications
-using a CMake option called CUBE_WSI_SELECTION. Supported options are XCB
-(default), XLIB, and WAYLAND. Note that you must build using the corresponding
-BUILD_WSI_*_SUPPORT enabled at the base repository level. For instance,
-creating a build that will use Xlib when running the vkcube demos, your CMake
-command line might look like:
-
-    cmake -DCMAKE_BUILD_TYPE=Debug -DCUBE_WSI_SELECTION=XLIB ..
-
-#### Linux Install to System Directories
-
-Installing the files resulting from your build to the systems directories is
-optional since environment variables can usually be used instead to locate the
-binaries. There are also risks with interfering with binaries installed by
-packages. If you are certain that you would like to install your binaries to
-system directories, you can proceed with these instructions.
-
-Assuming that you've built the code as described above and the current
-directory is still `build`, you can execute:
-
-    sudo make install
-
-This command installs files to `/usr/local` if no `CMAKE_INSTALL_PREFIX` is
-specified when creating the build files with CMake.
-
-You may need to run `ldconfig` in order to refresh the system loader search
-cache on some Linux systems.
-
-You can further customize the installation location by setting additional
-CMake variables to override their defaults. For example, if you would like to
-install to `/tmp/build` instead of `/usr/local`, on your CMake command line
-specify:
-
-    -DCMAKE_INSTALL_PREFIX=/tmp/build
-
-Then run `make install` as before. The install step places the files in
-`/tmp/build`. This may be useful for collecting the artifacts and providing
-them to another project that is dependent on them.
-
-Note: The Mock ICD is not installed by default since it is a "null" driver
-that does not render anything and is used for testing purposes. Installing it
-to system directories may cause some applications to discover and use this
-driver instead of other full drivers installed on the system. If you really
-want to install this null driver, use:
-
-    -DINSTALL_ICD=ON
-
-See the CMake documentation for more details on using these variables to
-further customize your installation.
-
-Also see the `LoaderAndLayerInterface` document in the `loader` folder of the
-Vulkan-Loader repository for more information about loader and layer
-operation.
-
-### Linux Tests
-
-After making any changes to the repository, you should perform some quick
-sanity tests, such as running the vkcube demo with validation enabled.
-
-To run the **vkcube application** with validation, in a terminal change to the
-`build/cube` directory and run:
-
-    VK_LAYER_PATH=../path/to/validation/layers ./vkcube --validate
-
-If you have an SDK installed and have run the setup script to set the
-`VULKAN_SDK` environment variable, it may be unnecessary to specify a
-`VK_LAYER_PATH`.
-
-#### Linux 32-bit support
-
-Usage of the contents of this repository in 32-bit Linux environments is not
-officially supported. However, since this repository is supported on 32-bit
-Windows, these modules should generally work on 32-bit Linux.
-
-Here are some notes for building 32-bit targets on a 64-bit Ubuntu "reference"
-platform:
-
-If not already installed, install the following 32-bit development libraries:
-
-`gcc-multilib g++-multilib libx11-dev:i386`
-
-This list may vary depending on your distribution and which windowing systems
-you are building for.
-
-Set up your environment for building 32-bit targets:
-
-    export ASFLAGS=--32
-    export CFLAGS=-m32
-    export CXXFLAGS=-m32
-    export PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu
-
-Again, your PKG_CONFIG configuration may be different, depending on your
-distribution.
-
-Finally, rebuild the repository using `cmake` and `make`, as explained above.
-
-## Building On Android
-
-TODO: https://github.com/KhronosGroup/Vulkan-Tools/issues/791
-
-### Run vkcube
-
-Use the following command to run vkcube for Android:
-
-```bash
-cd build-android
-
-# Optional
-adb uninstall com.example.VkCube
-
-adb install -r -g --no-incremental bin/VkCube.apk
-
-adb shell am start com.example.VkCube/android.app.NativeActivity
+```sh
+# EX: Installs Release artifacts into `build/install` directory.
+# NOTE: --config is only needed for multi-config generators (Visual Studio, Xcode, etc)
+cmake --install build/ --config Release --prefix build/install
 ```
-
-## Building on MacOS
-
-### MacOS Build Requirements
-
-Tested on OSX version 10.12
-
-NOTE: To force the OSX version set the environment variable [MACOSX_DEPLOYMENT_TARGET](https://cmake.org/cmake/help/latest/envvar/MACOSX_DEPLOYMENT_TARGET.html) when building VVL and it's dependencies.
-
-Setup Homebrew and components
-
-- Ensure Homebrew is at the beginning of your PATH:
-
-      export PATH=/usr/local/bin:$PATH
-
-- Add packages with the following (may need refinement)
-
-      brew install python python3 git
-
-### Clone the Repository
-
-Clone the Vulkan-Tools repository as defined above in the [Download the Repository](#download-the-repository)
-section.
-
-### Get the External Libraries
-
-[MoltenVK](https://github.com/KhronosGroup/MoltenVK) Library
-
-- Building the vkcube and vulkaninfo applications require linking to the
-  MoltenVK Library (libMoltenVK.dylib)
-  - The following option should be used on the cmake command line to specify a
-    vulkan loader library: MOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK
-    making sure to specify an absolute path, like so: cmake
-    -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK ....
-
-Vulkan Loader Library
-
-- Building the vkcube and vulkaninfo applications require linking to the Vulkan
-  Loader Library (libvulkan.1.dylib)
-  - The following option should be used on the cmake command line to specify a
-    vulkan loader library:
-    VULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir
-    making sure to specify an absolute path.
-
-### MacOS build
-
-#### CMake Generators
-
-This repository uses CMake to generate build or project files that are then
-used to build the repository. The CMake generators explicitly supported in
-this repository are:
-
-- Unix Makefiles
-- Xcode
-
-#### Building with the Unix Makefiles Generator
-
-This generator is the default generator, so all that is needed for a debug
-build is:
-
-        mkdir build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug \
-              -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir \
-              -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK \
-              -DCMAKE_INSTALL_PREFIX=install ..
-        make
-
-To speed up the build on a multi-core machine, use the `-j` option for `make`
-to specify the number of cores to use for the build. For example:
-
-    make -j4
-
-You can now run the demo applications from the command line:
-
-    open cube/vkcube.app
-    open cube/vkcubepp.app
-
-Or you can locate them from `Finder` and launch them from there.
-
-##### The Install Target and RPATH
-
-The applications you just built are "bundled applications", but the
-executables are using the `RPATH` mechanism to locate runtime dependencies
-that are still in your build tree.
-
-To see this, run this command from your `build` directory:
-
-    otool -l cube/cube.app/Contents/MacOS/vkcube
-
-and note that the `vkcube` executable contains loader commands:
-
-- `LC_LOAD_DYLIB` to load `libvulkan.1.dylib` via an `@rpath`
-- `LC_RPATH` that contains an absolute path to the build location of the Vulkan loader
-
-This makes the bundled application "non-transportable", meaning that it won't
-run unless the Vulkan loader is on that specific absolute path. This is useful
-for debugging the loader or other components built in this repository, but not
-if you want to move the application to another machine or remove your build
-tree.
-
-To address this problem, run:
-
-    make install
-
-This step copies the bundled applications to the location specified by
-CMAKE_INSTALL_PREFIX and "cleans up" the `RPATH` to remove any external
-references and performs other bundle fix-ups. After running `make install`,
-run the `otool` command again from the `build/install` directory and note:
-
-- `LC_LOAD_DYLIB` is now `@executable_path/../MacOS/libvulkan.1.dylib`
-- `LC_RPATH` is no longer present
-
-The "bundle fix-up" operation also puts a copy of the Vulkan loader into the
-bundle, making the bundle completely self-contained and self-referencing.
-
-##### The vulkaninfo Application
-
-There is also a `vulkaninfo` application that you can run from the command line:
-
-    vulkaninfo/vulkaninfo
-
-If you run this from the build directory, vulkaninfo's RPATH is already
-set to point to the Vulkan loader in the build tree, so it has no trouble
-finding it. But the loader will not find the MoltenVK driver and you'll see a
-message about an incompatible driver. To remedy this:
-
-    VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json vulkaninfo/vulkaninfo
-
-If you run `vulkaninfo` from the install directory, the `RPATH` in the
-`vulkaninfo` application got removed and the OS needs extra help to locate
-the Vulkan loader:
-
-    DYLD_LIBRARY_PATH=<path-to>/Vulkan-Loader/loader VK_ICD_FILENAMES=<path-to>/MoltenVK/Package/Latest/MoltenVK/macOS/MoltenVK_icd.json vulkaninfo/vulkaninfo
-
-#### Building with the Xcode Generator
-
-To create and open an Xcode project:
-
-        mkdir build-xcode
-        cd build-xcode
-        cmake -DVULKAN_LOADER_INSTALL_DIR=/absolute_path_to/Vulkan-Loader_install_dir -DMOLTENVK_REPO_ROOT=/absolute_path_to/MoltenVK -GXcode ..
-        open VULKAN.xcodeproj
-
-Within Xcode, you can select Debug or Release builds in the project's Build
-Settings. You can also select individual schemes for working with specific
-applications like `vkcube`.
