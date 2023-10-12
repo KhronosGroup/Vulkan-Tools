@@ -2072,7 +2072,7 @@ void Demo::prepare_pipeline() {
                                                                             .setPDynamicState(&dynamicStateInfo)
                                                                             .setLayout(pipeline_layout)
                                                                             .setRenderPass(render_pass));
-    VERIFY(result == vk::Result::eSuccess);
+    VERIFY(pipline_return.result == vk::Result::eSuccess);
     pipeline = pipline_return.value.at(0);
 
     device.destroyShaderModule(frag_shader_module);
