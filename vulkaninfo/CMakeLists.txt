@@ -128,9 +128,4 @@ elseif(APPLE)
     )
 endif()
 
-if(APPLE)
-    install(TARGETS vulkaninfo RUNTIME DESTINATION "vulkaninfo")
-else()
-    install(TARGETS vulkaninfo)
-endif()
-
+install(TARGETS vulkaninfo)
