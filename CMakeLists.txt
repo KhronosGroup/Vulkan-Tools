@@ -41,16 +41,7 @@ option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
 option(ENABLE_ADDRESS_SANITIZER "Use address sanitization")
 
-if(WIN32)
-    # Optional: Allow specify the exact version used in the vulkaninfo executable
-    # Format is major.minor.patch.build
-    set(VULKANINFO_BUILD_DLL_VERSIONINFO "" CACHE STRING "Set the version to be used in the vulkaninfo.rc file. Default value is 1.0.1111.2222")
-endif()
-
-# Enable IDE GUI folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-# "Helper" targets that don't have interesting source code should set their FOLDER property to this
-set(TOOLS_HELPER_FOLDER "Helper Targets")
 
 if(APPLE)
     set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
