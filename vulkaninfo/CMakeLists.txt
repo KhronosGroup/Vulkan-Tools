@@ -15,19 +15,25 @@
 # limitations under the License.
 # ~~~
 
+add_executable(vulkaninfo)
+
+target_sources(vulkaninfo PRIVATE vulkaninfo.cpp)
+
+# Setup the vulkaninfo.rc file to contain the correct info
+# Optionally uses the VULKANINFO_BUILD_DLL_VERSIONINFO build option to allow setting the exact build version
+# When VULKANINFO_BUILD_DLL_VERSIONINFO is not provided, "Dev Build" is added to the version strings
 if(WIN32)
-    # ~~~
-    # Setup the vulkaninfo.rc file to contain the correct info
-    # Optionally uses the VULKANINFO_BUILD_DLL_VERSIONINFO build option to allow setting the exact build version
-    # When VULKANINFO_BUILD_DLL_VERSIONINFO is not provided, "Dev Build" is added to the version strings
-    # ~~~
+    set(VULKANINFO_BUILD_DLL_VERSIONINFO "default" CACHE STRING "Set the version to be used in the vulkaninfo.rc file")
+
     string(TIMESTAMP CURRENT_YEAR "%Y")
     set(VULKANINFO_CUR_COPYRIGHT_STR "${CURRENT_YEAR}")
-    if ("$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}" STREQUAL "")
+    if ("$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}" STREQUAL "default")
+        message(DEBUG "Setting RC version based on VulkanHeaders Version")
         set(VULKANINFO_RC_VERSION "${VulkanHeaders_VERSION}")
         set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}.Dev Build\"")
         set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"Vulkaninfo - Dev Build\"")
     else()
+        message(DEBUG "Setting RC version based on VULKANINFO_BUILD_DLL_VERSIONINFO")
         set(VULKANINFO_RC_VERSION "$CACHE{VULKANINFO_BUILD_DLL_VERSIONINFO}")
         set(VULKANINFO_VER_FILE_VERSION_STR "\"${VULKANINFO_RC_VERSION}\"")
         set(VULKANINFO_VER_FILE_DESCRIPTION_STR "\"vulkaninfo\"")
@@ -39,27 +45,15 @@ if(WIN32)
     # Configure the file to include the versioning info
     configure_file(vulkaninfo.rc.in ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
 
-    add_executable(vulkaninfo vulkaninfo.cpp ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
-    if (MINGW)
-      target_link_libraries(vulkaninfo ucrt)
-    endif ()
-elseif(APPLE)
-    add_executable(vulkaninfo
-                   vulkaninfo.cpp
-                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.mm
-                   ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo/metal_view.h)
-else()
-    add_executable(vulkaninfo vulkaninfo.cpp)
+    target_sources(vulkaninfo PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/vulkaninfo.rc)
 endif()
 
-target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo)
-target_include_directories(vulkaninfo PRIVATE ${CMAKE_SOURCE_DIR}/vulkaninfo/generated)
+target_include_directories(vulkaninfo PRIVATE
+    generated
+    .
+)
 
-if (NOT WIN32)
-    target_link_libraries(vulkaninfo ${CMAKE_DL_LIBS})
-endif()
-
-target_compile_definitions(vulkaninfo PRIVATE -DVK_ENABLE_BETA_EXTENSIONS)
+target_compile_definitions(vulkaninfo PRIVATE VK_ENABLE_BETA_EXTENSIONS)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
@@ -71,28 +65,26 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
 
     if(BUILD_WSI_XCB_SUPPORT)
         pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
-        target_link_libraries(vulkaninfo PkgConfig::XCB)
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XCB_KHR -DVK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XCB_KHR VK_NO_PROTOTYPES)
+        target_link_libraries(vulkaninfo PRIVATE PkgConfig::XCB)
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
         pkg_check_modules(X11 REQUIRED QUIET IMPORTED_TARGET x11)
-        target_link_libraries(vulkaninfo PkgConfig::X11)
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_XLIB_KHR -DVK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XLIB_KHR VK_NO_PROTOTYPES)
+        target_link_libraries(vulkaninfo PRIVATE PkgConfig::X11)
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
         pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
-        add_compile_definitions(VK_USE_PLATFORM_WAYLAND_KHR)
-
-        target_link_libraries(vulkaninfo PkgConfig::WAYLAND_CLIENT)
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_WAYLAND_KHR VK_NO_PROTOTYPES)
+        target_link_libraries(vulkaninfo PRIVATE PkgConfig::WAYLAND_CLIENT)
     endif()
 
     if(BUILD_WSI_DIRECTFB_SUPPORT)
         pkg_check_modules(DirectFB REQUIRED QUIET IMPORTED_TARGET directfb)
-        target_link_libraries(vulkaninfo PkgConfig::DirectFB)
-        target_compile_definitions(vulkaninfo PRIVATE -DVK_USE_PLATFORM_DIRECTFB_EXT -DVK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DIRECTFB_EXT VK_NO_PROTOTYPES)
+        target_link_libraries(vulkaninfo PRIVATE PkgConfig::DirectFB)
     endif()
 
     if (ENABLE_ADDRESS_SANITIZER)
@@ -103,11 +95,24 @@ endif()
 
 if(APPLE)
     # We do this so vulkaninfo is linked to an individual library and NOT a framework.
-    target_link_libraries(vulkaninfo Vulkan::Loader "-framework AppKit -framework QuartzCore")
-    target_include_directories(vulkaninfo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/macOS/vulkaninfo)
+    target_link_libraries(vulkaninfo PRIVATE Vulkan::Loader "-framework AppKit -framework QuartzCore")
+    target_include_directories(vulkaninfo PRIVATE macOS/vulkaninfo)
+
+    target_sources(vulkaninfo PRIVATE
+        macOS/vulkaninfo/metal_view.mm
+        macOS/vulkaninfo/metal_view.h
+    )
 endif()
 
-target_link_libraries(vulkaninfo Vulkan::Headers)
+target_link_libraries(vulkaninfo PRIVATE
+    Vulkan::Headers
+    ${CMAKE_DL_LIBS}
+)
+
+# TODO: Add MinGW CI and verify this is needed.
+if (MINGW)
+    target_link_libraries(vulkaninfo PRIVATE ucrt)
+endif ()
 
 if(WIN32)
     target_compile_definitions(vulkaninfo PRIVATE 
@@ -122,10 +127,12 @@ if(WIN32)
     target_link_options(vulkaninfo PRIVATE /guard:cf)
 
 elseif(APPLE)
-    target_compile_definitions(vulkaninfo PRIVATE
-        VK_USE_PLATFORM_MACOS_MVK
-        VK_USE_PLATFORM_METAL_EXT
-    )
+    target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_METAL_EXT)
+    if (IOS)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_IOS_MVK)
+    else()
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_MACOS_MVK)
+    endif()
 endif()
 
 install(TARGETS vulkaninfo)
