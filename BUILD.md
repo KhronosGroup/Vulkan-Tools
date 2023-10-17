@@ -80,8 +80,8 @@ Alternatively you can modify `CMAKE_PREFIX_PATH` as follows.
 
 ```sh
 # Delete the CMakeCache.txt which will cache find_* results
-rm build/ -rf
-cmake -S . -B build/ ... -D CMAKE_PREFIX_PATH=~/foobar/my_custom_glslang_install/ ...
+rm  -rf build/
+cmake -S . -B build/ ... -D CMAKE_PREFIX_PATH=~/foobar/vulkan_headers_install/ ...
 ```
 
 ## Building On Linux
@@ -145,7 +145,7 @@ Run CMake to generate [Visual Studio project files](https://cmake.org/cmake/help
 
 ```bash
 # NOTE: By default CMake picks the latest version of Visual Studio as the default generator.
-cmake -S . -B build --preset dev
+cmake -S . -B build
 
 # Open the Visual Studio solution
 cmake --open build
@@ -169,7 +169,7 @@ To create and open an Xcode project:
 
 ```bash
 # Create the Xcode project
-cmake -S . -B build -G Xcode --preset dev
+cmake -S . -B build -G Xcode
 
 # Open the Xcode project
 cmake --open build
