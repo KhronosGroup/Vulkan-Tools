@@ -1255,6 +1255,15 @@ VK_NV_device_diagnostics_config = Extension(name='VK_NV_device_diagnostics_confi
 VK_QCOM_render_pass_store_ops = Extension(name='VK_QCOM_render_pass_store_ops', version=2, guard=None, commands=[
 ])
 
+VK_NV_cuda_kernel_launch = Extension(name='VK_NV_cuda_kernel_launch', version=2, guard=None, commands=[
+    Command(name='vkCreateCudaModuleNV', dispatch='VkDevice'),
+    Command(name='vkGetCudaModuleCacheNV', dispatch='VkDevice'),
+    Command(name='vkCreateCudaFunctionNV', dispatch='VkDevice'),
+    Command(name='vkDestroyCudaModuleNV', dispatch='VkDevice'),
+    Command(name='vkDestroyCudaFunctionNV', dispatch='VkDevice'),
+    Command(name='vkCmdCudaLaunchKernelNV', dispatch='VkCommandBuffer'),
+])
+
 VK_NV_low_latency = Extension(name='VK_NV_low_latency', version=1, guard=None, commands=[
 ])
 
@@ -1423,6 +1432,9 @@ VK_EXT_pageable_device_local_memory = Extension(name='VK_EXT_pageable_device_loc
 ])
 
 VK_ARM_shader_core_properties = Extension(name='VK_ARM_shader_core_properties', version=1, guard=None, commands=[
+])
+
+VK_ARM_scheduling_controls = Extension(name='VK_ARM_scheduling_controls', version=1, guard=None, commands=[
 ])
 
 VK_EXT_image_sliced_view_of_3d = Extension(name='VK_EXT_image_sliced_view_of_3d', version=1, guard=None, commands=[
@@ -2037,6 +2049,7 @@ extensions = [
     VK_EXT_pipeline_creation_cache_control,
     VK_NV_device_diagnostics_config,
     VK_QCOM_render_pass_store_ops,
+    VK_NV_cuda_kernel_launch,
     VK_NV_low_latency,
     VK_EXT_descriptor_buffer,
     VK_EXT_graphics_pipeline_library,
@@ -2079,6 +2092,7 @@ extensions = [
     VK_EXT_border_color_swizzle,
     VK_EXT_pageable_device_local_memory,
     VK_ARM_shader_core_properties,
+    VK_ARM_scheduling_controls,
     VK_EXT_image_sliced_view_of_3d,
     VK_VALVE_descriptor_set_host_mapping,
     VK_EXT_depth_clamp_zero_one,

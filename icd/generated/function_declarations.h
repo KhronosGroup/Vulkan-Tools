@@ -277,6 +277,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_video_encode_queue", 10},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
+    {"VK_NV_cuda_kernel_launch", 2},
     {"VK_NV_low_latency", 1},
     {"VK_EXT_metal_objects", 1},
     {"VK_KHR_synchronization2", 1},
@@ -335,6 +336,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
     {"VK_ARM_shader_core_properties", 1},
+    {"VK_ARM_scheduling_controls", 1},
     {"VK_EXT_image_sliced_view_of_3d", 1},
     {"VK_VALVE_descriptor_set_host_mapping", 1},
     {"VK_EXT_depth_clamp_zero_one", 1},
@@ -3507,6 +3509,39 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCudaModuleNV(
+    VkDevice                                    device,
+    const VkCudaModuleCreateInfoNV*             pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCudaModuleNV*                             pModule);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetCudaModuleCacheNV(
+    VkDevice                                    device,
+    VkCudaModuleNV                              module,
+    size_t*                                     pCacheSize,
+    void*                                       pCacheData);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateCudaFunctionNV(
+    VkDevice                                    device,
+    const VkCudaFunctionCreateInfoNV*           pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkCudaFunctionNV*                           pFunction);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCudaModuleNV(
+    VkDevice                                    device,
+    VkCudaModuleNV                              module,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyCudaFunctionNV(
+    VkDevice                                    device,
+    VkCudaFunctionNV                            function,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkCudaLaunchInfoNV*                   pLaunchInfo);
+
+
 #ifdef VK_USE_PLATFORM_METAL_EXT
 
 static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(
@@ -3888,6 +3923,7 @@ static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(
     VkDevice                                    device,
     VkDeviceMemory                              memory,
     float                                       priority);
+
 
 
 
@@ -4994,6 +5030,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyPrivateDataSlotEXT", (void*)DestroyPrivateDataSlotEXT},
     {"vkSetPrivateDataEXT", (void*)SetPrivateDataEXT},
     {"vkGetPrivateDataEXT", (void*)GetPrivateDataEXT},
+    {"vkCreateCudaModuleNV", (void*)CreateCudaModuleNV},
+    {"vkGetCudaModuleCacheNV", (void*)GetCudaModuleCacheNV},
+    {"vkCreateCudaFunctionNV", (void*)CreateCudaFunctionNV},
+    {"vkDestroyCudaModuleNV", (void*)DestroyCudaModuleNV},
+    {"vkDestroyCudaFunctionNV", (void*)DestroyCudaFunctionNV},
+    {"vkCmdCudaLaunchKernelNV", (void*)CmdCudaLaunchKernelNV},
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkExportMetalObjectsEXT", (void*)ExportMetalObjectsEXT},
 #endif
