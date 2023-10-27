@@ -109,11 +109,6 @@ target_link_libraries(vulkaninfo PRIVATE
     ${CMAKE_DL_LIBS}
 )
 
-# TODO: Add MinGW CI and verify this is needed.
-if (MINGW)
-    target_link_libraries(vulkaninfo PRIVATE ucrt)
-endif ()
-
 if(WIN32)
     target_compile_definitions(vulkaninfo PRIVATE 
         VK_USE_PLATFORM_WIN32_KHR
