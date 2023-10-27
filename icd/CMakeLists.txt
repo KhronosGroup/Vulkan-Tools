@@ -16,7 +16,7 @@
 # limitations under the License.
 # ~~~
 
-if (ANDROID)
+if (ANDROID OR MINGW)
     return()
 endif()
 
@@ -75,8 +75,6 @@ if(MSVC)
     target_compile_options(VkICD_mock_icd PRIVATE /bigobj)
     target_compile_definitions(VkICD_mock_icd PRIVATE _CRT_SECURE_NO_WARNINGS)
     target_link_options(VkICD_mock_icd PRIVATE /DEF:${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.def)
-elseif(MINGW)
-    target_sources(VkICD_mock_icd PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${MOCK_ICD_NAME}.def)
 else()
     if(APPLE)
         set_target_properties(VkICD_mock_icd PROPERTIES SUFFIX ".dylib")
@@ -100,7 +98,7 @@ set(INTERMEDIATE_FILE "${CMAKE_CURRENT_BINARY_DIR}/json/mock_icd.json")
 set(OUTPUT_FILE_FINAL_NAME "${MOCK_ICD_NAME}.json")
 set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
 if (WIN32)
-    set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}) # WIN32/MINGW expect the dll in the `bin` dir, this matches our WIN32 SDK process
+    set(LAYER_INSTALL_DIR ${CMAKE_INSTALL_BINDIR}) # WIN32 expect the dll in the `bin` dir, this matches our WIN32 SDK process
 endif()
 
 if (WIN32)
