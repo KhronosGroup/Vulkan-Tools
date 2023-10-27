@@ -203,6 +203,33 @@ jobs:
         - name: Install
           run: cmake --install build --prefix /tmp
 
+    mingw:
+        runs-on: windows-latest
+        defaults:
+          run:
+            shell: bash
+        steps:
+          - uses: actions/checkout@v4
+          - name: Setup ccache
+            uses: hendrikmuhs/ccache-action@v1.2
+            with:
+              key: mingw-ccache
+          - uses: actions/setup-python@v4
+            with:
+              python-version: '3.10'
+          - uses: lukka/get-cmake@latest
+          - name: GCC Version
+            run: gcc --version # If this fails MINGW is not setup correctly
+          - name: Configure
+            run: cmake -S. -B build -D UPDATE_DEPS=ON -D CMAKE_BUILD_TYPE=Release
+            env:
+              LDFLAGS: -fuse-ld=lld # MINGW linking is very slow. Use llvm linker instead.
+              CMAKE_C_COMPILER_LAUNCHER: ccache
+              CMAKE_CXX_COMPILER_LAUNCHER: ccache
+              CMAKE_GENERATOR: Ninja
+          - run: cmake --build build
+          - run: cmake --install build --prefix build/install
+
     tools_codegen:
       runs-on: ubuntu-latest
       steps:
