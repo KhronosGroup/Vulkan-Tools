@@ -101,8 +101,12 @@ jobs:
               working-directory: ./build
               run: ctest --output-on-failure
 
-            - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/${{ matrix.config }}/Vulkan-Headers/build/install/share/vulkan/registry
+    codegen:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - run: scripts/update_deps.py --dir ext --no-build
+        - run: scripts/generate_source.py --verify ext/Vulkan-Headers/registry/
 
     windows:
         runs-on: ${{matrix.os}}
@@ -136,9 +140,6 @@ jobs:
               working-directory: ./build
               run: ctest --output-on-failure
 
-            - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/${{matrix.config}}/Vulkan-Headers/build/install/share/vulkan/registry
-
     mac:
         runs-on: macos-latest
         steps:
@@ -168,9 +169,6 @@ jobs:
             - name: Test
               working-directory: ./build
               run: ctest --output-on-failure
-
-            - name: Verify generated source files
-              run: python scripts/generate_source.py --verify external/Release/Vulkan-Headers/build/install/share/vulkan/registry
 
     android:
       runs-on: ubuntu-22.04
