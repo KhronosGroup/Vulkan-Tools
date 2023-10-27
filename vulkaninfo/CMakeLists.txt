@@ -121,11 +121,6 @@ if(WIN32)
         _CRT_SECURE_NO_WARNINGS
         VK_NO_PROTOTYPES
     )
-
-    message(STATUS "Building vulkaninfo with control flow guard")
-    target_compile_options(vulkaninfo PRIVATE /guard:cf)
-    target_link_options(vulkaninfo PRIVATE /guard:cf)
-
 elseif(APPLE)
     target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_METAL_EXT)
     if (IOS)

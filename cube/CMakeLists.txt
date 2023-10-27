@@ -84,13 +84,6 @@ endif()
 
 if(WIN32)
     add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
-    if(MSVC AND NOT MSVC_VERSION LESS 1900)
-        # If MSVC, Enable control flow guard
-        message(STATUS "Building vkcube with control flow guard")
-        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/guard:cf>")
-        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /guard:cf")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /guard:cf")
-    endif()
 elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
 elseif(APPLE)
