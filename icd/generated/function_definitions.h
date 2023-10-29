@@ -5095,7 +5095,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryHostPointerPropertiesEXT(
     const void*                                 pHostPointer,
     VkMemoryHostPointerPropertiesEXT*           pMemoryHostPointerProperties)
 {
-//Not a CREATE or DESTROY function
+    pMemoryHostPointerProperties->memoryTypeBits = 1 << 5; // DEVICE_LOCAL only type
     return VK_SUCCESS;
 }
 

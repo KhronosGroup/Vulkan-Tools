@@ -1060,6 +1060,10 @@ CUSTOM_C_INTERCEPTS = {
     *pFd = 1;
     return VK_SUCCESS;
 ''',
+'vkGetMemoryHostPointerPropertiesEXT': '''
+    pMemoryHostPointerProperties->memoryTypeBits = 1 << 5; // DEVICE_LOCAL only type
+    return VK_SUCCESS;
+''',
 'vkGetAndroidHardwareBufferPropertiesANDROID': '''
     pProperties->allocationSize = 65536;
     pProperties->memoryTypeBits = 1 << 5; // DEVICE_LOCAL only type
