@@ -157,7 +157,7 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
     }
     if (inst.CheckExtensionEnabled(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME)) {
         p.SetSubHeader();
-        ObjectWrapper obj(p, "VK_EXT_surface_maintenance_1");
+        ObjectWrapper obj(p, "VK_EXT_surface_maintenance1");
         for (auto &mode : surface.surf_present_modes) {
             VkSurfacePresentModeEXT present_mode{};
             present_mode.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT;
