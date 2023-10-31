@@ -61,7 +61,7 @@ jobs:
 
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
@@ -118,7 +118,7 @@ jobs:
                 os: [ windows-latest ]
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
@@ -143,7 +143,7 @@ jobs:
     mac:
         runs-on: macos-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: actions/setup-python@v4
               with:
                 python-version: '3.7'
@@ -176,7 +176,7 @@ jobs:
         matrix:
           abi: [ armeabi-v7a, arm64-v8a ]
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - uses: actions/setup-python@v4
           with:
             python-version: '3.8'
@@ -231,7 +231,7 @@ jobs:
     tools_codegen:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - uses: actions/setup-python@v4
           with:
             python-version: '3.10'
@@ -243,5 +243,5 @@ jobs:
     chromium:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - run: scripts/gn/gn.py
