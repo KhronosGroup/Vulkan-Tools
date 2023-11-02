@@ -64,11 +64,6 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU|Clang")
         -Wno-unused-function
         -Wno-sign-compare
     )
-
-    if (ENABLE_ADDRESS_SANITIZER)
-        target_compile_options(VkICD_mock_icd PUBLIC -fsanitize=address)
-        target_link_options(VkICD_mock_icd PUBLIC -fsanitize=address)
-    endif()
 endif()
 
 if(MSVC)

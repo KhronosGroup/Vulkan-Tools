@@ -39,7 +39,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(BUILD_CUBE "Build cube" ON)
 option(BUILD_VULKANINFO "Build vulkaninfo" ON)
 option(BUILD_ICD "Build icd" ON)
+
 option(ENABLE_ADDRESS_SANITIZER "Use address sanitization")
+if (ENABLE_ADDRESS_SANITIZER)
+    add_compile_options(-fsanitize=address)
+    if (NOT MSVC)
+        add_link_options(-fsanitize=address)
+    endif()
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

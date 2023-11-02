@@ -203,11 +203,6 @@ else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
-if (ENABLE_ADDRESS_SANITIZER)
-    target_compile_options(vkcube PUBLIC -fsanitize=address)
-    target_link_options(vkcube PUBLIC -fsanitize=address)
-endif()
-
 target_include_directories(vkcube PRIVATE .)
 
 if (ANDROID)
@@ -244,11 +239,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
                    ${OPTIONAL_WAYLAND_DATA_FILES})
     target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
     target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
-
-    if (ENABLE_ADDRESS_SANITIZER)
-        target_compile_options(vkcubepp PUBLIC -fsanitize=address)
-        target_link_options(vkcubepp PUBLIC -fsanitize=address)
-    endif ()
 else()
     add_executable(vkcubepp
                    WIN32
@@ -308,10 +298,5 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
             target_link_libraries(vkcube-wayland PRIVATE rt)
         endif()
         install(TARGETS vkcube-wayland)
-
-        if (ENABLE_ADDRESS_SANITIZER)
-            target_compile_options(vkcube-wayland PUBLIC -fsanitize=address)
-            target_link_options(vkcube-wayland PUBLIC -fsanitize=address)
-        endif ()
     endif()
 endif()

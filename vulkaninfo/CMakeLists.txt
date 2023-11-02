@@ -86,11 +86,6 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
         target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DIRECTFB_EXT VK_NO_PROTOTYPES)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::DirectFB)
     endif()
-
-    if (ENABLE_ADDRESS_SANITIZER)
-        target_compile_options(vulkaninfo PRIVATE -fsanitize=address)
-        target_link_options(vulkaninfo PRIVATE -fsanitize=address)
-    endif ()
 endif()
 
 if(APPLE)
