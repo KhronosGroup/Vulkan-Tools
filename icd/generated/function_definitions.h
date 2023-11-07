@@ -403,6 +403,7 @@ static VKAPI_ATTR void VKAPI_CALL FreeMemory(
     const VkAllocationCallbacks*                pAllocator)
 {
 //Destroy object
+    UnmapMemory(device, memory);
     unique_lock_t lock(global_lock);
     allocated_memory_size_map.erase(memory);
 }

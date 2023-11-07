@@ -1497,6 +1497,8 @@ class MockICDOutputGenerator(OutputGenerator):
         elif True in [ftxt in api_function_name for ftxt in ['Destroy', 'Free']]:
             self.appendSection('command', '//Destroy object')
             if 'FreeMemory' in api_function_name:
+                # If the memory is mapped, unmap it
+                self.appendSection('command', '    UnmapMemory(device, memory);')
                 # Remove from allocation map
                 self.appendSection('command', '    unique_lock_t lock(global_lock);')
                 self.appendSection('command', '    allocated_memory_size_map.erase(memory);')
