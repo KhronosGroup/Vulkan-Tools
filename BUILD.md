@@ -233,7 +233,7 @@ sudo apt install default-jre
 
 ### Android Build
 
-1. Building libraries to package with your APK
+1. Building the binaries (No APK)
 
 Invoking CMake directly to build the binary is relatively simple.
 
@@ -256,15 +256,10 @@ cmake --build build
 cmake --install build --prefix build/install
 ```
 
-Then you just package the library into your APK under the appropriate lib directory based on the ABI:
-https://en.wikipedia.org/wiki/Apk_(file_format)#Package_contents
-
 Alternatively users can also use `scripts/android.py` to build the binaries.
 
-Note: `scripts/android.py` will place the binaries in the `build-android/libs` directory.
-
 ```sh
-# Build release binary for arm64-v8a
+# Build release binaries for arm64-v8a
 python3 scripts/android.py --config Release --app-abi arm64-v8a --app-stl c++_static
 ```
 
@@ -275,25 +270,29 @@ python3 scripts/android.py --config Release --app-abi arm64-v8a --app-stl c++_st
 python3 scripts/android.py --config Release --app-abi 'armeabi-v7a arm64-v8a x86 x86_64' --app-stl c++_static
 ```
 
-2. Building the test APK for development purposes
+NOTE: The above methods will only build the `vulkaninfo` and `libVkCube`. It won't create an APK.
 
-Creating the test APK is a bit of an involved process since it requires running multiple CLI tools after the CMake build has finished.
+Furthermore `vulkaninfo` is intended to run as an executable (No APK).
 
-As a result users are enouraged to use `scripts/android.py` to build the test APK.
+2. Building the VkCube APK
+
+Creating the `VkCube.apk` is a bit of an involved process since it requires running multiple CLI tools after the CMake build has finished.
+
+As a result users are enouraged to use `scripts/android.py` to build the APK.
 
 This script handles wrapping CMake and various Android CLI tools to create the APK for you.
 
 ```sh
-# Build a complete test APK with debug binaries for all ABIS
+# Build a complete APK with debug binaries for all ABIS
 python3 scripts/android.py --config Debug --app-abi 'armeabi-v7a arm64-v8a x86 x86_64' --app-stl c++_shared --apk --tests
 
-# Build a clean test APK with release binaries for arm64-v8a
+# Build a clean APK with release binaries for arm64-v8a
 python3 scripts/android.py --config Release --app-abi arm64-v8a --app-stl c++_shared --apk --tests --clean
 ```
 
 Note: `scripts/android.py` will place the APK in the `build-android/bin` directory.
 
-See [tests/README.md](tests/README.md) for running APK / `vulkaninfo` on Android.
+See [tests/README.md](tests/README.md) for running `VkCube.apk` / `vulkaninfo` on Android.
 
 ### Installed Files
 
