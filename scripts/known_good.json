@@ -59,6 +59,11 @@
                 "-Dgtest_force_shared_crt=ON",
                 "-DBUILD_SHARED_LIBS=OFF"
             ],
+            "build_platforms": [
+                "windows",
+                "linux",
+                "darwin"
+            ],
             "commit": "v1.14.0",
             "optional": [
                 "tests"
