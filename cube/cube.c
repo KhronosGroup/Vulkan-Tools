@@ -49,11 +49,9 @@
 #define APP_NAME_STR_LEN 80
 #endif  // _WIN32
 
-#ifdef ANDROID
-#include "vulkan_wrapper.h"
-#else
 #include <vulkan/vulkan.h>
-#endif
+#define VOLK_IMPLEMENTATION
+#include "volk.h"
 
 #include "linmath.h"
 #include "object_type_string_helper.h"
@@ -3172,7 +3170,7 @@ static void demo_run_display(struct demo *demo) {
 #include <sys/keycodes.h>
 
 static void demo_run(struct demo *demo) {
-    int size[2] = { 0, 0 };
+    int size[2] = {0, 0};
     screen_window_t win;
     int val;
     int rc;
@@ -3191,74 +3189,74 @@ static void demo_run(struct demo *demo) {
             }
             switch (val) {
                 case SCREEN_EVENT_KEYBOARD:
-                     rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_FLAGS, &val);
-                     if (rc) {
-                         printf("Cannot get SCREEN_PROPERTY_FLAGS of the event! (%s)\n", strerror(errno));
-                         fflush(stdout);
-                         demo->quit = true;
-                         break;
-                     }
-                     if (val & KEY_DOWN) {
-                         rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_SYM, &val);
-                         if (rc) {
-                             printf("Cannot get SCREEN_PROPERTY_SYM of the event! (%s)\n", strerror(errno));
-                             fflush(stdout);
-                             demo->quit = true;
-                             break;
-                         }
-                         switch (val) {
-                             case KEYCODE_ESCAPE:
-                                  demo->quit = true;
-                                  break;
-                             case KEYCODE_SPACE:
-                                  demo->pause = !demo->pause;
-                                  break;
-                             case KEYCODE_LEFT:
-                                  demo->spin_angle -= demo->spin_increment;
-                                  break;
-                             case KEYCODE_RIGHT:
-                                  demo->spin_angle += demo->spin_increment;
-                                  break;
-                             default:
-                                  break;
-                         }
-                     }
-                     break;
+                    rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_FLAGS, &val);
+                    if (rc) {
+                        printf("Cannot get SCREEN_PROPERTY_FLAGS of the event! (%s)\n", strerror(errno));
+                        fflush(stdout);
+                        demo->quit = true;
+                        break;
+                    }
+                    if (val & KEY_DOWN) {
+                        rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_SYM, &val);
+                        if (rc) {
+                            printf("Cannot get SCREEN_PROPERTY_SYM of the event! (%s)\n", strerror(errno));
+                            fflush(stdout);
+                            demo->quit = true;
+                            break;
+                        }
+                        switch (val) {
+                            case KEYCODE_ESCAPE:
+                                demo->quit = true;
+                                break;
+                            case KEYCODE_SPACE:
+                                demo->pause = !demo->pause;
+                                break;
+                            case KEYCODE_LEFT:
+                                demo->spin_angle -= demo->spin_increment;
+                                break;
+                            case KEYCODE_RIGHT:
+                                demo->spin_angle += demo->spin_increment;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
                 case SCREEN_EVENT_PROPERTY:
-                     rc = screen_get_event_property_pv(demo->screen_event, SCREEN_PROPERTY_WINDOW, (void **)&win);
-                     if (rc) {
-                         printf("Cannot get SCREEN_PROPERTY_WINDOW of the event! (%s)\n", strerror(errno));
-                         fflush(stdout);
-                         demo->quit = true;
-                         break;
-                     }
-                     rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_NAME, &val);
-                     if (rc) {
-                         printf("Cannot get SCREEN_PROPERTY_NAME of the event! (%s)\n", strerror(errno));
-                         fflush(stdout);
-                         demo->quit = true;
-                         break;
-                     }
-                     if (win == demo->screen_window) {
-                         switch(val) {
-                             case SCREEN_PROPERTY_SIZE:
-                                  rc = screen_get_window_property_iv(win, SCREEN_PROPERTY_SIZE, size);
-                                  if (rc) {
-                                      printf("Cannot get SCREEN_PROPERTY_SIZE of the window in the event! (%s)\n", strerror(errno));
-                                      fflush(stdout);
-                                      demo->quit = true;
-                                      break;
-                                  }
-                                  demo->width = size[0];
-                                  demo->height = size[1];
-                                  demo_resize(demo);
-                                  break;
-                             default:
-                                  /* We are not interested in any other events for now */
-                                  break;
-                         }
-                     }
-                     break;
+                    rc = screen_get_event_property_pv(demo->screen_event, SCREEN_PROPERTY_WINDOW, (void **)&win);
+                    if (rc) {
+                        printf("Cannot get SCREEN_PROPERTY_WINDOW of the event! (%s)\n", strerror(errno));
+                        fflush(stdout);
+                        demo->quit = true;
+                        break;
+                    }
+                    rc = screen_get_event_property_iv(demo->screen_event, SCREEN_PROPERTY_NAME, &val);
+                    if (rc) {
+                        printf("Cannot get SCREEN_PROPERTY_NAME of the event! (%s)\n", strerror(errno));
+                        fflush(stdout);
+                        demo->quit = true;
+                        break;
+                    }
+                    if (win == demo->screen_window) {
+                        switch (val) {
+                            case SCREEN_PROPERTY_SIZE:
+                                rc = screen_get_window_property_iv(win, SCREEN_PROPERTY_SIZE, size);
+                                if (rc) {
+                                    printf("Cannot get SCREEN_PROPERTY_SIZE of the window in the event! (%s)\n", strerror(errno));
+                                    fflush(stdout);
+                                    demo->quit = true;
+                                    break;
+                                }
+                                demo->width = size[0];
+                                demo->height = size[1];
+                                demo_resize(demo);
+                                break;
+                            default:
+                                /* We are not interested in any other events for now */
+                                break;
+                        }
+                    }
+                    break;
             }
         }
 
@@ -3387,6 +3385,13 @@ static void demo_init_vk(struct demo *demo) {
     demo->is_minimized = false;
     demo->cmd_pool = VK_NULL_HANDLE;
 
+    err = volkInitialize();
+    if (err != VK_SUCCESS) {
+        ERR_EXIT(
+            "Unable to find the Vulkan runtime on the system.\n\n"
+            "This likely indicates that no Vulkan capable drivers are installed.",
+            "Installation Failure");
+    }
     // Look for validation layers
     VkBool32 validation_found = 0;
     if (demo->validate) {
@@ -3622,6 +3627,8 @@ static void demo_init_vk(struct demo *demo) {
             "Please look at the Getting Started guide for additional information.\n",
             "vkCreateInstance Failure");
     }
+
+    volkLoadInstance(demo->inst);
 
     /* Make initial call to query gpu_count, then second call for gpu info */
     uint32_t gpu_count = 0;
@@ -3860,6 +3867,8 @@ static void demo_create_device(struct demo *demo) {
     }
     err = vkCreateDevice(demo->gpu, &device, NULL, &demo->device);
     assert(!err);
+
+    volkLoadDevice(demo->device);
 }
 
 static void demo_create_surface(struct demo *demo) {
@@ -3951,8 +3960,6 @@ static VkSurfaceFormatKHR pick_surface_format(const VkSurfaceFormatKHR *surfaceF
             format == VK_FORMAT_A2B10G10R10_UNORM_PACK32 || format == VK_FORMAT_A2R10G10B10_UNORM_PACK32 ||
             format == VK_FORMAT_A1R5G5B5_UNORM_PACK16 || format == VK_FORMAT_R5G6B5_UNORM_PACK16 ||
             format == VK_FORMAT_R16G16B16A16_SFLOAT) {
-
-
             return surfaceFormats[i];
         }
     }
@@ -4542,11 +4549,6 @@ static void processCommand(struct android_app *app, int32_t cmd) {
 }
 
 void android_main(struct android_app *app) {
-#ifdef ANDROID
-    int vulkanSupport = InitVulkan();
-    if (vulkanSupport == 0) return;
-#endif
-
     demo.prepared = false;
 
     app->onAppCmd = processCommand;

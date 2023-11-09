@@ -58,8 +58,11 @@ add_dependencies(vkcube MoltenVK_icd-staging-json)
 # Also include the MoltenVK helper files.
 target_include_directories(vkcube PRIVATE . ${MOLTENVK_DIR}/MoltenVK/include)
 
-# We do this so vulkaninfo is linked to an individual library and NOT a framework.
-target_link_libraries(vkcube Vulkan::Loader "-framework Cocoa -framework QuartzCore")
+# We do this so vkcube is linked to an individual library and NOT a framework.
+target_link_libraries(vkcube volk::volk_headers "-framework Cocoa -framework QuartzCore")
+
+# Link to MoltenVK directly, so the RPATH is setup
+target_link_libraries(vkcube ${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib)
 
 # Disable warnings about sprintf
 target_compile_options(vkcube PRIVATE -Wno-deprecated-declarations)
@@ -80,11 +83,9 @@ set_source_files_properties("${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.jso
 if(XCODE)
     add_custom_command(TARGET vkcube POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcube.app/Contents/Frameworks/libMoltenVK.dylib
-                       DEPENDS vulkan)
+                               ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcube.app/Contents/Frameworks/libMoltenVK.dylib)
 else()
     add_custom_command(TARGET vkcube POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/vkcube.app/Contents/Frameworks/libMoltenVK.dylib
-                       DEPENDS vulkan)
+                               ${CMAKE_CURRENT_BINARY_DIR}/vkcube.app/Contents/Frameworks/libMoltenVK.dylib)
 endif()

@@ -58,8 +58,11 @@ add_dependencies(vkcubepp MoltenVK_icd-staging-json)
 # code. Also include the MoltenVK helper files.
 target_include_directories(vkcubepp PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${MOLTENVK_DIR}/MoltenVK/include)
 
-# We do this so vulkaninfo is linked to an individual library and NOT a framework.
-target_link_libraries(vkcubepp Vulkan::Loader "-framework Cocoa -framework QuartzCore")
+# We do this so vkcubepp is linked to an individual library and NOT a framework.
+target_link_libraries(vkcubepp volk::volk_headers "-framework Cocoa -framework QuartzCore")
+
+# Link to MoltenVK directly, so the RPATH is setup
+target_link_libraries(vkcubepp ${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib)
 
 set_target_properties(vkcubepp PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/Info.plist)
 
@@ -77,11 +80,9 @@ set_source_files_properties("${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.jso
 if(XCODE)
     add_custom_command(TARGET vkcubepp POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib
-                       DEPENDS vulkan)
+                               ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
 else()
     add_custom_command(TARGET vkcubepp POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib
-                       DEPENDS vulkan)
+                               ${CMAKE_CURRENT_BINARY_DIR}/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
 endif()

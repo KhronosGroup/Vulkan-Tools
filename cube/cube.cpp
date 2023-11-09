@@ -43,6 +43,9 @@
 #define VULKAN_HPP_TYPESAFE_CONVERSION
 #include <vulkan/vulkan.hpp>
 
+#define VOLK_IMPLEMENTATION
+#include "volk.h"
+
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #include "linmath.h"
@@ -72,21 +75,6 @@ constexpr uint32_t FRAME_LAG = 2;
         exit(1);                     \
     } while (0)
 #endif
-
-// easier to use the C function for extension functions
-PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
-PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
-VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance,
-                                                              const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-                                                              const VkAllocationCallbacks *pAllocator,
-                                                              VkDebugUtilsMessengerEXT *pMessenger) {
-    return pfnVkCreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
-}
-
-VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger,
-                                                           VkAllocationCallbacks const *pAllocator) {
-    return pfnVkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
-}
 
 struct texture_object {
     vk::Sampler sampler;
@@ -1132,7 +1120,16 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
 }
 
 void Demo::init_vk() {
-    VULKAN_HPP_DEFAULT_DISPATCHER.init();
+    // Vulkan-hpp doesn't load moltenkVK, so we use volk to do that for us, then pass vkGetInstanceProcAddr along
+    VkResult err = volkInitialize();
+    if (err != VK_SUCCESS) {
+        ERR_EXIT(
+            "Unable to find the Vulkan runtime on the system.\n\n"
+            "This likely indicates that no Vulkan capable drivers are installed.",
+            "Installation Failure");
+    }
+
+    VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
     std::vector<char const *> instance_validation_layers = {"VK_LAYER_KHRONOS_validation"};
 
@@ -1327,11 +1324,6 @@ void Demo::init_vk() {
     VULKAN_HPP_DEFAULT_DISPATCHER.init(inst);
 
     if (use_debug_messenger) {
-        pfnVkCreateDebugUtilsMessengerEXT =
-            reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(inst.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
-        pfnVkDestroyDebugUtilsMessengerEXT =
-            reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(inst.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
-        VERIFY(pfnVkCreateDebugUtilsMessengerEXT != nullptr && pfnVkDestroyDebugUtilsMessengerEXT != nullptr);
         auto create_debug_messenger_return = inst.createDebugUtilsMessengerEXT(debug_utils_create_info);
         VERIFY(create_debug_messenger_return.result == vk::Result::eSuccess);
         debug_messenger = create_debug_messenger_return.value;
