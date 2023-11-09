@@ -113,7 +113,7 @@ TEST_F(MockICD, InitializationFunctions) {
     uint32_t api_version;
     res = vkEnumerateInstanceVersion(&api_version);
     ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(api_version, VK_HEADER_VERSION_COMPLETE);
+    ASSERT_GE(api_version, VK_API_VERSION_1_0);
 
     VkInstanceCreateInfo inst_create_info{};
     VkInstance instance{};

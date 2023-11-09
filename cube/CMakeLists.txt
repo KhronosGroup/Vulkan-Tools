@@ -217,7 +217,7 @@ elseif (ANDROID)
 
     add_subdirectory(android)
 
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers)
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     add_executable(vkcube)
     target_sources(vkcube PRIVATE
@@ -234,7 +234,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if (NEED_RT)
         target_link_libraries(vkcube PRIVATE rt)
     endif()
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers Vulkan::Loader)
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
 elseif(WIN32)
     add_executable(vkcube WIN32)
     target_sources(vkcube PRIVATE
@@ -244,15 +244,16 @@ elseif(WIN32)
         cube.vert.inc
         cube.frag.inc
     )
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers Vulkan::Loader)
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
 target_include_directories(vkcube PRIVATE .)
+target_compile_definitions(vkcube PRIVATE VK_NO_PROTOTYPES)
 
 if (ANDROID)
-    install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})    
+    install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})
 elseif(APPLE)
     # Keep RPATH so fixup_bundle can use it to find libraries
     set_target_properties(vkcube PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -260,7 +261,7 @@ elseif(APPLE)
     # Fix up the library references to be self-contained within the bundle.
     install(CODE "
         include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcube.app \"\" \"${Vulkan_LIBRARY_DIR}\")
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcube.app \"\" \"\")
         ")
 else()
     install(TARGETS vkcube)
@@ -283,7 +284,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
                    cube.vert.inc
                    cube.frag.inc
                    ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
+    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers)
     target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
 else()
     add_executable(vkcubepp
@@ -293,9 +294,10 @@ else()
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
                    cube.frag.inc)
-    target_link_libraries(vkcubepp Vulkan::Headers Vulkan::Loader)
+    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers)
 endif()
 target_include_directories(vkcubepp PRIVATE .)
+target_compile_definitions(vkcubepp PRIVATE VK_NO_PROTOTYPES)
 
 if(APPLE)
     # Keep RPATH so fixup_bundle can use it to find libraries
@@ -304,7 +306,7 @@ if(APPLE)
     # Fix up the library references to be self-contained within the bundle.
     install(CODE "
         include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcubepp.app \"\" \"${Vulkan_LIBRARY_DIR}\")
+        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcubepp.app \"\" \"\")
         ")
 else()
     install(TARGETS vkcubepp)
@@ -334,10 +336,10 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
         )
         target_link_libraries(vkcube-wayland PRIVATE
             Vulkan::Headers
-            Vulkan::Loader
+            volk::volk_headers
             PkgConfig::WAYLAND_CLIENT
         )
-        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
+        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR VK_NO_PROTOTYPES)
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
         if (NEED_RT)

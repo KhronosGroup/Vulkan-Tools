@@ -18,17 +18,11 @@
 target_sources(vkcube PRIVATE
     android_util.cpp
     android_util.h
-    vulkan_wrapper.cpp
-    vulkan_wrapper.h
 )
 
 target_include_directories(vkcube PRIVATE
     include
     .
-)
-
-target_compile_options(vkcube PRIVATE
-    --include=${CMAKE_CURRENT_SOURCE_DIR}/vulkan_wrapper.h
 )
 
 set_directory_properties(PROPERTIES "COMPILE_OPTIONS" "") # Disable compiler warnings for android glue
