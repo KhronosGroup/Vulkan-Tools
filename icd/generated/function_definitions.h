@@ -4606,6 +4606,7 @@ static VKAPI_ATTR void VKAPI_CALL SetHdrMetadataEXT(
 //Not a CREATE or DESTROY function
 }
 
+
 #ifdef VK_USE_PLATFORM_IOS_MVK
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateIOSSurfaceMVK(
