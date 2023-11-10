@@ -142,6 +142,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_hdr_metadata", 2},
     {"VK_KHR_imageless_framebuffer", 1},
     {"VK_KHR_create_renderpass2", 1},
+    {"VK_IMG_relaxed_line_rasterization", 1},
     {"VK_KHR_shared_presentable_image", 1},
     {"VK_KHR_external_fence", 1},
     {"VK_KHR_external_fence_win32", 1},
@@ -2800,6 +2801,7 @@ static VKAPI_ATTR void VKAPI_CALL SetHdrMetadataEXT(
     uint32_t                                    swapchainCount,
     const VkSwapchainKHR*                       pSwapchains,
     const VkHdrMetadataEXT*                     pMetadata);
+
 
 #ifdef VK_USE_PLATFORM_IOS_MVK
 

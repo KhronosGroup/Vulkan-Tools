@@ -4080,6 +4080,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_HDR_METADATA_EXT> {
     typedef VkHdrMetadataEXT Type;
 };
 
+// Map type VkPhysicalDeviceRelaxedLineRasterizationFeaturesIMG to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RELAXED_LINE_RASTERIZATION_FEATURES_IMG
+template <> struct LvlTypeMap<VkPhysicalDeviceRelaxedLineRasterizationFeaturesIMG> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RELAXED_LINE_RASTERIZATION_FEATURES_IMG;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RELAXED_LINE_RASTERIZATION_FEATURES_IMG> {
+    typedef VkPhysicalDeviceRelaxedLineRasterizationFeaturesIMG Type;
+};
+
 #ifdef VK_USE_PLATFORM_IOS_MVK
 // Map type VkIOSSurfaceCreateInfoMVK to id VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK
 template <> struct LvlTypeMap<VkIOSSurfaceCreateInfoMVK> {

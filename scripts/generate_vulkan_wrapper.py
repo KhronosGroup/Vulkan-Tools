@@ -889,6 +889,9 @@ VK_EXT_hdr_metadata = Extension(name='VK_EXT_hdr_metadata', version=2, guard=Non
     Command(name='vkSetHdrMetadataEXT', dispatch='VkDevice'),
 ])
 
+VK_IMG_relaxed_line_rasterization = Extension(name='VK_IMG_relaxed_line_rasterization', version=1, guard=None, commands=[
+])
+
 VK_EXT_external_memory_dma_buf = Extension(name='VK_EXT_external_memory_dma_buf', version=1, guard=None, commands=[
 ])
 
@@ -1958,6 +1961,7 @@ extensions = [
     VK_EXT_depth_clip_enable,
     VK_EXT_swapchain_colorspace,
     VK_EXT_hdr_metadata,
+    VK_IMG_relaxed_line_rasterization,
     VK_EXT_external_memory_dma_buf,
     VK_EXT_queue_family_foreign,
     VK_EXT_debug_utils,
