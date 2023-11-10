@@ -225,6 +225,7 @@ class VulkanInfoGenerator(OutputGenerator):
         self.enums = []
         self.flags = []
         self.bitmasks = []
+        self.format_ranges = []
         self.all_structures = []
         self.aliases = OrderedDict()
 
@@ -260,6 +261,8 @@ class VulkanInfoGenerator(OutputGenerator):
             self.vulkan_versions.append(VulkanVersion(ver))
 
     def endFile(self):
+        self.findFormatRanges()
+
         # gather the types that are needed to generate
         types_to_gen = set()
         for s in enums_to_gen:
@@ -340,6 +343,13 @@ class VulkanInfoGenerator(OutputGenerator):
         for s in (x for x in self.all_structures if x.name in struct_short_versions_to_gen):
             out += PrintStructShort(s)
 
+        out += 'auto format_ranges = std::array{\n'
+        for f in self.format_ranges:
+            out += f'    FormatRange{{{f.minimum_instance_version}, {f.extension_name if f.extension_name is not None else "nullptr"}, '
+            out += f'static_cast<VkFormat>({f.first_format}), static_cast<VkFormat>({f.last_format})}},\n'
+        out += '};\n'
+
+
         gen.write(out, file=self.outFile)
 
         gen.OutputGenerator.endFile(self)
@@ -395,6 +405,62 @@ class VulkanInfoGenerator(OutputGenerator):
                 if value.get('exclude') is None or name not in value.get('exclude'):
                     self.extension_sets[key].add(name)
 
+    # finds all the ranges of formats from core (1.0), core versions (1.1+), and extensions
+    def findFormatRanges(self):
+        for enums in self.registry.reg.findall('enums'):
+            if enums.get('name') == 'VkFormat':
+                min_val = 2**32
+                max_val = 0
+                for enum in enums.findall('enum'):
+                    if enum.get('value') is None:
+                        continue
+                    value = int(enum.get('value'))
+                    min_val = min(min_val, value)
+                    max_val = max(max_val, value)
+                if min_val < 2**32 and max_val > 0:
+                    self.format_ranges.append(VulkanFormatRange(0,None, min_val, max_val))
+
+        for feature in self.registry.reg.findall('feature'):
+            for require in feature.findall('require'):
+                comment = require.get('comment')
+                original_ext = None
+                if comment is not None and comment.find('Promoted from') >= 0:
+                    # may need tweaking in the future - some ext names aren't just the upper case version
+                    original_ext = comment.split(' ')[2].upper() + '_EXTENSION_NAME'
+                min_val = 2**32
+                max_val = 0
+                for enum in require.findall('enum'):
+                    if enum.get('extends') == 'VkFormat':
+                        value = CalcEnumValue(int(enum.get('extnumber')), int(enum.get('offset')))
+                        min_val = min(min_val, value)
+                        max_val = max(max_val, value)
+                if min_val < 2**32 and max_val > 0:
+                    self.format_ranges.append(VulkanFormatRange(feature.get('number').split('.')[1],None, min_val, max_val))
+                    # If the formats came from an extension, add a format range for that extension so it'll be printed if the ext is supported but not the core version
+                    if original_ext is not None:
+                        self.format_ranges.append(VulkanFormatRange(0,original_ext, min_val, max_val))
+
+        for extension in self.registry.reg.find('extensions').findall('extension'):
+            if extension.get('supported') in ['disabled', 'vulkansc']:
+                continue
+
+            min_val = 2**32
+            max_val = 0
+            enum_name_string = ''
+            for require in extension.findall('require'):
+                for enum in require.findall('enum'):
+                    if enum.get('value') is not None and enum.get('value').find(extension.get('name')):
+                        enum_name_string = enum.get('name')
+                    if enum.get('extends') == 'VkFormat':
+                        if enum.get('offset') is None:
+                            continue
+                        value = CalcEnumValue(int(extension.get('number')), int(enum.get('offset')))
+                        min_val = min(min_val, value)
+                        max_val = max(max_val, value)
+            if min_val < 2**32 and max_val > 0:
+                self.format_ranges.append(VulkanFormatRange(0, enum_name_string, min_val, max_val))
+
+
 
 def GatherTypesToGen(structure_list, structures, exclude = []):
     if exclude == None:
@@ -438,6 +504,10 @@ def AddGuardFooter(obj):
     else:
         return ""
 
+def CalcEnumValue(num, offset):
+    base = 1000000000
+    block_size = 1000
+    return base + (num - 1) * block_size + offset
 
 def PrintEnumToString(enum, gen):
     out = ''
@@ -871,12 +941,7 @@ class VulkanEnum:
                 continue
 
             if childExtends is not None and childExtNum is not None and childOffset is not None:
-                enumNegative = False
-                extNum = int(childExtNum)
-                extOffset = int(childOffset)
-                extBase = 1000000000
-                extBlockSize = 1000
-                childValue = extBase + (extNum - 1) * extBlockSize + extOffset
+                childValue = CalcEnumValue(int(childExtNum), int(childOffset))
                 if ('dir' in child.keys()):
                     childValue = -childValue
             duplicate = False
@@ -1079,3 +1144,10 @@ class VulkanVersion:
             for enum in req.findall('enum'):
                 self.names.add(enum.get('name'))
         self.names = sorted(self.names)
+
+class VulkanFormatRange:
+    def __init__(self, min_inst_version, ext_name, first, last):
+        self.minimum_instance_version = min_inst_version
+        self.extension_name = ext_name
+        self.first_format = first
+        self.last_format = last
