@@ -32,6 +32,20 @@
 #endif
 #include "vulkaninfo.hpp"
 
+// Used to sort the formats into buckets by their properties.
+std::unordered_map<PropFlags, std::set<VkFormat>> FormatPropMap(AppGpu &gpu) {
+    std::unordered_map<PropFlags, std::set<VkFormat>> map;
+    for (const auto fmtRange : format_ranges) {
+        if (gpu.FormatRangeSupported(fmtRange)) {
+            for (int32_t fmt = fmtRange.first_format; fmt <= fmtRange.last_format; ++fmt) {
+                PropFlags pf = get_format_properties(gpu, static_cast<VkFormat>(fmt));
+                map[pf].insert(static_cast<VkFormat>(fmt));
+            }
+        }
+    }
+    return map;
+}
+
 // =========== Dump Functions ========= //
 
 void DumpExtensions(Printer &p, std::string section_name, std::vector<VkExtensionProperties> extensions, bool do_indent = false) {
@@ -533,7 +547,7 @@ void GpuDumpFeatures(Printer &p, AppGpu &gpu) {
     }
 }
 
-void GpuDumpTextFormatProperty(Printer &p, const AppGpu &gpu, PropFlags formats, std::vector<VkFormat> format_list,
+void GpuDumpTextFormatProperty(Printer &p, const AppGpu &gpu, PropFlags formats, const std::set<VkFormat> &format_list,
                                uint32_t counter) {
     p.SetElementIndex(counter);
     ObjectWrapper obj_common_group(p, "Common Format Group");
@@ -576,9 +590,8 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
 
     if (p.Type() == OutputType::text) {
         auto fmtPropMap = FormatPropMap(gpu);
-
         int counter = 0;
-        std::vector<VkFormat> unsupported_formats;
+        std::set<VkFormat> unsupported_formats;
         for (auto &prop : fmtPropMap) {
             VkFormatProperties props = prop.first.props;
             VkFormatProperties3 props3 = prop.first.props3;
@@ -595,18 +608,21 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
             p.SetAsType().PrintString(VkFormatString(fmt));
         }
     } else {
-        for (auto &format : gpu.supported_format_ranges) {
-            if (gpu.FormatRangeSupported(format)) {
-                for (int32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
-                    VkFormat fmt = static_cast<VkFormat>(fmt_counter);
-                    auto formats = get_format_properties(gpu, fmt);
-                    p.SetTitleAsType();
-                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) {
-                        DumpVkFormatProperties3(p, VkFormatString(fmt), formats.props3);
-                    } else {
-                        DumpVkFormatProperties(p, VkFormatString(fmt), formats.props);
-                    }
+        std::set<VkFormat> formats_to_print;
+        for (auto &format_range : format_ranges) {
+            if (gpu.FormatRangeSupported(format_range)) {
+                for (int32_t fmt_counter = format_range.first_format; fmt_counter <= format_range.last_format; ++fmt_counter) {
+                    formats_to_print.insert(static_cast<VkFormat>(fmt_counter));
                 }
+            }
+        }
+        for (const auto &fmt : formats_to_print) {
+            auto formats = get_format_properties(gpu, fmt);
+            p.SetTitleAsType();
+            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) {
+                DumpVkFormatProperties3(p, VkFormatString(fmt), formats.props3);
+            } else {
+                DumpVkFormatProperties(p, VkFormatString(fmt), formats.props);
             }
         }
     }
@@ -680,10 +696,14 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
         }
         {
             ObjectWrapper obj(p, "formats");
-            for (auto &format : gpu.supported_format_ranges) {
+            std::set<VkFormat> already_printed_formats;
+            for (const auto &format : format_ranges) {
                 if (gpu.FormatRangeSupported(format)) {
                     for (int32_t fmt_counter = format.first_format; fmt_counter <= format.last_format; ++fmt_counter) {
                         VkFormat fmt = static_cast<VkFormat>(fmt_counter);
+                        if (already_printed_formats.count(fmt) > 0) {
+                            continue;
+                        }
                         auto formats = get_format_properties(gpu, fmt);
 
                         // don't print format properties that are unsupported
@@ -704,6 +724,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
                             gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &format_props2);
                             chain_iterator_format_properties2(p, gpu, format_props2.pNext);
                         }
+                        already_printed_formats.insert(fmt);
                     }
                 }
             }

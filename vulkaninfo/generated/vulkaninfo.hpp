@@ -5212,4 +5212,18 @@ bool operator==(const VkSurfaceFormatKHR & a, const VkSurfaceFormatKHR b) {
 std::ostream &operator<<(std::ostream &o, VkExtent3D &obj) {
     return o << "(" << obj.width << ',' << obj.height << ',' << obj.depth << ")";
 }
+auto format_ranges = std::array{
+    FormatRange{0, nullptr, static_cast<VkFormat>(0), static_cast<VkFormat>(184)},
+    FormatRange{1, nullptr, static_cast<VkFormat>(1000156000), static_cast<VkFormat>(1000156033)},
+    FormatRange{0, VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME, static_cast<VkFormat>(1000156000), static_cast<VkFormat>(1000156033)},
+    FormatRange{3, nullptr, static_cast<VkFormat>(1000330000), static_cast<VkFormat>(1000330003)},
+    FormatRange{0, VK_EXT_YCBCR_2PLANE_444_FORMATS_EXTENSION_NAME, static_cast<VkFormat>(1000330000), static_cast<VkFormat>(1000330003)},
+    FormatRange{3, nullptr, static_cast<VkFormat>(1000340000), static_cast<VkFormat>(1000340001)},
+    FormatRange{0, VK_EXT_4444_FORMATS_EXTENSION_NAME, static_cast<VkFormat>(1000340000), static_cast<VkFormat>(1000340001)},
+    FormatRange{3, nullptr, static_cast<VkFormat>(1000066000), static_cast<VkFormat>(1000066013)},
+    FormatRange{0, VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME, static_cast<VkFormat>(1000066000), static_cast<VkFormat>(1000066013)},
+    FormatRange{0, VK_IMG_FORMAT_PVRTC_EXTENSION_NAME, static_cast<VkFormat>(1000054000), static_cast<VkFormat>(1000054007)},
+    FormatRange{0, VK_NV_OPTICAL_FLOW_EXTENSION_NAME, static_cast<VkFormat>(1000464000), static_cast<VkFormat>(1000464000)},
+    FormatRange{0, VK_KHR_MAINTENANCE_5_EXTENSION_NAME, static_cast<VkFormat>(1000470000), static_cast<VkFormat>(1000470001)},
+};
 

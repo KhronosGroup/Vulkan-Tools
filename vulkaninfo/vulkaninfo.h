@@ -36,6 +36,7 @@
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <set>
 #include <vector>
 #include <utility>
 
@@ -1673,8 +1674,6 @@ struct AppGpu {
     std::array<VkDeviceSize, VK_MAX_MEMORY_HEAPS> heapBudget;
     std::array<VkDeviceSize, VK_MAX_MEMORY_HEAPS> heapUsage;
 
-    std::vector<FormatRange> supported_format_ranges;
-
     std::unique_ptr<phys_device_props2_chain> chain_for_phys_device_props2;
     std::unique_ptr<phys_device_mem_props2_chain> chain_for_phys_device_mem_props2;
     std::unique_ptr<phys_device_features2_chain> chain_for_phys_device_features2;
@@ -1873,36 +1872,6 @@ struct AppGpu {
             }
         }
         // TODO buffer - memory type compatibility
-
-        supported_format_ranges = {
-            {
-                // Standard formats in Vulkan 1.0
-                VK_MAKE_VERSION(1, 0, 0), NULL,
-                static_cast<VkFormat>(0),   // first core VkFormat
-                static_cast<VkFormat>(184)  // last core VkFormat
-            },
-            {
-                // YCBCR extension, standard in Vulkan 1.1
-                VK_MAKE_VERSION(1, 1, 0),
-                VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME,
-                VK_FORMAT_G8B8G8R8_422_UNORM,
-                VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM,
-            },
-            {
-                // PVRTC extension, not standardized
-                0,
-                VK_IMG_FORMAT_PVRTC_EXTENSION_NAME,
-                VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG,
-                VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG,
-            },
-            {
-                // ASTC extension, not standardized
-                0,
-                VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME,
-                VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT,
-                VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT,
-            },
-        };
     }
     ~AppGpu() { inst.dll.fp_vkDestroyDevice(dev, nullptr); }
 
@@ -1916,16 +1885,21 @@ struct AppGpu {
     }
 
     // Helper function to determine whether a format range is currently supported.
-    bool FormatRangeSupported(FormatRange &format_range) const {
-        // True if standard and supported by both this instance and this GPU
-        if (format_range.minimum_instance_version > 0 && inst.instance_version >= format_range.minimum_instance_version &&
-            props.apiVersion >= format_range.minimum_instance_version) {
+    bool FormatRangeSupported(const FormatRange &format_range) const {
+        // Formats from base vulkan spec
+        if (format_range.minimum_instance_version == 0 && format_range.extension_name == nullptr) {
             return true;
         }
 
         // True if this extension is present
         if (format_range.extension_name != nullptr) {
             return inst.CheckExtensionEnabled(format_range.extension_name);
+        }
+
+        // True if standard and supported by both this instance and this GPU
+        if (inst.instance_version >= VK_MAKE_API_VERSION(0, 1, format_range.minimum_instance_version, 0) &&
+            props.apiVersion >= VK_MAKE_API_VERSION(0, 1, format_range.minimum_instance_version, 0)) {
+            return true;
         }
 
         // Otherwise, not supported.
@@ -2025,15 +1999,3 @@ struct hash<PropFlags> {
     }
 };
 }  // namespace std
-
-// Used to sort the formats into buckets by their properties.
-std::unordered_map<PropFlags, std::vector<VkFormat>> FormatPropMap(AppGpu &gpu) {
-    std::unordered_map<PropFlags, std::vector<VkFormat>> map;
-    for (auto fmtRange : gpu.supported_format_ranges) {
-        for (int32_t fmt = fmtRange.first_format; fmt <= fmtRange.last_format; ++fmt) {
-            PropFlags pf = get_format_properties(gpu, static_cast<VkFormat>(fmt));
-            map[pf].push_back(static_cast<VkFormat>(fmt));
-        }
-    }
-    return map;
-}
