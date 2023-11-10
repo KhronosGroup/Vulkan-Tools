@@ -53,7 +53,7 @@ target_include_directories(vulkaninfo PRIVATE
     .
 )
 
-target_compile_definitions(vulkaninfo PRIVATE VK_ENABLE_BETA_EXTENSIONS)
+target_compile_definitions(vulkaninfo PRIVATE VK_ENABLE_BETA_EXTENSIONS VK_NO_PROTOTYPES)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
@@ -65,32 +65,32 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
 
     if(BUILD_WSI_XCB_SUPPORT)
         pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
-        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XCB_KHR VK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XCB_KHR)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::XCB)
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
         pkg_check_modules(X11 REQUIRED QUIET IMPORTED_TARGET x11)
-        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XLIB_KHR VK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_XLIB_KHR)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::X11)
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
         pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
-        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_WAYLAND_KHR VK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::WAYLAND_CLIENT)
     endif()
 
     if(BUILD_WSI_DIRECTFB_SUPPORT)
         pkg_check_modules(DirectFB REQUIRED QUIET IMPORTED_TARGET directfb)
-        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DIRECTFB_EXT VK_NO_PROTOTYPES)
+        target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DIRECTFB_EXT)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::DirectFB)
     endif()
 endif()
 
 if(APPLE)
     # We do this so vulkaninfo is linked to an individual library and NOT a framework.
-    target_link_libraries(vulkaninfo PRIVATE Vulkan::Loader "-framework AppKit -framework QuartzCore")
+    target_link_libraries(vulkaninfo PRIVATE "-framework AppKit -framework QuartzCore")
     target_include_directories(vulkaninfo PRIVATE macOS/vulkaninfo)
 
     target_sources(vulkaninfo PRIVATE
@@ -105,11 +105,10 @@ target_link_libraries(vulkaninfo PRIVATE
 )
 
 if(WIN32)
-    target_compile_definitions(vulkaninfo PRIVATE 
+    target_compile_definitions(vulkaninfo PRIVATE
         VK_USE_PLATFORM_WIN32_KHR
         WIN32_LEAN_AND_MEAN
         _CRT_SECURE_NO_WARNINGS
-        VK_NO_PROTOTYPES
     )
 elseif(APPLE)
     target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_METAL_EXT)
