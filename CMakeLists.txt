@@ -50,18 +50,6 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-if(APPLE)
-    set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
-    if(NOT MOLTENVK_REPO_ROOT AND NOT DEFINED ENV{MOLTENVK_REPO_ROOT})
-        message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
-    endif()
-
-    if(NOT MOLTENVK_REPO_ROOT)
-        set(MOLTENVK_REPO_ROOT $ENV{MOLTENVK_REPO_ROOT})
-    endif()
-    message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
-endif()
-
 find_package(VulkanHeaders QUIET CONFIG)
 find_package(VulkanLoader QUIET CONFIG)
 
@@ -143,10 +131,6 @@ if (GIT_FOUND AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/.git/HEAD")
         endif()
         string(REGEX REPLACE "\n$" "" GIT_BRANCH_NAME "${GIT_BRANCH_NAME}")
     endif()
-endif()
-
-if(APPLE)
-    include(mac_common.cmake)
 endif()
 
 if(BUILD_CUBE)
