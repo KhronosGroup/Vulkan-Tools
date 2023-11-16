@@ -15,6 +15,52 @@
 # limitations under the License.
 # ~~~
 
+if(APPLE)
+    set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
+    if(NOT MOLTENVK_REPO_ROOT)
+        message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
+    endif()
+    message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
+
+    # Source for the MoltenVK ICD library and JSON file
+    set(MOLTENVK_DIR ${MOLTENVK_REPO_ROOT})
+
+    # MoltenVK JSON File
+    execute_process(COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json)
+    execute_process(COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
+                            ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json
+                    OUTPUT_FILE ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json)
+
+    # ~~~
+    # Modify the ICD JSON file to adjust the library path.
+    # The ICD JSON file goes in the Resources/vulkan/icd.d directory, so adjust the
+    # library_path to the relative path to the Frameworks directory in the bundle.
+    # The regex does: substitute ':<whitespace>"<whitespace><all occurences of . and />' with:
+    # ': "../../../Frameworks/'
+    # ~~~
+    add_custom_target(MoltenVK_icd-staging-json ALL
+        COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json
+        COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
+                ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json > ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json
+        VERBATIM
+        DEPENDS "${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json"
+    )
+    set_source_files_properties(${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json PROPERTIES GENERATED TRUE)
+
+    find_library(COCOA NAMES Cocoa)
+
+    # Locate Interface Builder Tool, needed to build things like Storyboards outside of Xcode.
+    if(NOT XCODE)
+        # Make sure we can find the 'ibtool' program. If we can NOT find it we skip generation of this project.
+        find_program(IBTOOL ibtool HINTS "/usr/bin" "${OSX_DEVELOPER_ROOT}/usr/bin")
+        if(${IBTOOL} STREQUAL "IBTOOL-NOTFOUND")
+            message(SEND_ERROR "ibtool can not be found and is needed to compile the .xib files. "
+                            "It should have been installed with the Apple developer tools. "
+                            "The default system paths were searched in addition to ${OSX_DEVELOPER_ROOT}/usr/bin.")
+        endif()
+    endif()
+endif()
+
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
@@ -163,7 +209,7 @@ endif()
 # vkcube
 
 if(APPLE)
-    include(macOS/cube/cube.cmake)
+    add_subdirectory(macOS/cube)
 elseif (ANDROID)
     add_library(vkcube MODULE)
 
@@ -228,7 +274,7 @@ endif()
 # vkcubepp
 
 if(APPLE)
-    include(macOS/cubepp/cubepp.cmake)
+    add_subdirectory(macOS/cubepp)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     add_executable(vkcubepp
                    cube.cpp
