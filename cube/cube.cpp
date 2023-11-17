@@ -43,9 +43,6 @@
 #define VULKAN_HPP_TYPESAFE_CONVERSION
 #include <vulkan/vulkan.hpp>
 
-#define VOLK_IMPLEMENTATION
-#include "volk.h"
-
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #include "linmath.h"
@@ -1120,16 +1117,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
 }
 
 void Demo::init_vk() {
-    // Vulkan-hpp doesn't load moltenkVK, so we use volk to do that for us, then pass vkGetInstanceProcAddr along
-    VkResult err = volkInitialize();
-    if (err != VK_SUCCESS) {
-        ERR_EXIT(
-            "Unable to find the Vulkan runtime on the system.\n\n"
-            "This likely indicates that no Vulkan capable drivers are installed.",
-            "Installation Failure");
-    }
-
-    VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+    VULKAN_HPP_DEFAULT_DISPATCHER.init();
 
     std::vector<char const *> instance_validation_layers = {"VK_LAYER_KHRONOS_validation"};
 

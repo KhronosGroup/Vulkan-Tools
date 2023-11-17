@@ -59,10 +59,7 @@ add_dependencies(vkcube MoltenVK_icd-staging-json)
 target_include_directories(vkcube PRIVATE . ${MOLTENVK_DIR}/MoltenVK/include)
 
 # We do this so vkcube is linked to an individual library and NOT a framework.
-target_link_libraries(vkcube volk::volk_headers "-framework Cocoa -framework QuartzCore")
-
-# Link to MoltenVK directly, so the RPATH is setup
-target_link_libraries(vkcube ${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib)
+target_link_libraries(vkcube Vulkan::Loader volk::volk_headers "-framework Cocoa -framework QuartzCore")
 
 # Disable warnings about sprintf
 target_compile_options(vkcube PRIVATE -Wno-deprecated-declarations)
