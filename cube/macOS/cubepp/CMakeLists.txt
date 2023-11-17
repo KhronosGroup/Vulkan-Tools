@@ -59,10 +59,7 @@ add_dependencies(vkcubepp MoltenVK_icd-staging-json)
 target_include_directories(vkcubepp PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${MOLTENVK_DIR}/MoltenVK/include)
 
 # We do this so vkcubepp is linked to an individual library and NOT a framework.
-target_link_libraries(vkcubepp volk::volk_headers "-framework Cocoa -framework QuartzCore")
-
-# Link to MoltenVK directly, so the RPATH is setup
-target_link_libraries(vkcubepp ${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib)
+target_link_libraries(vkcubepp Vulkan::Loader volk::volk_headers "-framework Cocoa -framework QuartzCore")
 
 set_target_properties(vkcubepp PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_LIST_DIR}/Info.plist)
 

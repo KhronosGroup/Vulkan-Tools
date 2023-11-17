@@ -51,6 +51,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 find_package(VulkanHeaders QUIET CONFIG)
+find_package(VulkanLoader QUIET CONFIG)
 find_package(volk QUIET CONFIG)
 
 include(GNUInstallDirs)
