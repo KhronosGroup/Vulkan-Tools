@@ -6891,7 +6891,6 @@ static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerNV(
 static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    uint32_t*                                   pTimingCount,
     VkGetLatencyMarkerInfoNV*                   pLatencyMarkerInfo)
 {
 //Not a CREATE or DESTROY function
