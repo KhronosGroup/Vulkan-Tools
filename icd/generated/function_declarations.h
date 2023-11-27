@@ -371,7 +371,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_ARM_shader_core_builtins", 2},
     {"VK_EXT_pipeline_library_group_handles", 1},
     {"VK_EXT_dynamic_rendering_unused_attachments", 1},
-    {"VK_NV_low_latency2", 1},
+    {"VK_NV_low_latency2", 2},
     {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
     {"VK_QCOM_image_processing2", 1},
@@ -4242,7 +4242,6 @@ static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerNV(
 static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsNV(
     VkDevice                                    device,
     VkSwapchainKHR                              swapchain,
-    uint32_t*                                   pTimingCount,
     VkGetLatencyMarkerInfoNV*                   pLatencyMarkerInfo);
 
 static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
