@@ -6413,6 +6413,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetHostMappingVALVE(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
@@ -6852,6 +6853,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+
 
 
 

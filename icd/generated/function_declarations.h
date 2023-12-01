@@ -43,7 +43,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_GGP_stream_descriptor_surface", 1},
     {"VK_NV_external_memory_capabilities", 1},
     {"VK_KHR_get_physical_device_properties2", 2},
-    {"VK_EXT_validation_flags", 2},
+    {"VK_EXT_validation_flags", 3},
     {"VK_NN_vi_surface", 1},
     {"VK_KHR_device_group_creation", 1},
     {"VK_KHR_external_memory_capabilities", 1},
@@ -61,7 +61,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_FUCHSIA_imagepipe_surface", 1},
     {"VK_EXT_metal_surface", 1},
     {"VK_KHR_surface_protected_capabilities", 1},
-    {"VK_EXT_validation_features", 5},
+    {"VK_EXT_validation_features", 6},
     {"VK_EXT_headless_surface", 1},
     {"VK_EXT_surface_maintenance1", 1},
     {"VK_EXT_acquire_drm_display", 1},
@@ -70,6 +70,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_KHR_portability_enumeration", 1},
     {"VK_GOOGLE_surfaceless_query", 2},
     {"VK_LUNARG_direct_driver_loading", 1},
+    {"VK_EXT_layer_settings", 2},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -332,7 +333,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_opacity_micromap", 2},
     {"VK_NV_displacement_micromap", 2},
     {"VK_EXT_load_store_op_none", 1},
-    {"VK_HUAWEI_cluster_culling_shader", 2},
+    {"VK_HUAWEI_cluster_culling_shader", 3},
     {"VK_EXT_border_color_swizzle", 1},
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
@@ -342,6 +343,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_VALVE_descriptor_set_host_mapping", 1},
     {"VK_EXT_depth_clamp_zero_one", 1},
     {"VK_EXT_non_seamless_cube_map", 1},
+    {"VK_ARM_render_pass_striped", 1},
     {"VK_QCOM_fragment_density_map_offset", 1},
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
@@ -3944,6 +3946,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDescriptorSetHostMappingVALVE(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectNV(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             copyBufferAddress,
@@ -4214,6 +4217,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
     VkDevice                                    device,
     const VkRenderingInfo*                      pRenderingInfo,
     VkTilePropertiesQCOM*                       pProperties);
+
 
 
 
