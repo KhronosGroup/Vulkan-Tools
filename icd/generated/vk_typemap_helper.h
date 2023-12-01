@@ -6839,6 +6839,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING
     typedef VkPhysicalDeviceClusterCullingShaderPropertiesHUAWEI Type;
 };
 
+// Map type VkPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_VRS_FEATURES_HUAWEI
+template <> struct LvlTypeMap<VkPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_VRS_FEATURES_HUAWEI;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_VRS_FEATURES_HUAWEI> {
+    typedef VkPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI Type;
+};
+
 // Map type VkPhysicalDeviceBorderColorSwizzleFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceBorderColorSwizzleFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT;
@@ -6963,6 +6972,51 @@ template <> struct LvlTypeMap<VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT> {
     typedef VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceRenderPassStripedFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_FEATURES_ARM
+template <> struct LvlTypeMap<VkPhysicalDeviceRenderPassStripedFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_FEATURES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_FEATURES_ARM> {
+    typedef VkPhysicalDeviceRenderPassStripedFeaturesARM Type;
+};
+
+// Map type VkPhysicalDeviceRenderPassStripedPropertiesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_PROPERTIES_ARM
+template <> struct LvlTypeMap<VkPhysicalDeviceRenderPassStripedPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_PROPERTIES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_PROPERTIES_ARM> {
+    typedef VkPhysicalDeviceRenderPassStripedPropertiesARM Type;
+};
+
+// Map type VkRenderPassStripeInfoARM to id VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_INFO_ARM
+template <> struct LvlTypeMap<VkRenderPassStripeInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_INFO_ARM> {
+    typedef VkRenderPassStripeInfoARM Type;
+};
+
+// Map type VkRenderPassStripeBeginInfoARM to id VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_BEGIN_INFO_ARM
+template <> struct LvlTypeMap<VkRenderPassStripeBeginInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_BEGIN_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_BEGIN_INFO_ARM> {
+    typedef VkRenderPassStripeBeginInfoARM Type;
+};
+
+// Map type VkRenderPassStripeSubmitInfoARM to id VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_ARM
+template <> struct LvlTypeMap<VkRenderPassStripeSubmitInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_ARM> {
+    typedef VkRenderPassStripeSubmitInfoARM Type;
 };
 
 // Map type VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM
@@ -7455,6 +7509,15 @@ template <> struct LvlTypeMap<VkPhysicalDeviceExtendedSparseAddressSpaceProperti
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_PROPERTIES_NV> {
     typedef VkPhysicalDeviceExtendedSparseAddressSpacePropertiesNV Type;
+};
+
+// Map type VkLayerSettingsCreateInfoEXT to id VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkLayerSettingsCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT> {
+    typedef VkLayerSettingsCreateInfoEXT Type;
 };
 
 // Map type VkPhysicalDeviceShaderCoreBuiltinsFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_BUILTINS_FEATURES_ARM
