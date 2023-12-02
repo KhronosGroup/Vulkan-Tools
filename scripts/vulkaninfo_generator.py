@@ -795,7 +795,10 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
                 for key, value in extEnables.items():
                     if has_printed_condition:
                         out += '\n         || '
-                    has_printed_condition = True
+                    else:
+                        has_printed_condition = True
+                        if has_version:
+                            out += '('
                     if value == EXTENSION_TYPE_DEVICE:
                         out += f'gpu.CheckPhysicalDeviceExtensionIncluded({key})'
                     elif value == EXTENSION_TYPE_INSTANCE:
@@ -804,8 +807,9 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
                         assert False, 'Should never get here'
             if has_version:
                 if has_printed_condition:
-                    out += '\n            || '
-                out += f'{version_desc}.minor >= {str(version)}'
+                    out += f')\n            && {version_desc}.minor < {str(version)}'
+                else:
+                    out += f'{version_desc}.minor >= {str(version)}'
             out += ')\n            '
         else:
             out += '        '
@@ -881,7 +885,10 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
                         for key, value in extEnables.items():
                             if has_printed_condition:
                                 out += ' || '
-                            has_printed_condition = True
+                            else:
+                                has_printed_condition = True
+                                if has_version:
+                                    out += '('
                             if value == EXTENSION_TYPE_DEVICE:
                                 out += f'gpu.CheckPhysicalDeviceExtensionIncluded({key})'
                             elif value == EXTENSION_TYPE_INSTANCE:
@@ -890,8 +897,9 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
                                 assert False, 'Should never get here'
                     if has_version:
                         if has_printed_condition:
-                            out += ' ||\n            '
-                        out += f'{version_desc}.minor >= {str(version)}'
+                            out += f') &&\n            {version_desc}.minor < {str(version)}'
+                        else:
+                            out += f'{version_desc}.minor >= {str(version)}'
                     out += ')'
                 out += ') {\n'
                 out += f'            {s.name}* props = ({s.name}*)structure;\n'

@@ -1632,8 +1632,18 @@ struct AppGpu {
     VkPhysicalDeviceProperties props{};
     VkPhysicalDeviceProperties2KHR props2{};
 
-    VkPhysicalDeviceDriverProperties driver_props{};
-    VkPhysicalDeviceIDProperties device_id_props{};
+    // VkPhysicalDeviceDriverProperties
+    VkDriverId driverID;
+    char driverName[VK_MAX_DRIVER_NAME_SIZE];
+    char driverInfo[VK_MAX_DRIVER_INFO_SIZE];
+    VkConformanceVersion conformanceVersion;
+    // VkPhysicalDeviceIDProperties
+    uint8_t deviceUUID[VK_UUID_SIZE];
+    uint8_t driverUUID[VK_UUID_SIZE];
+    uint8_t deviceLUID[VK_LUID_SIZE];
+    uint32_t deviceNodeMask;
+    VkBool32 deviceLUIDValid;
+
     bool found_driver_props = false;
     bool found_device_id_props = false;
 
@@ -1714,12 +1724,38 @@ struct AppGpu {
                 while (place) {
                     VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
                     if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
-                        driver_props = *reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
+                        VkPhysicalDeviceDriverProperties *driver_driver_properties =
+                            reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
+                        driverID = driver_driver_properties->driverID;
+                        memcpy(driverName, driver_driver_properties->driverName, VK_MAX_DRIVER_NAME_SIZE);
+                        memcpy(driverInfo, driver_driver_properties->driverInfo, VK_MAX_DRIVER_INFO_SIZE);
+                        conformanceVersion = driver_driver_properties->conformanceVersion;
                         found_driver_props = true;
-
                     } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
-                        device_id_props = *reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
+                        VkPhysicalDeviceIDProperties *device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
+                        memcpy(deviceUUID, device_id_props->deviceUUID, VK_UUID_SIZE);
+                        memcpy(driverUUID, device_id_props->driverUUID, VK_UUID_SIZE);
+                        memcpy(deviceLUID, device_id_props->deviceLUID, VK_LUID_SIZE);
+                        deviceNodeMask = device_id_props->deviceNodeMask;
+                        deviceLUIDValid = device_id_props->deviceLUIDValid;
                         found_device_id_props = true;
+                    } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES) {
+                        VkPhysicalDeviceVulkan11Properties *vulkan_11_props =
+                            reinterpret_cast<VkPhysicalDeviceVulkan11Properties *>(structure);
+                        memcpy(deviceUUID, vulkan_11_props->deviceUUID, VK_UUID_SIZE);
+                        memcpy(driverUUID, vulkan_11_props->driverUUID, VK_UUID_SIZE);
+                        memcpy(deviceLUID, vulkan_11_props->deviceLUID, VK_LUID_SIZE);
+                        deviceNodeMask = vulkan_11_props->deviceNodeMask;
+                        deviceLUIDValid = vulkan_11_props->deviceLUIDValid;
+                        found_device_id_props = true;
+                    } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES) {
+                        VkPhysicalDeviceVulkan12Properties *vulkan_12_props =
+                            reinterpret_cast<VkPhysicalDeviceVulkan12Properties *>(structure);
+                        driverID = vulkan_12_props->driverID;
+                        memcpy(driverName, vulkan_12_props->driverName, VK_MAX_DRIVER_NAME_SIZE);
+                        memcpy(driverInfo, vulkan_12_props->driverInfo, VK_MAX_DRIVER_INFO_SIZE);
+                        conformanceVersion = vulkan_12_props->conformanceVersion;
+                        found_driver_props = true;
                     }
                     place = structure->pNext;
                 }
@@ -1901,11 +1937,11 @@ struct AppGpu {
     // If one isn't present, fall back to the standard Vulkan scheme
     std::string GetDriverVersionString() {
         uint32_t v = props.driverVersion;
-        if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY) ||
+        if ((found_driver_props && driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY) ||
             (!found_driver_props && props.deviceID == 4318)) {
             return std::to_string((v >> 22) & 0x3ff) + "." + std::to_string((v >> 14) & 0x0ff) + "." +
                    std::to_string((v >> 6) & 0x0ff) + "." + std::to_string(v & 0x003f);
-        } else if ((found_driver_props && driver_props.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS)
+        } else if ((found_driver_props && driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS)
 #if defined(WIN32)
                    || (!found_driver_props && props.deviceID == 0x8086)  // only do the fallback check if running in windows
 #endif
