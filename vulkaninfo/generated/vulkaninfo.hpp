@@ -3389,20 +3389,20 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCooperativeMatrixPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomBorderColorPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthStencilResolveProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorIndexingProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDiscardRectanglePropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDriverProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PHYSICAL_DEVICE_DRM_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDrmPropertiesEXT));
@@ -3410,8 +3410,8 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceExtendedDynamicState3PropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceExternalMemoryHostPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFloatControlsProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMap2PropertiesEXT));
@@ -3423,21 +3423,21 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentShadingRatePropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_GRAPHICS_PIPELINE_LIBRARY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT));
-        if (inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME)
+        if ((inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME)
          || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME)
-         || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+         || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceIDProperties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceInlineUniformBlockProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLineRasterizationPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance3Properties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance4Properties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_5_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance5PropertiesKHR));
@@ -3445,8 +3445,8 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMeshShaderPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTI_DRAW_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultiDrawPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultiviewProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_NESTED_COMMAND_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceNestedCommandBufferPropertiesEXT));
@@ -3458,8 +3458,8 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePerformanceQueryPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineRobustnessPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_2_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_2_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePointClippingProperties));
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME))
@@ -3477,11 +3477,11 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRobustness2PropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSampleLocationsPropertiesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSamplerFilterMinmaxProperties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderIntegerDotProductProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderModuleIdentifierPropertiesEXT));
@@ -3491,14 +3491,14 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTileImagePropertiesEXT));
         if (gpu.api_version.minor >= 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupProperties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupSizeControlProperties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTexelBufferAlignmentProperties));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTimelineSemaphoreProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTransformFeedbackPropertiesEXT));
@@ -3560,8 +3560,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceDepthStencilResolveProperties* props = (VkPhysicalDeviceDepthStencilResolveProperties*)structure;
             DumpVkPhysicalDeviceDepthStencilResolveProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceDepthStencilResolveProperties":"VkPhysicalDeviceDepthStencilResolvePropertiesKHR", *props);
             p.AddNewline();
@@ -3579,8 +3579,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceDescriptorIndexingProperties* props = (VkPhysicalDeviceDescriptorIndexingProperties*)structure;
             DumpVkPhysicalDeviceDescriptorIndexingProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceDescriptorIndexingProperties":"VkPhysicalDeviceDescriptorIndexingPropertiesEXT", *props);
             p.AddNewline();
@@ -3592,8 +3592,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceDriverProperties* props = (VkPhysicalDeviceDriverProperties*)structure;
             DumpVkPhysicalDeviceDriverProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceDriverProperties":"VkPhysicalDeviceDriverPropertiesKHR", *props);
             p.AddNewline();
@@ -3617,8 +3617,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceFloatControlsProperties* props = (VkPhysicalDeviceFloatControlsProperties*)structure;
             DumpVkPhysicalDeviceFloatControlsProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceFloatControlsProperties":"VkPhysicalDeviceFloatControlsPropertiesKHR", *props);
             p.AddNewline();
@@ -3654,15 +3654,15 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES &&
-           (inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME) || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME) || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME) || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME) || inst.CheckExtensionEnabled(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceIDProperties* props = (VkPhysicalDeviceIDProperties*)structure;
             DumpVkPhysicalDeviceIDProperties(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceIDProperties":"VkPhysicalDeviceIDPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceInlineUniformBlockProperties* props = (VkPhysicalDeviceInlineUniformBlockProperties*)structure;
             DumpVkPhysicalDeviceInlineUniformBlockProperties(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceInlineUniformBlockProperties":"VkPhysicalDeviceInlineUniformBlockPropertiesEXT", *props);
             p.AddNewline();
@@ -3674,15 +3674,15 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceMaintenance3Properties* props = (VkPhysicalDeviceMaintenance3Properties*)structure;
             DumpVkPhysicalDeviceMaintenance3Properties(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceMaintenance3Properties":"VkPhysicalDeviceMaintenance3PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceMaintenance4Properties* props = (VkPhysicalDeviceMaintenance4Properties*)structure;
             DumpVkPhysicalDeviceMaintenance4Properties(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceMaintenance4Properties":"VkPhysicalDeviceMaintenance4PropertiesKHR", *props);
             p.AddNewline();
@@ -3706,8 +3706,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceMultiviewProperties* props = (VkPhysicalDeviceMultiviewProperties*)structure;
             DumpVkPhysicalDeviceMultiviewProperties(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceMultiviewProperties":"VkPhysicalDeviceMultiviewPropertiesKHR", *props);
             p.AddNewline();
@@ -3743,8 +3743,8 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_2_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_2_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDevicePointClippingProperties* props = (VkPhysicalDevicePointClippingProperties*)structure;
             DumpVkPhysicalDevicePointClippingProperties(p, gpu.api_version.minor >= 1 ?"VkPhysicalDevicePointClippingProperties":"VkPhysicalDevicePointClippingPropertiesKHR", *props);
             p.AddNewline();
@@ -3794,15 +3794,15 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceSamplerFilterMinmaxProperties* props = (VkPhysicalDeviceSamplerFilterMinmaxProperties*)structure;
             DumpVkPhysicalDeviceSamplerFilterMinmaxProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceSamplerFilterMinmaxProperties":"VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceShaderIntegerDotProductProperties* props = (VkPhysicalDeviceShaderIntegerDotProductProperties*)structure;
             DumpVkPhysicalDeviceShaderIntegerDotProductProperties(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceShaderIntegerDotProductProperties":"VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR", *props);
             p.AddNewline();
@@ -3832,22 +3832,22 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceSubgroupSizeControlProperties* props = (VkPhysicalDeviceSubgroupSizeControlProperties*)structure;
             DumpVkPhysicalDeviceSubgroupSizeControlProperties(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceSubgroupSizeControlProperties":"VkPhysicalDeviceSubgroupSizeControlPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceTexelBufferAlignmentProperties* props = (VkPhysicalDeviceTexelBufferAlignmentProperties*)structure;
             DumpVkPhysicalDeviceTexelBufferAlignmentProperties(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceTexelBufferAlignmentProperties":"VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceTimelineSemaphoreProperties* props = (VkPhysicalDeviceTimelineSemaphoreProperties*)structure;
             DumpVkPhysicalDeviceTimelineSemaphoreProperties(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceTimelineSemaphoreProperties":"VkPhysicalDeviceTimelineSemaphorePropertiesKHR", *props);
             p.AddNewline();
@@ -4171,13 +4171,13 @@ struct phys_device_features2_chain {
         PhysicalDeviceYcbcrImageArraysFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT;
         PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES;
         std::vector<VkBaseOutStructure*> chain_members;
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevice16BitStorageFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_4444_FORMATS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevice4444FormatsFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevice8BitStorageFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_ASTC_DECODE_MODE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceASTCDecodeFeaturesEXT));
@@ -4193,8 +4193,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceBlendOperationAdvancedFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_BORDER_COLOR_SWIZZLE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceBorderColorSwizzleFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceBufferDeviceAddressFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceBufferDeviceAddressFeaturesEXT));
@@ -4216,13 +4216,13 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthClipEnableFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorBufferFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDescriptorIndexingFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDeviceMemoryReportFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDynamicRenderingFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT));
@@ -4254,8 +4254,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceHostImageCopyFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceHostQueryResetFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_2D_VIEW_OF_3D_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImage2DViewOf3DFeaturesEXT));
@@ -4263,27 +4263,27 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageCompressionControlFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageCompressionControlSwapchainFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageRobustnessFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_SLICED_VIEW_OF_3D_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageSlicedViewOf3DFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_VIEW_MIN_LOD_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImageViewMinLodFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceImagelessFramebufferFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INDEX_TYPE_UINT8_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceIndexTypeUint8FeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceInlineUniformBlockFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LEGACY_DITHERING_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLegacyDitheringFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLineRasterizationFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance4Features));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_5_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance5FeaturesKHR));
@@ -4295,8 +4295,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultiDrawFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMultiviewFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME)
          || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MUTABLE_DESCRIPTOR_TYPE_EXTENSION_NAME))
@@ -4311,8 +4311,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePerformanceQueryFeaturesKHR));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineCreationCacheControlFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePipelineExecutablePropertiesFeaturesKHR));
@@ -4336,8 +4336,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePrivateDataFeatures));
         if (gpu.api_version.minor >= 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceProtectedMemoryFeatures));
@@ -4358,76 +4358,76 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingPositionFetchFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_ROBUSTNESS_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRobustness2FeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSamplerYcbcrConversionFeatures));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceScalarBlockLayoutFeatures));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSeparateDepthStencilLayoutsFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_ATOMIC_FLOAT_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderAtomicFloat2FeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_ATOMIC_FLOAT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderAtomicFloatFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderAtomicInt64Features));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_CLOCK_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderClockFeaturesKHR));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderDemoteToHelperInvocationFeatures));
         if (gpu.api_version.minor >= 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderDrawParametersFeatures));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderFloat16Int8Features));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_IMAGE_ATOMIC_INT64_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderImageAtomicInt64FeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderIntegerDotProductFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderModuleIdentifierFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OBJECT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderObjectFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderSubgroupExtendedTypesFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTerminateInvocationFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_TILE_IMAGE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTileImageFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubgroupSizeControlFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBPASS_MERGE_FEEDBACK_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSubpassMergeFeedbackFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSwapchainMaintenance1FeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSynchronization2Features));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTexelBufferAlignmentFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTextureCompressionASTCHDRFeatures));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTimelineSemaphoreFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceTransformFeedbackFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceUniformBufferStandardLayoutFeatures));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME)
-            || gpu.api_version.minor >= 1)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME))
+            && gpu.api_version.minor < 1)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVariablePointersFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVertexAttributeDivisorFeaturesEXT));
@@ -4439,8 +4439,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVulkan12Features));
         if (gpu.api_version.minor >= 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVulkan13Features));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME)
-            || gpu.api_version.minor >= 2)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME))
+            && gpu.api_version.minor < 2)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVulkanMemoryModelFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR));
@@ -4448,8 +4448,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceYcbcrImageArraysFeaturesEXT));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures));
 
         if (!chain_members.empty()) {
@@ -4471,8 +4471,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
         struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_16BIT_STORAGE_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDevice16BitStorageFeatures* props = (VkPhysicalDevice16BitStorageFeatures*)structure;
             DumpVkPhysicalDevice16BitStorageFeatures(p, gpu.api_version.minor >= 1 ?"VkPhysicalDevice16BitStorageFeatures":"VkPhysicalDevice16BitStorageFeaturesKHR", *props);
             p.AddNewline();
@@ -4484,8 +4484,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_8BIT_STORAGE_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDevice8BitStorageFeatures* props = (VkPhysicalDevice8BitStorageFeatures*)structure;
             DumpVkPhysicalDevice8BitStorageFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDevice8BitStorageFeatures":"VkPhysicalDevice8BitStorageFeaturesKHR", *props);
             p.AddNewline();
@@ -4533,8 +4533,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceBufferDeviceAddressFeatures* props = (VkPhysicalDeviceBufferDeviceAddressFeatures*)structure;
             DumpVkPhysicalDeviceBufferDeviceAddressFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceBufferDeviceAddressFeatures":"VkPhysicalDeviceBufferDeviceAddressFeaturesKHR", *props);
             p.AddNewline();
@@ -4600,8 +4600,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceDescriptorIndexingFeatures* props = (VkPhysicalDeviceDescriptorIndexingFeatures*)structure;
             DumpVkPhysicalDeviceDescriptorIndexingFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceDescriptorIndexingFeatures":"VkPhysicalDeviceDescriptorIndexingFeaturesEXT", *props);
             p.AddNewline();
@@ -4613,8 +4613,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceDynamicRenderingFeatures* props = (VkPhysicalDeviceDynamicRenderingFeatures*)structure;
             DumpVkPhysicalDeviceDynamicRenderingFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceDynamicRenderingFeatures":"VkPhysicalDeviceDynamicRenderingFeaturesKHR", *props);
             p.AddNewline();
@@ -4704,8 +4704,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_HOST_QUERY_RESET_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceHostQueryResetFeatures* props = (VkPhysicalDeviceHostQueryResetFeatures*)structure;
             DumpVkPhysicalDeviceHostQueryResetFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceHostQueryResetFeatures":"VkPhysicalDeviceHostQueryResetFeaturesEXT", *props);
             p.AddNewline();
@@ -4729,8 +4729,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_ROBUSTNESS_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceImageRobustnessFeatures* props = (VkPhysicalDeviceImageRobustnessFeatures*)structure;
             DumpVkPhysicalDeviceImageRobustnessFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceImageRobustnessFeatures":"VkPhysicalDeviceImageRobustnessFeaturesEXT", *props);
             p.AddNewline();
@@ -4748,8 +4748,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceImagelessFramebufferFeatures* props = (VkPhysicalDeviceImagelessFramebufferFeatures*)structure;
             DumpVkPhysicalDeviceImagelessFramebufferFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceImagelessFramebufferFeatures":"VkPhysicalDeviceImagelessFramebufferFeaturesKHR", *props);
             p.AddNewline();
@@ -4761,8 +4761,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceInlineUniformBlockFeatures* props = (VkPhysicalDeviceInlineUniformBlockFeatures*)structure;
             DumpVkPhysicalDeviceInlineUniformBlockFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceInlineUniformBlockFeatures":"VkPhysicalDeviceInlineUniformBlockFeaturesEXT", *props);
             p.AddNewline();
@@ -4780,8 +4780,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceMaintenance4Features* props = (VkPhysicalDeviceMaintenance4Features*)structure;
             DumpVkPhysicalDeviceMaintenance4Features(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceMaintenance4Features":"VkPhysicalDeviceMaintenance4FeaturesKHR", *props);
             p.AddNewline();
@@ -4817,8 +4817,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceMultiviewFeatures* props = (VkPhysicalDeviceMultiviewFeatures*)structure;
             DumpVkPhysicalDeviceMultiviewFeatures(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceMultiviewFeatures":"VkPhysicalDeviceMultiviewFeaturesKHR", *props);
             p.AddNewline();
@@ -4860,8 +4860,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDevicePipelineCreationCacheControlFeatures* props = (VkPhysicalDevicePipelineCreationCacheControlFeatures*)structure;
             DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDevicePipelineCreationCacheControlFeatures":"VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT", *props);
             p.AddNewline();
@@ -4929,8 +4929,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIVATE_DATA_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDevicePrivateDataFeatures* props = (VkPhysicalDevicePrivateDataFeatures*)structure;
             DumpVkPhysicalDevicePrivateDataFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDevicePrivateDataFeatures":"VkPhysicalDevicePrivateDataFeaturesEXT", *props);
             p.AddNewline();
@@ -4990,22 +4990,22 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceSamplerYcbcrConversionFeatures* props = (VkPhysicalDeviceSamplerYcbcrConversionFeatures*)structure;
             DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceSamplerYcbcrConversionFeatures":"VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceScalarBlockLayoutFeatures* props = (VkPhysicalDeviceScalarBlockLayoutFeatures*)structure;
             DumpVkPhysicalDeviceScalarBlockLayoutFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceScalarBlockLayoutFeatures":"VkPhysicalDeviceScalarBlockLayoutFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* props = (VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures*)structure;
             DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures":"VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR", *props);
             p.AddNewline();
@@ -5023,8 +5023,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceShaderAtomicInt64Features* props = (VkPhysicalDeviceShaderAtomicInt64Features*)structure;
             DumpVkPhysicalDeviceShaderAtomicInt64Features(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceShaderAtomicInt64Features":"VkPhysicalDeviceShaderAtomicInt64FeaturesKHR", *props);
             p.AddNewline();
@@ -5036,8 +5036,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures* props = (VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures*)structure;
             DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures":"VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT", *props);
             p.AddNewline();
@@ -5049,8 +5049,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceShaderFloat16Int8Features* props = (VkPhysicalDeviceShaderFloat16Int8Features*)structure;
             DumpVkPhysicalDeviceShaderFloat16Int8Features(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceShaderFloat16Int8Features":"VkPhysicalDeviceFloat16Int8FeaturesKHR", *props);
             p.AddNewline();
@@ -5062,8 +5062,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceShaderIntegerDotProductFeatures* props = (VkPhysicalDeviceShaderIntegerDotProductFeatures*)structure;
             DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceShaderIntegerDotProductFeatures":"VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR", *props);
             p.AddNewline();
@@ -5081,8 +5081,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* props = (VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures*)structure;
             DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures":"VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR", *props);
             p.AddNewline();
@@ -5094,8 +5094,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_TERMINATE_INVOCATION_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceShaderTerminateInvocationFeatures* props = (VkPhysicalDeviceShaderTerminateInvocationFeatures*)structure;
             DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceShaderTerminateInvocationFeatures":"VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR", *props);
             p.AddNewline();
@@ -5107,8 +5107,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceSubgroupSizeControlFeatures* props = (VkPhysicalDeviceSubgroupSizeControlFeatures*)structure;
             DumpVkPhysicalDeviceSubgroupSizeControlFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceSubgroupSizeControlFeatures":"VkPhysicalDeviceSubgroupSizeControlFeaturesEXT", *props);
             p.AddNewline();
@@ -5126,8 +5126,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceSynchronization2Features* props = (VkPhysicalDeviceSynchronization2Features*)structure;
             DumpVkPhysicalDeviceSynchronization2Features(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceSynchronization2Features":"VkPhysicalDeviceSynchronization2FeaturesKHR", *props);
             p.AddNewline();
@@ -5139,15 +5139,15 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceTextureCompressionASTCHDRFeatures* props = (VkPhysicalDeviceTextureCompressionASTCHDRFeatures*)structure;
             DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceTextureCompressionASTCHDRFeatures":"VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceTimelineSemaphoreFeatures* props = (VkPhysicalDeviceTimelineSemaphoreFeatures*)structure;
             DumpVkPhysicalDeviceTimelineSemaphoreFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceTimelineSemaphoreFeatures":"VkPhysicalDeviceTimelineSemaphoreFeaturesKHR", *props);
             p.AddNewline();
@@ -5159,15 +5159,15 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* props = (VkPhysicalDeviceUniformBufferStandardLayoutFeatures*)structure;
             DumpVkPhysicalDeviceUniformBufferStandardLayoutFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceUniformBufferStandardLayoutFeatures":"VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 1)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 1)) {
             VkPhysicalDeviceVariablePointersFeatures* props = (VkPhysicalDeviceVariablePointersFeatures*)structure;
             DumpVkPhysicalDeviceVariablePointersFeatures(p, gpu.api_version.minor >= 1 ?"VkPhysicalDeviceVariablePointersFeatures":"VkPhysicalDeviceVariablePointersFeaturesKHR", *props);
             p.AddNewline();
@@ -5203,8 +5203,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 2)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 2)) {
             VkPhysicalDeviceVulkanMemoryModelFeatures* props = (VkPhysicalDeviceVulkanMemoryModelFeatures*)structure;
             DumpVkPhysicalDeviceVulkanMemoryModelFeatures(p, gpu.api_version.minor >= 2 ?"VkPhysicalDeviceVulkanMemoryModelFeatures":"VkPhysicalDeviceVulkanMemoryModelFeaturesKHR", *props);
             p.AddNewline();
@@ -5228,8 +5228,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, void * place)
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ZERO_INITIALIZE_WORKGROUP_MEMORY_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures* props = (VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures*)structure;
             DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(p, gpu.api_version.minor >= 3 ?"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures":"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR", *props);
             p.AddNewline();
@@ -5319,8 +5319,8 @@ struct format_properties2_chain {
         FormatProperties3.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
         SubpassResolvePerformanceQueryEXT.sType = VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT;
         std::vector<VkBaseOutStructure*> chain_members;
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)
-            || gpu.api_version.minor >= 3)
+        if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME))
+            && gpu.api_version.minor < 3)
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&FormatProperties3));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SubpassResolvePerformanceQueryEXT));
@@ -5344,8 +5344,8 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place) {
         struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3 &&
-           (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME) ||
-            gpu.api_version.minor >= 3)) {
+           ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) &&
+            gpu.api_version.minor < 3)) {
             VkFormatProperties3* props = (VkFormatProperties3*)structure;
             DumpVkFormatProperties3(p, gpu.api_version.minor >= 3 ?"VkFormatProperties3":"VkFormatProperties3KHR", *props);
             p.AddNewline();

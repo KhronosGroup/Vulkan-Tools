@@ -887,14 +887,14 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
     p.PrintKeyString("deviceName", props.deviceName);
 
     if (gpu.found_driver_props) {
-        DumpVkDriverId(p, "driverID", gpu.driver_props.driverID);
-        p.PrintKeyString("driverName", gpu.driver_props.driverName);
-        p.PrintKeyString("driverInfo", gpu.driver_props.driverInfo);
-        p.PrintKeyValue("conformanceVersion", gpu.driver_props.conformanceVersion);
+        DumpVkDriverId(p, "driverID", gpu.driverID);
+        p.PrintKeyString("driverName", gpu.driverName);
+        p.PrintKeyString("driverInfo", gpu.driverInfo);
+        p.PrintKeyValue("conformanceVersion", gpu.conformanceVersion);
     }
     if (gpu.found_device_id_props) {
-        p.PrintKeyValue("deviceUUID", gpu.device_id_props.deviceUUID);
-        p.PrintKeyValue("driverUUID", gpu.device_id_props.driverUUID);
+        p.PrintKeyValue("deviceUUID", gpu.deviceUUID);
+        p.PrintKeyValue("driverUUID", gpu.driverUUID);
     }
 }
 
