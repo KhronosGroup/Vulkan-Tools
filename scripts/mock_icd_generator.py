@@ -866,6 +866,15 @@ CUSTOM_C_INTERCEPTS = {
     }
     return VK_SUCCESS;
 ''',
+'vkGetPhysicalDeviceCalibrateableTimeDomainsKHR': '''
+    if (!pTimeDomains) {
+        *pTimeDomainCount = 1;
+    } else {
+        // arbitrary
+        *pTimeDomains = VK_TIME_DOMAIN_DEVICE_KHR;
+    }
+    return VK_SUCCESS;
+''',
 'vkGetFenceWin32HandleKHR': '''
     *pHandle = (HANDLE)0x12345678;
     return VK_SUCCESS;

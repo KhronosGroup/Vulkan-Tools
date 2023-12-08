@@ -381,8 +381,10 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_ycbcr_degamma", 1},
     {"VK_QCOM_filter_cubic_clamp", 1},
     {"VK_EXT_attachment_feedback_loop_dynamic_state", 1},
+    {"VK_KHR_vertex_attribute_divisor", 1},
     {"VK_QNX_external_memory_screen_buffer", 1},
     {"VK_MSFT_layered_driver", 1},
+    {"VK_KHR_calibrated_timestamps", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
 };
 
@@ -2477,6 +2479,20 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
     VkCooperativeMatrixPropertiesKHR*           pProperties);
 
 
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsKHR(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pTimeDomainCount,
+    VkTimeDomainKHR*                            pTimeDomains);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsKHR(
+    VkDevice                                    device,
+    uint32_t                                    timestampCount,
+    const VkCalibratedTimestampInfoKHR*         pTimestampInfos,
+    uint64_t*                                   pTimestamps,
+    uint64_t*                                   pMaxDeviation);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
     VkInstance                                  instance,
     const VkDebugReportCallbackCreateInfoEXT*   pCreateInfo,
@@ -3122,12 +3138,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarkerAMD(
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsEXT(
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pTimeDomainCount,
-    VkTimeDomainEXT*                            pTimeDomains);
+    VkTimeDomainKHR*                            pTimeDomains);
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsEXT(
     VkDevice                                    device,
     uint32_t                                    timestampCount,
-    const VkCalibratedTimestampInfoEXT*         pTimestampInfos,
+    const VkCalibratedTimestampInfoKHR*         pTimestampInfos,
     uint64_t*                                   pTimestamps,
     uint64_t*                                   pMaxDeviation);
 
@@ -4836,6 +4852,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetDeviceImageSubresourceLayoutKHR", (void*)GetDeviceImageSubresourceLayoutKHR},
     {"vkGetImageSubresourceLayout2KHR", (void*)GetImageSubresourceLayout2KHR},
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
+    {"vkGetPhysicalDeviceCalibrateableTimeDomainsKHR", (void*)GetPhysicalDeviceCalibrateableTimeDomainsKHR},
+    {"vkGetCalibratedTimestampsKHR", (void*)GetCalibratedTimestampsKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
