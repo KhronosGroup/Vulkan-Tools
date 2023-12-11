@@ -52,8 +52,10 @@ static VKAPI_ATTR void VKAPI_CALL DestroyInstance(
 {
 
     if (instance) {
-        for (const auto physical_device : physical_device_map.at(instance))
+        for (const auto physical_device : physical_device_map.at(instance)) {
+            display_map.erase(physical_device);
             DestroyDispObjHandle((void*)physical_device);
+        }
         physical_device_map.erase(instance);
         DestroyDispObjHandle((void*)instance);
     }
@@ -2526,7 +2528,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceDisplayPropertiesKHR(
     uint32_t*                                   pPropertyCount,
     VkDisplayPropertiesKHR*                     pProperties)
 {
-//Not a CREATE or DESTROY function
+    if (!pProperties) {
+        *pPropertyCount = 1;
+    } else {
+        unique_lock_t lock(global_lock);
+        pProperties[0].display = (VkDisplayKHR)global_unique_handle++;
+        display_map[physicalDevice].insert(pProperties[0].display);
+    }
     return VK_SUCCESS;
 }
 

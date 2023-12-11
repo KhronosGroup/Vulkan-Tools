@@ -50,6 +50,7 @@ static void DestroyDispObjHandle(void* handle) { delete reinterpret_cast<VK_LOAD
 
 static constexpr uint32_t icd_physical_device_count = 1;
 static std::unordered_map<VkInstance, std::array<VkPhysicalDevice, icd_physical_device_count>> physical_device_map;
+static std::unordered_map<VkPhysicalDevice, std::unordered_set<VkDisplayKHR>> display_map;
 
 // Map device memory handle to any mapped allocations that we'll need to free on unmap
 static std::unordered_map<VkDeviceMemory, std::vector<void*>> mapped_memory_map;

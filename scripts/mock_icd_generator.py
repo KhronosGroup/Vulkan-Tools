@@ -45,8 +45,10 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkDestroyInstance': '''
     if (instance) {
-        for (const auto physical_device : physical_device_map.at(instance))
+        for (const auto physical_device : physical_device_map.at(instance)) {
+            display_map.erase(physical_device);
             DestroyDispObjHandle((void*)physical_device);
+        }
         physical_device_map.erase(instance);
         DestroyDispObjHandle((void*)instance);
     }
@@ -1087,6 +1089,16 @@ CUSTOM_C_INTERCEPTS = {
     auto *format_resolve_prop = lvl_find_mod_in_chain<VkAndroidHardwareBufferFormatResolvePropertiesANDROID>(pProperties->pNext);
     if (format_resolve_prop) {
         format_resolve_prop->colorAttachmentFormat = VK_FORMAT_R8G8B8A8_UNORM;
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPhysicalDeviceDisplayPropertiesKHR': '''
+    if (!pProperties) {
+        *pPropertyCount = 1;
+    } else {
+        unique_lock_t lock(global_lock);
+        pProperties[0].display = (VkDisplayKHR)global_unique_handle++;
+        display_map[physicalDevice].insert(pProperties[0].display);
     }
     return VK_SUCCESS;
 ''',
