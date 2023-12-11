@@ -4565,7 +4565,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL RegisterDisplayEventEXT(
     const VkAllocationCallbacks*                pAllocator,
     VkFence*                                    pFence)
 {
-//Not a CREATE or DESTROY function
+    unique_lock_t lock(global_lock);
+    *pFence = (VkFence)global_unique_handle++;
     return VK_SUCCESS;
 }
 

@@ -1102,6 +1102,11 @@ CUSTOM_C_INTERCEPTS = {
     }
     return VK_SUCCESS;
 ''',
+'vkRegisterDisplayEventEXT': '''
+    unique_lock_t lock(global_lock);
+    *pFence = (VkFence)global_unique_handle++;
+    return VK_SUCCESS;
+''',
 }
 
 # MockICDGeneratorOptions - subclass of GeneratorOptions.
