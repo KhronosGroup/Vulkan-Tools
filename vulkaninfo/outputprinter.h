@@ -2,6 +2,7 @@
  * Copyright (c) 2019 The Khronos Group Inc.
  * Copyright (c) 2019 Valve Corporation
  * Copyright (c) 2019 LunarG, Inc.
+ * Copyright (c) 2023 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +30,8 @@
 #include <string>
 
 #include <assert.h>
+
+#include "vulkaninfo.h"
 
 std::string insert_quotes(std::string s) { return "\"" + s + "\""; }
 
@@ -61,30 +64,29 @@ enum class OutputType { text, html, json, vkconfig_output };
 struct PrinterCreateDetails {
     OutputType output_type = OutputType::text;
     bool print_to_file = false;
-    std::string file_name = "vulkaninfo.txt";
+    std::string file_name = APP_SHORT_NAME ".txt";
     std::string start_string = "";
 };
 
 class Printer {
   public:
-    Printer(const PrinterCreateDetails &details, std::ostream &out, const VulkanVersion vulkan_version)
+    Printer(const PrinterCreateDetails &details, std::ostream &out, const APIVersion vulkan_version)
         : output_type(details.output_type), out(out) {
         StackNode node{};
         node.is_first_item = false;
         node.indents = 0;
         switch (output_type) {
             case (OutputType::text):
-                out << "==========\n";
-                out << "VULKANINFO\n";
-                out << "==========\n\n";
-                out << "Vulkan Instance Version: " << VulkanVersion(vulkan_version) << "\n\n\n";
-
+                out << std::string(strlen(APP_UPPER_CASE_NAME), '=') << "\n";
+                out << APP_UPPER_CASE_NAME "\n";
+                out << std::string(strlen(APP_UPPER_CASE_NAME), '=') << "\n\n";
+                out << API_NAME " Instance Version: " << APIVersion(vulkan_version) << "\n\n\n";
                 break;
             case (OutputType::html):
                 out << "<!doctype html>\n";
                 out << "<html lang='en'>\n";
                 out << "\t<head>\n";
-                out << "\t\t<title>vulkaninfo</title>\n";
+                out << "\t\t<title>" APP_SHORT_NAME "</title>\n";
                 out << "\t\t<style>\n";
                 out << "\t\thtml {\n";
                 out << "\t\t\tbackground-color: #0b1e48;\n";
@@ -166,10 +168,10 @@ class Printer {
                 out << "\t</head>\n";
                 out << "\t<body>\n";
                 out << "\t\t<div id='header'>\n";
-                out << "\t\t\t<h1>vulkaninfo</h1>\n";
+                out << "\t\t\t<h1>" APP_SHORT_NAME "</h1>\n";
                 out << "\t\t</div>\n";
                 out << "\t\t<div id='wrapper'>\n";
-                out << "\t\t\t<details><summary>Vulkan Instance Version: <span class='val'>" << VulkanVersion(vulkan_version)
+                out << "\t\t\t<details><summary>" API_NAME " Instance Version: <span class='val'>" << APIVersion(vulkan_version)
                     << "</span></summary></details>\n\t\t\t<br />\n";
                 node.indents = 3;
                 break;

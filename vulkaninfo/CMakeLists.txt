@@ -1,6 +1,7 @@
 # ~~~
 # Copyright (c) 2018-2023 Valve Corporation
 # Copyright (c) 2018-2023 LunarG, Inc.
+# Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +16,13 @@
 # limitations under the License.
 # ~~~
 
+# These variables enable downstream users to customize the CMake targets
+# based on the target API variant (e.g. Vulkan SC)
+set(VULKANINFO_NAME vulkaninfo)
+set(GENERATED generated)
+
 add_executable(vulkaninfo)
+set_target_properties(vulkaninfo PROPERTIES OUTPUT_NAME ${VULKANINFO_NAME})
 
 target_sources(vulkaninfo PRIVATE vulkaninfo.cpp)
 
@@ -49,7 +56,7 @@ if(WIN32)
 endif()
 
 target_include_directories(vulkaninfo PRIVATE
-    generated
+    ${GENERATED}
     .
 )
 

@@ -2,6 +2,7 @@
  * Copyright (c) 2015-2021 The Khronos Group Inc.
  * Copyright (c) 2015-2021 Valve Corporation
  * Copyright (c) 2015-2021 LunarG, Inc.
+ * Copyright (c) 2023-2023 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,10 +84,10 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
             IndentWrapper indent(p);
 
             for (auto &layer : layers) {
-                std::string v_str = VulkanVersion(layer.layer_properties.specVersion);
+                std::string v_str = APIVersion(layer.layer_properties.specVersion);
                 auto props = layer.layer_properties;
 
-                std::string header = p.DecorateAsType(props.layerName) + " (" + props.description + ") Vulkan version " +
+                std::string header = p.DecorateAsType(props.layerName) + " (" + props.description + ") " API_NAME " version " +
                                      p.DecorateAsValue(v_str) + ", layer version " +
                                      p.DecorateAsValue(std::to_string(props.implementationVersion));
                 ObjectWrapper obj(p, header);
@@ -113,7 +114,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 ObjectWrapper obj_name(p, layer.layer_properties.layerName);
                 p.SetMinKeyWidth(21);
                 p.PrintKeyString("layerName", layer.layer_properties.layerName);
-                p.PrintKeyString("version", VulkanVersion(layer.layer_properties.specVersion).str());
+                p.PrintKeyString("version", APIVersion(layer.layer_properties.specVersion).str());
                 p.PrintKeyValue("implementation version", layer.layer_properties.implementationVersion);
                 p.PrintKeyString("description", layer.layer_properties.description);
                 DumpExtensions(p, "Layer Extensions", layer.extension_properties);
@@ -373,7 +374,7 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
             p.PrintKeyValue("apiVersion", props.apiVersion);
             p.PrintKeyValue("driverVersion", props.driverVersion);
         } else {
-            p.SetValueDescription(std::to_string(props.apiVersion)).PrintKeyString("apiVersion", VulkanVersion(props.apiVersion));
+            p.SetValueDescription(std::to_string(props.apiVersion)).PrintKeyString("apiVersion", APIVersion(props.apiVersion));
             p.SetValueDescription(std::to_string(props.driverVersion))
                 .PrintKeyString("driverVersion", gpu.GetDriverVersionString());
         }
@@ -749,7 +750,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
     // Print portability subset extension, features, and properties if available
     if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) &&
         (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) ||
-         gpu.inst.instance_version >= VK_API_VERSION_1_1)) {
+         gpu.inst.api_version >= VK_API_VERSION_1_1)) {
         ObjectWrapper macos_obj(p, "macos-specific");
         {
             ObjectWrapper ext_obj(p, "extensions");
@@ -793,9 +794,9 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
                           const std::vector<std::string> &capabilities) {
     ObjectWrapper vk_info(p, device_name);
     p.PrintKeyValue("version", 1);
-    p.PrintKeyString("api-version", VulkanVersion(apiVersion).str());
+    p.PrintKeyString("api-version", APIVersion(apiVersion).str());
     p.PrintKeyString("label", device_label);
-    p.PrintKeyString("description", "Exported from vulkaninfo");
+    p.PrintKeyString("description", std::string("Exported from ") + APP_SHORT_NAME);
     { ObjectWrapper contributors(p, "contributors"); }
     {
         ArrayWrapper contributors(p, "history");
@@ -806,7 +807,7 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
         std::string date =
             std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
         p.PrintKeyString("date", date);
-        p.PrintKeyString("author", "Automated export from vulkaninfo");
+        p.PrintKeyString("author", std::string("Automated export from ") + APP_SHORT_NAME);
         p.PrintKeyString("comment", "");
     }
     ArrayWrapper contributors(p, "capabilities");
@@ -819,7 +820,7 @@ void DumpGpuProfileInfo(Printer &p, AppGpu &gpu) {
 
     std::string device_label = std::string(gpu.props.deviceName) + " driver " + gpu.GetDriverVersionString();
     std::string device_name =
-        std::string("VP_VULKANINFO_") + std::string(gpu.props.deviceName) + "_" + gpu.GetDriverVersionString();
+        std::string("VP_" APP_UPPER_CASE_NAME "_") + std::string(gpu.props.deviceName) + "_" + gpu.GetDriverVersionString();
     ;
     for (auto &c : device_name) {
         if (c == ' ' || c == '.') c = '_';
@@ -828,7 +829,7 @@ void DumpGpuProfileInfo(Printer &p, AppGpu &gpu) {
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
     if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) &&
         (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) ||
-         gpu.inst.instance_version >= VK_API_VERSION_1_1)) {
+         gpu.inst.api_version >= VK_API_VERSION_1_1)) {
         PrintProfileBaseInfo(p, device_name + "_portability_subset", gpu.props.apiVersion, device_label + " subset",
                              {"device", "macos-specific"});
     }
@@ -856,10 +857,10 @@ void DumpSummaryInstance(Printer &p, AppInstance &inst) {
         auto props = layer.layer_properties;
         layer_name_max = std::max(layer_name_max, strlen(props.layerName));
         layer_desc_max = std::max(layer_desc_max, strlen(props.description));
-        layer_version_max = std::max(layer_version_max, VulkanVersion(layer.layer_properties.specVersion).str().size());
+        layer_version_max = std::max(layer_version_max, APIVersion(layer.layer_properties.specVersion).str().size());
     }
     for (auto &layer : inst.global_layers) {
-        auto v_str = VulkanVersion(layer.layer_properties.specVersion).str();
+        auto v_str = APIVersion(layer.layer_properties.specVersion).str();
         auto props = layer.layer_properties;
 
         auto name_padding = std::string(layer_name_max - strlen(props.layerName), ' ');
@@ -875,7 +876,7 @@ void DumpSummaryGPU(Printer &p, AppGpu &gpu) {
     ObjectWrapper obj(p, "GPU" + std::to_string(gpu.id));
     p.SetMinKeyWidth(18);
     auto props = gpu.GetDeviceProperties();
-    p.PrintKeyValue("apiVersion", VulkanVersion(props.apiVersion));
+    p.PrintKeyValue("apiVersion", APIVersion(props.apiVersion));
     if (gpu.found_driver_props) {
         p.PrintKeyString("driverVersion", gpu.GetDriverVersionString());
     } else {
@@ -921,7 +922,7 @@ static void ConsoleEnlarge() {
     SetConsoleWindowInfo(console_handle, true, &r);
 
     // change the console window title
-    SetConsoleTitle(TEXT(app_short_name));
+    SetConsoleTitle(TEXT(APP_SHORT_NAME));
 }
 #endif
 
@@ -934,26 +935,26 @@ const char *help_message_body =
     "[-o <filename>, --output <filename>]\n"
     "                    Print output to a new file whose name is specified by filename.\n"
     "                    File will be written to the current working directory.\n"
-    "[--text]            Produce a text version of vulkaninfo output to stdout. This is\n"
+    "[--text]            Produce a text version of " APP_SHORT_NAME " output to stdout. This is\n"
     "                    the default output.\n"
-    "[--html]            Produce an html version of vulkaninfo output, saved as\n"
-    "                    \"vulkaninfo.html\" in the directory in which the command\n"
+    "[--html]            Produce an html version of " APP_SHORT_NAME " output, saved as\n"
+    "                    \"" APP_SHORT_NAME ".html\" in the directory in which the command\n"
     "                    is run.\n"
-    "[-j, --json]        Produce a json version of vulkaninfo output conforming to the Vulkan\n"
+    "[-j, --json]        Produce a json version of " APP_SHORT_NAME " output conforming to the Vulkan\n"
     "                    Profiles schema, saved as \n"
-    "                     \"VP_VULKANINFO_[DEVICE_NAME]_[DRIVER_VERSION].json\"\n"
+    "                     \"VP_" APP_UPPER_CASE_NAME "_[DEVICE_NAME]_[DRIVER_VERSION].json\"\n"
     "                     of the first gpu in the system.\n"
     "[-j=<gpu-number>, --json=<gpu-number>]\n"
     "                    For a multi-gpu system, a single gpu can be targetted by\n"
     "                    specifying the gpu-number associated with the gpu of \n"
     "                    interest. This number can be determined by running\n"
-    "                    vulkaninfo without any options specified.\n"
-    "[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that vulkaninfo finds.\n"
+    "                    " APP_SHORT_NAME " without any options specified.\n"
+    "[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that " APP_SHORT_NAME " finds.\n"
     "[--show-formats]    Display the format properties of each physical device.\n"
     "                    Note: This only affects text output.\n";
 
 void print_usage(const std::string &executable_name) {
-    std::cout << "\nvulkaninfo - Summarize Vulkan information in relation to the current environment.\n\n";
+    std::cout << "\n" APP_SHORT_NAME " - Summarize " API_NAME " information in relation to the current environment.\n\n";
     std::cout << "USAGE: \n";
     std::cout << "    " << executable_name << " --summary\n";
     std::cout << "    " << executable_name << " -o <filename> | --output <filename>\n";
@@ -979,7 +980,7 @@ struct ParsedResults {
 util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, std::string executable_name) {
     ParsedResults results{};                         // default it to zero init everything
     results.output_category = OutputCategory::text;  // default output category
-    results.default_filename = "vulkaninfo.txt";
+    results.default_filename = APP_SHORT_NAME ".txt";
     for (int i = 1; i < argc; ++i) {
         // A internal-use-only format for communication with the Vulkan Configurator tool
         // Usage "--vkconfig_output <path>"
@@ -987,12 +988,12 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
         if (0 == strcmp("--vkconfig_output", argv[i])) {
             results.output_category = OutputCategory::vkconfig_output;
             results.print_to_file = true;
-            results.default_filename = "vulkaninfo.json";
+            results.default_filename = APP_SHORT_NAME ".json";
             if (argc > (i + 1) && argv[i + 1][0] != '-') {
 #ifdef WIN32
-                results.filename = (std::string(argv[i + 1]) + "\\vulkaninfo.json");
+                results.filename = (std::string(argv[i + 1]) + "\\" APP_SHORT_NAME ".json");
 #else
-                results.filename = (std::string(argv[i + 1]) + "/vulkaninfo.json");
+                results.filename = (std::string(argv[i + 1]) + "/" APP_SHORT_NAME ".json");
 #endif
                 ++i;
             }
@@ -1006,17 +1007,17 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
                 results.has_selected_gpu = true;
             }
             results.output_category = OutputCategory::profile_json;
-            results.default_filename = "vulkaninfo.json";
+            results.default_filename = APP_SHORT_NAME ".json";
             results.print_to_file = true;
         } else if (strcmp(argv[i], "--summary") == 0) {
             results.output_category = OutputCategory::summary;
         } else if (strcmp(argv[i], "--text") == 0) {
             results.output_category = OutputCategory::text;
-            results.default_filename = "vulkaninfo.txt";
+            results.default_filename = APP_SHORT_NAME ".txt";
         } else if (strcmp(argv[i], "--html") == 0) {
             results.output_category = OutputCategory::html;
             results.print_to_file = true;
-            results.default_filename = "vulkaninfo.html";
+            results.default_filename = APP_SHORT_NAME ".html";
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
             results.show_tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
@@ -1058,7 +1059,7 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
             create.start_string =
                 std::string("{\n\t\"$schema\": ") + "\"https://schema.khronos.org/vulkan/profiles-0.8-latest.json\"";
             if (parse_data.filename.empty()) {
-                create.file_name = std::string("VP_VULKANINFO_") + std::string(selected_gpu.props.deviceName) + "_" +
+                create.file_name = std::string("VP_" APP_UPPER_CASE_NAME "_") + std::string(selected_gpu.props.deviceName) + "_" +
                                    selected_gpu.GetDriverVersionString();
                 for (auto &c : create.file_name) {
                     if (c == ' ' || c == '.') c = '_';
@@ -1068,7 +1069,7 @@ PrinterCreateDetails get_printer_create_details(ParsedResults &parse_data, AppIn
             break;
         case (OutputCategory::vkconfig_output):
             create.output_type = OutputType::vkconfig_output;
-            create.start_string = "{\n\t\"Vulkan Instance Version\": \"" + VulkanVersion(inst.vk_version).str() + "\"";
+            create.start_string = "{\n\t\"" API_NAME " Instance Version\": \"" + inst.api_version.str() + "\"";
             break;
     }
     return create;
@@ -1122,7 +1123,7 @@ int main(int argc, char **argv) {
 
     // Figure out the name of the executable, pull out the name if given a path
     // Default is `vulkaninfo`
-    std::string executable_name = "vulkaninfo";
+    std::string executable_name = APP_SHORT_NAME;
     if (argc >= 1) {
         const auto argv_0 = std::string(argv[0]);
         // don't include path separator
@@ -1208,7 +1209,7 @@ int main(int argc, char **argv) {
             if (parse_data.has_selected_gpu) {
                 std::cout << "The selected gpu (" << parse_data.selected_gpu << ") is not a valid GPU index. ";
                 if (gpus.size() == 0) {
-                    std::cout << "vulkaninfo could not find any GPU's.\n";
+                    std::cout << APP_SHORT_NAME " could not find any GPU's.\n";
                     return 1;
                 } else {
                     if (gpus.size() == 1) {
@@ -1219,7 +1220,7 @@ int main(int argc, char **argv) {
                     return 1;
                 }
             } else if (parse_data.output_category == OutputCategory::profile_json) {
-                std::cout << "vulkaninfo could not find any GPU's.\n";
+                std::cout << APP_SHORT_NAME " could not find any GPU's.\n";
             }
         }
 
@@ -1228,7 +1229,7 @@ int main(int argc, char **argv) {
             file_out = std::ofstream(printer_data.file_name);
             out = &file_out;
         }
-        printer = std::unique_ptr<Printer>(new Printer(printer_data, *out, instance.vk_version));
+        printer = std::unique_ptr<Printer>(new Printer(printer_data, *out, instance.api_version));
 
         RunPrinter(*(printer.get()), parse_data, instance, gpus, surfaces);
 
