@@ -3,6 +3,7 @@
 # Copyright (c) 2019-2022 Valve Corporation
 # Copyright (c) 2019-2022 LunarG, Inc.
 # Copyright (c) 2019-2022 Google Inc.
+# Copyright (c) 2023-2023 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,6 +32,7 @@ LICENSE_HEADER = '''
  * Copyright (c) 2019-2022 The Khronos Group Inc.
  * Copyright (c) 2019-2022 Valve Corporation
  * Copyright (c) 2019-2022 LunarG, Inc.
+ * Copyright (c) 2023-2023 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -288,13 +290,6 @@ class VulkanInfoGenerator(OutputGenerator):
         for key, value in self.extension_sets.items():
             self.extension_sets[key] = sorted(value)
 
-        alias_versions = OrderedDict()
-        for version in self.vulkan_versions:
-            for aliases in self.aliases.values():
-                for alias in aliases:
-                    if alias in version.names:
-                        alias_versions[alias] = version.minorVersion
-
         self.enums = sorted(self.enums, key=operator.attrgetter('name'))
         self.flags = sorted(self.flags, key=operator.attrgetter('name'))
         self.bitmasks = sorted(self.bitmasks, key=operator.attrgetter('name'))
@@ -408,7 +403,7 @@ class VulkanInfoGenerator(OutputGenerator):
                     min_val = min(min_val, value)
                     max_val = max(max_val, value)
                 if min_val < 2**32 and max_val > 0:
-                    self.format_ranges.append(VulkanFormatRange(0,None, min_val, max_val))
+                    self.format_ranges.append(VulkanFormatRange(0, None, min_val, max_val))
 
         for feature in self.registry.reg.findall('feature'):
             for require in feature.findall('require'):
@@ -425,13 +420,13 @@ class VulkanInfoGenerator(OutputGenerator):
                         min_val = min(min_val, value)
                         max_val = max(max_val, value)
                 if min_val < 2**32 and max_val > 0:
-                    self.format_ranges.append(VulkanFormatRange(feature.get('number').split('.')[1],None, min_val, max_val))
+                    self.format_ranges.append(VulkanFormatRange(feature.get('name').replace('_VERSION_', '_API_VERSION_'), None, min_val, max_val))
                     # If the formats came from an extension, add a format range for that extension so it'll be printed if the ext is supported but not the core version
                     if original_ext is not None:
-                        self.format_ranges.append(VulkanFormatRange(0,original_ext, min_val, max_val))
+                        self.format_ranges.append(VulkanFormatRange(0, original_ext, min_val, max_val))
 
         for extension in self.registry.reg.find('extensions').findall('extension'):
-            if extension.get('supported') in ['disabled', 'vulkansc']:
+            if not self.genOpts.apiname in extension.get('supported').split(','):
                 continue
 
             min_val = 2**32
@@ -766,7 +761,7 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
         out += AddGuardFooter(s)
 
 
-    out += '        std::vector<VkBaseOutStructure*> chain_members;\n'
+    out += '        std::vector<VkBaseOutStructure*> chain_members{};\n'
     for s in structs_to_print:
         if s.name in STRUCT_BLACKLIST:
             continue
@@ -781,7 +776,7 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
         oldVersionName = None
         for v in vulkan_versions:
             if s.name in v.names:
-                version = v.minorVersion
+                version = v
         if s.name in aliases.keys():
             for alias in aliases[s.name]:
                 oldVersionName = alias
@@ -807,9 +802,9 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
                         assert False, 'Should never get here'
             if has_version:
                 if has_printed_condition:
-                    out += f')\n            && {version_desc}.minor < {str(version)}'
+                    out += f')\n            && {version_desc} < {version.constant}'
                 else:
-                    out += f'{version_desc}.minor >= {str(version)}'
+                    out += f'{version_desc} >= {version.constant}'
             out += ')\n            '
         else:
             out += '        '
@@ -865,7 +860,7 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
             oldVersionName = None
             for v in vulkan_versions:
                 if s.name in v.names:
-                    version = v.minorVersion
+                    version = v
             if s.name in aliases.keys():
                 for alias in aliases[s.name]:
                     oldVersionName = alias
@@ -897,15 +892,15 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
                                 assert False, 'Should never get here'
                     if has_version:
                         if has_printed_condition:
-                            out += f') &&\n            {version_desc}.minor < {str(version)}'
+                            out += f') &&\n            {version_desc} < {version.constant}'
                         else:
-                            out += f'{version_desc}.minor >= {str(version)}'
+                            out += f'{version_desc} >= {version.constant}'
                     out += ')'
                 out += ') {\n'
                 out += f'            {s.name}* props = ({s.name}*)structure;\n'
                 out += f'            Dump{s.name}(p, '
                 if s.name in aliases.keys() and version is not None:
-                    out += f'{version_desc}.minor >= {version} ?"{s.name}":"{oldVersionName}"'
+                    out += f'{version_desc} >= {version.constant} ?"{s.name}":"{oldVersionName}"'
                 else:
                     out += f'"{s.name}"'
                 out += ', *props);\n'
@@ -1135,15 +1130,7 @@ class VulkanExtension:
         self.vkfuncs = []
         self.constants = OrderedDict()
         self.enumValues = OrderedDict()
-        self.version = 0
         self.node = rootNode
-
-        promotedto = rootNode.get('promotedto')
-        if promotedto is not None:
-            # get last char of VK_VERSION_1_1 or VK_VERSION_1_2
-            minorVersion = promotedto[-1:]
-            if minorVersion.isdigit():
-                self.version = minorVersion
 
         for req in rootNode.findall('require'):
             for ty in req.findall('type'):
@@ -1179,9 +1166,7 @@ class VulkanExtension:
 class VulkanVersion:
     def __init__(self, rootNode):
         self.name = rootNode.get('name')
-        version_str = rootNode.get('number').split('.')
-        self.majorVersion = version_str[0]
-        self.minorVersion = version_str[1]
+        self.constant = self.name.replace('_VERSION_', '_API_VERSION_')
         self.names = set()
 
         for req in rootNode.findall('require'):
