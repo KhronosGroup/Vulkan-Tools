@@ -439,13 +439,6 @@ struct demo {
     bool suppress_popups;
     bool force_errors;
 
-    PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessengerEXT;
-    PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT;
-    PFN_vkSubmitDebugUtilsMessageEXT SubmitDebugUtilsMessageEXT;
-    PFN_vkCmdBeginDebugUtilsLabelEXT CmdBeginDebugUtilsLabelEXT;
-    PFN_vkCmdEndDebugUtilsLabelEXT CmdEndDebugUtilsLabelEXT;
-    PFN_vkCmdInsertDebugUtilsLabelEXT CmdInsertDebugUtilsLabelEXT;
-    PFN_vkSetDebugUtilsObjectNameEXT SetDebugUtilsObjectNameEXT;
     VkDebugUtilsMessengerEXT dbg_messenger;
 
     uint32_t current_buffer;
@@ -632,7 +625,7 @@ static void demo_name_object(struct demo *demo, VkObjectType object_type, uint64
         .objectHandle = vulkan_handle,
         .pObjectName = name,
     };
-    err = demo->SetDebugUtilsObjectNameEXT(demo->device, &obj_name);
+    err = vkSetDebugUtilsObjectNameEXT(demo->device, &obj_name);
     assert(!err);
 }
 
@@ -657,14 +650,14 @@ static void demo_push_cb_label(struct demo *demo, VkCommandBuffer cb, const floa
         memcpy(label.color, color, sizeof(label.color));
     }
 
-    demo->CmdBeginDebugUtilsLabelEXT(cb, &label);
+    vkCmdBeginDebugUtilsLabelEXT(cb, &label);
 }
 
 static void demo_pop_cb_label(struct demo *demo, VkCommandBuffer cb) {
     if (!demo->validate) {
         return;
     }
-    demo->CmdEndDebugUtilsLabelEXT(cb);
+    vkCmdEndDebugUtilsLabelEXT(cb);
 }
 
 static bool memory_type_from_properties(struct demo *demo, uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -2428,7 +2421,7 @@ static void demo_cleanup(struct demo *demo) {
     vkDeviceWaitIdle(demo->device);
     vkDestroyDevice(demo->device, NULL);
     if (demo->validate) {
-        demo->DestroyDebugUtilsMessengerEXT(demo->inst, demo->dbg_messenger, NULL);
+        vkDestroyDebugUtilsMessengerEXT(demo->inst, demo->dbg_messenger, NULL);
     }
     vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
 
@@ -3746,11 +3739,7 @@ static void demo_init_vk(struct demo *demo) {
     }
 
     if (demo->validate) {
-        if (NULL == demo->CreateDebugUtilsMessengerEXT) {
-            ERR_EXIT("GetProcAddr: Failed to init VK_EXT_debug_utils\n", "GetProcAddr: Failure");
-        }
-
-        err = demo->CreateDebugUtilsMessengerEXT(demo->inst, &dbg_messenger_create_info, NULL, &demo->dbg_messenger);
+        err = vkCreateDebugUtilsMessengerEXT(demo->inst, &dbg_messenger_create_info, NULL, &demo->dbg_messenger);
         switch (err) {
             case VK_SUCCESS:
                 break;
