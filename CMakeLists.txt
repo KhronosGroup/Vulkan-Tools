@@ -67,7 +67,6 @@ if (${CMAKE_CXX_COMPILER_ID} MATCHES "(GNU|Clang)")
         -Wextra
         -Wno-unused-parameter
         -Wno-missing-field-initializers
-        -fno-strict-aliasing
     )
 
     if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
