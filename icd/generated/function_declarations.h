@@ -85,7 +85,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_explicit_vertex_parameter", 1},
     {"VK_EXT_debug_marker", 4},
     {"VK_KHR_video_queue", 8},
-    {"VK_KHR_video_decode_queue", 7},
+    {"VK_KHR_video_decode_queue", 8},
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
@@ -95,9 +95,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
     {"VK_AMD_shader_ballot", 1},
-    {"VK_EXT_video_encode_h264", 12},
-    {"VK_EXT_video_encode_h265", 12},
-    {"VK_KHR_video_decode_h264", 8},
+    {"VK_KHR_video_encode_h264", 14},
+    {"VK_KHR_video_encode_h265", 14},
+    {"VK_KHR_video_decode_h264", 9},
     {"VK_AMD_texture_gather_bias_lod", 1},
     {"VK_AMD_shader_info", 1},
     {"VK_KHR_dynamic_rendering", 1},
@@ -198,7 +198,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_pipeline_compiler_control", 1},
     {"VK_EXT_calibrated_timestamps", 2},
     {"VK_AMD_shader_core_properties", 2},
-    {"VK_KHR_video_decode_h265", 7},
+    {"VK_KHR_video_decode_h265", 8},
     {"VK_KHR_global_priority", 1},
     {"VK_AMD_memory_overallocation_behavior", 1},
     {"VK_EXT_vertex_attribute_divisor", 3},
@@ -276,7 +276,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_present_id", 1},
     {"VK_EXT_private_data", 1},
     {"VK_EXT_pipeline_creation_cache_control", 3},
-    {"VK_KHR_video_encode_queue", 10},
+    {"VK_KHR_video_encode_queue", 12},
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_NV_cuda_kernel_launch", 2},
@@ -376,6 +376,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_low_latency2", 2},
     {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
+    {"VK_KHR_video_maintenance1", 1},
+    {"VK_NV_per_stage_descriptor_set", 1},
     {"VK_QCOM_image_processing2", 1},
     {"VK_QCOM_filter_cubic_weights", 1},
     {"VK_QCOM_ycbcr_degamma", 1},
@@ -385,6 +387,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QNX_external_memory_screen_buffer", 1},
     {"VK_MSFT_layered_driver", 1},
     {"VK_KHR_calibrated_timestamps", 1},
+    {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
 };
 
@@ -1850,6 +1853,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdDecodeVideoKHR(
 
 
 
+
+
 static VKAPI_ATTR void VKAPI_CALL CmdBeginRenderingKHR(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingInfo*                      pRenderingInfo);
@@ -2330,7 +2335,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL UnmapMemory2KHR(
 
 
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(
     VkPhysicalDevice                            physicalDevice,
@@ -2347,7 +2351,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetEncodedVideoSessionParametersKHR(
 static VKAPI_ATTR void VKAPI_CALL CmdEncodeVideoKHR(
     VkCommandBuffer                             commandBuffer,
     const VkVideoEncodeInfoKHR*                 pEncodeInfo);
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetEvent2KHR(
@@ -2480,6 +2483,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsKHR(
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pTimeDomainCount,
@@ -2491,6 +2495,31 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsKHR(
     const VkCalibratedTimestampInfoKHR*         pTimestampInfos,
     uint64_t*                                   pTimestamps,
     uint64_t*                                   pMaxDeviation);
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorSets2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushConstants2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfoKHR*               pPushConstantsInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSet2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetWithTemplate2KHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkSetDescriptorBufferOffsetsInfoEXT*  pSetDescriptorBufferOffsetsInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
@@ -2645,12 +2674,6 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCountAMD(
 
 
 
-
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
-
-#ifdef VK_ENABLE_BETA_EXTENSIONS
-#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 
@@ -4274,6 +4297,7 @@ static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetAttachmentFeedbackLoopEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkImageAspectFlags                          aspectMask);
@@ -4820,15 +4844,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPipelineExecutableInternalRepresentationsKHR", (void*)GetPipelineExecutableInternalRepresentationsKHR},
     {"vkMapMemory2KHR", (void*)MapMemory2KHR},
     {"vkUnmapMemory2KHR", (void*)UnmapMemory2KHR},
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR", (void*)GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR},
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkGetEncodedVideoSessionParametersKHR", (void*)GetEncodedVideoSessionParametersKHR},
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCmdEncodeVideoKHR", (void*)CmdEncodeVideoKHR},
-#endif
     {"vkCmdSetEvent2KHR", (void*)CmdSetEvent2KHR},
     {"vkCmdResetEvent2KHR", (void*)CmdResetEvent2KHR},
     {"vkCmdWaitEvents2KHR", (void*)CmdWaitEvents2KHR},
@@ -4854,6 +4872,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
     {"vkGetPhysicalDeviceCalibrateableTimeDomainsKHR", (void*)GetPhysicalDeviceCalibrateableTimeDomainsKHR},
     {"vkGetCalibratedTimestampsKHR", (void*)GetCalibratedTimestampsKHR},
+    {"vkCmdBindDescriptorSets2KHR", (void*)CmdBindDescriptorSets2KHR},
+    {"vkCmdPushConstants2KHR", (void*)CmdPushConstants2KHR},
+    {"vkCmdPushDescriptorSet2KHR", (void*)CmdPushDescriptorSet2KHR},
+    {"vkCmdPushDescriptorSetWithTemplate2KHR", (void*)CmdPushDescriptorSetWithTemplate2KHR},
+    {"vkCmdSetDescriptorBufferOffsets2EXT", (void*)CmdSetDescriptorBufferOffsets2EXT},
+    {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT", (void*)CmdBindDescriptorBufferEmbeddedSamplers2EXT},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
