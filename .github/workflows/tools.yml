@@ -158,17 +158,13 @@ jobs:
             - name: Add ccache to PATH
               run: echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
 
-            - name: Configure
-              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON -D BUILD_WERROR=ON
-              env:
-                MACOSX_DEPLOYMENT_TARGET: 10.15
+            - run: cmake -S. -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON -D BUILD_WERROR=ON
 
-            - name: Build
-              run: cmake --build build
+            - run: cmake --build build
 
-            - name: Test
-              working-directory: ./build
-              run: ctest --output-on-failure
+            - run: ctest --output-on-failure --test-dir build/
+
+            - run: cmake --install build --prefix /tmp
 
     android:
       runs-on: ubuntu-22.04

@@ -255,14 +255,15 @@ target_compile_definitions(vkcube PRIVATE VK_NO_PROTOTYPES)
 if (ANDROID)
     install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})
 elseif(APPLE)
-    # Keep RPATH so fixup_bundle can use it to find libraries
-    set_target_properties(vkcube PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-    install(TARGETS vkcube BUNDLE DESTINATION "cube")
-    # Fix up the library references to be self-contained within the bundle.
-    install(CODE "
-        include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcube.app \"\" \"\")
-        ")
+    install(
+        TARGETS vkcube
+        # Install runtime dependencies like the Vulkan::Loader so the app is self-contained
+        RUNTIME_DEPENDENCIES DESTINATION "cube/vkcube.app/Contents/Frameworks/"
+        BUNDLE DESTINATION "cube"
+    )
+    set_target_properties(vkcube PROPERTIES
+        INSTALL_RPATH @executable_path/../Frameworks
+    )
 else()
     install(TARGETS vkcube)
 endif()
@@ -300,14 +301,15 @@ target_include_directories(vkcubepp PRIVATE .)
 target_compile_definitions(vkcubepp PRIVATE VK_NO_PROTOTYPES)
 
 if(APPLE)
-    # Keep RPATH so fixup_bundle can use it to find libraries
-    set_target_properties(vkcubepp PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
-    install(TARGETS vkcubepp BUNDLE DESTINATION "cube")
-    # Fix up the library references to be self-contained within the bundle.
-    install(CODE "
-        include(BundleUtilities)
-        fixup_bundle(\${CMAKE_INSTALL_PREFIX}/cube/vkcubepp.app \"\" \"\")
-        ")
+    install(
+        TARGETS vkcubepp
+        # Install runtime dependencies like the Vulkan::Loader so the app is self-contained
+        RUNTIME_DEPENDENCIES DESTINATION "cube/vkcubepp.app/Contents/Frameworks/"
+        BUNDLE DESTINATION "cube"
+    )
+    set_target_properties(vkcubepp PROPERTIES
+        INSTALL_RPATH @executable_path/../Frameworks
+    )
 else()
     install(TARGETS vkcubepp)
 endif()
