@@ -159,28 +159,39 @@ TEST_F(MockICD, InitializationFunctions) {
     count = 0;
 
     vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &count, nullptr);
-    ASSERT_EQ(count, 1);
-    VkQueueFamilyProperties queue_family_properties{};
-    vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &count, &queue_family_properties);
-    ASSERT_EQ(count, 1);
-    ASSERT_EQ(queue_family_properties.queueFlags, 1 | 2 | 4 | 8 | 16);
-    ASSERT_EQ(queue_family_properties.queueCount, 1);
-    ASSERT_EQ(queue_family_properties.timestampValidBits, 16);
-    ASSERT_EQ(queue_family_properties.minImageTransferGranularity.width, 1);
-    ASSERT_EQ(queue_family_properties.minImageTransferGranularity.height, 1);
-    ASSERT_EQ(queue_family_properties.minImageTransferGranularity.depth, 1);
+    ASSERT_EQ(count, 3);
+    VkQueueFamilyProperties queue_family_properties[3] = {};
+    vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &count, queue_family_properties);
+    ASSERT_EQ(count, 3);
+    ASSERT_EQ(queue_family_properties[0].queueFlags, 1 | 2 | 4 | 8 | 16);
+    ASSERT_EQ(queue_family_properties[1].queueFlags, 4 | 16 | 32);
+    ASSERT_EQ(queue_family_properties[2].queueFlags, 4 | 16 | 64);
+    for (uint32_t i = 0; i < count; ++i) {
+        ASSERT_EQ(queue_family_properties[i].queueCount, 1);
+        ASSERT_EQ(queue_family_properties[i].timestampValidBits, 16);
+        ASSERT_EQ(queue_family_properties[i].minImageTransferGranularity.width, 1);
+        ASSERT_EQ(queue_family_properties[i].minImageTransferGranularity.height, 1);
+        ASSERT_EQ(queue_family_properties[i].minImageTransferGranularity.depth, 1);
+    }
 
     vkGetPhysicalDeviceQueueFamilyProperties2(physical_device, &count, nullptr);
-    ASSERT_EQ(count, 1);
-    VkQueueFamilyProperties2 queue_family_properties2{};
-    vkGetPhysicalDeviceQueueFamilyProperties2(physical_device, &count, &queue_family_properties2);
-    ASSERT_EQ(count, 1);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.queueFlags, 1 | 2 | 4 | 8 | 16);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.queueCount, 1);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.timestampValidBits, 16);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.minImageTransferGranularity.width, 1);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.minImageTransferGranularity.height, 1);
-    ASSERT_EQ(queue_family_properties2.queueFamilyProperties.minImageTransferGranularity.depth, 1);
+    ASSERT_EQ(count, 3);
+    VkQueueFamilyProperties2 queue_family_properties2[3] = {};
+    for (uint32_t i = 0; i < count; ++i) {
+        queue_family_properties2[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
+    }
+    vkGetPhysicalDeviceQueueFamilyProperties2(physical_device, &count, queue_family_properties2);
+    ASSERT_EQ(count, 3);
+    ASSERT_EQ(queue_family_properties2[0].queueFamilyProperties.queueFlags, 1 | 2 | 4 | 8 | 16);
+    ASSERT_EQ(queue_family_properties2[1].queueFamilyProperties.queueFlags, 4 | 16 | 32);
+    ASSERT_EQ(queue_family_properties2[2].queueFamilyProperties.queueFlags, 4 | 16 | 64);
+    for (uint32_t i = 0; i < count; ++i) {
+        ASSERT_EQ(queue_family_properties2[i].queueFamilyProperties.queueCount, 1);
+        ASSERT_EQ(queue_family_properties2[i].queueFamilyProperties.timestampValidBits, 16);
+        ASSERT_EQ(queue_family_properties2[i].queueFamilyProperties.minImageTransferGranularity.width, 1);
+        ASSERT_EQ(queue_family_properties2[i].queueFamilyProperties.minImageTransferGranularity.height, 1);
+        ASSERT_EQ(queue_family_properties2[i].queueFamilyProperties.minImageTransferGranularity.depth, 1);
+    }
 
     VkDeviceCreateInfo dev_create_info{};
     VkDevice device{};
@@ -1110,29 +1121,60 @@ TEST_F(MockICD, vkGetPhysicalDeviceVideoFormatPropertiesKHR) {
         vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR"));
     ASSERT_NE(vkGetPhysicalDeviceVideoFormatPropertiesKHR, nullptr);
 
+    VkVideoDecodeH264ProfileInfoKHR decode_h264_profile_info{};
+    decode_h264_profile_info.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR;
+    decode_h264_profile_info.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+    decode_h264_profile_info.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+    VkVideoProfileInfoKHR video_profile_info{};
+    video_profile_info.sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR;
+    video_profile_info.pNext = &decode_h264_profile_info;
+    video_profile_info.videoCodecOperation = VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR;
+    video_profile_info.chromaSubsampling = VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR;
+    video_profile_info.lumaBitDepth = VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR;
+    video_profile_info.chromaBitDepth = VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR;
+    VkVideoProfileListInfoKHR video_profile_list{};
+    video_profile_list.sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_LIST_INFO_KHR;
+    video_profile_list.profileCount = 1;
+    video_profile_list.pProfiles = &video_profile_info;
     VkPhysicalDeviceVideoFormatInfoKHR video_format_info{};
+    video_format_info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR;
+    video_format_info.pNext = &video_profile_list;
     uint32_t count = 0;
     VkResult res = vkGetPhysicalDeviceVideoFormatPropertiesKHR(physical_device, &video_format_info, &count, nullptr);
     ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(count, 2);
-    std::array<VkVideoFormatPropertiesKHR, 2> video_format_properties{};
+    ASSERT_EQ(count, 3);
+    std::array<VkVideoFormatPropertiesKHR, 3> video_format_properties{};
     res = vkGetPhysicalDeviceVideoFormatPropertiesKHR(physical_device, &video_format_info, &count, video_format_properties.data());
     ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(count, 2);
-    ASSERT_EQ(video_format_properties[0].format, VK_FORMAT_R8G8B8A8_UNORM);
-    ASSERT_EQ(video_format_properties[0].imageCreateFlags, VK_IMAGE_TYPE_2D);
+    ASSERT_EQ(count, 3);
+    ASSERT_EQ(video_format_properties[0].format, VK_FORMAT_G8_B8R8_2PLANE_420_UNORM);
+    ASSERT_EQ(video_format_properties[0].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
+                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
+                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
     ASSERT_EQ(video_format_properties[0].imageType, VK_IMAGE_TYPE_2D);
     ASSERT_EQ(video_format_properties[0].imageTiling, VK_IMAGE_TILING_OPTIMAL);
-    ASSERT_EQ(video_format_properties[0].imageUsageFlags, VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
-                                                              VK_IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR |
-                                                              VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
-    ASSERT_EQ(video_format_properties[1].format, VK_FORMAT_R8G8B8A8_SNORM);
-    ASSERT_EQ(video_format_properties[1].imageCreateFlags, VK_IMAGE_TYPE_2D);
+    ASSERT_EQ(video_format_properties[0].imageUsageFlags,
+              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
+    ASSERT_EQ(video_format_properties[1].format, VK_FORMAT_G8_B8R8_2PLANE_420_UNORM);
+    ASSERT_EQ(video_format_properties[1].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
+                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
+                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
     ASSERT_EQ(video_format_properties[1].imageType, VK_IMAGE_TYPE_2D);
     ASSERT_EQ(video_format_properties[1].imageTiling, VK_IMAGE_TILING_OPTIMAL);
-    ASSERT_EQ(video_format_properties[1].imageUsageFlags, VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR |
-                                                              VK_IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR |
-                                                              VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
+    ASSERT_EQ(video_format_properties[1].imageUsageFlags,
+              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
+                  VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR);
+    ASSERT_EQ(video_format_properties[2].format, VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM);
+    ASSERT_EQ(video_format_properties[2].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
+                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
+                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
+    ASSERT_EQ(video_format_properties[2].imageType, VK_IMAGE_TYPE_2D);
+    ASSERT_EQ(video_format_properties[2].imageTiling, VK_IMAGE_TILING_OPTIMAL);
+    ASSERT_EQ(video_format_properties[2].imageUsageFlags,
+              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
+                  VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR);
 }
 
 TEST_F(MockICD, vkGetPhysicalDeviceVideoCapabilitiesKHR) {
@@ -1140,21 +1182,42 @@ TEST_F(MockICD, vkGetPhysicalDeviceVideoCapabilitiesKHR) {
         vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR"));
     ASSERT_NE(vkGetPhysicalDeviceVideoCapabilitiesKHR, nullptr);
 
+    VkVideoDecodeH264ProfileInfoKHR decode_h264_profile_info{};
+    decode_h264_profile_info.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR;
+    decode_h264_profile_info.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+    decode_h264_profile_info.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
     VkVideoProfileInfoKHR video_profile_info{};
+    video_profile_info.sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR;
+    video_profile_info.pNext = &decode_h264_profile_info;
+    video_profile_info.videoCodecOperation = VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR;
+    video_profile_info.chromaSubsampling = VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR;
+    video_profile_info.lumaBitDepth = VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR;
+    video_profile_info.chromaBitDepth = VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR;
+    VkVideoDecodeH264CapabilitiesKHR decode_h264_capabilities{};
+    decode_h264_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
+    VkVideoDecodeCapabilitiesKHR decode_capabilities{};
+    decode_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+    decode_capabilities.pNext = &decode_h264_capabilities;
     VkVideoCapabilitiesKHR video_capabilities{};
+    video_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
+    video_capabilities.pNext = &decode_capabilities;
     VkResult res = vkGetPhysicalDeviceVideoCapabilitiesKHR(physical_device, &video_profile_info, &video_capabilities);
     ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(video_capabilities.flags, 0);
-    ASSERT_EQ(video_capabilities.minBitstreamBufferOffsetAlignment, 4);
-    ASSERT_EQ(video_capabilities.minBitstreamBufferSizeAlignment, 4);
-    ASSERT_EQ(video_capabilities.pictureAccessGranularity.width, 1);
-    ASSERT_EQ(video_capabilities.pictureAccessGranularity.height, 1);
-    ASSERT_EQ(video_capabilities.minCodedExtent.width, 4);
-    ASSERT_EQ(video_capabilities.minCodedExtent.height, 4);
-    ASSERT_EQ(video_capabilities.maxCodedExtent.width, 16);
-    ASSERT_EQ(video_capabilities.maxCodedExtent.height, 16);
-    ASSERT_EQ(video_capabilities.maxDpbSlots, 4);
-    ASSERT_EQ(video_capabilities.maxActiveReferencePictures, 4);
+    ASSERT_EQ(video_capabilities.flags, VK_VIDEO_CAPABILITY_PROTECTED_CONTENT_BIT_KHR);
+    ASSERT_EQ(video_capabilities.minBitstreamBufferOffsetAlignment, 256);
+    ASSERT_EQ(video_capabilities.minBitstreamBufferSizeAlignment, 256);
+    ASSERT_EQ(video_capabilities.pictureAccessGranularity.width, 16);
+    ASSERT_EQ(video_capabilities.pictureAccessGranularity.height, 16);
+    ASSERT_EQ(video_capabilities.minCodedExtent.width, 16);
+    ASSERT_EQ(video_capabilities.minCodedExtent.height, 16);
+    ASSERT_EQ(video_capabilities.maxCodedExtent.width, 1920);
+    ASSERT_EQ(video_capabilities.maxCodedExtent.height, 1080);
+    ASSERT_EQ(video_capabilities.maxDpbSlots, 33);
+    ASSERT_EQ(video_capabilities.maxActiveReferencePictures, 32);
+    ASSERT_EQ(decode_capabilities.flags, VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR);
+    ASSERT_EQ(decode_h264_capabilities.maxLevelIdc, STD_VIDEO_H264_LEVEL_IDC_6_2);
+    ASSERT_EQ(decode_h264_capabilities.fieldOffsetGranularity.x, 0);
+    ASSERT_EQ(decode_h264_capabilities.fieldOffsetGranularity.y, 0);
 }
 
 TEST_F(MockICD, vkGetDescriptorSetLayoutSupport) {
