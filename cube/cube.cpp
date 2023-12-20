@@ -43,6 +43,9 @@
 #define VULKAN_HPP_TYPESAFE_CONVERSION
 #include <vulkan/vulkan.hpp>
 
+#define VOLK_IMPLEMENTATION
+#include "volk.h"
+
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 #include "linmath.h"
@@ -1117,7 +1120,18 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
 }
 
 void Demo::init_vk() {
-    VULKAN_HPP_DEFAULT_DISPATCHER.init();
+    // See https://github.com/KhronosGroup/Vulkan-Hpp/pull/1755
+    // Currently Vulkan-Hpp doesn't check for libvulkan.1.dylib
+    // Which affects vkcube installation on Apple platforms.
+    VkResult err = volkInitialize();
+    if (err != VK_SUCCESS) {
+        ERR_EXIT(
+            "Unable to find the Vulkan runtime on the system.\n\n"
+            "This likely indicates that no Vulkan capable drivers are installed.",
+            "Installation Failure");
+    }
+
+    VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
     std::vector<char const *> instance_validation_layers = {"VK_LAYER_KHRONOS_validation"};
 
