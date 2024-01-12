@@ -109,6 +109,7 @@ endif()
 target_link_libraries(vulkaninfo PRIVATE
     Vulkan::Headers
     ${CMAKE_DL_LIBS}
+    volk::volk_headers
 )
 
 if(WIN32)

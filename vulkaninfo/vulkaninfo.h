@@ -88,6 +88,9 @@
 
 #include <vulkan/vulkan.h>
 
+#define VOLK_IMPLEMENTATION
+#include "volk.h"
+
 static std::string VkResultString(VkResult err);
 
 // General error: Get file + line and a short message
@@ -254,232 +257,6 @@ auto GetVector(const char *func_name, F &&f, Ts &&...ts) -> std::vector<T> {
     return GetVectorInit(func_name, f, T(), ts...);
 }
 
-// ----------- Instance Setup ------- //
-struct VkDll {
-    VkResult Initialize() {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__)
-        library = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
-        if (!library) library = dlopen("libvulkan.so.1", RTLD_NOW | RTLD_LOCAL);
-#elif defined(__APPLE__)
-        library = dlopen("libvulkan.dylib", RTLD_NOW | RTLD_LOCAL);
-        if (!library) library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
-        if (!library) library = dlopen("libMoltenVK.dylib", RTLD_NOW | RTLD_LOCAL);
-#elif defined(_WIN32)
-        library = LoadLibrary(TEXT("vulkan-1.dll"));
-#endif
-        return library != nullptr ? VK_SUCCESS : VK_ERROR_INITIALIZATION_FAILED;
-    }
-    void Close() {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__) || defined(__APPLE__)
-        dlclose(library);
-#elif defined(_WIN32)
-        FreeLibrary(library);
-#endif
-    }
-
-    // Function pointers, loaded from the dll
-    PFN_vkCreateInstance fp_vkCreateInstance{};
-    PFN_vkEnumerateInstanceExtensionProperties fp_vkEnumerateInstanceExtensionProperties{};
-    PFN_vkEnumerateInstanceLayerProperties fp_vkEnumerateInstanceLayerProperties{};
-    PFN_vkDestroyInstance fp_vkDestroyInstance{};
-    PFN_vkEnumeratePhysicalDevices fp_vkEnumeratePhysicalDevices{};
-    PFN_vkGetPhysicalDeviceFeatures fp_vkGetPhysicalDeviceFeatures{};
-    PFN_vkGetPhysicalDeviceFormatProperties fp_vkGetPhysicalDeviceFormatProperties{};
-    PFN_vkGetPhysicalDeviceImageFormatProperties fp_vkGetPhysicalDeviceImageFormatProperties{};
-    PFN_vkGetPhysicalDeviceProperties fp_vkGetPhysicalDeviceProperties{};
-    PFN_vkGetPhysicalDeviceQueueFamilyProperties fp_vkGetPhysicalDeviceQueueFamilyProperties{};
-    PFN_vkGetPhysicalDeviceMemoryProperties fp_vkGetPhysicalDeviceMemoryProperties{};
-    PFN_vkGetInstanceProcAddr fp_vkGetInstanceProcAddr{};
-    PFN_vkGetDeviceProcAddr fp_vkGetDeviceProcAddr{};
-    PFN_vkCreateDevice fp_vkCreateDevice{};
-    PFN_vkDestroyDevice fp_vkDestroyDevice{};
-    PFN_vkEnumerateDeviceExtensionProperties fp_vkEnumerateDeviceExtensionProperties{};
-    PFN_vkGetDeviceQueue fp_vkGetDeviceQueue{};
-    PFN_vkCreateImage fp_vkCreateImage{};
-    PFN_vkDestroyImage fp_vkDestroyImage{};
-    PFN_vkGetBufferMemoryRequirements fp_vkGetBufferMemoryRequirements{};
-    PFN_vkGetImageMemoryRequirements fp_vkGetImageMemoryRequirements{};
-    PFN_vkGetImageSparseMemoryRequirements fp_vkGetImageSparseMemoryRequirements{};
-    PFN_vkEnumerateInstanceVersion fp_vkEnumerateInstanceVersion{};
-    PFN_vkEnumeratePhysicalDeviceGroups fp_vkEnumeratePhysicalDeviceGroups{};
-    PFN_vkGetPhysicalDeviceFeatures2 fp_vkGetPhysicalDeviceFeatures2{};
-    PFN_vkGetPhysicalDeviceProperties2 fp_vkGetPhysicalDeviceProperties2{};
-    PFN_vkGetPhysicalDeviceFormatProperties2 fp_vkGetPhysicalDeviceFormatProperties2{};
-    PFN_vkGetPhysicalDeviceQueueFamilyProperties2 fp_vkGetPhysicalDeviceQueueFamilyProperties2{};
-    PFN_vkGetPhysicalDeviceMemoryProperties2 fp_vkGetPhysicalDeviceMemoryProperties2{};
-    PFN_vkDestroySurfaceKHR fp_vkDestroySurfaceKHR{};
-#ifdef VK_USE_PLATFORM_XLIB_KHR
-    PFN_vkCreateXlibSurfaceKHR fp_vkCreateXlibSurfaceKHR{};
-    PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR fp_vkGetPhysicalDeviceXlibPresentationSupportKHR{};
-#endif  // VK_USE_PLATFORM_XLIB_KHR
-#ifdef VK_USE_PLATFORM_XCB_KHR
-    PFN_vkCreateXcbSurfaceKHR fp_vkCreateXcbSurfaceKHR{};
-    PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR fp_vkGetPhysicalDeviceXcbPresentationSupportKHR{};
-#endif  // VK_USE_PLATFORM_XCB_KHR
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
-    PFN_vkCreateWaylandSurfaceKHR fp_vkCreateWaylandSurfaceKHR{};
-    PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR fp_vkGetPhysicalDeviceWaylandPresentationSupportKHR{};
-#endif  // VK_USE_PLATFORM_WAYLAND_KHR
-#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
-    PFN_vkCreateDirectFBSurfaceEXT fp_vkCreateDirectFBSurfaceEXT{};
-    PFN_vkGetPhysicalDeviceDirectFBPresentationSupportEXT fp_vkGetPhysicalDeviceDirectFBPresentationSupportEXT{};
-#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-    PFN_vkCreateAndroidSurfaceKHR fp_vkCreateAndroidSurfaceKHR{};
-#endif  // VK_USE_PLATFORM_ANDROID_KHR
-#ifdef VK_USE_PLATFORM_GGP
-    PFN_vkCreateStreamDescriptorSurfaceGGP fp_vkCreateStreamDescriptorSurfaceGGP{};
-#endif  // VK_USE_PLATFORM_GGP
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-    PFN_vkCreateWin32SurfaceKHR fp_vkCreateWin32SurfaceKHR{};
-    PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR fp_vkGetPhysicalDeviceWin32PresentationSupportKHR{};
-#endif  // VK_USE_PLATFORM_WIN32_KHR
-#ifdef VK_USE_PLATFORM_MACOS_MVK
-    PFN_vkCreateMacOSSurfaceMVK fp_vkCreateMacOSSurfaceMVK{};
-#endif  // VK_USE_PLATFORM_MACOS_MVK
-#ifdef VK_USE_PLATFORM_METAL_EXT
-    PFN_vkCreateMetalSurfaceEXT fp_vkCreateMetalSurfaceEXT{};
-#endif  // VK_USE_PLATFORM_METAL_EXT
-#ifdef VK_USE_PLATFORM_SCREEN_QNX
-    PFN_vkCreateScreenSurfaceQNX fp_vkCreateScreenSurfaceQNX{};
-    PFN_vkGetPhysicalDeviceScreenPresentationSupportQNX fp_vkGetPhysicalDeviceScreenPresentationSupportQNX{};
-#endif  // VK_USE_PLATFORM_SCREEN_QNX
-    void InitializeDispatchPointers() {
-        Load(fp_vkCreateInstance, "vkCreateInstance");
-        Load(fp_vkDestroyInstance, "vkDestroyInstance");
-        Load(fp_vkEnumeratePhysicalDevices, "vkEnumeratePhysicalDevices");
-        Load(fp_vkGetPhysicalDeviceFeatures, "vkGetPhysicalDeviceFeatures");
-        Load(fp_vkGetPhysicalDeviceFormatProperties, "vkGetPhysicalDeviceFormatProperties");
-        Load(fp_vkGetPhysicalDeviceImageFormatProperties, "vkGetPhysicalDeviceImageFormatProperties");
-        Load(fp_vkGetPhysicalDeviceProperties, "vkGetPhysicalDeviceProperties");
-        Load(fp_vkGetPhysicalDeviceQueueFamilyProperties, "vkGetPhysicalDeviceQueueFamilyProperties");
-        Load(fp_vkGetPhysicalDeviceMemoryProperties, "vkGetPhysicalDeviceMemoryProperties");
-        Load(fp_vkGetInstanceProcAddr, "vkGetInstanceProcAddr");
-        Load(fp_vkGetDeviceProcAddr, "vkGetDeviceProcAddr");
-        Load(fp_vkCreateDevice, "vkCreateDevice");
-        Load(fp_vkDestroyDevice, "vkDestroyDevice");
-        Load(fp_vkEnumerateInstanceExtensionProperties, "vkEnumerateInstanceExtensionProperties");
-        Load(fp_vkEnumerateDeviceExtensionProperties, "vkEnumerateDeviceExtensionProperties");
-        Load(fp_vkEnumerateInstanceLayerProperties, "vkEnumerateInstanceLayerProperties");
-        Load(fp_vkGetDeviceQueue, "vkGetDeviceQueue");
-        Load(fp_vkCreateImage, "vkCreateImage");
-        Load(fp_vkDestroyImage, "vkDestroyImage");
-        Load(fp_vkGetBufferMemoryRequirements, "vkGetBufferMemoryRequirements");
-        Load(fp_vkGetImageMemoryRequirements, "vkGetImageMemoryRequirements");
-        Load(fp_vkGetImageSparseMemoryRequirements, "vkGetImageSparseMemoryRequirements");
-        Load(fp_vkEnumerateInstanceVersion, "vkEnumerateInstanceVersion");
-        Load(fp_vkEnumeratePhysicalDeviceGroups, "vkEnumeratePhysicalDeviceGroups");
-        Load(fp_vkGetPhysicalDeviceFeatures2, "vkGetPhysicalDeviceFeatures2");
-        Load(fp_vkGetPhysicalDeviceProperties2, "vkGetPhysicalDeviceProperties2");
-        Load(fp_vkGetPhysicalDeviceFormatProperties2, "vkGetPhysicalDeviceFormatProperties2");
-        Load(fp_vkGetPhysicalDeviceQueueFamilyProperties2, "vkGetPhysicalDeviceQueueFamilyProperties2");
-        Load(fp_vkGetPhysicalDeviceMemoryProperties2, "vkGetPhysicalDeviceMemoryProperties2");
-        Load(fp_vkDestroySurfaceKHR, "vkDestroySurfaceKHR");
-
-#ifdef VK_USE_PLATFORM_XLIB_KHR
-        Load(fp_vkCreateXlibSurfaceKHR, "vkCreateXlibSurfaceKHR");
-        Load(fp_vkGetPhysicalDeviceXlibPresentationSupportKHR, "vkGetPhysicalDeviceXlibPresentationSupportKHR");
-#endif  // VK_USE_PLATFORM_XLIB_KHR
-#ifdef VK_USE_PLATFORM_XCB_KHR
-        Load(fp_vkCreateXcbSurfaceKHR, "vkCreateXcbSurfaceKHR");
-        Load(fp_vkGetPhysicalDeviceXcbPresentationSupportKHR, "vkGetPhysicalDeviceXcbPresentationSupportKHR");
-#endif  // VK_USE_PLATFORM_XCB_KHR
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
-        Load(fp_vkCreateWaylandSurfaceKHR, "vkCreateWaylandSurfaceKHR");
-        Load(fp_vkGetPhysicalDeviceWaylandPresentationSupportKHR, "vkGetPhysicalDeviceWaylandPresentationSupportKHR");
-#endif  // VK_USE_PLATFORM_WAYLAND_KHR
-#ifdef VK_USE_PLATFORM_DIRECTFB_EXT
-        Load(fp_vkCreateDirectFBSurfaceEXT, "vkCreateDirectFBSurfaceEXT");
-        Load(fp_vkGetPhysicalDeviceDirectFBPresentationSupportEXT, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT");
-#endif  // VK_USE_PLATFORM_DIRECTFB_EXT
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
-        Load(fp_vkCreateAndroidSurfaceKHR, "vkCreateAndroidSurfaceKHR");
-#endif  // VK_USE_PLATFORM_ANDROID_KHR
-#ifdef VK_USE_PLATFORM_GGP
-        Load(fp_vkCreateStreamDescriptorSurfaceGGP, "vkCreateStreamDescriptorSurfaceGGP");
-#endif  // VK_USE_PLATFORM_GGP
-#ifdef VK_USE_PLATFORM_WIN32_KHR
-        Load(fp_vkCreateWin32SurfaceKHR, "vkCreateWin32SurfaceKHR");
-        Load(fp_vkGetPhysicalDeviceWin32PresentationSupportKHR, "vkGetPhysicalDeviceWin32PresentationSupportKHR");
-#endif  // VK_USE_PLATFORM_WIN32_KHR
-#ifdef VK_USE_PLATFORM_MACOS_MVK
-        Load(fp_vkCreateMacOSSurfaceMVK, "vkCreateMacOSSurfaceMVK");
-#endif  // VK_USE_PLATFORM_MACOS_MVK
-#ifdef VK_USE_PLATFORM_METAL_EXT
-        Load(fp_vkCreateMetalSurfaceEXT, "vkCreateMetalSurfaceEXT");
-#endif  // VK_USE_PLATFORM_METAL_EXT
-#ifdef VK_USE_PLATFORM_SCREEN_QNX
-        Load(fp_vkCreateScreenSurfaceQNX, "vkCreateScreenSurfaceQNX");
-#endif  // VK_USE_PLATFORM_SCREEN_QNX
-    }
-
-  private:
-    template <typename T>
-    void Load(T &func_dest, const char *func_name) {
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__) || defined(__APPLE__)
-        func_dest = reinterpret_cast<T>(dlsym(library, func_name));
-#elif defined(_WIN32)
-        func_dest = reinterpret_cast<T>(GetProcAddress(library, func_name));
-#endif
-    }
-#if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__) || defined(__APPLE__)
-    void *library;
-#elif defined(_WIN32)
-    HMODULE library;
-#endif
-};
-
-struct ExtensionFunctions {
-    // Extension pointers, loaded after instance is created
-    PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
-    PFN_vkDestroyDebugReportCallbackEXT vkDestroyDebugReportCallbackEXT;
-    PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR{};
-    PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR{};
-    PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR{};
-    PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR{};
-    PFN_vkGetDeviceGroupPresentCapabilitiesKHR vkGetDeviceGroupPresentCapabilitiesKHR{};
-    PFN_vkGetPhysicalDeviceSurfaceFormats2KHR vkGetPhysicalDeviceSurfaceFormats2KHR{};
-    PFN_vkGetPhysicalDeviceProperties2KHR vkGetPhysicalDeviceProperties2KHR{};
-    PFN_vkGetPhysicalDeviceFormatProperties2KHR vkGetPhysicalDeviceFormatProperties2KHR{};
-    PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR vkGetPhysicalDeviceQueueFamilyProperties2KHR{};
-    PFN_vkGetPhysicalDeviceFeatures2KHR vkGetPhysicalDeviceFeatures2KHR{};
-    PFN_vkGetPhysicalDeviceMemoryProperties2KHR vkGetPhysicalDeviceMemoryProperties2KHR{};
-    PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR vkGetPhysicalDeviceSurfaceCapabilities2KHR{};
-    PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT vkGetPhysicalDeviceSurfaceCapabilities2EXT{};
-    PFN_vkEnumeratePhysicalDeviceGroupsKHR vkEnumeratePhysicalDeviceGroupsKHR{};
-    PFN_vkGetPhysicalDeviceToolPropertiesEXT vkGetPhysicalDeviceToolPropertiesEXT{};
-
-    void LoadInstanceExtensionDispatchPointers(PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr, VkInstance instance) {
-        this->instance = instance;
-        this->vkGetInstanceProcAddr = vkGetInstanceProcAddr;
-        Load(vkCreateDebugReportCallbackEXT, "vkCreateDebugReportCallbackEXT");
-        Load(vkDestroyDebugReportCallbackEXT, "vkDestroyDebugReportCallbackEXT");
-        Load(vkGetPhysicalDeviceSurfaceSupportKHR, "vkGetPhysicalDeviceSurfaceSupportKHR");
-        Load(vkGetPhysicalDeviceSurfaceCapabilitiesKHR, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
-        Load(vkGetPhysicalDeviceSurfaceFormatsKHR, "vkGetPhysicalDeviceSurfaceFormatsKHR");
-        Load(vkGetPhysicalDeviceSurfaceFormats2KHR, "vkGetPhysicalDeviceSurfaceFormats2KHR");
-        Load(vkGetPhysicalDeviceSurfacePresentModesKHR, "vkGetPhysicalDeviceSurfacePresentModesKHR");
-        Load(vkGetDeviceGroupPresentCapabilitiesKHR, "vkGetDeviceGroupPresentCapabilitiesKHR");
-        Load(vkGetPhysicalDeviceProperties2KHR, "vkGetPhysicalDeviceProperties2KHR");
-        Load(vkGetPhysicalDeviceFormatProperties2KHR, "vkGetPhysicalDeviceFormatProperties2KHR");
-        Load(vkGetPhysicalDeviceQueueFamilyProperties2KHR, "vkGetPhysicalDeviceQueueFamilyProperties2KHR");
-        Load(vkGetPhysicalDeviceFeatures2KHR, "vkGetPhysicalDeviceFeatures2KHR");
-        Load(vkGetPhysicalDeviceMemoryProperties2KHR, "vkGetPhysicalDeviceMemoryProperties2KHR");
-        Load(vkGetPhysicalDeviceSurfaceCapabilities2KHR, "vkGetPhysicalDeviceSurfaceCapabilities2KHR");
-        Load(vkGetPhysicalDeviceSurfaceCapabilities2EXT, "vkGetPhysicalDeviceSurfaceCapabilities2EXT");
-        Load(vkEnumeratePhysicalDeviceGroupsKHR, "vkEnumeratePhysicalDeviceGroupsKHR");
-        Load(vkGetPhysicalDeviceToolPropertiesEXT, "vkGetPhysicalDeviceToolPropertiesEXT");
-    }
-
-  private:
-    PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
-    VkInstance instance;
-    template <typename T>
-    void Load(T &dest, const char *name) {
-        dest = reinterpret_cast<T>(vkGetInstanceProcAddr(instance, name));
-    }
-};
-
 // Forward declarations for pNext chains
 struct phys_device_props2_chain;
 struct phys_device_mem_props2_chain;
@@ -577,14 +354,10 @@ class APIVersion {
 std::ostream &operator<<(std::ostream &out, const APIVersion &v) { return out << v.Major() << "." << v.Minor() << "." << v.Patch(); }
 
 struct AppInstance {
-    VkDll dll;
-
     VkInstance instance;
     APIVersion api_version;
 
     VkDebugReportCallbackEXT debug_callback = VK_NULL_HANDLE;
-
-    ExtensionFunctions ext_funcs;
 
     std::vector<LayerExtensionList> global_layers;
 
@@ -633,15 +406,15 @@ struct AppInstance {
     struct _screen_window *window;
 #endif
     AppInstance() {
-        VkResult dllErr = dll.Initialize();
+        VkResult dllErr = volkInitialize();
+
         if (dllErr != VK_SUCCESS) {
             THROW_ERR("Failed to initialize: " API_NAME " loader is not installed, not found, or failed to load.");
         }
-        dll.InitializeDispatchPointers();
 
         uint32_t instance_version = VK_API_VERSION_1_0;
-        if (dll.fp_vkEnumerateInstanceVersion) {
-            const VkResult err = dll.fp_vkEnumerateInstanceVersion(&instance_version);
+        if (vkEnumerateInstanceVersion) {
+            const VkResult err = vkEnumerateInstanceVersion(&instance_version);
             if (err) THROW_VK_ERR("vkEnumerateInstanceVersion", err);
         }
 
@@ -677,7 +450,7 @@ struct AppInstance {
             static_cast<uint32_t>(inst_exts.size()),
             inst_exts.data()};
 
-        VkResult err = dll.fp_vkCreateInstance(&inst_info, nullptr, &instance);
+        VkResult err = vkCreateInstance(&inst_info, nullptr, &instance);
         if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
             std::cerr << "Cannot create " API_NAME " instance.\n";
             std::cerr << "This problem is often caused by a faulty installation of the " API_NAME " driver or attempting to use a GPU "
@@ -686,18 +459,19 @@ struct AppInstance {
         } else if (err) {
             THROW_VK_ERR("vkCreateInstance", err);
         }
-        ext_funcs.LoadInstanceExtensionDispatchPointers(dll.fp_vkGetInstanceProcAddr, instance);
 
-        err = ext_funcs.vkCreateDebugReportCallbackEXT(instance, &dbg_info, nullptr, &debug_callback);
+        volkLoadInstance(instance);
+
+        err = vkCreateDebugReportCallbackEXT(instance, &dbg_info, nullptr, &debug_callback);
         if (err != VK_SUCCESS) {
             THROW_VK_ERR("vkCreateDebugReportCallbackEXT", err);
         }
     }
 
     ~AppInstance() {
-        if (debug_callback) ext_funcs.vkDestroyDebugReportCallbackEXT(instance, debug_callback, nullptr);
-        if (dll.fp_vkDestroyInstance) dll.fp_vkDestroyInstance(instance, nullptr);
-        dll.Close();
+        if (debug_callback) vkDestroyDebugReportCallbackEXT(instance, debug_callback, nullptr);
+        if (vkDestroyInstance) vkDestroyInstance(instance, nullptr);
+        volkFinalize();
     }
 
     AppInstance(const AppInstance &) = delete;
@@ -712,7 +486,7 @@ struct AppInstance {
     void AppGetInstanceExtensions() {
         /* Scan layers */
         auto global_layer_properties =
-            GetVector<VkLayerProperties>("vkEnumerateInstanceLayerProperties", dll.fp_vkEnumerateInstanceLayerProperties);
+            GetVector<VkLayerProperties>("vkEnumerateInstanceLayerProperties", vkEnumerateInstanceLayerProperties);
 
         for (const auto &layer : global_layer_properties) {
             global_layers.push_back(LayerExtensionList{layer, AppGetGlobalLayerExtensions(layer.layerName)});
@@ -819,16 +593,16 @@ struct AppInstance {
     void AddSurfaceExtension(SurfaceExtension ext) { surface_extensions.push_back(ext); }
 
     std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(const char *layer_name) {
-        return GetVector<VkExtensionProperties>("vkEnumerateInstanceExtensionProperties",
-                                                dll.fp_vkEnumerateInstanceExtensionProperties, layer_name);
+        return GetVector<VkExtensionProperties>("vkEnumerateInstanceExtensionProperties", vkEnumerateInstanceExtensionProperties,
+                                                layer_name);
     }
 
     std::vector<VkPhysicalDevice> FindPhysicalDevices() {
-        return GetVector<VkPhysicalDevice>("vkEnumeratePhysicalDevices", dll.fp_vkEnumeratePhysicalDevices, instance);
+        return GetVector<VkPhysicalDevice>("vkEnumeratePhysicalDevices", vkEnumeratePhysicalDevices, instance);
     }
 
     std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(VkPhysicalDevice phys_device, const char *layer_name) {
-        return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties", dll.fp_vkEnumerateDeviceExtensionProperties,
+        return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties", vkEnumerateDeviceExtensionProperties,
                                                 phys_device, layer_name);
     }
 };
@@ -845,7 +619,7 @@ struct AppInstance {
 //-----------------------------------------------------------
 #if defined(VULKANINFO_WSI_ENABLED)
 static void AppDestroySurface(AppInstance &inst, VkSurfaceKHR surface) {  // same for all platforms
-    inst.dll.fp_vkDestroySurfaceKHR(inst.instance, surface, nullptr);
+    vkDestroySurfaceKHR(inst.instance, surface, nullptr);
 }
 #endif  // defined(VULKANINFO_WSI_ENABLED)
 //-----------------------------------------------------------
@@ -912,7 +686,7 @@ static VkSurfaceKHR AppCreateWin32Surface(AppInstance &inst) {
     createInfo.hwnd = inst.h_wnd;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateWin32SurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateWin32SurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateWin32SurfaceKHR", err);
     return surface;
 }
@@ -971,7 +745,7 @@ static VkSurfaceKHR AppCreateXcbSurface(AppInstance &inst) {
     xcb_createInfo.window = inst.xcb_window;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateXcbSurfaceKHR(inst.instance, &xcb_createInfo, nullptr, &surface);
+    VkResult err = vkCreateXcbSurfaceKHR(inst.instance, &xcb_createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateXcbSurfaceKHR", err);
     return surface;
 }
@@ -1017,7 +791,7 @@ static VkSurfaceKHR AppCreateXlibSurface(AppInstance &inst) {
     createInfo.window = inst.xlib_window;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateXlibSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateXlibSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateXlibSurfaceKHR", err);
     return surface;
 }
@@ -1046,7 +820,7 @@ static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
     createInfo.pView = inst.macos_window;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateMacOSSurfaceMVK(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateMacOSSurfaceMVK(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateMacOSSurfaceMVK", err);
     return surface;
 }
@@ -1072,7 +846,7 @@ static VkSurfaceKHR AppCreateMetalSurface(AppInstance &inst) {
     createInfo.pLayer = static_cast<CAMetalLayer *>(GetCAMetalLayerFromMetalView(inst.metal_window));
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateMetalSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateMetalSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateMetalSurfaceEXT", err);
     return surface;
 }
@@ -1111,7 +885,7 @@ static VkSurfaceKHR AppCreateWaylandSurface(AppInstance &inst) {
     createInfo.surface = inst.wayland_surface;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateWaylandSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateWaylandSurfaceKHR(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateWaylandSurfaceKHR", err);
     return surface;
 }
@@ -1155,7 +929,7 @@ static VkSurfaceKHR AppCreateDirectFBSurface(AppInstance &inst) {
     createInfo.surface = inst.directfb_surface;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateDirectFBSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateDirectFBSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateDirectFBSurfaceEXT", err);
     return surface;
 }
@@ -1178,7 +952,7 @@ static VkSurfaceKHR AppCreateAndroidSurface(AppInstance &inst) {
     createInfo.window = (struct ANativeWindow *)(inst.window);
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateAndroidSurfaceKHR(inst.instance, &createInfo, NULL, &surface);
+    VkResult err = vkCreateAndroidSurfaceKHR(inst.instance, &createInfo, NULL, &surface);
     if (err) THROW_VK_ERR("vkCreateAndroidSurfaceKHR", err);
     return surface;
 }
@@ -1196,7 +970,7 @@ static VkSurfaceKHR AppCreateGgpSurface(AppInstance &inst) {
     createInfo.streamDescriptor = 1;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateStreamDescriptorSurfaceGGP(inst.instance, &createInfo, NULL, &surface);
+    VkResult err = vkCreateStreamDescriptorSurfaceGGP(inst.instance, &createInfo, NULL, &surface);
     if (err) THROW_VK_ERR("vkCreateStreamDescriptorSurfaceGGP", err);
     return surface;
 }
@@ -1232,7 +1006,7 @@ static VkSurfaceKHR AppCreateScreenSurface(AppInstance &inst) {
     createInfo.window = inst.window;
 
     VkSurfaceKHR surface;
-    VkResult err = inst.dll.fp_vkCreateScreenSurfaceQNX(inst.instance, &createInfo, nullptr, &surface);
+    VkResult err = vkCreateScreenSurfaceQNX(inst.instance, &createInfo, nullptr, &surface);
     if (err) THROW_VK_ERR("vkCreateScreenSurfaceQNX", err);
     return surface;
 }
@@ -1410,27 +1184,25 @@ class AppSurface {
 
     AppSurface(AppInstance &inst, AppGpu &gpu, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
         : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
-        surf_present_modes = GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR",
-                                                         inst.ext_funcs.vkGetPhysicalDeviceSurfacePresentModesKHR, phys_device,
-                                                         surface_extension.surface);
+        surf_present_modes =
+            GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR", vkGetPhysicalDeviceSurfacePresentModesKHR,
+                                        phys_device, surface_extension.surface);
         const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
                                                                surface_extension.surface};
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
             VkSurfaceFormat2KHR init{};
             init.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-            surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>("vkGetPhysicalDeviceSurfaceFormats2KHR",
-                                                               inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormats2KHR, init,
-                                                               phys_device, &surface_info2);
+            surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>(
+                "vkGetPhysicalDeviceSurfaceFormats2KHR", vkGetPhysicalDeviceSurfaceFormats2KHR, init, phys_device, &surface_info2);
         } else {
-            surf_formats = GetVector<VkSurfaceFormatKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR",
-                                                         inst.ext_funcs.vkGetPhysicalDeviceSurfaceFormatsKHR, phys_device,
-                                                         surface_extension.surface);
+            surf_formats =
+                GetVector<VkSurfaceFormatKHR>("vkGetPhysicalDeviceSurfaceFormatsKHR", vkGetPhysicalDeviceSurfaceFormatsKHR,
+                                              phys_device, surface_extension.surface);
         }
 
         if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_EXTENSION_NAME)) {
-            VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phys_device, surface_extension.surface,
-                                                                                    &surface_capabilities);
+            VkResult err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phys_device, surface_extension.surface, &surface_capabilities);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", err);
         }
 
@@ -1448,16 +1220,15 @@ class AppSurface {
 
             surface_info.pNext = static_cast<void *>(&win32_fullscreen_exclusive_info);
 #endif  // defined(WIN32)
-            VkResult err =
-                inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
+            VkResult err = vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2KHR", err);
         }
 
         if (inst.CheckExtensionEnabled(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME)) {
             surface_capabilities2_ext.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
             surface_capabilities2_ext.pNext = nullptr;
-            VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceCapabilities2EXT(phys_device, surface_extension.surface,
-                                                                                     &surface_capabilities2_ext);
+            VkResult err =
+                vkGetPhysicalDeviceSurfaceCapabilities2EXT(phys_device, surface_extension.surface, &surface_capabilities2_ext);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2EXT", err);
         }
     }
@@ -1472,8 +1243,8 @@ std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
         VkPhysicalDeviceGroupProperties group_props{};
         group_props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
-        return GetVectorInit<VkPhysicalDeviceGroupProperties>(
-            "vkEnumeratePhysicalDeviceGroupsKHR", inst.ext_funcs.vkEnumeratePhysicalDeviceGroupsKHR, group_props, inst.instance);
+        return GetVectorInit<VkPhysicalDeviceGroupProperties>("vkEnumeratePhysicalDeviceGroupsKHR",
+                                                              vkEnumeratePhysicalDeviceGroupsKHR, group_props, inst.instance);
     }
     return {};
 }
@@ -1482,7 +1253,7 @@ std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance &inst, VkPhysi
     std::vector<VkPhysicalDeviceProperties> props(group.physicalDeviceCount);
 
     for (uint32_t i = 0; i < group.physicalDeviceCount; ++i) {
-        inst.dll.fp_vkGetPhysicalDeviceProperties(group.physicalDevices[i], &props[i]);
+        vkGetPhysicalDeviceProperties(group.physicalDevices[i], &props[i]);
     }
 
     return props;
@@ -1514,11 +1285,11 @@ util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilit
 
     VkDevice logical_device = VK_NULL_HANDLE;
 
-    VkResult err = inst.dll.fp_vkCreateDevice(group.physicalDevices[0], &device_ci, nullptr, &logical_device);
+    VkResult err = vkCreateDevice(group.physicalDevices[0], &device_ci, nullptr, &logical_device);
     if (err != VK_SUCCESS && err != VK_ERROR_EXTENSION_NOT_PRESENT) THROW_VK_ERR("vkCreateDevice", err);
 
     if (err == VK_ERROR_EXTENSION_NOT_PRESENT) {
-        inst.dll.fp_vkDestroyDevice(logical_device, nullptr);
+        vkDestroyDevice(logical_device, nullptr);
         return {};
     }
 
@@ -1526,10 +1297,10 @@ util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilit
 
     // If the KHR_device_group extension is present, write the capabilities of the logical device into a struct for later
     // output to user.
-    err = inst.ext_funcs.vkGetDeviceGroupPresentCapabilitiesKHR(logical_device, &group_capabilities);
+    err = vkGetDeviceGroupPresentCapabilitiesKHR(logical_device, &group_capabilities);
     if (err) THROW_VK_ERR("vkGetDeviceGroupPresentCapabilitiesKHR", err);
 
-    inst.dll.fp_vkDestroyDevice(logical_device, nullptr);
+    vkDestroyDevice(logical_device, nullptr);
 
     return {group_capabilities};
 }
@@ -1576,22 +1347,22 @@ VkImageCreateInfo GetImageCreateInfo(VkImageCreateFlags flags, VkFormat format, 
 util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
                                                                  ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
     VkImageFormatProperties img_props;
-    VkResult res = inst.dll.fp_vkGetPhysicalDeviceImageFormatProperties(
-        phys_device, image_ci.format, image_ci.imageType, image_ci.tiling, image_ci.usage, image_ci.flags, &img_props);
+    VkResult res = vkGetPhysicalDeviceImageFormatProperties(phys_device, image_ci.format, image_ci.imageType, image_ci.tiling,
+                                                            image_ci.usage, image_ci.flags, &img_props);
 
     if (res == VK_SUCCESS) {
         ImageTypeSupport img_type_support{};
         img_type_support.type = img_type;
 
         VkImage dummy_img;
-        res = inst.dll.fp_vkCreateImage(device, &image_ci, nullptr, &dummy_img);
+        res = vkCreateImage(device, &image_ci, nullptr, &dummy_img);
         if (res) THROW_VK_ERR("vkCreateImage", res);
 
         VkMemoryRequirements mem_req;
-        inst.dll.fp_vkGetImageMemoryRequirements(device, dummy_img, &mem_req);
+        vkGetImageMemoryRequirements(device, dummy_img, &mem_req);
         img_type_support.memoryTypeBits = mem_req.memoryTypeBits;
 
-        inst.dll.fp_vkDestroyImage(device, dummy_img, nullptr);
+        vkDestroyImage(device, dummy_img, nullptr);
         return img_type_support;
     } else if (res == VK_ERROR_FORMAT_NOT_SUPPORTED) {
         return {};  // return empty util::vulkaninfo_optional
@@ -1623,8 +1394,8 @@ struct AppQueueFamilyProperties {
                              uint32_t queue_index, void *pNext = nullptr)
         : props(family_properties), queue_index(queue_index), pNext(pNext) {
         for (auto &surface_ext : inst.surface_extensions) {
-            VkResult err = inst.ext_funcs.vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_index, surface_ext.surface,
-                                                                               &surface_ext.supports_present);
+            VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_index, surface_ext.surface,
+                                                                &surface_ext.supports_present);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceSupportKHR", err);
 
             const bool first = (surface_ext == inst.surface_extensions.at(0));
@@ -1686,53 +1457,54 @@ struct AppGpu {
     std::vector<std::unique_ptr<queue_properties2_chain>> chain_for_queue_props2;
 
     AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device) : inst(inst), id(id), phys_device(phys_device) {
-        inst.dll.fp_vkGetPhysicalDeviceProperties(phys_device, &props);
+        vkGetPhysicalDeviceProperties(phys_device, &props);
 
         // needs to find the minimum of the instance and device version, and use that to print the device info
         api_version = APIVersion(props.apiVersion);
 
         device_extensions = inst.AppGetPhysicalDeviceLayerExtensions(phys_device, nullptr);
 
-        inst.dll.fp_vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
+        vkGetPhysicalDeviceMemoryProperties(phys_device, &memory_props);
 
-        inst.dll.fp_vkGetPhysicalDeviceFeatures(phys_device, &features);
+        vkGetPhysicalDeviceFeatures(phys_device, &features);
 
         uint32_t queue_count = 0;
-        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
+        vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, nullptr);
         queue_props.resize(queue_count);
-        inst.dll.fp_vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, queue_props.data());
+        vkGetPhysicalDeviceQueueFamilyProperties(phys_device, &queue_count, queue_props.data());
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             // VkPhysicalDeviceProperties2
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
             setup_phys_device_props2_chain(props2, chain_for_phys_device_props2, inst, *this);
 
-            inst.ext_funcs.vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
+            vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
 
             // VkPhysicalDeviceMemoryProperties2
             memory_props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
             setup_phys_device_mem_props2_chain(memory_props2, chain_for_phys_device_mem_props2, *this);
 
-            inst.ext_funcs.vkGetPhysicalDeviceMemoryProperties2KHR(phys_device, &memory_props2);
+            vkGetPhysicalDeviceMemoryProperties2KHR(phys_device, &memory_props2);
 
             // VkPhysicalDeviceFeatures2
             features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
             setup_phys_device_features2_chain(features2, chain_for_phys_device_features2, *this);
 
-            inst.ext_funcs.vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
+            vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
 
             // std::vector<VkPhysicalDeviceQueueFamilyProperties2>
             uint32_t queue_prop2_count = 0;
-            inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, nullptr);
+            vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, nullptr);
             queue_props2.resize(queue_prop2_count);
             chain_for_queue_props2.resize(queue_prop2_count);
             for (size_t i = 0; i < queue_props2.size(); i++) {
                 queue_props2[i].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
                 setup_queue_properties2_chain(queue_props2[i], chain_for_queue_props2[i], *this);
             }
-            inst.ext_funcs.vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, queue_props2.data());
+            vkGetPhysicalDeviceQueueFamilyProperties2KHR(phys_device, &queue_prop2_count, queue_props2.data());
 
-            if (CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) || api_version >= VK_API_VERSION_1_2) {
+            if (CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) ||
+                api_version >= VK_API_VERSION_1_2) {
                 void *place = props2.pNext;
                 while (place) {
                     VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
@@ -1812,7 +1584,7 @@ struct AppGpu {
         device_ci.ppEnabledExtensionNames = extensions_to_enable.data();
         device_ci.pEnabledFeatures = &enabled_features;
 
-        VkResult err = inst.dll.fp_vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
+        VkResult err = vkCreateDevice(phys_device, &device_ci, nullptr, &dev);
         if (err) THROW_VK_ERR("vkCreateDevice", err);
 
         const std::array<VkImageTiling, 2> tilings = {VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_TILING_LINEAR};
@@ -1829,7 +1601,7 @@ struct AppGpu {
                 image_type_format_info.format = format;
 
                 VkFormatProperties fmt_props;
-                inst.dll.fp_vkGetPhysicalDeviceFormatProperties(phys_device, format, &fmt_props);
+                vkGetPhysicalDeviceFormatProperties(phys_device, format, &fmt_props);
                 if ((tiling == VK_IMAGE_TILING_OPTIMAL && fmt_props.optimalTilingFeatures == 0) ||
                     (tiling == VK_IMAGE_TILING_LINEAR && fmt_props.linearTilingFeatures == 0)) {
                     continue;
@@ -1905,7 +1677,7 @@ struct AppGpu {
         }
         // TODO buffer - memory type compatibility
     }
-    ~AppGpu() { inst.dll.fp_vkDestroyDevice(dev, nullptr); }
+    ~AppGpu() { vkDestroyDevice(dev, nullptr); }
 
     AppGpu(const AppGpu &) = delete;
     const AppGpu &operator=(const AppGpu &) = delete;
@@ -1968,9 +1740,9 @@ struct AppGpu {
 };
 
 std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
-    if (gpu.inst.ext_funcs.vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
+    if (vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
     return GetVector<VkPhysicalDeviceToolPropertiesEXT>("vkGetPhysicalDeviceToolPropertiesEXT",
-                                                        gpu.inst.ext_funcs.vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
+                                                        vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
 }
 
 // --------- Format Properties ----------//
@@ -1993,7 +1765,7 @@ struct PropFlags {
 
 PropFlags get_format_properties(const AppGpu &gpu, VkFormat fmt) {
     VkFormatProperties props;
-    gpu.inst.dll.fp_vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
+    vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
     VkFormatProperties3 props3{};
     props3.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
@@ -2004,7 +1776,7 @@ PropFlags get_format_properties(const AppGpu &gpu, VkFormat fmt) {
         props2.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
         props2.formatProperties = props;
         props2.pNext = static_cast<void *>(&props3);
-        gpu.inst.ext_funcs.vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &props2);
+        vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &props2);
     }
     return {props, props3};
 }
