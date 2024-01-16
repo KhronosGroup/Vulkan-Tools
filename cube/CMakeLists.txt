@@ -205,6 +205,15 @@ if(WIN32)
     add_compile_definitions(_USE_MATH_DEFINES)
 endif()
 
+
+# On Ubuntu 20.04, it was found that the validation layers fail to launch in vkcube & vkcubepp due to
+# a missing dependency on libpthread. While newer Ubuntu versions use a glibc version where libpthread
+# is integrated into libc, older ubuntu's do not so we need to link threads directly in order for
+# validation layers to be loadable.
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+    find_package(Threads REQUIRED)
+endif()
+
 # ----------------------------------------------------------------------------
 # vkcube
 
@@ -234,7 +243,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
     if (NEED_RT)
         target_link_libraries(vkcube PRIVATE rt)
     endif()
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
+    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers Threads::Threads)
 elseif(WIN32)
     add_executable(vkcube WIN32)
     target_sources(vkcube PRIVATE
@@ -285,7 +294,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
                    cube.vert.inc
                    cube.frag.inc
                    ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers)
+    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers Threads::Threads)
     target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
 else()
     add_executable(vkcubepp
@@ -339,6 +348,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
         target_link_libraries(vkcube-wayland PRIVATE
             Vulkan::Headers
             volk::volk_headers
+            Threads::Threads
             PkgConfig::WAYLAND_CLIENT
         )
         target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR VK_NO_PROTOTYPES)
