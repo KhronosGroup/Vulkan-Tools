@@ -3596,6 +3596,51 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MAT
     typedef VkPhysicalDeviceCooperativeMatrixPropertiesKHR Type;
 };
 
+// Map type VkVideoDecodeAV1ProfileInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1ProfileInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR> {
+    typedef VkVideoDecodeAV1ProfileInfoKHR Type;
+};
+
+// Map type VkVideoDecodeAV1CapabilitiesKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1CapabilitiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR> {
+    typedef VkVideoDecodeAV1CapabilitiesKHR Type;
+};
+
+// Map type VkVideoDecodeAV1SessionParametersCreateInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1SessionParametersCreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR> {
+    typedef VkVideoDecodeAV1SessionParametersCreateInfoKHR Type;
+};
+
+// Map type VkVideoDecodeAV1PictureInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PICTURE_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1PictureInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PICTURE_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PICTURE_INFO_KHR> {
+    typedef VkVideoDecodeAV1PictureInfoKHR Type;
+};
+
+// Map type VkVideoDecodeAV1DpbSlotInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1DpbSlotInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR> {
+    typedef VkVideoDecodeAV1DpbSlotInfoKHR Type;
+};
+
 // Map type VkPhysicalDeviceVideoMaintenance1FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR
 template <> struct LvlTypeMap<VkPhysicalDeviceVideoMaintenance1FeaturesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR;

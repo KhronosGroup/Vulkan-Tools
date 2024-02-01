@@ -1195,6 +1195,8 @@ std::vector<const char *> VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureF
     if (VK_SUBGROUP_FEATURE_CLUSTERED_BIT & value) strings.push_back("SUBGROUP_FEATURE_CLUSTERED_BIT");
     if (VK_SUBGROUP_FEATURE_QUAD_BIT & value) strings.push_back("SUBGROUP_FEATURE_QUAD_BIT");
     if (VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV & value) strings.push_back("SUBGROUP_FEATURE_PARTITIONED_BIT_NV");
+    if (VK_SUBGROUP_FEATURE_ROTATE_BIT_KHR & value) strings.push_back("SUBGROUP_FEATURE_ROTATE_BIT_KHR");
+    if (VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT_KHR & value) strings.push_back("SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT_KHR");
     return strings;
 }
 void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureFlags value) {
@@ -1340,6 +1342,7 @@ std::vector<const char *> VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCode
     if (VK_VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR");
     if (VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR");
     if (VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR");
+    if (VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR");
     return strings;
 }
 void DumpVkVideoCodecOperationFlagsKHR(Printer &p, std::string name, VkVideoCodecOperationFlagsKHR value) {
