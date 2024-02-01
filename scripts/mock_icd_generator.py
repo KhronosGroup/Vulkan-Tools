@@ -395,7 +395,8 @@ CUSTOM_C_INTERCEPTS = {
             auto video_props = lvl_find_mod_in_chain<VkQueueFamilyVideoPropertiesKHR>(pQueueFamilyProperties[1].pNext);
             if (video_props) {
                 video_props->videoCodecOperations = VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR
-                                                  | VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR;
+                                                  | VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR
+                                                  | VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR;
             }
         }
         if (*pQueueFamilyPropertyCount >= 3) {
@@ -1098,6 +1099,7 @@ CUSTOM_C_INTERCEPTS = {
     auto caps_decode = lvl_find_mod_in_chain<VkVideoDecodeCapabilitiesKHR>(pCapabilities->pNext);
     auto caps_decode_h264 = lvl_find_mod_in_chain<VkVideoDecodeH264CapabilitiesKHR>(pCapabilities->pNext);
     auto caps_decode_h265 = lvl_find_mod_in_chain<VkVideoDecodeH265CapabilitiesKHR>(pCapabilities->pNext);
+    auto caps_decode_av1 = lvl_find_mod_in_chain<VkVideoDecodeAV1CapabilitiesKHR>(pCapabilities->pNext);
     auto caps_encode = lvl_find_mod_in_chain<VkVideoEncodeCapabilitiesKHR>(pCapabilities->pNext);
     auto caps_encode_h264 = lvl_find_mod_in_chain<VkVideoEncodeH264CapabilitiesKHR>(pCapabilities->pNext);
     auto caps_encode_h265 = lvl_find_mod_in_chain<VkVideoEncodeH265CapabilitiesKHR>(pCapabilities->pNext);
@@ -1186,6 +1188,46 @@ CUSTOM_C_INTERCEPTS = {
                     caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR
                                        | VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR;
                     caps_decode_h265->maxLevelIdc = STD_VIDEO_H265_LEVEL_IDC_4_1;
+                    break;
+                default:
+                    return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
+            }
+            break;
+        }
+        case VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR: {
+            auto profile = lvl_find_in_chain<VkVideoDecodeAV1ProfileInfoKHR>(pVideoProfile->pNext);
+            if (profile->stdProfile != STD_VIDEO_AV1_PROFILE_MAIN) {
+                return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
+            }
+
+            caps->flags = VK_VIDEO_CAPABILITY_PROTECTED_CONTENT_BIT_KHR;
+            caps->minBitstreamBufferOffsetAlignment = 256;
+            caps->minBitstreamBufferSizeAlignment   = 256;
+            caps->pictureAccessGranularity          = {16,16};
+            caps->minCodedExtent                    = {16,16};
+            caps->maxCodedExtent                    = {1920,1080};
+            caps->maxDpbSlots                       = 8;
+            caps->maxActiveReferencePictures        = 7;
+            std::strncpy(caps->stdHeaderVersion.extensionName, VK_STD_VULKAN_VIDEO_CODEC_AV1_DECODE_EXTENSION_NAME,
+                         sizeof(caps->stdHeaderVersion.extensionName));
+            caps->stdHeaderVersion.specVersion      = VK_STD_VULKAN_VIDEO_CODEC_AV1_DECODE_SPEC_VERSION;
+
+            switch (pVideoProfile->chromaSubsampling) {
+                case VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR:
+                    caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR;
+                    caps_decode_av1->maxLevel = STD_VIDEO_AV1_LEVEL_6_2;
+                    break;
+                case VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR:
+                    if (profile->filmGrainSupport) {
+                        return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
+                    }
+                    caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR;
+                    caps_decode_av1->maxLevel = STD_VIDEO_AV1_LEVEL_5_0;
+                    break;
+                case VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR:
+                    caps_decode->flags = VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR
+                                       | VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR;
+                    caps_decode_av1->maxLevel = STD_VIDEO_AV1_LEVEL_3_2;
                     break;
                 default:
                     return VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR;
@@ -1437,6 +1479,7 @@ CUSTOM_C_INTERCEPTS = {
     switch (profile_list->pProfiles[0].videoCodecOperation) {
         case VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR:
         case VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR:
+        case VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR:
             switch (profile_list->pProfiles[0].chromaSubsampling) {
                 case VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR:
                     props.format = VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
