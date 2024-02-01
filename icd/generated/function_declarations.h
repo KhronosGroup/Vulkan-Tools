@@ -340,7 +340,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pageable_device_local_memory", 1},
     {"VK_KHR_maintenance4", 2},
     {"VK_ARM_shader_core_properties", 1},
-    {"VK_KHR_shader_subgroup_rotate", 1},
+    {"VK_KHR_shader_subgroup_rotate", 2},
     {"VK_ARM_scheduling_controls", 1},
     {"VK_EXT_image_sliced_view_of_3d", 1},
     {"VK_VALVE_descriptor_set_host_mapping", 1},
@@ -380,6 +380,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_low_latency2", 2},
     {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
+    {"VK_KHR_video_decode_av1", 1},
     {"VK_KHR_video_maintenance1", 1},
     {"VK_NV_per_stage_descriptor_set", 1},
     {"VK_QCOM_image_processing2", 1},
@@ -2501,6 +2502,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pPropertyCount,
     VkCooperativeMatrixPropertiesKHR*           pProperties);
+
 
 
 
