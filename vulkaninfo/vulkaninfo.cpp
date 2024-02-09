@@ -348,6 +348,10 @@ void DumpGroups(Printer &p, AppInstance &inst) {
 }
 
 void GetAndDumpHostImageCopyPropertiesEXT(Printer &p, AppGpu &gpu) {
+    if (!gpu.CheckPhysicalDeviceExtensionIncluded("VK_EXT_host_image_copy")) {
+        return;
+    }
+
     // Manually implement VkPhysicalDeviceHostImageCopyPropertiesEXT due to it needing to be called twice
     VkPhysicalDeviceHostImageCopyPropertiesEXT host_image_copy_properties_ext{};
     host_image_copy_properties_ext.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
@@ -360,7 +364,9 @@ void GetAndDumpHostImageCopyPropertiesEXT(Printer &p, AppGpu &gpu) {
     std::vector<VkImageLayout> dst_layouts(host_image_copy_properties_ext.copyDstLayoutCount);
     host_image_copy_properties_ext.pCopyDstLayouts = dst_layouts.data();
     vkGetPhysicalDeviceProperties2KHR(gpu.phys_device, &props2);
+    p.SetSubHeader();
     DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(p, "VkPhysicalDeviceHostImageCopyPropertiesEXT", host_image_copy_properties_ext);
+    p.AddNewline();
 }
 
 void GpuDumpProps(Printer &p, AppGpu &gpu) {
@@ -391,7 +397,6 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.props2.pNext;
         chain_iterator_phys_device_props2(p, gpu.inst, gpu, place);
-        p.AddNewline();
         GetAndDumpHostImageCopyPropertiesEXT(p, gpu);
     }
 }

@@ -655,8 +655,10 @@ def PrintStructure(struct, types_to_gen):
                 out += f'        for (uint32_t i = 0; i < {v.arrayLength}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n'
                 out += '    }\n'
             else:  # dynamic array length based on other member
-                out += '    {\n'
-                out += f'        ArrayWrapper arr(p,"{v.name}", obj.' + v.arrayLength + ');\n'
+                out += f'    if (obj.{v.arrayLength} == 0) {{\n'
+                out += f'        p.PrintKeyValue("{v.name}", "NULL");\n'
+                out += '    } else {\n'
+                out += f'        ArrayWrapper arr(p,"{v.name}", obj.{v.arrayLength});\n'
                 out += f'        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n'
                 if v.typeID in types_to_gen:
                     out += f'            if (obj.{v.name} != nullptr) {{\n'
