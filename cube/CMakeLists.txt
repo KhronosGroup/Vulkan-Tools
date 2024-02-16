@@ -129,7 +129,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
 endif()
 
 if(WIN32)
-    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN)
+    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -DNOMINMAX)
 elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
 elseif(APPLE)
