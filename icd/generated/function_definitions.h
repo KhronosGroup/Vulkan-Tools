@@ -6248,6 +6248,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
     VkDevice                                    device,
     const VkReleaseSwapchainImagesInfoEXT*      pReleaseInfo)
@@ -7583,6 +7584,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 
 

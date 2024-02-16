@@ -259,6 +259,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_pipeline_executable_properties", 1},
     {"VK_EXT_host_image_copy", 1},
     {"VK_KHR_map_memory2", 1},
+    {"VK_EXT_map_memory_placed", 1},
     {"VK_EXT_shader_atomic_float2", 1},
     {"VK_EXT_swapchain_maintenance1", 1},
     {"VK_EXT_shader_demote_to_helper_invocation", 1},
@@ -399,6 +400,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_expect_assume", 1},
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
+    {"VK_NV_shader_atomic_float16_vector", 1},
 };
 
 
@@ -3493,6 +3495,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
     VkDevice                                    device,
     const VkReleaseSwapchainImagesInfoEXT*      pReleaseInfo);
@@ -4342,6 +4345,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
     const struct _screen_buffer*                buffer,
     VkScreenBufferPropertiesQNX*                pProperties);
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 
 

@@ -5473,6 +5473,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMA
     typedef VkHostImageCopyDevicePerformanceQueryEXT Type;
 };
 
+// Map type VkPhysicalDeviceMapMemoryPlacedFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceMapMemoryPlacedFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT> {
+    typedef VkPhysicalDeviceMapMemoryPlacedFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceMapMemoryPlacedPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceMapMemoryPlacedPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceMapMemoryPlacedPropertiesEXT Type;
+};
+
+// Map type VkMemoryMapPlacedInfoEXT to id VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT
+template <> struct LvlTypeMap<VkMemoryMapPlacedInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT> {
+    typedef VkMemoryMapPlacedInfoEXT Type;
+};
+
 // Map type VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT;
@@ -7972,6 +7999,15 @@ template <> struct LvlTypeMap<VkPhysicalDeviceDescriptorPoolOverallocationFeatur
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV> {
     typedef VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV Type;
+};
+
+// Map type VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV> {
+    typedef VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV Type;
 };
 
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
