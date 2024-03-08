@@ -402,6 +402,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_NV_raw_access_chains", 1},
     {"VK_NV_shader_atomic_float16_vector", 1},
+    {"VK_NV_ray_tracing_validation", 1},
 };
 
 
@@ -4346,6 +4347,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
     const struct _screen_buffer*                buffer,
     VkScreenBufferPropertiesQNX*                pProperties);
 #endif /* VK_USE_PLATFORM_SCREEN_QNX */
+
 
 
 
