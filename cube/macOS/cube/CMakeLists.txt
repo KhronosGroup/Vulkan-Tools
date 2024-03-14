@@ -79,10 +79,10 @@ set_source_files_properties("${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.jso
 # Copy the MoltenVK lib into the bundle.
 if(XCODE)
     add_custom_command(TARGET vkcube POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
+                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
                                ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcube.app/Contents/Frameworks/libMoltenVK.dylib)
 else()
     add_custom_command(TARGET vkcube POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/MoltenVK/dylib/macOS/libMoltenVK.dylib"
+                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
                                ${CMAKE_CURRENT_BINARY_DIR}/vkcube.app/Contents/Frameworks/libMoltenVK.dylib)
 endif()
