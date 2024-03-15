@@ -1989,7 +1989,7 @@ void DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(Printer &p, std::string name
     p.SetMinKeyWidth(35);
     p.PrintKeyValue("copySrcLayoutCount", obj.copySrcLayoutCount);
     if (obj.copySrcLayoutCount == 0) {
-        p.PrintKeyValue("pCopySrcLayouts", "NULL");
+        p.PrintKeyString("pCopySrcLayouts", "NULL");
     } else {
         ArrayWrapper arr(p,"pCopySrcLayouts", obj.copySrcLayoutCount);
         for (uint32_t i = 0; i < obj.copySrcLayoutCount; i++) {
@@ -2004,7 +2004,7 @@ void DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(Printer &p, std::string name
     }
     p.PrintKeyValue("copyDstLayoutCount", obj.copyDstLayoutCount);
     if (obj.copyDstLayoutCount == 0) {
-        p.PrintKeyValue("pCopyDstLayouts", "NULL");
+        p.PrintKeyString("pCopyDstLayouts", "NULL");
     } else {
         ArrayWrapper arr(p,"pCopyDstLayouts", obj.copyDstLayoutCount);
         for (uint32_t i = 0; i < obj.copyDstLayoutCount; i++) {
@@ -3304,7 +3304,7 @@ void DumpVkSurfacePresentModeCompatibilityEXT(Printer &p, std::string name, cons
     p.SetMinKeyWidth(31);
     p.PrintKeyValue("presentModeCount", obj.presentModeCount);
     if (obj.presentModeCount == 0) {
-        p.PrintKeyValue("pPresentModes", "NULL");
+        p.PrintKeyString("pPresentModes", "NULL");
     } else {
         ArrayWrapper arr(p,"pPresentModes", obj.presentModeCount);
         for (uint32_t i = 0; i < obj.presentModeCount; i++) {
