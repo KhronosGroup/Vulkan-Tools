@@ -656,7 +656,7 @@ def PrintStructure(struct, types_to_gen):
                 out += '    }\n'
             else:  # dynamic array length based on other member
                 out += f'    if (obj.{v.arrayLength} == 0) {{\n'
-                out += f'        p.PrintKeyValue("{v.name}", "NULL");\n'
+                out += f'        p.PrintKeyString("{v.name}", "NULL");\n'
                 out += '    } else {\n'
                 out += f'        ArrayWrapper arr(p,"{v.name}", obj.{v.arrayLength});\n'
                 out += f'        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n'
