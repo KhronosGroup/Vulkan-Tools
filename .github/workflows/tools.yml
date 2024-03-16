@@ -84,7 +84,7 @@ jobs:
                 -D BUILD_WERROR=ON \
                 -D INSTALL_ICD=ON \
                 -D BUILD_TESTS=ON \
-                -D ENABLE_ADDRESS_SANITIZER=ON
+                -D ENABLE_ADDRESS_SANITIZER=OFF # Re-enable when github CI doesn't have fatal issues
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
