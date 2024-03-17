@@ -206,6 +206,10 @@ void DumpSurfaceCapabilities(Printer &p, AppInstance &inst, AppGpu &gpu, AppSurf
 
             if (err == VK_SUCCESS) {
                 ObjectWrapper present_mode_obj(p, VkPresentModeKHRString(mode));
+
+                p.PrintKeyValue("minImageCount", surface_caps2.surfaceCapabilities.minImageCount);
+                p.PrintKeyValue("maxImageCount", surface_caps2.surfaceCapabilities.maxImageCount);
+                
                 DumpVkSurfacePresentScalingCapabilitiesEXT(p, "VkSurfacePresentScalingCapabilitiesEXT",
                                                            SurfacePresentScalingCapabilitiesEXT);
                 DumpVkSurfacePresentModeCompatibilityEXT(p, "VkSurfacePresentModeCompatibilityEXT",
