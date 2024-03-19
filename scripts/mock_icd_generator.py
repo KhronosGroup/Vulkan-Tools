@@ -1659,9 +1659,11 @@ CUSTOM_C_INTERCEPTS = {
     // Picked VkExportFenceCreateInfo because needed some struct that wouldn't get cleared by validation Safe Struct
     // ... TODO - It would be MUCH nicer to have a layer or other setting control when this occured
     // For now this is used to allow Validation Layers test reacting to device losts
-    auto pNext = reinterpret_cast<const VkBaseInStructure *>(pSubmits[0].pNext);
-    if (pNext && pNext->sType == VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO && pNext->pNext == nullptr) {
-        return VK_ERROR_DEVICE_LOST;
+    if (submitCount > 0 && pSubmits) {
+        auto pNext = reinterpret_cast<const VkBaseInStructure *>(pSubmits[0].pNext);
+        if (pNext && pNext->sType == VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO && pNext->pNext == nullptr) {
+            return VK_ERROR_DEVICE_LOST;
+        }
     }
     return VK_SUCCESS;
 ''',
