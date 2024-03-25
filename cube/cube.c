@@ -37,6 +37,7 @@
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+#include <poll.h>
 #include <linux/input.h>
 #include "xdg-shell-client-header.h"
 #include "xdg-decoration-client-header.h"
@@ -2820,7 +2821,15 @@ static void demo_run(struct demo *demo) {
         if (demo->pause) {
             wl_display_dispatch(demo->display);  // block and wait for input
         } else {
-            wl_display_dispatch_pending(demo->display);  // don't block
+            struct pollfd pollfd = {
+                .fd = wl_display_get_fd(demo->display),
+                .events = POLLIN,
+            };
+            if (poll(&pollfd, 1, 0) > 0) {
+                wl_display_dispatch(demo->display);
+            } else {
+                wl_display_dispatch_pending(demo->display);  // don't block
+            }
             demo_draw(demo);
             demo->curFrame++;
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
