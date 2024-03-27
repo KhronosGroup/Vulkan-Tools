@@ -37,7 +37,6 @@
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
 #include <X11/Xutil.h>
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-#include <poll.h>
 #include <linux/input.h>
 #include "xdg-shell-client-header.h"
 #include "xdg-decoration-client-header.h"
@@ -2818,18 +2817,24 @@ static void demo_create_xcb_window(struct demo *demo) {
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
 static void demo_run(struct demo *demo) {
     while (!demo->quit) {
+        // Flush any commands to the server
+        wl_display_flush(demo->display);
+
         if (demo->pause) {
-            wl_display_dispatch(demo->display);  // block and wait for input
+            // block and wait for input
+            wl_display_dispatch(demo->display);
         } else {
-            struct pollfd pollfd = {
-                .fd = wl_display_get_fd(demo->display),
-                .events = POLLIN,
-            };
-            if (poll(&pollfd, 1, 0) > 0) {
-                wl_display_dispatch(demo->display);
-            } else {
-                wl_display_dispatch_pending(demo->display);  // don't block
+            // Lock the display event queue in case the driver is doing something on another thread
+            // while we wait, keep pumping events
+            while (wl_display_prepare_read(demo->display) != 0) {
+                wl_display_dispatch_pending(demo->display);
             }
+            // Actually do the read from the socket
+            wl_display_read_events(demo->display);
+
+            // Pump events
+            wl_display_dispatch_pending(demo->display);
+
             demo_draw(demo);
             demo->curFrame++;
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
