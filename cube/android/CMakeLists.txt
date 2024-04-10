@@ -21,7 +21,6 @@ target_sources(vkcube PRIVATE
 )
 
 target_include_directories(vkcube PRIVATE
-    include
     .
 )
 
