@@ -284,7 +284,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_NV_cuda_kernel_launch", 2},
     {"VK_NV_low_latency", 1},
-    {"VK_EXT_metal_objects", 1},
+    {"VK_EXT_metal_objects", 2},
     {"VK_KHR_synchronization2", 1},
     {"VK_EXT_descriptor_buffer", 1},
     {"VK_EXT_graphics_pipeline_library", 1},
