@@ -358,7 +358,7 @@ std::string VkFormatString(VkFormat value) {
         case (VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG): return "FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG";
         case (VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG): return "FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG";
         case (VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG): return "FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG";
-        case (VK_FORMAT_R16G16_S10_5_NV): return "FORMAT_R16G16_S10_5_NV";
+        case (VK_FORMAT_R16G16_SFIXED5_NV): return "FORMAT_R16G16_SFIXED5_NV";
         case (VK_FORMAT_A1B5G5R5_UNORM_PACK16_KHR): return "FORMAT_A1B5G5R5_UNORM_PACK16_KHR";
         case (VK_FORMAT_A8_UNORM_KHR): return "FORMAT_A8_UNORM_KHR";
         default: return std::string("UNKNOWN_VkFormat_value") + std::to_string(value);
