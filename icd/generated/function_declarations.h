@@ -363,7 +363,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_module_identifier", 1},
     {"VK_EXT_rasterization_order_attachment_access", 1},
     {"VK_NV_optical_flow", 1},
-    {"VK_EXT_legacy_dithering", 1},
+    {"VK_EXT_legacy_dithering", 2},
     {"VK_EXT_pipeline_protected_access", 1},
     {"VK_ANDROID_external_format_resolve", 1},
     {"VK_KHR_maintenance5", 1},
