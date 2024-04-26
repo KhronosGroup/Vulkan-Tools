@@ -394,6 +394,7 @@ struct demo {
     VkPresentModeKHR presentMode;
     VkFence fences[FRAME_LAG];
     int frame_index;
+    bool first_frame;
 
     VkCommandPool cmd_pool;
     VkCommandPool present_cmd_pool;
@@ -1134,10 +1135,17 @@ static void demo_draw(struct demo *demo) {
         uint32_t eighthOfWidth = demo->width / 8;
         uint32_t eighthOfHeight = demo->height / 8;
 
-        rect.offset.x = eighthOfWidth;
-        rect.offset.y = eighthOfHeight;
-        rect.extent.width = eighthOfWidth * 6;
-        rect.extent.height = eighthOfHeight * 6;
+        if (demo->first_frame) {
+            rect.offset.x = 0;
+            rect.offset.y = 0;
+            rect.extent.width = demo->width;
+            rect.extent.height = demo->height;
+        } else {
+            rect.offset.x = eighthOfWidth;
+            rect.offset.y = eighthOfHeight;
+            rect.extent.width = eighthOfWidth * 6;
+            rect.extent.height = eighthOfHeight * 6;
+        }
         rect.layer = 0;
 
         region.rectangleCount = 1;
@@ -1188,6 +1196,7 @@ static void demo_draw(struct demo *demo) {
     err = vkQueuePresentKHR(demo->present_queue, &present);
     demo->frame_index += 1;
     demo->frame_index %= FRAME_LAG;
+    demo->first_frame = false;
 
     if (err == VK_ERROR_OUT_OF_DATE_KHR) {
         // demo->swapchain is out of date (e.g. the window was resized) and
@@ -4023,6 +4032,7 @@ static void demo_init_vk_swapchain(struct demo *demo) {
         }
     }
     demo->frame_index = 0;
+    demo->first_frame = true;
 
     // Get Memory information and properties
     vkGetPhysicalDeviceMemoryProperties(demo->gpu, &demo->memory_properties);
