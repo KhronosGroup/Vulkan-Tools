@@ -31,21 +31,6 @@ endif()
 
 find_package(VulkanLoader CONFIG)
 
-# setup binary_locations_$<CONFIG>.h.in using binary_locations.h.in as a source
-file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/binary_locations_$<CONFIG>.h" INPUT "${CMAKE_CURRENT_SOURCE_DIR}/binary_locations.h.in")
-
-# copy binary_locations_$<CONFIG> to the build directory
-add_custom_command(
-    PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} "-E" "copy_if_different" "${CMAKE_CURRENT_BINARY_DIR}/binary_locations_$<CONFIG>.h" "${CMAKE_CURRENT_BINARY_DIR}/binary_locations.h"
-    VERBATIM
-    DEPENDS  "${CMAKE_CURRENT_BINARY_DIR}/binary_locations_$<CONFIG>.h"
-    OUTPUT   "${CMAKE_CURRENT_BINARY_DIR}/binary_locations.h"
-    COMMENT  "creating binary_locations.h file ({event: PRE_BUILD}, {filename: binary_locations.h })"
-    )
-add_custom_target (generate_binary_locations DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/binary_locations.h")
-add_dependencies (generate_binary_locations vkcube vkcubepp VkICD_mock_icd vulkaninfo)
-
 find_package(GTest REQUIRED CONFIG QUIET)
 
 add_executable(vulkan_tools_tests)
@@ -57,13 +42,15 @@ target_sources(vulkan_tools_tests PRIVATE
 get_target_property(TEST_SOURCES vulkan_tools_tests SOURCES)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${TEST_SOURCES})
 
-target_include_directories(vulkan_tools_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(vulkan_tools_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(vulkan_tools_tests GTest::gtest Vulkan::Headers Vulkan::Loader)
-add_dependencies(vulkan_tools_tests generate_binary_locations)
 if (WIN32)
     target_compile_definitions(vulkan_tools_tests PUBLIC -DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -DNOMINMAX)
 endif()
 set_target_properties(vulkan_tools_tests PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+
+# Set the exact path to Mock JSON ICD
+target_compile_definitions(vulkan_tools_tests PRIVATE MOCK_ICD_JSON_MANIFEST_PATH="$<TARGET_FILE_DIR:VkICD_mock_icd>")
 
 if (DEFINED GIT_BRANCH_NAME AND DEFINED GIT_TAG_INFO)
     target_compile_definitions(vulkan_tools_tests PRIVATE GIT_BRANCH_NAME="${GIT_BRANCH_NAME}" GIT_TAG_INFO="${GIT_TAG_INFO}")
