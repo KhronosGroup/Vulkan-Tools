@@ -26,9 +26,6 @@
 #include "gtest/gtest.h"
 #include "vulkan/vulkan.h"
 
-// Location of the built binaries in this repo
-#include "binary_locations.h"
-
 #if defined(WIN32)
 #include <windows.h>
 inline int set_environment_var(const char* name, const char* value) { return SetEnvironmentVariable(name, value); }
