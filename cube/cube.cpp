@@ -41,6 +41,9 @@
 #define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
 #define VULKAN_HPP_NO_EXCEPTIONS
 #define VULKAN_HPP_TYPESAFE_CONVERSION 1
+
+// Volk requires VK_NO_PROTOTYPES before including vulkan.hpp
+#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.hpp>
 
 #define VOLK_IMPLEMENTATION

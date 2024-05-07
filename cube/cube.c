@@ -49,6 +49,8 @@
 #define APP_NAME_STR_LEN 80
 #endif  // _WIN32
 
+// Volk requires VK_NO_PROTOTYPES before including vulkan.h
+#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 #define VOLK_IMPLEMENTATION
 #include "volk.h"

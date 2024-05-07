@@ -19,8 +19,6 @@
 #import "DemoViewController.h"
 #import <QuartzCore/CAMetalLayer.h>
 
-#include <MoltenVK/mvk_vulkan.h>
-
 #include "cube.c"
 
 #pragma mark -
