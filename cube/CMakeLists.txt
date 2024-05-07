@@ -259,7 +259,6 @@ else()
 endif()
 
 target_include_directories(vkcube PRIVATE .)
-target_compile_definitions(vkcube PRIVATE VK_NO_PROTOTYPES)
 
 if (ANDROID)
     install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -307,7 +306,6 @@ else()
     target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers)
 endif()
 target_include_directories(vkcubepp PRIVATE .)
-target_compile_definitions(vkcubepp PRIVATE VK_NO_PROTOTYPES)
 
 if(APPLE)
     install(
@@ -351,7 +349,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
             Threads::Threads
             PkgConfig::WAYLAND_CLIENT
         )
-        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR VK_NO_PROTOTYPES)
+        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
         include(CheckLibraryExists)
         CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
         if (NEED_RT)
