@@ -8046,6 +8046,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VAL
     typedef VkPhysicalDeviceRayTracingValidationFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceImageAlignmentControlFeaturesMESA to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA
+template <> struct LvlTypeMap<VkPhysicalDeviceImageAlignmentControlFeaturesMESA> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA> {
+    typedef VkPhysicalDeviceImageAlignmentControlFeaturesMESA Type;
+};
+
+// Map type VkPhysicalDeviceImageAlignmentControlPropertiesMESA to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA
+template <> struct LvlTypeMap<VkPhysicalDeviceImageAlignmentControlPropertiesMESA> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA> {
+    typedef VkPhysicalDeviceImageAlignmentControlPropertiesMESA Type;
+};
+
+// Map type VkImageAlignmentControlCreateInfoMESA to id VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA
+template <> struct LvlTypeMap<VkImageAlignmentControlCreateInfoMESA> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA> {
+    typedef VkImageAlignmentControlCreateInfoMESA Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <> struct LvlTypeMap<VkAccelerationStructureGeometryTrianglesDataKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
