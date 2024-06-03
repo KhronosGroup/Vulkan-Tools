@@ -8037,6 +8037,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_F
     typedef VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT> {
+    typedef VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT Type;
+};
+
 // Map type VkPhysicalDeviceRayTracingValidationFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV
 template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingValidationFeaturesNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV;
