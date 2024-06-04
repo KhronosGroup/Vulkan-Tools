@@ -62,7 +62,7 @@ target_include_directories(vulkaninfo PRIVATE
 
 target_compile_definitions(vulkaninfo PRIVATE VK_ENABLE_BETA_EXTENSIONS VK_NO_PROTOTYPES)
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
