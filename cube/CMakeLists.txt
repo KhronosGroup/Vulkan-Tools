@@ -61,7 +61,7 @@ if(APPLE)
     endif()
 endif()
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
@@ -134,7 +134,7 @@ elseif(ANDROID)
     add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
 elseif(APPLE)
     add_definitions(-DVK_USE_PLATFORM_METAL_EXT)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     if(NOT CUBE_WSI_SELECTION)
         set(CUBE_WSI_SELECTION "XCB")
     endif()
@@ -210,7 +210,7 @@ endif()
 # a missing dependency on libpthread. While newer Ubuntu versions use a glibc version where libpthread
 # is integrated into libc, older ubuntu's do not so we need to link threads directly in order for
 # validation layers to be loadable.
-if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     find_package(Threads REQUIRED)
 endif()
 
@@ -227,7 +227,7 @@ elseif (ANDROID)
     add_subdirectory(android)
 
     target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     add_executable(vkcube)
     target_sources(vkcube PRIVATE
         cube.c
@@ -285,7 +285,7 @@ endif()
 
 if(APPLE)
     add_subdirectory(macOS/cubepp)
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     add_executable(vkcubepp
                    cube.cpp
                    ${PROJECT_SOURCE_DIR}/cube/cube.vert
