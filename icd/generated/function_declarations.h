@@ -402,6 +402,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_NV_raw_access_chains", 1},
+    {"VK_KHR_shader_relaxed_extended_instruction", 1},
     {"VK_NV_shader_atomic_float16_vector", 1},
     {"VK_EXT_shader_replicated_composites", 1},
     {"VK_NV_ray_tracing_validation", 1},
@@ -2560,6 +2561,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
