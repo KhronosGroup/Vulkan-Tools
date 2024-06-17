@@ -264,11 +264,11 @@ struct AppInstance;
 struct AppGpu;
 
 void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain,
-                                    AppInstance &inst, AppGpu &gpu);
+                                    AppInstance &inst, AppGpu &gpu, bool show_promoted_structs);
 void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2 &start,
                                         std::unique_ptr<phys_device_mem_props2_chain> &chain, AppGpu &gpu);
 void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2 &start, std::unique_ptr<phys_device_features2_chain> &chain,
-                                       AppGpu &gpu);
+                                       AppGpu &gpu, bool show_promoted_structs);
 void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::unique_ptr<surface_capabilities2_chain> &chain,
                                        AppInstance &inst, AppGpu &gpu);
 void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain, AppGpu &gpu);
@@ -1466,7 +1466,8 @@ struct AppGpu {
     std::unique_ptr<phys_device_features2_chain> chain_for_phys_device_features2;
     std::vector<std::unique_ptr<queue_properties2_chain>> chain_for_queue_props2;
 
-    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device) : inst(inst), id(id), phys_device(phys_device) {
+    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, bool show_promoted_structs)
+        : inst(inst), id(id), phys_device(phys_device) {
         vkGetPhysicalDeviceProperties(phys_device, &props);
 
         // needs to find the minimum of the instance and device version, and use that to print the device info
@@ -1486,7 +1487,7 @@ struct AppGpu {
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
             // VkPhysicalDeviceProperties2
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-            setup_phys_device_props2_chain(props2, chain_for_phys_device_props2, inst, *this);
+            setup_phys_device_props2_chain(props2, chain_for_phys_device_props2, inst, *this, show_promoted_structs);
 
             vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
             prepare_phys_device_props2_twocall_chain_vectors(chain_for_phys_device_props2);
@@ -1500,7 +1501,7 @@ struct AppGpu {
 
             // VkPhysicalDeviceFeatures2
             features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-            setup_phys_device_features2_chain(features2, chain_for_phys_device_features2, *this);
+            setup_phys_device_features2_chain(features2, chain_for_phys_device_features2, *this, show_promoted_structs);
 
             vkGetPhysicalDeviceFeatures2KHR(phys_device, &features2);
 
