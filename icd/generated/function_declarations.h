@@ -348,7 +348,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_depth_clamp_zero_one", 1},
     {"VK_EXT_non_seamless_cube_map", 1},
     {"VK_ARM_render_pass_striped", 1},
-    {"VK_QCOM_fragment_density_map_offset", 1},
+    {"VK_QCOM_fragment_density_map_offset", 2},
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
     {"VK_NV_device_generated_commands_compute", 2},
@@ -403,6 +403,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_NV_raw_access_chains", 1},
     {"VK_KHR_shader_relaxed_extended_instruction", 1},
+    {"VK_KHR_maintenance7", 1},
     {"VK_NV_shader_atomic_float16_vector", 1},
     {"VK_EXT_shader_replicated_composites", 1},
     {"VK_NV_ray_tracing_validation", 1},
@@ -2561,6 +2562,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+
 
 
 
