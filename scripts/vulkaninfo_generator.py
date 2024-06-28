@@ -115,7 +115,7 @@ EXTENSION_CATEGORIES = OrderedDict((
          'type': EXTENSION_TYPE_BOTH,
          'holder_type': 'VkPhysicalDeviceProperties2',
          'print_iterator': True,
-        'exclude': ['VkPhysicalDeviceHostImageCopyPropertiesEXT']}),
+        'exclude': ['VkPhysicalDeviceHostImageCopyPropertiesEXT', 'VkPhysicalDeviceLayeredApiPropertiesListKHR']}),
     ('phys_device_mem_props2',
         {'extends': 'VkPhysicalDeviceMemoryProperties2',
         'type': EXTENSION_TYPE_DEVICE,

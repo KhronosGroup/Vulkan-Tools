@@ -3839,6 +3839,51 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_
     typedef VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR Type;
 };
 
+// Map type VkPhysicalDeviceMaintenance7FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceMaintenance7FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR> {
+    typedef VkPhysicalDeviceMaintenance7FeaturesKHR Type;
+};
+
+// Map type VkPhysicalDeviceMaintenance7PropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceMaintenance7PropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceMaintenance7PropertiesKHR Type;
+};
+
+// Map type VkPhysicalDeviceLayeredApiPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceLayeredApiPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceLayeredApiPropertiesKHR Type;
+};
+
+// Map type VkPhysicalDeviceLayeredApiPropertiesListKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceLayeredApiPropertiesListKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR> {
+    typedef VkPhysicalDeviceLayeredApiPropertiesListKHR Type;
+};
+
+// Map type VkPhysicalDeviceLayeredApiVulkanPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceLayeredApiVulkanPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceLayeredApiVulkanPropertiesKHR Type;
+};
+
 // Map type VkDebugReportCallbackCreateInfoEXT to id VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT
 template <> struct LvlTypeMap<VkDebugReportCallbackCreateInfoEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
