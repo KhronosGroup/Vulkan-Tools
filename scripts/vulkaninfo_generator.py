@@ -114,8 +114,7 @@ EXTENSION_CATEGORIES = OrderedDict((
         {'extends': 'VkPhysicalDeviceProperties2',
          'type': EXTENSION_TYPE_BOTH,
          'holder_type': 'VkPhysicalDeviceProperties2',
-         'print_iterator': True,
-        'exclude': ['VkPhysicalDeviceHostImageCopyPropertiesEXT', 'VkPhysicalDeviceLayeredApiPropertiesListKHR']}),
+         'print_iterator': True}),
     ('phys_device_mem_props2',
         {'extends': 'VkPhysicalDeviceMemoryProperties2',
         'type': EXTENSION_TYPE_DEVICE,
@@ -131,7 +130,9 @@ EXTENSION_CATEGORIES = OrderedDict((
         'type': EXTENSION_TYPE_BOTH,
         'holder_type': 'VkSurfaceCapabilities2KHR',
         'print_iterator': True,
-        'exclude': ['VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT']}),
+        'exclude': [# VK_EXT_surface_maintenance1 is difficult to code-gen
+                    'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT'
+                    ]}),
     ('format_properties2',
         {'extends': 'VkFormatProperties2',
         'type': EXTENSION_TYPE_DEVICE,
@@ -318,7 +319,7 @@ class VulkanInfoGenerator(OutputGenerator):
                     out += PrintBitMaskToString(bitmask, flag.name, self)
 
         for s in (x for x in self.all_structures if x.name in types_to_gen and x.name not in STRUCT_BLACKLIST):
-            out += PrintStructure(s, types_to_gen)
+            out += PrintStructure(s)
 
         for key, value in EXTENSION_CATEGORIES.items():
             out += PrintChainStruct(key, self.extension_sets[key], self.all_structures, value, self.extTypes, self.aliases, self.vulkan_versions)
@@ -600,7 +601,7 @@ def PrintBitMaskToString(bitmask, name, generator):
     return out
 
 
-def PrintStructure(struct, types_to_gen):
+def PrintStructure(struct):
     if len(struct.members) == 0:
         return ''
     out = ''
@@ -655,21 +656,12 @@ def PrintStructure(struct, types_to_gen):
                 out += f'        for (uint32_t i = 0; i < {v.arrayLength}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n'
                 out += '    }\n'
             else:  # dynamic array length based on other member
-                out += f'    if (obj.{v.arrayLength} == 0) {{\n'
+                out += f'    if (obj.{v.arrayLength} == 0 || obj.{v.name} == nullptr) {{\n'
                 out += f'        p.PrintKeyString("{v.name}", "NULL");\n'
                 out += '    } else {\n'
                 out += f'        ArrayWrapper arr(p,"{v.name}", obj.{v.arrayLength});\n'
                 out += f'        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n'
-                if v.typeID in types_to_gen:
-                    out += f'            if (obj.{v.name} != nullptr) {{\n'
-                    out += '                p.SetElementIndex(i);\n'
-                    out += '                if (p.Type() == OutputType::json)\n'
-                    out += f'                    p.PrintString(std::string("VK_") + {v.typeID}String(obj.{v.name}[i]));\n'
-                    out += '                else\n'
-                    out += f'                    p.PrintString({v.typeID}String(obj.{v.name}[i]));\n'
-                    out += '            }\n'
-                else:
-                    out += f'            p.PrintElement(obj.{v.name}[i]);\n'
+                out += f'            Dump{v.typeID}(p, std::to_string(i), obj.{v.name}[i]);\n'
                 out += '        }\n'
                 out += '    }\n'
         elif v.typeID == 'VkBool32':
@@ -750,6 +742,10 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
             # members which don't exist.
             if s.name in ['VkPhysicalDeviceShaderIntegerDotProductFeatures', 'VkPhysicalDeviceHostImageCopyFeaturesEXT']:
                 out += f'    char {s.name}_padding[64];\n'
+            if s.hasLengthmember:
+                for member in s.members:
+                    if member.lengthMember:
+                        out += f'    std::vector<{member.typeID}> {s.name}_{member.name};\n'
         out += AddGuardFooter(s)
     out += '    void initialize_chain('
     if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
@@ -918,6 +914,32 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
         out += '        place = structure->pNext;\n'
         out += '    }\n'
         out += '}\n'
+
+    should_print_twocall_func = False
+    for s in structs_to_print:
+        if not s.hasLengthmember:
+            continue
+        if s.name in STRUCT_BLACKLIST:
+            continue
+        should_print_twocall_func = True
+
+    if not should_print_twocall_func:
+        return out
+
+    out += '\n'
+    out += f'void prepare_{listName}_twocall_chain_vectors(std::unique_ptr<{listName}_chain>& chain) {{\n'
+    for s in structs_to_print:
+        if not s.hasLengthmember:
+            continue
+        if s.name in STRUCT_BLACKLIST:
+            continue
+        out += AddGuardHeader(s)
+        for member in s.members:
+            if member.lengthMember:
+                out += f'    chain->{s.name}_{member.name}.resize(chain->{s.name[2:]}.{member.arrayLength});\n'
+                out += f'    chain->{s.name[2:]}.{member.name} = chain->{s.name}_{member.name}.data();\n'
+        out += AddGuardFooter(s)
+    out += '}\n'
 
     return out
 
@@ -1112,11 +1134,17 @@ class VulkanStructure:
         self.guard = None
         self.sTypeName = None
         self.extendsStruct = rootNode.get('structextends')
+        self.hasLengthmember = False
 
         for node in rootNode.findall('member'):
             if node.get('values') is not None:
                 self.sTypeName = node.get('values')
             self.members.append(VulkanVariable(node, constants))
+
+        for member in self.members:
+            if member.lengthMember:
+                self.hasLengthmember = True
+                break
 
         for k, elem in extTypes.items():
             if k == self.name:
