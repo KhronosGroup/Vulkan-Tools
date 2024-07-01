@@ -274,6 +274,8 @@ void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::un
 void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain, AppGpu &gpu);
 void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain, AppGpu &gpu);
 
+void prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain> &chain);
+
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
  * This class assumes the template type is 'trivial'
@@ -1474,6 +1476,8 @@ struct AppGpu {
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
             setup_phys_device_props2_chain(props2, chain_for_phys_device_props2, inst, *this);
 
+            vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
+            prepare_phys_device_props2_twocall_chain_vectors(chain_for_phys_device_props2);
             vkGetPhysicalDeviceProperties2KHR(phys_device, &props2);
 
             // VkPhysicalDeviceMemoryProperties2
