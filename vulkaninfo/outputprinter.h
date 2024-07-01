@@ -438,8 +438,7 @@ class Printer {
                 } else {
                     get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << array_name << "\": "
-                    << "[\n";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << array_name << "\": " << "[\n";
                 assert(get_top().is_array == false &&
                        "Cant start an array object inside another array, must be enclosed in an object");
                 break;
@@ -471,6 +470,12 @@ class Printer {
     // value_description is for reference information and is displayed inside parenthesis after the value
     template <typename T>
     void PrintKeyValue(std::string key, T value) {
+        // If we are inside of an array, Print the value as an element
+        if (get_top().is_array) {
+            PrintElement(value);
+            return;
+        }
+
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << key;
@@ -568,6 +573,11 @@ class Printer {
     // print inside array
     template <typename T>
     void PrintElement(T element) {
+        // If we are inside of an object, just use an empty string as the key
+        if (!get_top().is_array) {
+            PrintKeyValue("placeholder", element);
+            return;
+        }
         switch (output_type) {
             case (OutputType::text):
                 out << std::string(static_cast<size_t>(get_top().indents), '\t') << element << "\n";

@@ -93,7 +93,7 @@ void DumpLayers(Printer &p, std::vector<LayerExtensionList> layers, const std::v
                 ObjectWrapper obj(p, header);
                 DumpExtensions(p, "Layer Extensions", layer.extension_properties);
 
-                ArrayWrapper arr_devices(p, "Devices", gpus.size());
+                ObjectWrapper arr_devices(p, "Devices", gpus.size());
                 for (auto &gpu : gpus) {
                     p.SetValueDescription(std::string(gpu->props.deviceName)).PrintKeyValue("GPU id", gpu->id);
                     auto exts = gpu->inst.AppGetPhysicalDeviceLayerExtensions(gpu->phys_device, props.layerName);
@@ -351,28 +351,6 @@ void DumpGroups(Printer &p, AppInstance &inst) {
     }
 }
 
-void GetAndDumpHostImageCopyPropertiesEXT(Printer &p, AppGpu &gpu) {
-    if (!gpu.CheckPhysicalDeviceExtensionIncluded("VK_EXT_host_image_copy")) {
-        return;
-    }
-
-    // Manually implement VkPhysicalDeviceHostImageCopyPropertiesEXT due to it needing to be called twice
-    VkPhysicalDeviceHostImageCopyPropertiesEXT host_image_copy_properties_ext{};
-    host_image_copy_properties_ext.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT;
-    VkPhysicalDeviceProperties2KHR props2{};
-    props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-    props2.pNext = static_cast<void *>(&host_image_copy_properties_ext);
-    vkGetPhysicalDeviceProperties2KHR(gpu.phys_device, &props2);
-    std::vector<VkImageLayout> src_layouts(host_image_copy_properties_ext.copySrcLayoutCount);
-    host_image_copy_properties_ext.pCopySrcLayouts = src_layouts.data();
-    std::vector<VkImageLayout> dst_layouts(host_image_copy_properties_ext.copyDstLayoutCount);
-    host_image_copy_properties_ext.pCopyDstLayouts = dst_layouts.data();
-    vkGetPhysicalDeviceProperties2KHR(gpu.phys_device, &props2);
-    p.SetSubHeader();
-    DumpVkPhysicalDeviceHostImageCopyPropertiesEXT(p, "VkPhysicalDeviceHostImageCopyPropertiesEXT", host_image_copy_properties_ext);
-    p.AddNewline();
-}
-
 void GpuDumpProps(Printer &p, AppGpu &gpu) {
     auto props = gpu.GetDeviceProperties();
     p.SetSubHeader();
@@ -401,7 +379,6 @@ void GpuDumpProps(Printer &p, AppGpu &gpu) {
     if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
         void *place = gpu.props2.pNext;
         chain_iterator_phys_device_props2(p, gpu.inst, gpu, place);
-        GetAndDumpHostImageCopyPropertiesEXT(p, gpu);
     }
 }
 
@@ -942,21 +919,28 @@ const char *help_message_body =
     "[-o <filename>, --output <filename>]\n"
     "                    Print output to a new file whose name is specified by filename.\n"
     "                    File will be written to the current working directory.\n"
-    "[--text]            Produce a text version of " APP_SHORT_NAME " output to stdout. This is\n"
+    "[--text]            Produce a text version of " APP_SHORT_NAME
+    " output to stdout. This is\n"
     "                    the default output.\n"
-    "[--html]            Produce an html version of " APP_SHORT_NAME " output, saved as\n"
-    "                    \"" APP_SHORT_NAME ".html\" in the directory in which the command\n"
+    "[--html]            Produce an html version of " APP_SHORT_NAME
+    " output, saved as\n"
+    "                    \"" APP_SHORT_NAME
+    ".html\" in the directory in which the command\n"
     "                    is run.\n"
-    "[-j, --json]        Produce a json version of " APP_SHORT_NAME " output conforming to the Vulkan\n"
+    "[-j, --json]        Produce a json version of " APP_SHORT_NAME
+    " output conforming to the Vulkan\n"
     "                    Profiles schema, saved as \n"
-    "                     \"VP_" APP_UPPER_CASE_NAME "_[DEVICE_NAME]_[DRIVER_VERSION].json\"\n"
+    "                     \"VP_" APP_UPPER_CASE_NAME
+    "_[DEVICE_NAME]_[DRIVER_VERSION].json\"\n"
     "                     of the first gpu in the system.\n"
     "[-j=<gpu-number>, --json=<gpu-number>]\n"
     "                    For a multi-gpu system, a single gpu can be targetted by\n"
     "                    specifying the gpu-number associated with the gpu of \n"
     "                    interest. This number can be determined by running\n"
-    "                    " APP_SHORT_NAME " without any options specified.\n"
-    "[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that " APP_SHORT_NAME " finds.\n"
+    "                    " APP_SHORT_NAME
+    " without any options specified.\n"
+    "[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that " APP_SHORT_NAME
+    " finds.\n"
     "[--show-formats]    Display the format properties of each physical device.\n"
     "                    Note: This only affects text output.\n";
 
