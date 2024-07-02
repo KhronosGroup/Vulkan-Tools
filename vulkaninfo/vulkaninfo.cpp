@@ -1148,7 +1148,7 @@ int main(int argc, char **argv) {
     if (!parsing_return) return 1;
     ParsedResults parse_data = parsing_return.value();
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
     _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
     _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
