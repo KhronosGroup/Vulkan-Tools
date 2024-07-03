@@ -55,10 +55,10 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-find_package(VulkanHeaders REQUIRED QUIET CONFIG)
-find_package(volk REQUIRED QUIET CONFIG)
+find_package(VulkanHeaders QUIET REQUIRED CONFIG)
+find_package(volk REQUIRED QUIET REQUIRED CONFIG)
 if (APPLE OR BUILD_TESTS)
-    find_package(VulkanLoader REQUIRED QUIET CONFIG)
+    find_package(VulkanLoader QUIET REQUIRED CONFIG)
 endif()
 
 include(GNUInstallDirs)
