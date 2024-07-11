@@ -57,7 +57,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 find_package(VulkanHeaders QUIET REQUIRED CONFIG)
 find_package(volk REQUIRED QUIET REQUIRED CONFIG)
-if (APPLE OR BUILD_TESTS)
+if ((APPLE OR BUILD_TESTS) AND NOT ANDROID)
     find_package(VulkanLoader QUIET REQUIRED CONFIG)
 endif()
 
