@@ -7631,6 +7631,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_
 };
 
 #endif // VK_USE_PLATFORM_ANDROID_KHR
+// Map type VkPhysicalDeviceAntiLagFeaturesAMD to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD
+template <> struct LvlTypeMap<VkPhysicalDeviceAntiLagFeaturesAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD> {
+    typedef VkPhysicalDeviceAntiLagFeaturesAMD Type;
+};
+
+// Map type VkAntiLagPresentationInfoAMD to id VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD
+template <> struct LvlTypeMap<VkAntiLagPresentationInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD> {
+    typedef VkAntiLagPresentationInfoAMD Type;
+};
+
+// Map type VkAntiLagDataAMD to id VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD
+template <> struct LvlTypeMap<VkAntiLagDataAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD> {
+    typedef VkAntiLagDataAMD Type;
+};
+
 // Map type VkPhysicalDeviceShaderObjectFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceShaderObjectFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT;

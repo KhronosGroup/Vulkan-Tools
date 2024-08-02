@@ -367,6 +367,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_pipeline_protected_access", 1},
     {"VK_ANDROID_external_format_resolve", 1},
     {"VK_KHR_maintenance5", 1},
+    {"VK_AMD_anti_lag", 1},
     {"VK_KHR_ray_tracing_position_fetch", 1},
     {"VK_EXT_shader_object", 1},
     {"VK_QCOM_tile_properties", 1},
@@ -4266,6 +4267,11 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
 
 
+static VKAPI_ATTR void VKAPI_CALL AntiLagUpdateAMD(
+    VkDevice                                    device,
+    const VkAntiLagDataAMD*                     pData);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
     VkDevice                                    device,
     uint32_t                                    createInfoCount,
@@ -5276,6 +5282,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyOpticalFlowSessionNV", (void*)DestroyOpticalFlowSessionNV},
     {"vkBindOpticalFlowSessionImageNV", (void*)BindOpticalFlowSessionImageNV},
     {"vkCmdOpticalFlowExecuteNV", (void*)CmdOpticalFlowExecuteNV},
+    {"vkAntiLagUpdateAMD", (void*)AntiLagUpdateAMD},
     {"vkCreateShadersEXT", (void*)CreateShadersEXT},
     {"vkDestroyShaderEXT", (void*)DestroyShaderEXT},
     {"vkGetShaderBinaryDataEXT", (void*)GetShaderBinaryDataEXT},
