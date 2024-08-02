@@ -7457,6 +7457,14 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
 
 
+static VKAPI_ATTR void VKAPI_CALL AntiLagUpdateAMD(
+    VkDevice                                    device,
+    const VkAntiLagDataAMD*                     pData)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
     VkDevice                                    device,
     uint32_t                                    createInfoCount,
