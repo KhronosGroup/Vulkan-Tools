@@ -178,9 +178,6 @@ jobs:
             python-version: '3.8'
         - uses: lukka/get-cmake@latest
         - name: Configure
-          env:
-            # workaround for https://github.com/KhronosGroup/Vulkan-Tools/issues/1015
-            ANDROID_NDK_ROOT: /usr/local/lib/android/sdk/ndk/25.2.9519653
           run: |
             cmake -S . -B build/ --toolchain $ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
             -D ANDROID_PLATFORM=23 \
