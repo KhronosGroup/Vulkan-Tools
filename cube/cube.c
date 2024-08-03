@@ -4505,7 +4505,7 @@ void android_main(struct android_app *app) {
     while (1) {
         int events;
         struct android_poll_source *source;
-        while (ALooper_pollAll(active ? 0 : -1, NULL, &events, (void **)&source) >= 0) {
+        while (ALooper_pollOnce(active ? 0 : -1, NULL, &events, (void **)&source) >= 0) {
             if (source) {
                 source->process(app, source);
             }
