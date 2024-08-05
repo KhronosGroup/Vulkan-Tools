@@ -349,7 +349,9 @@ class APIVersion {
     uint32_t api_version_;
 };
 
-std::ostream &operator<<(std::ostream &out, const APIVersion &v) { return out << v.Major() << "." << v.Minor() << "." << v.Patch(); }
+std::ostream &operator<<(std::ostream &out, const APIVersion &v) {
+    return out << v.Major() << "." << v.Minor() << "." << v.Patch();
+}
 
 struct AppInstance {
     VkInstance instance;
@@ -451,7 +453,8 @@ struct AppInstance {
         VkResult err = vkCreateInstance(&inst_info, nullptr, &instance);
         if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
             std::cerr << "Cannot create " API_NAME " instance.\n";
-            std::cerr << "This problem is often caused by a faulty installation of the " API_NAME " driver or attempting to use a GPU "
+            std::cerr << "This problem is often caused by a faulty installation of the " API_NAME
+                         " driver or attempting to use a GPU "
                          "that does not support " API_NAME ".\n";
             THROW_VK_ERR("vkCreateInstance", err);
         } else if (err) {
@@ -495,6 +498,15 @@ struct AppInstance {
         global_extensions = AppGetGlobalLayerExtensions(nullptr);
     }
     void AppCompileInstanceExtensionsToEnable() {
+#if defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_IOS_MVK)
+        bool metal_surface_available = false;
+        for (const auto &ext : global_extensions) {
+            if (strcmp("VK_EXT_metal_surface", ext.extensionName) == 0) {
+                metal_surface_available = true;
+            }
+        }
+#endif
+
         for (const auto &ext : global_extensions) {
             if (strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
@@ -519,12 +531,12 @@ struct AppInstance {
             }
 #endif
 #ifdef VK_USE_PLATFORM_IOS_MVK
-            if (strcmp(VK_MVK_IOS_SURFACE_EXTENSION_NAME, ext.extensionName) == 0) {
+            if (strcmp(VK_MVK_IOS_SURFACE_EXTENSION_NAME, ext.extensionName) == 0 && !metal_surface_available) {
                 inst_extensions.push_back(ext.extensionName);
             }
 #endif
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-            if (strcmp(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, ext.extensionName) == 0) {
+            if (strcmp(VK_MVK_MACOS_SURFACE_EXTENSION_NAME, ext.extensionName) == 0 && !metal_surface_available) {
                 inst_extensions.push_back(ext.extensionName);
             }
 #endif
@@ -1077,7 +1089,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 //--MACOS--
 #ifdef VK_USE_PLATFORM_MACOS_MVK
     SurfaceExtension surface_ext_macos;
-    if (inst.CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME)) {
+    if (inst.CheckExtensionEnabled(VK_MVK_MACOS_SURFACE_EXTENSION_NAME) && !inst.CheckExtensionEnabled("VK_EXT_metal_surface")) {
         surface_ext_macos.name = VK_MVK_MACOS_SURFACE_EXTENSION_NAME;
         surface_ext_macos.create_window = AppCreateMacOSWindow;
         surface_ext_macos.create_surface = AppCreateMacOSSurface;
