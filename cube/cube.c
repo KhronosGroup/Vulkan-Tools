@@ -4188,7 +4188,7 @@ static void demo_init_connection(struct demo *demo) {
 
     demo->registry = wl_display_get_registry(demo->display);
     wl_registry_add_listener(demo->registry, &registry_listener, demo);
-    wl_display_dispatch(demo->display);
+    wl_display_roundtrip(demo->display);
 #endif
 }
 
