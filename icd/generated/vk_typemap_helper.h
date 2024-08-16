@@ -8109,6 +8109,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAI
     typedef VkPhysicalDeviceRawAccessChainsFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceCommandBufferInheritanceFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV
+template <> struct LvlTypeMap<VkPhysicalDeviceCommandBufferInheritanceFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV> {
+    typedef VkPhysicalDeviceCommandBufferInheritanceFeaturesNV Type;
+};
+
 // Map type VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV
 template <> struct LvlTypeMap<VkPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV;
