@@ -3569,6 +3569,96 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POS
     typedef VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR Type;
 };
 
+// Map type VkPhysicalDevicePipelineBinaryFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDevicePipelineBinaryFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR> {
+    typedef VkPhysicalDevicePipelineBinaryFeaturesKHR Type;
+};
+
+// Map type VkPhysicalDevicePipelineBinaryPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDevicePipelineBinaryPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR> {
+    typedef VkPhysicalDevicePipelineBinaryPropertiesKHR Type;
+};
+
+// Map type VkDevicePipelineBinaryInternalCacheControlKHR to id VK_STRUCTURE_TYPE_DEVICE_PIPELINE_BINARY_INTERNAL_CACHE_CONTROL_KHR
+template <> struct LvlTypeMap<VkDevicePipelineBinaryInternalCacheControlKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DEVICE_PIPELINE_BINARY_INTERNAL_CACHE_CONTROL_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DEVICE_PIPELINE_BINARY_INTERNAL_CACHE_CONTROL_KHR> {
+    typedef VkDevicePipelineBinaryInternalCacheControlKHR Type;
+};
+
+// Map type VkPipelineBinaryKeyKHR to id VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR
+template <> struct LvlTypeMap<VkPipelineBinaryKeyKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR> {
+    typedef VkPipelineBinaryKeyKHR Type;
+};
+
+// Map type VkPipelineCreateInfoKHR to id VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR
+template <> struct LvlTypeMap<VkPipelineCreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR> {
+    typedef VkPipelineCreateInfoKHR Type;
+};
+
+// Map type VkPipelineBinaryCreateInfoKHR to id VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR
+template <> struct LvlTypeMap<VkPipelineBinaryCreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR> {
+    typedef VkPipelineBinaryCreateInfoKHR Type;
+};
+
+// Map type VkPipelineBinaryInfoKHR to id VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR
+template <> struct LvlTypeMap<VkPipelineBinaryInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR> {
+    typedef VkPipelineBinaryInfoKHR Type;
+};
+
+// Map type VkReleaseCapturedPipelineDataInfoKHR to id VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR
+template <> struct LvlTypeMap<VkReleaseCapturedPipelineDataInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR> {
+    typedef VkReleaseCapturedPipelineDataInfoKHR Type;
+};
+
+// Map type VkPipelineBinaryDataInfoKHR to id VK_STRUCTURE_TYPE_PIPELINE_BINARY_DATA_INFO_KHR
+template <> struct LvlTypeMap<VkPipelineBinaryDataInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_DATA_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_BINARY_DATA_INFO_KHR> {
+    typedef VkPipelineBinaryDataInfoKHR Type;
+};
+
+// Map type VkPipelineBinaryHandlesInfoKHR to id VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR
+template <> struct LvlTypeMap<VkPipelineBinaryHandlesInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR> {
+    typedef VkPipelineBinaryHandlesInfoKHR Type;
+};
+
 // Map type VkCooperativeMatrixPropertiesKHR to id VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR
 template <> struct LvlTypeMap<VkCooperativeMatrixPropertiesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR;

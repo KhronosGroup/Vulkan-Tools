@@ -370,6 +370,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_anti_lag", 1},
     {"VK_KHR_ray_tracing_position_fetch", 1},
     {"VK_EXT_shader_object", 1},
+    {"VK_KHR_pipeline_binary", 1},
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
@@ -2507,6 +2508,35 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2KHR(
     const VkImageSubresource2KHR*               pSubresource,
     VkSubresourceLayout2KHR*                    pLayout);
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreatePipelineBinariesKHR(
+    VkDevice                                    device,
+    const VkPipelineBinaryCreateInfoKHR*        pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipelineBinaryHandlesInfoKHR*             pBinaries);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyPipelineBinaryKHR(
+    VkDevice                                    device,
+    VkPipelineBinaryKHR                         pipelineBinary,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineKeyKHR(
+    VkDevice                                    device,
+    const VkPipelineCreateInfoKHR*              pPipelineCreateInfo,
+    VkPipelineBinaryKeyKHR*                     pPipelineKey);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineBinaryDataKHR(
+    VkDevice                                    device,
+    const VkPipelineBinaryDataInfoKHR*          pInfo,
+    VkPipelineBinaryKeyKHR*                     pPipelineBinaryKey,
+    size_t*                                     pPipelineBinaryDataSize,
+    void*                                       pPipelineBinaryData);
+
+static VKAPI_ATTR VkResult VKAPI_CALL ReleaseCapturedPipelineDataKHR(
+    VkDevice                                    device,
+    const VkReleaseCapturedPipelineDataInfoKHR* pInfo,
+    const VkAllocationCallbacks*                pAllocator);
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
@@ -4930,6 +4960,11 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetRenderingAreaGranularityKHR", (void*)GetRenderingAreaGranularityKHR},
     {"vkGetDeviceImageSubresourceLayoutKHR", (void*)GetDeviceImageSubresourceLayoutKHR},
     {"vkGetImageSubresourceLayout2KHR", (void*)GetImageSubresourceLayout2KHR},
+    {"vkCreatePipelineBinariesKHR", (void*)CreatePipelineBinariesKHR},
+    {"vkDestroyPipelineBinaryKHR", (void*)DestroyPipelineBinaryKHR},
+    {"vkGetPipelineKeyKHR", (void*)GetPipelineKeyKHR},
+    {"vkGetPipelineBinaryDataKHR", (void*)GetPipelineBinaryDataKHR},
+    {"vkReleaseCapturedPipelineDataKHR", (void*)ReleaseCapturedPipelineDataKHR},
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
     {"vkCmdSetLineStippleKHR", (void*)CmdSetLineStippleKHR},
     {"vkGetPhysicalDeviceCalibrateableTimeDomainsKHR", (void*)GetPhysicalDeviceCalibrateableTimeDomainsKHR},
