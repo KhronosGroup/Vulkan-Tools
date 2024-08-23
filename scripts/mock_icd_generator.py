@@ -1669,6 +1669,13 @@ CUSTOM_C_INTERCEPTS = {
 'vkGetMemoryWin32HandlePropertiesKHR': '''
     pMemoryWin32HandleProperties->memoryTypeBits = 0xFFFF;
     return VK_SUCCESS;
+''',
+'vkCreatePipelineBinariesKHR': '''
+    unique_lock_t lock(global_lock);
+    for (uint32_t i = 0; i < pBinaries->pipelineBinaryCount; ++i) {
+        pBinaries->pPipelineBinaries[i] = (VkPipelineBinaryKHR)global_unique_handle++;
+    }
+    return VK_SUCCESS;
 '''
 }
 
