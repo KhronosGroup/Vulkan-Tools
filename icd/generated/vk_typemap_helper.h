@@ -3686,6 +3686,24 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MAT
     typedef VkPhysicalDeviceCooperativeMatrixPropertiesKHR Type;
 };
 
+// Map type VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR> {
+    typedef VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR Type;
+};
+
+// Map type VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR Type;
+};
+
 // Map type VkVideoDecodeAV1ProfileInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR
 template <> struct LvlTypeMap<VkVideoDecodeAV1ProfileInfoKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
@@ -5067,15 +5085,6 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP> {
 };
 
 #endif // VK_USE_PLATFORM_GGP
-// Map type VkPhysicalDeviceComputeShaderDerivativesFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV
-template <> struct LvlTypeMap<VkPhysicalDeviceComputeShaderDerivativesFeaturesNV> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV> {
-    typedef VkPhysicalDeviceComputeShaderDerivativesFeaturesNV Type;
-};
-
 // Map type VkPhysicalDeviceMeshShaderFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV
 template <> struct LvlTypeMap<VkPhysicalDeviceMeshShaderFeaturesNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV;

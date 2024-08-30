@@ -384,6 +384,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_low_latency2", 2},
     {"VK_KHR_cooperative_matrix", 2},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
+    {"VK_KHR_compute_shader_derivatives", 1},
     {"VK_KHR_video_decode_av1", 1},
     {"VK_KHR_video_maintenance1", 1},
     {"VK_NV_per_stage_descriptor_set", 1},
@@ -2543,6 +2544,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pPropertyCount,
     VkCooperativeMatrixPropertiesKHR*           pProperties);
+
 
 
 
