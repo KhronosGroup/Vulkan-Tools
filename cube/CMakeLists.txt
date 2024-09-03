@@ -65,6 +65,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
+    option(BUILD_WSI_DISPLAY_SUPPORT "Build Display WSI support" ON)
     option(BUILD_WSI_DIRECTFB_SUPPORT "Build DirectFB WSI support" OFF)
     set(CUBE_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for vkcube (XCB, XLIB, WAYLAND, DIRECTFB, DISPLAY)")
 
@@ -319,6 +320,33 @@ if(APPLE)
     )
 else()
     install(TARGETS vkcubepp)
+endif()
+
+# ----------------------------------------------------------------------------
+# vkcube-display
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
+    if(BUILD_WSI_DISPLAY_SUPPORT)
+        add_executable(vkcube-display)
+        target_sources(vkcube-display PRIVATE
+            cube.c
+            ${PROJECT_SOURCE_DIR}/cube/cube.vert
+            ${PROJECT_SOURCE_DIR}/cube/cube.frag
+            cube.vert.inc
+            cube.frag.inc
+        )
+        target_compile_definitions(vkcube-display PRIVATE VK_USE_PLATFORM_DISPLAY_KHR)
+        include(CheckLibraryExists)
+        CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
+        if (NEED_RT)
+            target_link_libraries(vkcube-display PRIVATE rt)
+        endif()
+        target_link_libraries(vkcube-display PRIVATE Vulkan::Headers volk::volk_headers Threads::Threads)
+
+        target_include_directories(vkcube-display PRIVATE .)
+
+        install(TARGETS vkcube-display)
+    endif()
 endif()
 
 # ----------------------------------------------------------------------------
