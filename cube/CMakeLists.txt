@@ -61,32 +61,58 @@ if(APPLE)
     endif()
 endif()
 
+if(ANDROID OR APPLE)
+    set(WSI_DISPLAY_DEFAULT_SETTING "OFF")
+else()
+    set(WSI_DISPLAY_DEFAULT_SETTING "ON")
+endif()
+
+option(BUILD_WSI_DISPLAY_SUPPORT "Build DISPLAY WSI support" ${WSI_DISPLAY_DEFAULT_SETTING})
+
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build Wayland WSI support" ON)
     option(BUILD_WSI_DIRECTFB_SUPPORT "Build DirectFB WSI support" OFF)
-    set(CUBE_WSI_SELECTION "XCB" CACHE STRING "Select WSI target for vkcube (XCB, XLIB, WAYLAND, DIRECTFB, DISPLAY)")
 
     find_package(PkgConfig REQUIRED QUIET) # Use PkgConfig to find Linux system libraries
 
     if(BUILD_WSI_XCB_SUPPORT)
         pkg_check_modules(XCB REQUIRED QUIET IMPORTED_TARGET xcb)
+        pkg_get_variable(XCB_INCLUDE_DIRS xcb includedir)
+        message(DEBUG "XCB_INCLUDE_DIRS = ${XCB_INCLUDE_DIRS}")
     endif()
 
     if(BUILD_WSI_XLIB_SUPPORT)
         pkg_check_modules(X11 REQUIRED QUIET IMPORTED_TARGET x11)
+        pkg_get_variable(XLIB_INCLUDE_DIRS x11 includedir)
+        message(DEBUG "XLIB_INCLUDE_DIRS = ${XLIB_INCLUDE_DIRS}")
     endif()
 
     if(BUILD_WSI_WAYLAND_SUPPORT)
         pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
+        pkg_get_variable(WAYLAND_INCLUDE_DIRS wayland-client includedir)
 
         pkg_get_variable(WAYLAND_SCANNER_EXECUTABLE wayland-scanner wayland_scanner)
-        message(STATUS "WAYLAND_SCANNER_EXECUTABLE = ${WAYLAND_SCANNER_EXECUTABLE}")
+        message(DEBUG "WAYLAND_SCANNER_EXECUTABLE = ${WAYLAND_SCANNER_EXECUTABLE}")
+
+        pkg_get_variable(WAYLAND_CLIENT_PATH wayland-client pkgdatadir)
+        message(DEBUG "WAYLAND_CLIENT_PATH = ${WAYLAND_CLIENT_PATH}")
+        set(WAYLAND_CODE_PROTOCOL ${WAYLAND_CLIENT_PATH}/wayland.xml)
 
         pkg_get_variable(WAYLAND_PROTOCOLS_PATH wayland-protocols pkgdatadir)
-        message(STATUS "WAYLAND_PROTOCOLS_PATH = ${WAYLAND_PROTOCOLS_PATH}")
+        message(DEBUG "WAYLAND_PROTOCOLS_PATH = ${WAYLAND_PROTOCOLS_PATH}")
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
+
+        add_custom_command(COMMENT "Generating wayland client protocol dispatch data"
+                          OUTPUT wayland-client.c
+                          COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
+                                  private-code
+                                  ${WAYLAND_CODE_PROTOCOL}
+                                  ${CMAKE_CURRENT_BINARY_DIR}/wayland-client.c
+                          MAIN_DEPENDENCY ${WAYLAND_CODE_PROTOCOL}
+                          DEPENDS ${WAYLAND_CODE_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+
         add_custom_command(COMMENT "Generating xdg-shell protocol dispatch data"
                            OUTPUT xdg-shell-code.c
                            COMMAND ${WAYLAND_SCANNER_EXECUTABLE}
@@ -121,6 +147,12 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
                                    ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h
                            MAIN_DEPENDENCY ${XDG_DECORATION_PROTOCOL}
                            DEPENDS ${XDG_DECORATION_PROTOCOL} ${WAYLAND_SCANNER_EXECUTABLE})
+
+        set(WAYLAND_ADDITIONAL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wayland-client.c
+                           ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
+                           ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
+                           ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
+                           ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
     endif()
 
     if(BUILD_WSI_DIRECTFB_SUPPORT)
@@ -128,57 +160,37 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     endif()
 endif()
 
+if(BUILD_WSI_DISPLAY_SUPPORT)
+    list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_DISPLAY_KHR)
+endif()
+
 if(WIN32)
-    add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DWIN32_LEAN_AND_MEAN -DNOMINMAX)
+    add_definitions(-DWIN32_LEAN_AND_MEAN -DNOMINMAX)
+    list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_WIN32_KHR)
 elseif(ANDROID)
-    add_definitions(-DVK_USE_PLATFORM_ANDROID_KHR)
+    list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_ANDROID_KHR)
 elseif(APPLE)
-    add_definitions(-DVK_USE_PLATFORM_METAL_EXT)
+    list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_METAL_EXT)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
-    if(NOT CUBE_WSI_SELECTION)
-        set(CUBE_WSI_SELECTION "XCB")
+    if(BUILD_WSI_XCB_SUPPORT)
+        list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_XCB_KHR)
     endif()
-
-    if(CUBE_WSI_SELECTION STREQUAL "XCB")
-        if(NOT BUILD_WSI_XCB_SUPPORT)
-            message(FATAL_ERROR "Selected XCB for vkcube build but not building Xcb support")
-        endif()
-        link_libraries(PkgConfig::XCB)
-        set(CUBE_PLATFORM VK_USE_PLATFORM_XCB_KHR)
-    elseif(CUBE_WSI_SELECTION STREQUAL "XLIB")
-        if(NOT BUILD_WSI_XLIB_SUPPORT)
-            message(FATAL_ERROR "Selected XLIB for vkcube build but not building Xlib support")
-        endif()
-        link_libraries(PkgConfig::X11)
-        set(CUBE_PLATFORM VK_USE_PLATFORM_XLIB_KHR)
-    elseif(CUBE_WSI_SELECTION STREQUAL "WAYLAND")
-        if(NOT BUILD_WSI_WAYLAND_SUPPORT)
-            message(FATAL_ERROR "Selected Wayland for vkcube build but not building Wayland support")
-        endif()
-        link_libraries(PkgConfig::WAYLAND_CLIENT)
-        set(CUBE_PLATFORM VK_USE_PLATFORM_WAYLAND_KHR)
-        set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
-        set(OPTIONAL_WAYLAND_DATA_FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h)
-        include_directories(${CMAKE_CURRENT_BINARY_DIR})
-    elseif(CUBE_WSI_SELECTION STREQUAL "DIRECTFB")
-        if(NOT BUILD_WSI_DIRECTFB_SUPPORT)
-            message(FATAL_ERROR "Selected DIRECTFB for vkcube build but not building DirectFB support")
-        endif()
-        link_libraries(PkgConfig::DirectFB)
-        set(CUBE_PLATFORM VK_USE_PLATFORM_DIRECTFB_EXT)
-    elseif(CUBE_WSI_SELECTION STREQUAL "DISPLAY")
-        set(CUBE_PLATFORM VK_USE_PLATFORM_DISPLAY_KHR)
-    else()
-        message(FATAL_ERROR "Unrecognized value for CUBE_WSI_SELECTION: ${CUBE_WSI_SELECTION}")
+    if(BUILD_WSI_XLIB_SUPPORT)
+        list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_XLIB_KHR)
     endif()
-
+    if(BUILD_WSI_WAYLAND_SUPPORT)
+        list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_WAYLAND_KHR)
+    endif()
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        list(APPEND ENABLED_CUBE_PLATFORMS VK_USE_PLATFORM_DIRECTFB_EXT)
+    endif()
     link_libraries(${API_LOWERCASE} m)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
+endif()
+
+if(NOT DEFINED ENABLED_CUBE_PLATFORMS)
+        message(FATAL_ERROR "There are no supported WSI platforms on this system, vkcube requires a WSI platform be available to be able to render its output")
 endif()
 
 if (COMPILE_CUBE_SHADERS)
@@ -226,7 +238,6 @@ elseif (ANDROID)
 
     add_subdirectory(android)
 
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     add_executable(vkcube)
     target_sources(vkcube PRIVATE
@@ -235,15 +246,28 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
         ${PROJECT_SOURCE_DIR}/cube/cube.frag
         cube.vert.inc
         cube.frag.inc
-        ${OPTIONAL_WAYLAND_DATA_FILES}
     )
-    target_compile_definitions(vkcube PUBLIC ${CUBE_PLATFORM})
+    target_link_libraries(vkcube  Threads::Threads)
+    if(BUILD_WSI_XCB_SUPPORT)
+        target_sources(vkcube PRIVATE xcb_loader.h)
+        target_include_directories(vkcube PRIVATE ${xcb_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_XLIB_SUPPORT)
+        target_sources(vkcube PRIVATE xlib_loader.h)
+        target_include_directories(vkcube PRIVATE ${XLIB_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_WAYLAND_SUPPORT)
+        target_include_directories(vkcube PRIVATE ${WAYLAND_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+        target_sources(vkcube PRIVATE PRIVATE ${WAYLAND_ADDITIONAL_SOURCES})
+    endif()
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        target_link_libraries(vkcube PkgConfig::DirectFB)
+    endif()
     include(CheckLibraryExists)
     CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
     if (NEED_RT)
-        target_link_libraries(vkcube PRIVATE rt)
+        target_link_libraries(vkcube  rt)
     endif()
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers Threads::Threads)
 elseif(WIN32)
     add_executable(vkcube WIN32)
     target_sources(vkcube PRIVATE
@@ -253,12 +277,13 @@ elseif(WIN32)
         cube.vert.inc
         cube.frag.inc
     )
-    target_link_libraries(vkcube PRIVATE Vulkan::Headers volk::volk_headers)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
 
+target_compile_definitions(vkcube PRIVATE ${ENABLED_CUBE_PLATFORMS})
 target_include_directories(vkcube PRIVATE .)
+target_link_libraries(vkcube  Vulkan::Headers volk::volk_headers)
 
 if (ANDROID)
     install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -280,6 +305,16 @@ if (ANDROID)
     return()
 endif()
 
+if (XCB_LINK_LIBRARIES)
+    target_compile_definitions(vkcube PRIVATE "XCB_LIBRARY=\"${XCB_LINK_LIBRARIES}\"")
+endif()
+if (X11_LINK_LIBRARIES)
+    target_compile_definitions(vkcube PRIVATE "XLIB_LIBRARY=\"${X11_LINK_LIBRARIES}\"")
+endif()
+if (WAYLAND_CLIENT_LINK_LIBRARIES)
+    target_compile_definitions(vkcube PRIVATE "WAYLAND_LIBRARY=\"${WAYLAND_CLIENT_LINK_LIBRARIES}\"")
+endif()
+
 # ----------------------------------------------------------------------------
 # vkcubepp
 
@@ -291,10 +326,24 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
                    ${PROJECT_SOURCE_DIR}/cube/cube.vert
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
-                   cube.frag.inc
-                   ${OPTIONAL_WAYLAND_DATA_FILES})
-    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers Threads::Threads)
-    target_compile_definitions(vkcubepp PUBLIC ${CUBE_PLATFORM})
+                   cube.frag.inc)
+    target_link_libraries(vkcubepp  Threads::Threads)
+
+    if(BUILD_WSI_XCB_SUPPORT)
+        target_sources(vkcubepp PRIVATE xcb_loader.h)
+        target_include_directories(vkcubepp PRIVATE ${xcb_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_XLIB_SUPPORT)
+        target_sources(vkcubepp PRIVATE xlib_loader.h)
+        target_include_directories(vkcubepp PRIVATE ${XLIB_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_WAYLAND_SUPPORT)
+        target_include_directories(vkcubepp PRIVATE ${WAYLAND_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+        target_sources(vkcubepp PRIVATE ${WAYLAND_ADDITIONAL_SOURCES})
+    endif()
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        target_link_libraries(vkcubepp  PkgConfig::DirectFB)
+    endif()
 else()
     add_executable(vkcubepp
                    WIN32
@@ -303,9 +352,21 @@ else()
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
                    cube.frag.inc)
-    target_link_libraries(vkcubepp Vulkan::Headers volk::volk_headers)
 endif()
+
 target_include_directories(vkcubepp PRIVATE .)
+target_compile_definitions(vkcubepp PRIVATE ${ENABLED_CUBE_PLATFORMS})
+target_link_libraries(vkcubepp  Vulkan::Headers volk::volk_headers)
+
+if (XCB_LINK_LIBRARIES )
+    target_compile_definitions(vkcubepp PUBLIC "XCB_LIBRARY=\"${XCB_LINK_LIBRARIES}\"")
+endif()
+if (X11_LINK_LIBRARIES)
+    target_compile_definitions(vkcubepp PUBLIC "XLIB_LIBRARY=\"${X11_LINK_LIBRARIES}\"")
+endif()
+if (WAYLAND_CLIENT_LINK_LIBRARIES)
+    target_compile_definitions(vkcubepp PUBLIC "WAYLAND_LIBRARY=\"${WAYLAND_CLIENT_LINK_LIBRARIES}\"")
+endif()
 
 if(APPLE)
     install(
@@ -319,42 +380,4 @@ if(APPLE)
     )
 else()
     install(TARGETS vkcubepp)
-endif()
-
-# ----------------------------------------------------------------------------
-# vkcube-wayland
-
-if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD")
-    if(BUILD_WSI_WAYLAND_SUPPORT AND EXISTS ${WAYLAND_PROTOCOLS_PATH}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
-        add_executable(vkcube-wayland)
-
-        target_sources(vkcube-wayland PRIVATE
-            cube.c
-            ${PROJECT_SOURCE_DIR}/cube/cube.vert
-            ${PROJECT_SOURCE_DIR}/cube/cube.frag
-            cube.vert.inc
-            cube.frag.inc
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-code.c
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-header.h
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-code.c
-            ${CMAKE_CURRENT_BINARY_DIR}/xdg-decoration-client-header.h
-        )
-        target_include_directories(vkcube-wayland PRIVATE
-            ${CMAKE_CURRENT_BINARY_DIR}
-            .
-        )
-        target_link_libraries(vkcube-wayland PRIVATE
-            Vulkan::Headers
-            volk::volk_headers
-            Threads::Threads
-            PkgConfig::WAYLAND_CLIENT
-        )
-        target_compile_definitions(vkcube-wayland PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
-        include(CheckLibraryExists)
-        CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
-        if (NEED_RT)
-            target_link_libraries(vkcube-wayland PRIVATE rt)
-        endif()
-        install(TARGETS vkcube-wayland)
-    endif()
 endif()

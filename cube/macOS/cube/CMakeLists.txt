@@ -59,7 +59,7 @@ add_dependencies(vkcube MoltenVK_icd-staging-json)
 target_include_directories(vkcube PRIVATE . ${MOLTENVK_DIR}/MoltenVK/include)
 
 # We do this so vkcube is linked to an individual library and NOT a framework.
-target_link_libraries(vkcube Vulkan::Loader volk::volk_headers "-framework Cocoa -framework QuartzCore")
+target_link_libraries(vkcube "-framework Cocoa -framework QuartzCore")
 
 # Disable warnings about sprintf
 target_compile_options(vkcube PRIVATE -Wno-deprecated-declarations)
