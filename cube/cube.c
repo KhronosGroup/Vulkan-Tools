@@ -26,6 +26,7 @@
  */
 
 #define _GNU_SOURCE
+#include <ctype.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -33,13 +34,18 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <signal.h>
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
 #include <errno.h>
-#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
-#include <X11/Xutil.h>
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+#include "xlib_loader.h"
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+#include "xcb_loader.h"
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 #include <linux/input.h>
-#include "xdg-shell-client-header.h"
-#include "xdg-decoration-client-header.h"
+#include "wayland_loader.h"
 #endif
 
 #ifdef _WIN32
@@ -290,6 +296,97 @@ char const *to_string(VkPhysicalDeviceType const type) {
     }
 }
 
+typedef enum WSI_PLATFORM {
+    WSI_PLATFORM_AUTO = 0,
+    WSI_PLATFORM_WIN32,
+    WSI_PLATFORM_METAL,
+    WSI_PLATFORM_ANDROID,
+    WSI_PLATFORM_QNX,
+    WSI_PLATFORM_XCB,
+    WSI_PLATFORM_XLIB,
+    WSI_PLATFORM_WAYLAND,
+    WSI_PLATFORM_DIRECTFB,
+    WSI_PLATFORM_DISPLAY,
+    WSI_PLATFORM_INVALID,  // Sentinel just to indicate invalid user input
+} WSI_PLATFORM;
+
+WSI_PLATFORM wsi_from_string(const char *str) {
+    if (strcmp(str, "auto") == 0) return WSI_PLATFORM_AUTO;
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    if (strcmp(str, "win32") == 0) return WSI_PLATFORM_WIN32;
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+    if (strcmp(str, "metal") == 0) return WSI_PLATFORM_METAL;
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    if (strcmp(str, "android") == 0) return WSI_PLATFORM_ANDROID;
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+    if (strcmp(str, "qnx") == 0) return WSI_PLATFORM_QNX;
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    if (strcmp(str, "xcb") == 0) return WSI_PLATFORM_XCB;
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+    if (strcmp(str, "xlib") == 0) return WSI_PLATFORM_XLIB;
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (strcmp(str, "wayland") == 0) return WSI_PLATFORM_WAYLAND;
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    if (strcmp(str, "directfb") == 0) return WSI_PLATFORM_DIRECTFB;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    if (strcmp(str, "display") == 0) return WSI_PLATFORM_DISPLAY;
+#endif
+    return WSI_PLATFORM_INVALID;
+};
+
+const char *wsi_to_string(WSI_PLATFORM wsi_platform) {
+    switch (wsi_platform) {
+        case (WSI_PLATFORM_AUTO):
+            return "auto";
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+        case (WSI_PLATFORM_WIN32):
+            return "win32";
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+        case (WSI_PLATFORM_METAL):
+            return "metal";
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+        case (WSI_PLATFORM_ANDROID):
+            return "android";
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+        case (WSI_PLATFORM_QNX):
+            return "qnx";
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+        case (WSI_PLATFORM_XCB):
+            return "xcb";
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+        case (WSI_PLATFORM_XLIB):
+            return "xlib";
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+        case (WSI_PLATFORM_WAYLAND):
+            return "wayland";
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        case (WSI_PLATFORM_DIRECTFB):
+            return "directfb";
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+        case (WSI_PLATFORM_DISPLAY):
+            return "display";
+#endif
+        default:
+            return "unknown";
+    }
+};
+
 typedef struct {
     VkImage image;
     VkCommandBuffer cmd;
@@ -309,18 +406,24 @@ struct demo {
     char name[APP_NAME_STR_LEN];  // Name to put on the window/icon
     HWND window;                  // hWnd - window handle
     POINT minsize;                // minimum window size
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-    Display *display;
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+    void *xlib_library;
+    Display *xlib_display;
     Window xlib_window;
     Atom xlib_wm_delete_window;
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-    Display *display;
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    void *xcb_library;
+    Display *xcb_display;
     xcb_connection_t *connection;
     xcb_screen_t *screen;
     xcb_window_t xcb_window;
     xcb_intern_atom_reply_t *atom_wm_delete_window;
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    struct wl_display *display;
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    void *wayland_library;  // Dynamic library for wayland
+    struct wl_display *wayland_display;
     struct wl_registry *registry;
     struct wl_compositor *compositor;
     struct wl_surface *window;
@@ -333,20 +436,24 @@ struct demo {
     struct wl_seat *seat;
     struct wl_pointer *pointer;
     struct wl_keyboard *keyboard;
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     IDirectFB *dfb;
-    IDirectFBSurface *window;
+    IDirectFBSurface *directfb_window;
     IDirectFBEventBuffer *event_buffer;
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
     struct ANativeWindow *window;
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
     void *caMetalLayer;
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
     screen_context_t screen_context;
     screen_window_t screen_window;
     screen_event_t screen_event;
 #endif
-
+    WSI_PLATFORM wsi_platform;
     VkSurfaceKHR surface;
     bool prepared;
     bool use_staging_buffer;
@@ -2435,35 +2542,49 @@ static void demo_cleanup(struct demo *demo) {
     vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
-    XDestroyWindow(demo->display, demo->xlib_window);
-    XCloseDisplay(demo->display);
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-    xcb_destroy_window(demo->connection, demo->xcb_window);
-    xcb_disconnect(demo->connection);
-    free(demo->atom_wm_delete_window);
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    if (demo->keyboard) wl_keyboard_destroy(demo->keyboard);
-    if (demo->pointer) wl_pointer_destroy(demo->pointer);
-    if (demo->seat) wl_seat_destroy(demo->seat);
-    xdg_toplevel_destroy(demo->xdg_toplevel);
-    xdg_surface_destroy(demo->xdg_surface);
-    wl_surface_destroy(demo->window);
-    xdg_wm_base_destroy(demo->xdg_wm_base);
-    if (demo->xdg_decoration_mgr) {
-        zxdg_toplevel_decoration_v1_destroy(demo->toplevel_decoration);
-        zxdg_decoration_manager_v1_destroy(demo->xdg_decoration_mgr);
+    if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
+        XDestroyWindow(demo->xlib_display, demo->xlib_window);
+        XCloseDisplay(demo->xlib_display);
     }
-    wl_compositor_destroy(demo->compositor);
-    wl_registry_destroy(demo->registry);
-    wl_display_disconnect(demo->display);
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    demo->event_buffer->Release(demo->event_buffer);
-    demo->window->Release(demo->window);
-    demo->dfb->Release(demo->dfb);
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-    screen_destroy_event(demo->screen_event);
-    screen_destroy_window(demo->screen_window);
-    screen_destroy_context(demo->screen_context);
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XCB) {
+        xcb_destroy_window(demo->connection, demo->xcb_window);
+        xcb_disconnect(demo->connection);
+        free(demo->atom_wm_delete_window);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
+        if (demo->keyboard) wl_keyboard_destroy(demo->keyboard);
+        if (demo->pointer) wl_pointer_destroy(demo->pointer);
+        if (demo->seat) wl_seat_destroy(demo->seat);
+        xdg_toplevel_destroy(demo->xdg_toplevel);
+        xdg_surface_destroy(demo->xdg_surface);
+        wl_surface_destroy(demo->window);
+        xdg_wm_base_destroy(demo->xdg_wm_base);
+        if (demo->xdg_decoration_mgr) {
+            zxdg_toplevel_decoration_v1_destroy(demo->toplevel_decoration);
+            zxdg_decoration_manager_v1_destroy(demo->xdg_decoration_mgr);
+        }
+        wl_compositor_destroy(demo->compositor);
+        wl_registry_destroy(demo->registry);
+        wl_display_disconnect(demo->wayland_display);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    if (demo->wsi_platform == WSI_PLATFORM_DIRECTFB) {
+        demo->event_buffer->Release(demo->event_buffer);
+        demo->directfb_window->Release(demo->directfb_window);
+        demo->dfb->Release(demo->dfb);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+    if (demo->wsi_platform == WSI_PLATFORM_QNX) {
+        screen_destroy_event(demo->screen_event);
+        screen_destroy_window(demo->screen_window);
+        screen_destroy_context(demo->screen_context);
+    }
 #endif
 
     vkDestroyInstance(demo->inst, NULL);
@@ -2640,7 +2761,8 @@ static void demo_create_window(struct demo *demo) {
     demo->minsize.x = GetSystemMetrics(SM_CXMINTRACK);
     demo->minsize.y = GetSystemMetrics(SM_CYMINTRACK) + 1;
 }
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
 static void demo_create_xlib_window(struct demo *demo) {
     const char *display_envar = getenv("DISPLAY");
     if (display_envar == NULL || display_envar[0] == '\0') {
@@ -2650,15 +2772,15 @@ static void demo_create_xlib_window(struct demo *demo) {
     }
 
     XInitThreads();
-    demo->display = XOpenDisplay(NULL);
+    demo->xlib_display = XOpenDisplay(NULL);
     long visualMask = VisualScreenMask;
     int numberOfVisuals;
     XVisualInfo vInfoTemplate = {};
-    vInfoTemplate.screen = DefaultScreen(demo->display);
-    XVisualInfo *visualInfo = XGetVisualInfo(demo->display, visualMask, &vInfoTemplate, &numberOfVisuals);
+    vInfoTemplate.screen = DefaultScreen(demo->xlib_display);
+    XVisualInfo *visualInfo = XGetVisualInfo(demo->xlib_display, visualMask, &vInfoTemplate, &numberOfVisuals);
 
     Colormap colormap =
-        XCreateColormap(demo->display, RootWindow(demo->display, vInfoTemplate.screen), visualInfo->visual, AllocNone);
+        XCreateColormap(demo->xlib_display, RootWindow(demo->xlib_display, vInfoTemplate.screen), visualInfo->visual, AllocNone);
 
     XSetWindowAttributes windowAttributes = {};
     windowAttributes.colormap = colormap;
@@ -2666,14 +2788,14 @@ static void demo_create_xlib_window(struct demo *demo) {
     windowAttributes.border_pixel = 0;
     windowAttributes.event_mask = KeyPressMask | KeyReleaseMask | StructureNotifyMask | ExposureMask;
 
-    demo->xlib_window = XCreateWindow(demo->display, RootWindow(demo->display, vInfoTemplate.screen), 0, 0, demo->width,
+    demo->xlib_window = XCreateWindow(demo->xlib_display, RootWindow(demo->xlib_display, vInfoTemplate.screen), 0, 0, demo->width,
                                       demo->height, 0, visualInfo->depth, InputOutput, visualInfo->visual,
                                       CWBackPixel | CWBorderPixel | CWEventMask | CWColormap, &windowAttributes);
 
-    XSelectInput(demo->display, demo->xlib_window, ExposureMask | KeyPressMask);
-    XMapWindow(demo->display, demo->xlib_window);
-    XFlush(demo->display);
-    demo->xlib_wm_delete_window = XInternAtom(demo->display, "WM_DELETE_WINDOW", False);
+    XSelectInput(demo->xlib_display, demo->xlib_window, ExposureMask | KeyPressMask);
+    XMapWindow(demo->xlib_display, demo->xlib_window);
+    XFlush(demo->xlib_display);
+    demo->xlib_wm_delete_window = XInternAtom(demo->xlib_display, "WM_DELETE_WINDOW", False);
 }
 static void demo_handle_xlib_event(struct demo *demo, const XEvent *event) {
     switch (event->type) {
@@ -2713,11 +2835,11 @@ static void demo_run_xlib(struct demo *demo) {
         XEvent event;
 
         if (demo->pause) {
-            XNextEvent(demo->display, &event);
+            XNextEvent(demo->xlib_display, &event);
             demo_handle_xlib_event(demo, &event);
         }
-        while (XPending(demo->display) > 0) {
-            XNextEvent(demo->display, &event);
+        while (XPending(demo->xlib_display) > 0) {
+            XNextEvent(demo->xlib_display, &event);
             demo_handle_xlib_event(demo, &event);
         }
 
@@ -2726,7 +2848,8 @@ static void demo_run_xlib(struct demo *demo) {
         if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
     }
 }
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
 static void demo_handle_xcb_event(struct demo *demo, const xcb_generic_event_t *event) {
     uint8_t event_code = event->response_type & 0x7f;
     switch (event_code) {
@@ -2823,26 +2946,27 @@ static void demo_create_xcb_window(struct demo *demo) {
     xcb_configure_window(demo->connection, demo->xcb_window, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, coords);
 }
 // VK_USE_PLATFORM_XCB_KHR
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 static void demo_run(struct demo *demo) {
     while (!demo->quit) {
         // Flush any commands to the server
-        wl_display_flush(demo->display);
+        wl_display_flush(demo->wayland_display);
 
         if (demo->pause) {
             // block and wait for input
-            wl_display_dispatch(demo->display);
+            wl_display_dispatch(demo->wayland_display);
         } else {
             // Lock the display event queue in case the driver is doing something on another thread
             // while we wait, keep pumping events
-            while (wl_display_prepare_read(demo->display) != 0) {
-                wl_display_dispatch_pending(demo->display);
+            while (wl_display_prepare_read(demo->wayland_display) != 0) {
+                wl_display_dispatch_pending(demo->wayland_display);
             }
             // Actually do the read from the socket
-            wl_display_read_events(demo->display);
+            wl_display_read_events(demo->wayland_display);
 
             // Pump events
-            wl_display_dispatch_pending(demo->display);
+            wl_display_dispatch_pending(demo->wayland_display);
 
             demo_draw(demo);
             demo->curFrame++;
@@ -2883,7 +3007,7 @@ static void handle_toplevel_close(void *data, struct xdg_toplevel *xdg_toplevel 
 
 static const struct xdg_toplevel_listener xdg_toplevel_listener = {handle_toplevel_configure, handle_toplevel_close};
 
-static void demo_create_window(struct demo *demo) {
+static void demo_create_wayland_window(struct demo *demo) {
     if (!demo->xdg_wm_base) {
         printf("Compositor did not provide the standard protocol xdg-wm-base\n");
         fflush(stdout);
@@ -2921,7 +3045,8 @@ static void demo_create_window(struct demo *demo) {
 
     wl_surface_commit(demo->window);
 }
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
 static void demo_create_directfb_window(struct demo *demo) {
     DFBResult ret;
 
@@ -2944,7 +3069,7 @@ static void demo_create_directfb_window(struct demo *demo) {
     desc.caps = DSCAPS_PRIMARY;
     desc.width = demo->width;
     desc.height = demo->height;
-    ret = demo->dfb->CreateSurface(demo->dfb, &desc, &demo->window);
+    ret = demo->dfb->CreateSurface(demo->dfb, &desc, &demo->directfb_window);
     if (ret) {
         printf("CreateSurface failed to create DirectFB surface interface!\n");
         fflush(stdout);
@@ -2995,14 +3120,16 @@ static void demo_run_directfb(struct demo *demo) {
         }
     }
 }
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
 static void demo_run(struct demo *demo) {
     if (!demo->prepared) return;
 
     demo_draw(demo);
     demo->curFrame++;
 }
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_run(struct demo *demo) {
     demo_draw(demo);
     demo->curFrame++;
@@ -3010,7 +3137,8 @@ static void demo_run(struct demo *demo) {
         demo->quit = TRUE;
     }
 }
-#elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
 static VkResult demo_create_display_surface(struct demo *demo) {
     VkResult U_ASSERT_ONLY err;
     uint32_t display_count;
@@ -3105,8 +3233,6 @@ static VkResult demo_create_display_surface(struct demo *demo) {
         exit(1);
     }
 
-    free(plane_props);
-
     VkDisplayPlaneCapabilitiesKHR planeCaps;
     vkGetDisplayPlaneCapabilitiesKHR(demo->gpu, mode_props.displayMode, plane_index, &planeCaps);
     // Find a supported alpha mode
@@ -3137,6 +3263,8 @@ static VkResult demo_create_display_surface(struct demo *demo) {
     create_info.globalAlpha = 1.0f;
     create_info.imageExtent = image_extent;
 
+    free(plane_props);
+
     return vkCreateDisplayPlaneSurfaceKHR(demo->inst, &create_info, NULL, &demo->surface);
 }
 
@@ -3150,7 +3278,8 @@ static void demo_run_display(struct demo *demo) {
         }
     }
 }
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
 
 #include <sys/keycodes.h>
 
@@ -3256,7 +3385,7 @@ static void demo_run(struct demo *demo) {
     }
 }
 
-static void demo_create_window(struct demo *demo) {
+static void demo_create_screen_window(struct demo *demo) {
     const char *idstr = APP_SHORT_NAME;
     int size[2];
     int usage = SCREEN_USAGE_VULKAN;
@@ -3360,6 +3489,348 @@ int find_display_gpu(int gpu_number, uint32_t gpu_count, VkPhysicalDevice *physi
         return -1;
 }
 #endif
+
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+static void pointer_handle_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx,
+                                 wl_fixed_t sy) {}
+
+static void pointer_handle_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface) {}
+
+static void pointer_handle_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy) {}
+
+static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button,
+                                  uint32_t state) {
+    struct demo *demo = data;
+    if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
+        xdg_toplevel_move(demo->xdg_toplevel, demo->seat, serial);
+    }
+}
+
+static void pointer_handle_axis(void *data, struct wl_pointer *wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {}
+
+static const struct wl_pointer_listener pointer_listener = {
+    pointer_handle_enter, pointer_handle_leave, pointer_handle_motion, pointer_handle_button, pointer_handle_axis,
+};
+
+static void keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size) {}
+
+static void keyboard_handle_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface,
+                                  struct wl_array *keys) {}
+
+static void keyboard_handle_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface) {}
+
+static void keyboard_handle_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key,
+                                uint32_t state) {
+    if (state != WL_KEYBOARD_KEY_STATE_RELEASED) return;
+    struct demo *demo = data;
+    switch (key) {
+        case KEY_ESC:  // Escape
+            demo->quit = true;
+            break;
+        case KEY_LEFT:  // left arrow key
+            demo->spin_angle -= demo->spin_increment;
+            break;
+        case KEY_RIGHT:  // right arrow key
+            demo->spin_angle += demo->spin_increment;
+            break;
+        case KEY_SPACE:  // space bar
+            demo->pause = !demo->pause;
+            break;
+    }
+}
+
+static void keyboard_handle_modifiers(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t mods_depressed,
+                                      uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {}
+
+static const struct wl_keyboard_listener keyboard_listener = {
+    keyboard_handle_keymap, keyboard_handle_enter, keyboard_handle_leave, keyboard_handle_key, keyboard_handle_modifiers,
+};
+
+static void seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps) {
+    // Subscribe to pointer events
+    struct demo *demo = data;
+    if ((caps & WL_SEAT_CAPABILITY_POINTER) && !demo->pointer) {
+        demo->pointer = wl_seat_get_pointer(seat);
+        wl_pointer_add_listener(demo->pointer, &pointer_listener, demo);
+    } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo->pointer) {
+        wl_pointer_destroy(demo->pointer);
+        demo->pointer = NULL;
+    }
+    // Subscribe to keyboard events
+    if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
+        demo->keyboard = wl_seat_get_keyboard(seat);
+        wl_keyboard_add_listener(demo->keyboard, &keyboard_listener, demo);
+    } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && demo->keyboard) {
+        wl_keyboard_destroy(demo->keyboard);
+        demo->keyboard = NULL;
+    }
+}
+
+static const struct wl_seat_listener seat_listener = {
+    seat_handle_capabilities,
+};
+
+static void wm_base_ping(void *data UNUSED, struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
+    xdg_wm_base_pong(xdg_wm_base, serial);
+}
+
+static const struct xdg_wm_base_listener wm_base_listener = {wm_base_ping};
+
+static void registry_handle_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface,
+                                   uint32_t version UNUSED) {
+    struct demo *demo = data;
+    // pickup wayland objects when they appear
+    if (strcmp(interface, wl_compositor_interface.name) == 0) {
+        uint32_t minVersion = version < 4 ? version : 4;
+        demo->compositor = wl_registry_bind(registry, id, &wl_compositor_interface, minVersion);
+        if (demo->VK_KHR_incremental_present_enabled && minVersion < 4) {
+            fprintf(stderr, "Wayland compositor doesn't support VK_KHR_incremental_present, disabling.\n");
+            demo->VK_KHR_incremental_present_enabled = false;
+        }
+    } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
+        demo->xdg_wm_base = wl_registry_bind(registry, id, &xdg_wm_base_interface, 1);
+        xdg_wm_base_add_listener(demo->xdg_wm_base, &wm_base_listener, NULL);
+    } else if (strcmp(interface, wl_seat_interface.name) == 0) {
+        demo->seat = wl_registry_bind(registry, id, &wl_seat_interface, 1);
+        wl_seat_add_listener(demo->seat, &seat_listener, demo);
+    } else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0) {
+        demo->xdg_decoration_mgr = wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1);
+    }
+}
+
+static void registry_handle_global_remove(void *data UNUSED, struct wl_registry *registry UNUSED, uint32_t name UNUSED) {}
+
+static const struct wl_registry_listener registry_listener = {registry_handle_global, registry_handle_global_remove};
+#endif
+
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+static const char *demo_init_xcb_connection(struct demo *demo) {
+    demo->xcb_library = initialize_xcb();
+    if (NULL == demo->xcb_library) {
+        return "Cannot load XCB dynamic library.";
+    }
+
+    const xcb_setup_t *setup;
+    xcb_screen_iterator_t iter;
+    int scr;
+
+    const char *display_envar = getenv("DISPLAY");
+    if (display_envar == NULL || display_envar[0] == '\0') {
+        return "Environment variable DISPLAY requires a valid value.n";
+    }
+
+    demo->connection = xcb_connect(NULL, &scr);
+    if (xcb_connection_has_error(demo->connection) > 0) {
+        return "Cannot connect to XCB.";
+    }
+
+    setup = xcb_get_setup(demo->connection);
+    iter = xcb_setup_roots_iterator(setup);
+    while (scr-- > 0) xcb_screen_next(&iter);
+
+    demo->screen = iter.data;
+    return NULL;
+}
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+static const char *demo_init_xlib_connection(struct demo *demo) {
+    demo->xlib_library = initialize_xlib();
+    if (NULL == demo->xlib_library) {
+        return "Cannot load XLIB dynamic library.";
+    }
+    return NULL;
+}
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+static const char *demo_init_wayland_connection(struct demo *demo) {
+    demo->wayland_library = initialize_wayland();
+    if (NULL == demo->wayland_library) {
+        return "Cannot load wayland dynamic library.";
+    }
+
+    demo->wayland_display = wl_display_connect(NULL);
+
+    if (demo->wayland_display == NULL) {
+        return "Cannot connect to wayland.";
+    }
+
+    demo->registry = wl_display_get_registry(demo->wayland_display);
+    wl_registry_add_listener(demo->registry, &registry_listener, demo);
+    wl_display_roundtrip(demo->wayland_display);
+    return NULL;
+}
+#endif
+
+// Check that WSI platforms are available - only necessary when multiple WSI platforms exist, like on linux
+// If the wsi_platform is AUTO, this function also sets wsi_platform to the first available WSI platform
+// Otherwise, it errors out if the specified wsi_platform isn't available
+static void demo_check_and_set_wsi_platform(struct demo *demo) {
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XCB || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool xcb_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_XCB_SURFACE_EXTENSION_NAME) == 0) {
+                xcb_extension_available = true;
+                break;
+            }
+        }
+        if (xcb_extension_available) {
+            const char *error_msg = demo_init_xcb_connection(demo);
+            if (error_msg != NULL) {
+                if (demo->wsi_platform == WSI_PLATFORM_XCB) {
+                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
+                    fflush(stdout);
+                    exit(1);
+                }
+            } else {
+                demo->wsi_platform = WSI_PLATFORM_XCB;
+                return;
+            }
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XLIB || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool xlib_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_XLIB_SURFACE_EXTENSION_NAME) == 0) {
+                xlib_extension_available = true;
+                break;
+            }
+        }
+        if (xlib_extension_available) {
+            const char *error_msg = demo_init_xlib_connection(demo);
+            if (error_msg != NULL) {
+                if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
+                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
+                    fflush(stdout);
+                    exit(1);
+                }
+            } else {
+                demo->wsi_platform = WSI_PLATFORM_XLIB;
+                return;
+            }
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool wayland_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME) == 0) {
+                wayland_extension_available = true;
+                break;
+            }
+        }
+        if (wayland_extension_available) {
+            const char *error_msg = demo_init_wayland_connection(demo);
+            if (error_msg != NULL) {
+                if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
+                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
+                    fflush(stdout);
+                    exit(1);
+                }
+            } else {
+                demo->wsi_platform = WSI_PLATFORM_WAYLAND;
+                return;
+            }
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    if (demo->wsi_platform == WSI_PLATFORM_DIRECTFB || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool direftfb_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME) == 0) {
+                direftfb_extension_available = true;
+                break;
+            }
+        }
+        if (direftfb_extension_available) {
+            // Because DirectFB is still linked in, we can assume that it works if we got here
+            demo->wsi_platform = WSI_PLATFORM_DIRECTFB;
+            return;
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WIN32 || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool win32_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_WIN32_SURFACE_EXTENSION_NAME) == 0) {
+                win32_extension_available = true;
+                break;
+            }
+        }
+        if (win32_extension_available) {
+            demo->wsi_platform = WSI_PLATFORM_WIN32;
+            return;
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+    if (demo->wsi_platform == WSI_PLATFORM_METAL || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool metal_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_EXT_METAL_SURFACE_EXTENSION_NAME) == 0) {
+                metal_extension_available = true;
+                break;
+            }
+        }
+        if (metal_extension_available) {
+            demo->wsi_platform = WSI_PLATFORM_METAL;
+            return;
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_ANDROID || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool android_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_ANDROID_SURFACE_EXTENSION_NAME) == 0) {
+                android_extension_available = true;
+                break;
+            }
+        }
+        if (android_extension_available) {
+            demo->wsi_platform = WSI_PLATFORM_ANDROID;
+            return;
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+    if (demo->wsi_platform == WSI_PLATFORM_QNX || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool qnx_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_QNX_SCREEN_SURFACE_EXTENSION_NAME) == 0) {
+                qnx_extension_available = true;
+                break;
+            }
+        }
+        if (qnx_extension_available) {
+            demo->wsi_platform = WSI_PLATFORM_ANDROID;
+            return;
+        }
+    }
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_DISPLAY || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool display_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_DISPLAY_EXTENSION_NAME) == 0) {
+                display_extension_available = true;
+                break;
+            }
+        }
+        if (display_extension_available) {
+            // Because DISPLAY doesn't require additional libraries, we can assume that it works if we got here
+            demo->wsi_platform = WSI_PLATFORM_DISPLAY;
+            return;
+        }
+    }
+#endif
+}
+
 static void demo_init_vk(struct demo *demo) {
     VkResult err;
     uint32_t instance_extension_count = 0;
@@ -3406,8 +3877,8 @@ static void demo_init_vk(struct demo *demo) {
     }
 
     /* Look for instance extensions */
-    VkBool32 surfaceExtFound = 0;
-    VkBool32 platformSurfaceExtFound = 0;
+    VkBool32 surfaceExtFound = false;
+    VkBool32 platformSurfaceExtFound = false;
     bool portabilityEnumerationActive = false;
     memset(demo->extension_names, 0, sizeof(demo->extension_names));
 
@@ -3420,52 +3891,69 @@ static void demo_init_vk(struct demo *demo) {
         assert(!err);
         for (uint32_t i = 0; i < instance_extension_count; i++) {
             if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                surfaceExtFound = 1;
+                surfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_SURFACE_EXTENSION_NAME;
             }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-            if (!strcmp(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+            if (!strcmp(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_WIN32)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-            if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+            if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_XLIB)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-            if (!strcmp(VK_KHR_XCB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+            if (!strcmp(VK_KHR_XCB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_XCB)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_XCB_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-            if (!strcmp(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+            if (!strcmp(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_WAYLAND)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-            if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+            if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_DIRECTFB)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
-            if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+            if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_DISPLAY)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_DISPLAY_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-            if (!strcmp(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+            if (!strcmp(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_ANDROID)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_ANDROID_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
-            if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+            if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_METAL)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_EXT_METAL_SURFACE_EXTENSION_NAME;
             }
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-            if (!strcmp(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName)) {
-                platformSurfaceExtFound = 1;
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+            if (!strcmp(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME, instance_extensions[i].extensionName) &&
+                (demo->wsi_platform == WSI_PLATFORM_AUTO || demo->wsi_platform == WSI_PLATFORM_QNX)) {
+                platformSurfaceExtFound = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_QNX_SCREEN_SURFACE_EXTENSION_NAME;
             }
 #endif
@@ -3477,8 +3965,8 @@ static void demo_init_vk(struct demo *demo) {
                     demo->extension_names[demo->enabled_extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
                 }
             }
-            // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable the
-            // portability enumeration extension.
+            // We want cube to be able to enumerate drivers that support the portability_subset extension, so we have to enable
+            // the portability enumeration extension.
             if (!strcmp(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, instance_extensions[i].extensionName)) {
                 portabilityEnumerationActive = true;
                 demo->extension_names[demo->enabled_extension_count++] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
@@ -3498,61 +3986,102 @@ static void demo_init_vk(struct demo *demo) {
     }
     if (!platformSurfaceExtFound) {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XCB_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_DISPLAY_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-        ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
-                 "vkCreateInstance Failure");
+        if (demo->wsi_platform == WSI_PLATFORM_WIN32) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
 #endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+        if (demo->wsi_platform == WSI_PLATFORM_METAL) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+        if (demo->wsi_platform == WSI_PLATFORM_XCB) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XCB_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+        if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+        if (demo->wsi_platform == WSI_PLATFORM_DISPLAY) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_DISPLAY_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+        if (demo->wsi_platform == WSI_PLATFORM_ANDROID) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+        if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        if (demo->wsi_platform == WSI_PLATFORM_DIRECTFB) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+        if (demo->wsi_platform == WSI_PLATFORM_WIN32) {
+            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
+                     " extension.\n\n"
+                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                     "Please look at the Getting Started guide for additional information.\n",
+                     "vkCreateInstance Failure");
+        }
+#endif
+        ERR_EXIT(
+            "vkEnumerateInstanceExtensionProperties failed to find any supported WSI surface extension.\n\n"
+            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+            "Please look at the Getting Started guide for additional information.\n",
+            "vkCreateInstance Failure");
     }
+
+    bool auto_wsi_platform = demo->wsi_platform == WSI_PLATFORM_AUTO;
+
+    demo_check_and_set_wsi_platform(demo);
+
+    // Print a message to indicate the automatically set WSI platform
+    if (auto_wsi_platform && demo->wsi_platform != WSI_PLATFORM_AUTO) {
+        fprintf(stderr, "Selected WSI platform: %s\n", wsi_to_string(demo->wsi_platform));
+    }
+
     const VkApplicationInfo app = {
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = NULL,
@@ -3636,48 +4165,55 @@ static void demo_init_vk(struct demo *demo) {
         ERR_EXIT("Specified GPU number is not present", "User Error");
     }
 
+    if (demo->wsi_platform == WSI_PLATFORM_DISPLAY) {
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-    demo->gpu_number = find_display_gpu(demo->gpu_number, gpu_count, physical_devices);
-    if (demo->gpu_number < 0) {
-        printf("Cannot find any display!\n");
+        demo->gpu_number = find_display_gpu(demo->gpu_number, gpu_count, physical_devices);
+        if (demo->gpu_number < 0) {
+            printf("Cannot find any display!\n");
+            fflush(stdout);
+            exit(1);
+        }
+#else
+        printf("WSI selection was set to DISPLAY but vkcube was not compiled with support for the DISPLAY platform, exiting \n");
         fflush(stdout);
         exit(1);
-    }
-#else
-    /* Try to auto select most suitable device */
-    if (demo->gpu_number == -1) {
-        uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
-        memset(count_device_type, 0, sizeof(count_device_type));
+#endif
+    } else {
+        /* Try to auto select most suitable device */
+        if (demo->gpu_number == -1) {
+            uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
+            memset(count_device_type, 0, sizeof(count_device_type));
 
-        VkPhysicalDeviceProperties physicalDeviceProperties;
-        for (uint32_t i = 0; i < gpu_count; i++) {
-            vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
-            assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
-            count_device_type[physicalDeviceProperties.deviceType]++;
-        }
+            VkPhysicalDeviceProperties physicalDeviceProperties;
+            for (uint32_t i = 0; i < gpu_count; i++) {
+                vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
+                assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
+                count_device_type[physicalDeviceProperties.deviceType]++;
+            }
 
-        VkPhysicalDeviceType search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-        if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU]) {
-            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU]) {
-            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
-        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU]) {
-            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
-        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU]) {
-            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_CPU;
-        } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_OTHER]) {
-            search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_OTHER;
-        }
+            VkPhysicalDeviceType search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+            if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU]) {
+                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU]) {
+                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
+            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU]) {
+                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
+            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU]) {
+                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_CPU;
+            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_OTHER]) {
+                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_OTHER;
+            }
 
-        for (uint32_t i = 0; i < gpu_count; i++) {
-            vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
-            if (physicalDeviceProperties.deviceType == search_for_device_type) {
-                demo->gpu_number = i;
-                break;
+            for (uint32_t i = 0; i < gpu_count; i++) {
+                vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
+                if (physicalDeviceProperties.deviceType == search_for_device_type) {
+                    demo->gpu_number = i;
+                    break;
+                }
             }
         }
     }
-#endif
+
     assert(demo->gpu_number >= 0);
     demo->gpu = physical_devices[demo->gpu_number];
     {
@@ -3828,81 +4364,108 @@ static void demo_create_device(struct demo *demo) {
 }
 
 static void demo_create_surface(struct demo *demo) {
-    VkResult U_ASSERT_ONLY err;
+    VkResult U_ASSERT_ONLY err = VK_SUCCESS;
 
 // Create a WSI surface for the window:
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-    VkWin32SurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.hinstance = demo->connection;
-    createInfo.hwnd = demo->window;
+    if (demo->wsi_platform == WSI_PLATFORM_WIN32) {
+        VkWin32SurfaceCreateInfoKHR win32_createInfo;
+        win32_createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        win32_createInfo.pNext = NULL;
+        win32_createInfo.flags = 0;
+        win32_createInfo.hinstance = demo->connection;
+        win32_createInfo.hwnd = demo->window;
 
-    err = vkCreateWin32SurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    VkWaylandSurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.display = demo->display;
-    createInfo.surface = demo->window;
+        err = vkCreateWin32SurfaceKHR(demo->inst, &win32_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
+        VkWaylandSurfaceCreateInfoKHR wayland_createInfo;
+        wayland_createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+        wayland_createInfo.pNext = NULL;
+        wayland_createInfo.flags = 0;
+        wayland_createInfo.display = demo->wayland_display;
+        wayland_createInfo.surface = demo->window;
 
-    err = vkCreateWaylandSurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
-    VkAndroidSurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.window = (struct ANativeWindow *)(demo->window);
+        err = vkCreateWaylandSurfaceKHR(demo->inst, &wayland_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_ANDROID) {
+        VkAndroidSurfaceCreateInfoKHR android_createInfo;
+        android_createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+        android_createInfo.pNext = NULL;
+        android_createInfo.flags = 0;
+        android_createInfo.window = (struct ANativeWindow *)(demo->window);
 
-    err = vkCreateAndroidSurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-    VkXlibSurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.dpy = demo->display;
-    createInfo.window = demo->xlib_window;
+        err = vkCreateAndroidSurfaceKHR(demo->inst, &android_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
+        VkXlibSurfaceCreateInfoKHR xlib_createInfo;
+        xlib_createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+        xlib_createInfo.pNext = NULL;
+        xlib_createInfo.flags = 0;
+        xlib_createInfo.dpy = demo->xlib_display;
+        xlib_createInfo.window = demo->xlib_window;
 
-    err = vkCreateXlibSurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-    VkXcbSurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.connection = demo->connection;
-    createInfo.window = demo->xcb_window;
+        err = vkCreateXlibSurfaceKHR(demo->inst, &xlib_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XCB) {
+        VkXcbSurfaceCreateInfoKHR xcb_createInfo;
+        xcb_createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+        xcb_createInfo.pNext = NULL;
+        xcb_createInfo.flags = 0;
+        xcb_createInfo.connection = demo->connection;
+        xcb_createInfo.window = demo->xcb_window;
 
-    err = vkCreateXcbSurfaceKHR(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    VkDirectFBSurfaceCreateInfoEXT createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_DIRECTFB_SURFACE_CREATE_INFO_EXT;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.dfb = demo->dfb;
-    createInfo.surface = demo->window;
+        err = vkCreateXcbSurfaceKHR(demo->inst, &xcb_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+    if (demo->wsi_platform == WSI_PLATFORM_DIRECTFB) {
+        VkDirectFBSurfaceCreateInfoEXT directfb_createInfo;
+        directfb_createInfo.sType = VK_STRUCTURE_TYPE_DIRECTFB_SURFACE_CREATE_INFO_EXT;
+        directfb_createInfo.pNext = NULL;
+        directfb_createInfo.flags = 0;
+        directfb_createInfo.dfb = demo->dfb;
+        directfb_createInfo.surface = demo->directfb_window;
 
-    err = vkCreateDirectFBSurfaceEXT(demo->inst, &createInfo, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
-    err = demo_create_display_surface(demo);
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
-    VkMetalSurfaceCreateInfoEXT surface;
-    surface.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
-    surface.pNext = NULL;
-    surface.flags = 0;
-    surface.pLayer = demo->caMetalLayer;
+        err = vkCreateDirectFBSurfaceEXT(demo->inst, &directfb_createInfo, NULL, &demo->surface);
+    }
 
-    err = vkCreateMetalSurfaceEXT(demo->inst, &surface, NULL, &demo->surface);
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-    VkScreenSurfaceCreateInfoQNX createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
-    createInfo.pNext = NULL;
-    createInfo.flags = 0;
-    createInfo.context = demo->screen_context;
-    createInfo.window = demo->screen_window;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_DISPLAY) {
+        err = demo_create_display_surface(demo);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+    if (demo->wsi_platform == WSI_PLATFORM_METAL) {
+        VkMetalSurfaceCreateInfoEXT metal_createInfo;
+        metal_createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+        metal_createInfo.pNext = NULL;
+        metal_createInfo.flags = 0;
+        metal_createInfo.pLayer = demo->caMetalLayer;
 
-    err = vkCreateScreenSurfaceQNX(demo->inst, &createInfo, NULL, &demo->surface);
+        err = vkCreateMetalSurfaceEXT(demo->inst, &metal_createInfo, NULL, &demo->surface);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+    if (demo->wsi_platform == WSI_PLATFORM_QNX) {
+        VkScreenSurfaceCreateInfoQNX qnx_createInfo;
+        qnx_createInfo.sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
+        qnx_createInfo.pNext = NULL;
+        qnx_createInfo.flags = 0;
+        qnx_createInfo.context = demo->screen_context;
+        qnx_createInfo.window = demo->screen_window;
+
+        err = vkCreateScreenSurfaceQNX(demo->inst, &qnx_createInfo, NULL, &demo->surface);
+    }
 #endif
     assert(!err);
 }
@@ -4038,159 +4601,6 @@ static void demo_init_vk_swapchain(struct demo *demo) {
     vkGetPhysicalDeviceMemoryProperties(demo->gpu, &demo->memory_properties);
 }
 
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-static void pointer_handle_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx,
-                                 wl_fixed_t sy) {}
-
-static void pointer_handle_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface) {}
-
-static void pointer_handle_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy) {}
-
-static void pointer_handle_button(void *data, struct wl_pointer *wl_pointer, uint32_t serial, uint32_t time, uint32_t button,
-                                  uint32_t state) {
-    struct demo *demo = data;
-    if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
-        xdg_toplevel_move(demo->xdg_toplevel, demo->seat, serial);
-    }
-}
-
-static void pointer_handle_axis(void *data, struct wl_pointer *wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {}
-
-static const struct wl_pointer_listener pointer_listener = {
-    pointer_handle_enter, pointer_handle_leave, pointer_handle_motion, pointer_handle_button, pointer_handle_axis,
-};
-
-static void keyboard_handle_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size) {}
-
-static void keyboard_handle_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface,
-                                  struct wl_array *keys) {}
-
-static void keyboard_handle_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface) {}
-
-static void keyboard_handle_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key,
-                                uint32_t state) {
-    if (state != WL_KEYBOARD_KEY_STATE_RELEASED) return;
-    struct demo *demo = data;
-    switch (key) {
-        case KEY_ESC:  // Escape
-            demo->quit = true;
-            break;
-        case KEY_LEFT:  // left arrow key
-            demo->spin_angle -= demo->spin_increment;
-            break;
-        case KEY_RIGHT:  // right arrow key
-            demo->spin_angle += demo->spin_increment;
-            break;
-        case KEY_SPACE:  // space bar
-            demo->pause = !demo->pause;
-            break;
-    }
-}
-
-static void keyboard_handle_modifiers(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t mods_depressed,
-                                      uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {}
-
-static const struct wl_keyboard_listener keyboard_listener = {
-    keyboard_handle_keymap, keyboard_handle_enter, keyboard_handle_leave, keyboard_handle_key, keyboard_handle_modifiers,
-};
-
-static void seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps) {
-    // Subscribe to pointer events
-    struct demo *demo = data;
-    if ((caps & WL_SEAT_CAPABILITY_POINTER) && !demo->pointer) {
-        demo->pointer = wl_seat_get_pointer(seat);
-        wl_pointer_add_listener(demo->pointer, &pointer_listener, demo);
-    } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && demo->pointer) {
-        wl_pointer_destroy(demo->pointer);
-        demo->pointer = NULL;
-    }
-    // Subscribe to keyboard events
-    if (caps & WL_SEAT_CAPABILITY_KEYBOARD) {
-        demo->keyboard = wl_seat_get_keyboard(seat);
-        wl_keyboard_add_listener(demo->keyboard, &keyboard_listener, demo);
-    } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && demo->keyboard) {
-        wl_keyboard_destroy(demo->keyboard);
-        demo->keyboard = NULL;
-    }
-}
-
-static const struct wl_seat_listener seat_listener = {
-    seat_handle_capabilities,
-};
-
-static void wm_base_ping(void *data UNUSED, struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
-    xdg_wm_base_pong(xdg_wm_base, serial);
-}
-
-static const struct xdg_wm_base_listener wm_base_listener = {wm_base_ping};
-
-static void registry_handle_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface,
-                                   uint32_t version UNUSED) {
-    struct demo *demo = data;
-    // pickup wayland objects when they appear
-    if (strcmp(interface, wl_compositor_interface.name) == 0) {
-        uint32_t minVersion = version < 4 ? version : 4;
-        demo->compositor = wl_registry_bind(registry, id, &wl_compositor_interface, minVersion);
-        if (demo->VK_KHR_incremental_present_enabled && minVersion < 4) {
-            fprintf(stderr, "Wayland compositor doesn't support VK_KHR_incremental_present, disabling.\n");
-            demo->VK_KHR_incremental_present_enabled = false;
-        }
-    } else if (strcmp(interface, xdg_wm_base_interface.name) == 0) {
-        demo->xdg_wm_base = wl_registry_bind(registry, id, &xdg_wm_base_interface, 1);
-        xdg_wm_base_add_listener(demo->xdg_wm_base, &wm_base_listener, NULL);
-    } else if (strcmp(interface, wl_seat_interface.name) == 0) {
-        demo->seat = wl_registry_bind(registry, id, &wl_seat_interface, 1);
-        wl_seat_add_listener(demo->seat, &seat_listener, demo);
-    } else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0) {
-        demo->xdg_decoration_mgr = wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1);
-    }
-}
-
-static void registry_handle_global_remove(void *data UNUSED, struct wl_registry *registry UNUSED, uint32_t name UNUSED) {}
-
-static const struct wl_registry_listener registry_listener = {registry_handle_global, registry_handle_global_remove};
-#endif
-
-static void demo_init_connection(struct demo *demo) {
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-    const xcb_setup_t *setup;
-    xcb_screen_iterator_t iter;
-    int scr;
-
-    const char *display_envar = getenv("DISPLAY");
-    if (display_envar == NULL || display_envar[0] == '\0') {
-        printf("Environment variable DISPLAY requires a valid value.\nExiting ...\n");
-        fflush(stdout);
-        exit(1);
-    }
-
-    demo->connection = xcb_connect(NULL, &scr);
-    if (xcb_connection_has_error(demo->connection) > 0) {
-        printf("Cannot connect to XCB.\nExiting ...\n");
-        fflush(stdout);
-        exit(1);
-    }
-
-    setup = xcb_get_setup(demo->connection);
-    iter = xcb_setup_roots_iterator(setup);
-    while (scr-- > 0) xcb_screen_next(&iter);
-
-    demo->screen = iter.data;
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    demo->display = wl_display_connect(NULL);
-
-    if (demo->display == NULL) {
-        printf("Cannot connect to wayland.\nExiting ...\n");
-        fflush(stdout);
-        exit(1);
-    }
-
-    demo->registry = wl_display_get_registry(demo->display);
-    wl_registry_add_listener(demo->registry, &registry_listener, demo);
-    wl_display_roundtrip(demo->display);
-#endif
-}
-
 static void demo_init(struct demo *demo, int argc, char **argv) {
     vec3 eye = {0.0f, 3.0f, 5.0f};
     vec3 origin = {0, 0, 0};
@@ -4223,7 +4633,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             continue;
         }
         if (strcmp(argv[i], "--xlib") == 0) {
-            fprintf(stderr, "--xlib is deprecated and no longer does anything");
+            fprintf(stderr, "--xlib is deprecated and no longer does anything\n");
             continue;
         }
         if (strcmp(argv[i], "--c") == 0 && demo->frameCount == INT32_MAX && i < argc - 1 &&
@@ -4275,10 +4685,85 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             demo->force_errors = true;
             continue;
         }
-
+        if ((strcmp(argv[i], "--wsi") == 0) && (i < argc - 1)) {
+            size_t argc_len = strlen(argv[i + 1]);
+            for (size_t argc_i = 0; argc_i < argc_len; argc_i++) {
+                argv[i + 1][argc_i] = tolower(argv[i + 1][argc_i]);
+            }
+            WSI_PLATFORM selection = wsi_from_string(argv[i + 1]);
+            if (selection == WSI_PLATFORM_INVALID) {
+                printf(
+                    "The --wsi parameter %s is not a supported WSI platform. The list of available platforms is available from "
+                    "--help\n",
+                    (const char *)&(argv[i + 1][0]));
+                fflush(stdout);
+                exit(1);
+            }
+            demo->wsi_platform = selection;
+            i++;
+            continue;
+        }
 #if defined(ANDROID)
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
 #else
+
+        // Making the help for --wsi nice requires a little extra work since the list depends on what is available at
+        // compile time
+        size_t max_str_len = 100;
+        char *available_wsi_platforms = (char *)malloc(max_str_len);
+        memset(available_wsi_platforms, 0, max_str_len);
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+        strncat(available_wsi_platforms, "xcb", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "xlib", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "wayland", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "directfb", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "display", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "win32", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "android", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "metal", max_str_len);
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+        if (strlen(available_wsi_platforms) > 0) {
+            strncat(available_wsi_platforms, "|", max_str_len);
+        }
+        strncat(available_wsi_platforms, "qnx", max_str_len);
+#endif
+
         char *message =
             "Usage:\n  %s\t[--use_staging] [--validate]\n"
             "\t[--break] [--c <framecount>] [--suppress_popups]\n"
@@ -4287,19 +4772,20 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             "\t[--present_mode <present mode enum>]\n"
             "\t[--width <width>] [--height <height>]\n"
             "\t[--force_errors]\n"
+            "\t[--wsi <%s>]\n"
             "\t<present_mode_enum>\n"
             "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_MAILBOX_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_FIFO_KHR = %d\n"
             "\t\tVK_PRESENT_MODE_FIFO_RELAXED_KHR = %d\n";
-        int length = snprintf(NULL, 0, message, APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR,
-                              VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
+        int length = snprintf(NULL, 0, message, APP_SHORT_NAME, available_wsi_platforms, VK_PRESENT_MODE_IMMEDIATE_KHR,
+                              VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
         char *usage = (char *)malloc(length + 1);
         if (!usage) {
             exit(1);
         }
-        snprintf(usage, length + 1, message, APP_SHORT_NAME, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_MAILBOX_KHR,
-                 VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
+        snprintf(usage, length + 1, message, APP_SHORT_NAME, available_wsi_platforms, VK_PRESENT_MODE_IMMEDIATE_KHR,
+                 VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR, VK_PRESENT_MODE_FIFO_RELAXED_KHR);
 #if defined(_WIN32)
         if (!demo->suppress_popups) MessageBox(NULL, usage, "Usage Error", MB_OK);
 #else
@@ -4310,8 +4796,6 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
         exit(1);
 #endif
     }
-
-    demo_init_connection(demo);
 
     demo_init_vk(demo);
 
@@ -4418,7 +4902,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     return (int)msg.wParam;
 }
 
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
+#endif
+#if defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_main(struct demo *demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo_init(demo, argc, (char **)argv);
     demo->caMetalLayer = caMetalLayer;
@@ -4427,7 +4912,8 @@ static void demo_main(struct demo *demo, void *caMetalLayer, int argc, const cha
     demo->spin_angle = 0.4f;
 }
 
-#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+#endif
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
 #include <android/log.h>
 #include <android_native_app_glue.h>
 #include "android_util.h"
@@ -4514,40 +5000,94 @@ void android_main(struct android_app *app) {
         }
     }
 }
-#else
+#elif defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__) || defined(__GNU__)
 int main(int argc, char **argv) {
     struct demo demo;
 
     demo_init(&demo, argc, argv);
+    switch (demo.wsi_platform) {
+        default:
+        case (WSI_PLATFORM_AUTO):
+            fprintf(stderr,
+                    "WSI platform should have already been set, indicating a bug. Please set a WSI platform manually with "
+                    "--wsi\n");
+            exit(1);
+            break;
 #if defined(VK_USE_PLATFORM_XCB_KHR)
-    demo_create_xcb_window(&demo);
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-    demo_create_xlib_window(&demo);
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    demo_create_window(&demo);
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    demo_create_directfb_window(&demo);
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-    demo_create_window(&demo);
+        case (WSI_PLATFORM_XCB):
+            demo_create_xcb_window(&demo);
+            break;
 #endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+        case (WSI_PLATFORM_XLIB):
+            demo_create_xlib_window(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+        case (WSI_PLATFORM_WAYLAND):
+            demo_create_wayland_window(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        case (WSI_PLATFORM_DIRECTFB):
+            demo_create_directfb_window(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+        case (WSI_PLATFORM_QNX):
+            demo_create_screen_window(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+        case (WSI_PLATFORM_DISPLAY):
+            // nothing to do here
+            break;
+#endif
+    }
 
     demo_init_vk_swapchain(&demo);
 
     demo_prepare(&demo);
 
+    switch (demo.wsi_platform) {
+        default:
+        case (WSI_PLATFORM_AUTO):
+            fprintf(stderr,
+                    "WSI platform should have already been set, indicating a bug. Please set a WSI platform manually with "
+                    "--wsi\n");
+            exit(1);
+            break;
 #if defined(VK_USE_PLATFORM_XCB_KHR)
-    demo_run_xcb(&demo);
-#elif defined(VK_USE_PLATFORM_XLIB_KHR)
-    demo_run_xlib(&demo);
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    demo_run(&demo);
-#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    demo_run_directfb(&demo);
-#elif defined(VK_USE_PLATFORM_DISPLAY_KHR)
-    demo_run_display(&demo);
-#elif defined(VK_USE_PLATFORM_SCREEN_QNX)
-    demo_run(&demo);
+        case (WSI_PLATFORM_XCB):
+            demo_run_xcb(&demo);
+            break;
 #endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+        case (WSI_PLATFORM_XLIB):
+            demo_run_xlib(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+        case (WSI_PLATFORM_WAYLAND):
+            demo_run(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+        case (WSI_PLATFORM_DIRECTFB):
+            demo_run_directfb(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
+        case (WSI_PLATFORM_DISPLAY):
+            demo_run_display(&demo);
+            break;
+#endif
+#if defined(VK_USE_PLATFORM_SCREEN_QNX)
+        case (WSI_PLATFORM_QNX):
+            demo_run(&demo);
+            break;
+#endif
+    }
 
     demo_cleanup(&demo);
 

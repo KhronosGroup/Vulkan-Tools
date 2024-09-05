@@ -38,26 +38,17 @@ jobs:
                 cxx: [ g++ ]
                 config: [ Debug, Release ]
                 os: [ ubuntu-20.04, ubuntu-22.04 ]
-                cube_wsi: [ XCB ]
                 include:
-                    # Test WAYLAND
-                  - cc: gcc
-                    cxx: g++
-                    config: Release
-                    os: ubuntu-22.04
-                    cube_wsi: WAYLAND
-                    # Test clang on ubuntu 20 with XLIB
+                    # Test clang on ubuntu 20
                   - cc: clang
                     cxx: clang++
                     config: Debug
                     os: ubuntu-20.04
-                    cube_wsi: XLIB
-                    # Test clang on ubuntu 22 with the DISPLAY option
+                    # Test clang on ubuntu 22
                   - cc: clang
                     cxx: clang++
                     config: Release
                     os: ubuntu-22.04
-                    cube_wsi: DISPLAY
 
 
         steps:
@@ -67,14 +58,14 @@ jobs:
                 python-version: '3.7'
             - run: |
                 sudo apt-get -qq update
-                sudo apt install libwayland-dev xorg-dev wayland-protocols
+                sudo apt install --yes libwayland-dev xorg-dev wayland-protocols
             - uses: lukka/get-cmake@latest
               with:
                 cmakeVersion: 3.17.2
             - name: Setup ccache
               uses: hendrikmuhs/ccache-action@v1.2
               with:
-                key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}-${{matrix.cube_wsi}}
+                key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}
             # This is to combat a bug when using 6.6 linux kernels with thread/address sanitizer
             # https://github.com/google/sanitizers/issues/1716
             - run: sudo sysctl vm.mmap_rnd_bits=28
@@ -82,7 +73,6 @@ jobs:
               run: |
                 cmake -S. -B build -G "Ninja" \
                 -D CMAKE_BUILD_TYPE=${{matrix.config}} \
-                -D CUBE_WSI_SELECTION=${{matrix.cube_wsi}} \
                 -D UPDATE_DEPS=ON \
                 -D BUILD_WERROR=ON \
                 -D INSTALL_ICD=ON \
@@ -234,7 +224,7 @@ jobs:
         - uses: actions/setup-python@v5
           with:
             python-version: '3.10'
-        - run: sudo apt-get -qq update && sudo apt install libwayland-dev xorg-dev wayland-protocols
+        - run: sudo apt-get -qq update && sudo apt install --yes libwayland-dev xorg-dev wayland-protocols
         - run: cmake -S . -B build/ -D UPDATE_DEPS=ON -D UPDATE_DEPS_DIR=external -D TOOLS_CODEGEN=ON
         - run: cmake --build build --target tools_codegen
         - run: git diff --exit-code
