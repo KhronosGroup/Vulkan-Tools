@@ -75,6 +75,9 @@ jobs:
               uses: hendrikmuhs/ccache-action@v1.2
               with:
                 key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}-${{matrix.cube_wsi}}
+            # This is to combat a bug when using 6.6 linux kernels with thread/address sanitizer
+            # https://github.com/google/sanitizers/issues/1716
+            - run: sudo sysctl vm.mmap_rnd_bits=28
             - name: Configure
               run: |
                 cmake -S. -B build -G "Ninja" \
@@ -84,7 +87,7 @@ jobs:
                 -D BUILD_WERROR=ON \
                 -D INSTALL_ICD=ON \
                 -D BUILD_TESTS=ON \
-                -D ENABLE_ADDRESS_SANITIZER=OFF # Re-enable when github CI doesn't have fatal issues
+                -D ENABLE_ADDRESS_SANITIZER=ON
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
