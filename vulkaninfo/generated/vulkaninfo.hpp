@@ -4061,13 +4061,15 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
     }
 }
 
-void prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain>& chain) {
+bool prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain>& chain) {
+    (void)chain;
     chain->VkPhysicalDeviceHostImageCopyPropertiesEXT_pCopySrcLayouts.resize(chain->PhysicalDeviceHostImageCopyPropertiesEXT.copySrcLayoutCount);
     chain->PhysicalDeviceHostImageCopyPropertiesEXT.pCopySrcLayouts = chain->VkPhysicalDeviceHostImageCopyPropertiesEXT_pCopySrcLayouts.data();
     chain->VkPhysicalDeviceHostImageCopyPropertiesEXT_pCopyDstLayouts.resize(chain->PhysicalDeviceHostImageCopyPropertiesEXT.copyDstLayoutCount);
     chain->PhysicalDeviceHostImageCopyPropertiesEXT.pCopyDstLayouts = chain->VkPhysicalDeviceHostImageCopyPropertiesEXT_pCopyDstLayouts.data();
     chain->VkPhysicalDeviceLayeredApiPropertiesListKHR_pLayeredApis.resize(chain->PhysicalDeviceLayeredApiPropertiesListKHR.layeredApiCount);
     chain->PhysicalDeviceLayeredApiPropertiesListKHR.pLayeredApis = chain->VkPhysicalDeviceLayeredApiPropertiesListKHR_pLayeredApis.data();
+    return true;
 }
 struct phys_device_mem_props2_chain {
     phys_device_mem_props2_chain() = default;
@@ -4096,6 +4098,11 @@ void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2& start
     chain->initialize_chain(gpu);
     start.pNext = chain->start_of_chain;
 };
+
+bool prepare_phys_device_mem_props2_twocall_chain_vectors(std::unique_ptr<phys_device_mem_props2_chain>& chain) {
+    (void)chain;
+    return false;
+}
 struct phys_device_features2_chain {
     phys_device_features2_chain() = default;
     phys_device_features2_chain(const phys_device_features2_chain &) = delete;
@@ -5408,6 +5415,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         place = structure->pNext;
     }
 }
+
+bool prepare_phys_device_features2_twocall_chain_vectors(std::unique_ptr<phys_device_features2_chain>& chain) {
+    (void)chain;
+    return false;
+}
 struct surface_capabilities2_chain {
     surface_capabilities2_chain() = default;
     surface_capabilities2_chain(const surface_capabilities2_chain &) = delete;
@@ -5474,6 +5486,11 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
         place = structure->pNext;
     }
 }
+
+bool prepare_surface_capabilities2_twocall_chain_vectors(std::unique_ptr<surface_capabilities2_chain>& chain) {
+    (void)chain;
+    return false;
+}
 struct format_properties2_chain {
     format_properties2_chain() = default;
     format_properties2_chain(const format_properties2_chain &) = delete;
@@ -5523,6 +5540,11 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place) {
         }
         place = structure->pNext;
     }
+}
+
+bool prepare_format_properties2_twocall_chain_vectors(std::unique_ptr<format_properties2_chain>& chain) {
+    (void)chain;
+    return false;
 }
 struct queue_properties2_chain {
     queue_properties2_chain() = default;
@@ -5582,6 +5604,11 @@ void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place) {
         }
         place = structure->pNext;
     }
+}
+
+bool prepare_queue_properties2_twocall_chain_vectors(std::unique_ptr<queue_properties2_chain>& chain) {
+    (void)chain;
+    return false;
 }
 bool operator==(const VkExtent2D & a, const VkExtent2D b);
 bool operator==(const VkSurfaceCapabilities2EXT & a, const VkSurfaceCapabilities2EXT b);
