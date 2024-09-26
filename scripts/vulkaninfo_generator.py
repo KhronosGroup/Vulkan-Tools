@@ -901,19 +901,10 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
         out += '    }\n'
         out += '}\n'
 
-    should_print_twocall_func = False
-    for s in structs_to_print:
-        if not s.hasLengthmember:
-            continue
-        if s.name in STRUCT_BLACKLIST:
-            continue
-        should_print_twocall_func = True
-
-    if not should_print_twocall_func:
-        return out
-
     out += '\n'
-    out += f'void prepare_{listName}_twocall_chain_vectors(std::unique_ptr<{listName}_chain>& chain) {{\n'
+    out += f'bool prepare_{listName}_twocall_chain_vectors(std::unique_ptr<{listName}_chain>& chain) {{\n'
+    out += '    (void)chain;\n'
+    is_twocall = False
     for s in structs_to_print:
         if not s.hasLengthmember:
             continue
@@ -925,6 +916,8 @@ void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_p
                 out += f'    chain->{s.name}_{member.name}.resize(chain->{s.name[2:]}.{member.arrayLength});\n'
                 out += f'    chain->{s.name[2:]}.{member.name} = chain->{s.name}_{member.name}.data();\n'
         out += AddGuardFooter(s)
+        is_twocall = True
+    out += f'    return {"true" if is_twocall else "false"};\n'
     out += '}\n'
 
     return out
