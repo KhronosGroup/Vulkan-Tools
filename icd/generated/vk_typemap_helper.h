@@ -8244,6 +8244,132 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VAL
     typedef VkPhysicalDeviceRayTracingValidationFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT> {
+    typedef VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT Type;
+};
+
+// Map type VkGeneratedCommandsMemoryRequirementsInfoEXT to id VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT
+template <> struct LvlTypeMap<VkGeneratedCommandsMemoryRequirementsInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT> {
+    typedef VkGeneratedCommandsMemoryRequirementsInfoEXT Type;
+};
+
+// Map type VkIndirectExecutionSetPipelineInfoEXT to id VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT
+template <> struct LvlTypeMap<VkIndirectExecutionSetPipelineInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT> {
+    typedef VkIndirectExecutionSetPipelineInfoEXT Type;
+};
+
+// Map type VkIndirectExecutionSetShaderLayoutInfoEXT to id VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT
+template <> struct LvlTypeMap<VkIndirectExecutionSetShaderLayoutInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT> {
+    typedef VkIndirectExecutionSetShaderLayoutInfoEXT Type;
+};
+
+// Map type VkIndirectExecutionSetShaderInfoEXT to id VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT
+template <> struct LvlTypeMap<VkIndirectExecutionSetShaderInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT> {
+    typedef VkIndirectExecutionSetShaderInfoEXT Type;
+};
+
+// Map type VkIndirectExecutionSetCreateInfoEXT to id VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkIndirectExecutionSetCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT> {
+    typedef VkIndirectExecutionSetCreateInfoEXT Type;
+};
+
+// Map type VkGeneratedCommandsInfoEXT to id VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT
+template <> struct LvlTypeMap<VkGeneratedCommandsInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT> {
+    typedef VkGeneratedCommandsInfoEXT Type;
+};
+
+// Map type VkWriteIndirectExecutionSetPipelineEXT to id VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT
+template <> struct LvlTypeMap<VkWriteIndirectExecutionSetPipelineEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT> {
+    typedef VkWriteIndirectExecutionSetPipelineEXT Type;
+};
+
+// Map type VkIndirectCommandsLayoutTokenEXT to id VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT
+template <> struct LvlTypeMap<VkIndirectCommandsLayoutTokenEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT> {
+    typedef VkIndirectCommandsLayoutTokenEXT Type;
+};
+
+// Map type VkIndirectCommandsLayoutCreateInfoEXT to id VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkIndirectCommandsLayoutCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT> {
+    typedef VkIndirectCommandsLayoutCreateInfoEXT Type;
+};
+
+// Map type VkGeneratedCommandsPipelineInfoEXT to id VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT
+template <> struct LvlTypeMap<VkGeneratedCommandsPipelineInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT> {
+    typedef VkGeneratedCommandsPipelineInfoEXT Type;
+};
+
+// Map type VkGeneratedCommandsShaderInfoEXT to id VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT
+template <> struct LvlTypeMap<VkGeneratedCommandsShaderInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT> {
+    typedef VkGeneratedCommandsShaderInfoEXT Type;
+};
+
+// Map type VkWriteIndirectExecutionSetShaderEXT to id VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT
+template <> struct LvlTypeMap<VkWriteIndirectExecutionSetShaderEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT> {
+    typedef VkWriteIndirectExecutionSetShaderEXT Type;
+};
+
 // Map type VkPhysicalDeviceImageAlignmentControlFeaturesMESA to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA
 template <> struct LvlTypeMap<VkPhysicalDeviceImageAlignmentControlFeaturesMESA> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA;
@@ -8269,6 +8395,24 @@ template <> struct LvlTypeMap<VkImageAlignmentControlCreateInfoMESA> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA> {
     typedef VkImageAlignmentControlCreateInfoMESA Type;
+};
+
+// Map type VkPhysicalDeviceDepthClampControlFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceDepthClampControlFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT> {
+    typedef VkPhysicalDeviceDepthClampControlFeaturesEXT Type;
+};
+
+// Map type VkPipelineViewportDepthClampControlCreateInfoEXT to id VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkPipelineViewportDepthClampControlCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT> {
+    typedef VkPipelineViewportDepthClampControlCreateInfoEXT Type;
 };
 
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
