@@ -321,11 +321,8 @@ struct SurfaceExtension {
     VkSurfaceKHR (*create_surface)(AppInstance &) = nullptr;
     void (*destroy_window)(AppInstance &) = nullptr;
     VkSurfaceKHR surface = VK_NULL_HANDLE;
-    VkBool32 supports_present = 0;
 
-    bool operator==(const SurfaceExtension &other) {
-        return name == other.name && surface == other.surface && supports_present == other.supports_present;
-    }
+    bool operator==(const SurfaceExtension &other) { return name == other.name && surface == other.surface; }
 };
 
 class APIVersion {
@@ -1398,21 +1395,22 @@ struct AppQueueFamilyProperties {
     VkQueueFamilyProperties props;
     uint32_t queue_index;
     void *pNext = nullptr;  // assumes the lifetime of the pNext chain outlives this object, eg parent object must keep both alive
-    bool is_present_platform_agnostic = true;
-    VkBool32 platforms_support_present = VK_FALSE;
+    bool can_present = false;
+    bool can_always_present = true;
+    std::vector<std::pair<std::string, VkBool32>> present_support;
     AppQueueFamilyProperties(AppInstance &inst, VkPhysicalDevice physical_device, VkQueueFamilyProperties family_properties,
                              uint32_t queue_index, void *pNext = nullptr)
         : props(family_properties), queue_index(queue_index), pNext(pNext) {
-        for (auto &surface_ext : inst.surface_extensions) {
+        for (const auto &surface_ext : inst.surface_extensions) {
+            present_support.push_back({surface_ext.name, VK_FALSE});
             VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(physical_device, queue_index, surface_ext.surface,
-                                                                &surface_ext.supports_present);
+                                                                &present_support.back().second);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceSupportKHR", err);
-
-            const bool first = (surface_ext == inst.surface_extensions.at(0));
-            if (!first && platforms_support_present != surface_ext.supports_present) {
-                is_present_platform_agnostic = false;
+            if (present_support.back().second) {
+                can_present = true;
+            } else {
+                can_always_present = false;
             }
-            platforms_support_present = surface_ext.supports_present;
         }
     }
 };

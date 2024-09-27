@@ -396,17 +396,19 @@ void GpuDumpQueueProps(Printer &p, AppGpu &gpu, const AppQueueFamilyProperties &
     p.PrintKeyString("queueFlags", VkQueueFlagsString(props.queueFlags));
     p.PrintKeyValue("timestampValidBits", props.timestampValidBits);
 
-    if (queue.is_present_platform_agnostic) {
-        p.PrintKeyString("present support", queue.platforms_support_present ? "true" : "false");
+    if (!queue.can_present) {
+        p.PrintKeyString("present support", "false");
+    } else if (queue.can_always_present) {
+        p.PrintKeyString("present support", "true");
     } else {
         size_t width = 0;
-        for (auto &surface : gpu.inst.surface_extensions) {
-            if (surface.name.size() > width) width = surface.name.size();
+        for (const auto &support : queue.present_support) {
+            if (support.first.size() > width) width = support.first.size();
         }
         ObjectWrapper obj_present_support(p, "present support");
         p.SetMinKeyWidth(width);
-        for (auto &surface : gpu.inst.surface_extensions) {
-            p.PrintKeyString(surface.name, surface.supports_present ? "true" : "false");
+        for (const auto &support : queue.present_support) {
+            p.PrintKeyString(support.first, support.second ? "true" : "false");
         }
     }
     chain_iterator_queue_properties2(p, gpu, queue.pNext);
