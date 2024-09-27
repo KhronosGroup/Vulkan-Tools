@@ -243,8 +243,8 @@ auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vec
         err = f(ts..., &count, results.data());
         results.resize(count);
         iteration_count++;
-    } while (err == VK_INCOMPLETE || iteration_count < max_iterations);
-    if (err && iteration_count <= max_iterations) THROW_VK_ERR(func_name, err);
+    } while (err == VK_INCOMPLETE && iteration_count < max_iterations);
+    if (err) THROW_VK_ERR(func_name, err);
     return results;
 }
 
