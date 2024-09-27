@@ -1194,10 +1194,10 @@ class AppSurface {
         surf_present_modes =
             GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR", vkGetPhysicalDeviceSurfacePresentModesKHR,
                                         phys_device, surface_extension.surface);
-        const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
-                                                               surface_extension.surface};
 
         if (inst.CheckExtensionEnabled(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME)) {
+            const VkPhysicalDeviceSurfaceInfo2KHR surface_info2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR, nullptr,
+                                                                   surface_extension.surface};
             VkSurfaceFormat2KHR init{};
             init.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
             surf_formats2 = GetVectorInit<VkSurfaceFormat2KHR>(
