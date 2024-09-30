@@ -43,7 +43,7 @@ target_sources(android_glue PRIVATE
 
 set_target_properties(vkcube PROPERTIES OUTPUT_NAME "VkCube")
 
-target_link_libraries(vkcube PRIVATE
+target_link_libraries(vkcube
     android_glue
     log
     android
