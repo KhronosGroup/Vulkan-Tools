@@ -6711,6 +6711,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
 
 
 
+
 #ifdef VK_USE_PLATFORM_FUCHSIA
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryZirconHandleFUCHSIA(

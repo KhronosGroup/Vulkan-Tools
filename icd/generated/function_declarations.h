@@ -315,6 +315,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_depth_clip_control", 1},
     {"VK_EXT_primitive_topology_list_restart", 1},
     {"VK_KHR_format_feature_flags2", 2},
+    {"VK_EXT_present_mode_fifo_latest_ready", 1},
     {"VK_FUCHSIA_external_memory", 1},
     {"VK_FUCHSIA_external_semaphore", 1},
     {"VK_FUCHSIA_buffer_collection", 2},
@@ -3794,6 +3795,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetVertexInputEXT(
     const VkVertexInputBindingDescription2EXT*  pVertexBindingDescriptions,
     uint32_t                                    vertexAttributeDescriptionCount,
     const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
+
 
 
 
