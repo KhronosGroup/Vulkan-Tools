@@ -158,7 +158,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_sampler_filter_minmax", 2},
     {"VK_KHR_storage_buffer_storage_class", 1},
     {"VK_AMD_gpu_shader_int16", 2},
-    {"VK_AMDX_shader_enqueue", 1},
+    {"VK_AMDX_shader_enqueue", 2},
     {"VK_AMD_mixed_attachment_samples", 1},
     {"VK_AMD_shader_fragment_mask", 1},
     {"VK_EXT_inline_uniform_block", 1},
@@ -3031,21 +3031,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetExecutionGraphPipelineNodeIndexAMDX(
 
 static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             scratch);
+    VkPipeline                                  executionGraph,
+    VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize);
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo);
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo);
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     VkDeviceAddress                             countInfo);
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
 

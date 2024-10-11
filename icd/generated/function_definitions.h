@@ -5511,7 +5511,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetExecutionGraphPipelineNodeIndexAMDX(
 
 static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(
     VkCommandBuffer                             commandBuffer,
-    VkDeviceAddress                             scratch)
+    VkPipeline                                  executionGraph,
+    VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize)
 {
 //Not a CREATE or DESTROY function
 }
@@ -5519,6 +5521,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdInitializeGraphScratchMemoryAMDX(
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo)
 {
 //Not a CREATE or DESTROY function
@@ -5527,6 +5530,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphAMDX(
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     const VkDispatchGraphCountInfoAMDX*         pCountInfo)
 {
 //Not a CREATE or DESTROY function
@@ -5535,6 +5539,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectAMDX(
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(
     VkCommandBuffer                             commandBuffer,
     VkDeviceAddress                             scratch,
+    VkDeviceSize                                scratchSize,
     VkDeviceAddress                             countInfo)
 {
 //Not a CREATE or DESTROY function
