@@ -437,7 +437,6 @@ struct demo {
     int32_t curFrame;
     int32_t frameCount;
     bool validate;
-    bool validate_checks_disabled;
     bool use_break;
     bool suppress_popups;
     bool force_errors;
@@ -4223,11 +4222,6 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
             demo->validate = true;
             continue;
         }
-        if (strcmp(argv[i], "--validate-checks-disabled") == 0) {
-            demo->validate = true;
-            demo->validate_checks_disabled = true;
-            continue;
-        }
         if (strcmp(argv[i], "--xlib") == 0) {
             fprintf(stderr, "--xlib is deprecated and no longer does anything");
             continue;
@@ -4286,7 +4280,7 @@ static void demo_init(struct demo *demo, int argc, char **argv) {
         ERR_EXIT("Usage: vkcube [--validate]\n", "Usage");
 #else
         char *message =
-            "Usage:\n  %s\t[--use_staging] [--validate] [--validate-checks-disabled]\n"
+            "Usage:\n  %s\t[--use_staging] [--validate]\n"
             "\t[--break] [--c <framecount>] [--suppress_popups]\n"
             "\t[--incremental_present] [--display_timing]\n"
             "\t[--gpu_number <index of physical device>]\n"
