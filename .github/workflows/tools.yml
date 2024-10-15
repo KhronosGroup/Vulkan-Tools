@@ -37,18 +37,18 @@ jobs:
                 cc: [ gcc ]
                 cxx: [ g++ ]
                 config: [ Debug, Release ]
-                os: [ ubuntu-20.04, ubuntu-22.04 ]
+                os: [ ubuntu-22.04, ubuntu-22.04 ]
                 include:
-                    # Test clang on ubuntu 20
-                  - cc: clang
-                    cxx: clang++
-                    config: Debug
-                    os: ubuntu-20.04
                     # Test clang on ubuntu 22
                   - cc: clang
                     cxx: clang++
-                    config: Release
+                    config: Debug
                     os: ubuntu-22.04
+                    # Test clang on ubuntu 24
+                  - cc: clang
+                    cxx: clang++
+                    config: Release
+                    os: ubuntu-24.04
 
 
         steps:
