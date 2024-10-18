@@ -4531,24 +4531,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2KHR(
     return VK_SUCCESS;
 }
 
-static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarker2AMD(
-    VkCommandBuffer                             commandBuffer,
-    VkPipelineStageFlags2                       stage,
-    VkBuffer                                    dstBuffer,
-    VkDeviceSize                                dstOffset,
-    uint32_t                                    marker)
-{
-//Not a CREATE or DESTROY function
-}
-
-static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData)
-{
-//Not a CREATE or DESTROY function
-}
-
 
 
 
@@ -5832,6 +5814,16 @@ static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarkerAMD(
 //Not a CREATE or DESTROY function
 }
 
+static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarker2AMD(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineStageFlags2                       stage,
+    VkBuffer                                    dstBuffer,
+    VkDeviceSize                                dstOffset,
+    uint32_t                                    marker)
+{
+//Not a CREATE or DESTROY function
+}
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsEXT(
@@ -5932,6 +5924,14 @@ static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointDataNV(
     VkQueue                                     queue,
     uint32_t*                                   pCheckpointDataCount,
     VkCheckpointDataNV*                         pCheckpointData)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
+    VkQueue                                     queue,
+    uint32_t*                                   pCheckpointDataCount,
+    VkCheckpointData2NV*                        pCheckpointData)
 {
 //Not a CREATE or DESTROY function
 }

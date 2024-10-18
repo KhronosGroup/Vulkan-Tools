@@ -2605,42 +2605,6 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_DPB_SLOT_INFO
     typedef VkVideoDecodeH264DpbSlotInfoKHR Type;
 };
 
-// Map type VkRenderingFragmentShadingRateAttachmentInfoKHR to id VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR
-template <> struct LvlTypeMap<VkRenderingFragmentShadingRateAttachmentInfoKHR> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR> {
-    typedef VkRenderingFragmentShadingRateAttachmentInfoKHR Type;
-};
-
-// Map type VkRenderingFragmentDensityMapAttachmentInfoEXT to id VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT
-template <> struct LvlTypeMap<VkRenderingFragmentDensityMapAttachmentInfoEXT> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT> {
-    typedef VkRenderingFragmentDensityMapAttachmentInfoEXT Type;
-};
-
-// Map type VkAttachmentSampleCountInfoAMD to id VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD
-template <> struct LvlTypeMap<VkAttachmentSampleCountInfoAMD> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD> {
-    typedef VkAttachmentSampleCountInfoAMD Type;
-};
-
-// Map type VkMultiviewPerViewAttributesInfoNVX to id VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX
-template <> struct LvlTypeMap<VkMultiviewPerViewAttributesInfoNVX> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX> {
-    typedef VkMultiviewPerViewAttributesInfoNVX Type;
-};
-
 #ifdef VK_USE_PLATFORM_WIN32_KHR
 // Map type VkImportMemoryWin32HandleInfoKHR to id VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR
 template <> struct LvlTypeMap<VkImportMemoryWin32HandleInfoKHR> {
@@ -3155,6 +3119,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADIN
     typedef VkPhysicalDeviceFragmentShadingRateKHR Type;
 };
 
+// Map type VkRenderingFragmentShadingRateAttachmentInfoKHR to id VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR
+template <> struct LvlTypeMap<VkRenderingFragmentShadingRateAttachmentInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR> {
+    typedef VkRenderingFragmentShadingRateAttachmentInfoKHR Type;
+};
+
 // Map type VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR
 template <> struct LvlTypeMap<VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR;
@@ -3405,24 +3378,6 @@ template <> struct LvlTypeMap<VkVideoEncodeSessionParametersFeedbackInfoKHR> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_PARAMETERS_FEEDBACK_INFO_KHR> {
     typedef VkVideoEncodeSessionParametersFeedbackInfoKHR Type;
-};
-
-// Map type VkQueueFamilyCheckpointProperties2NV to id VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV
-template <> struct LvlTypeMap<VkQueueFamilyCheckpointProperties2NV> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV> {
-    typedef VkQueueFamilyCheckpointProperties2NV Type;
-};
-
-// Map type VkCheckpointData2NV to id VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV
-template <> struct LvlTypeMap<VkCheckpointData2NV> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV> {
-    typedef VkCheckpointData2NV Type;
 };
 
 // Map type VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR
@@ -4380,6 +4335,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_V
     typedef VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX Type;
 };
 
+// Map type VkMultiviewPerViewAttributesInfoNVX to id VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX
+template <> struct LvlTypeMap<VkMultiviewPerViewAttributesInfoNVX> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX> {
+    typedef VkMultiviewPerViewAttributesInfoNVX Type;
+};
+
 // Map type VkPipelineViewportSwizzleStateCreateInfoNV to id VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV
 template <> struct LvlTypeMap<VkPipelineViewportSwizzleStateCreateInfoNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV;
@@ -4660,6 +4624,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_NODE_CREA
 };
 
 #endif // VK_ENABLE_BETA_EXTENSIONS
+// Map type VkAttachmentSampleCountInfoAMD to id VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD
+template <> struct LvlTypeMap<VkAttachmentSampleCountInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD> {
+    typedef VkAttachmentSampleCountInfoAMD Type;
+};
+
 // Map type VkSampleLocationsInfoEXT to id VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT
 template <> struct LvlTypeMap<VkSampleLocationsInfoEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
@@ -5148,6 +5121,24 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CHECKPOINT_DATA_NV> {
     typedef VkCheckpointDataNV Type;
 };
 
+// Map type VkQueueFamilyCheckpointProperties2NV to id VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV
+template <> struct LvlTypeMap<VkQueueFamilyCheckpointProperties2NV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV> {
+    typedef VkQueueFamilyCheckpointProperties2NV Type;
+};
+
+// Map type VkCheckpointData2NV to id VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV
+template <> struct LvlTypeMap<VkCheckpointData2NV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV> {
+    typedef VkCheckpointData2NV Type;
+};
+
 // Map type VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL
 template <> struct LvlTypeMap<VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;
@@ -5285,6 +5276,15 @@ template <> struct LvlTypeMap<VkRenderPassFragmentDensityMapCreateInfoEXT> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT> {
     typedef VkRenderPassFragmentDensityMapCreateInfoEXT Type;
+};
+
+// Map type VkRenderingFragmentDensityMapAttachmentInfoEXT to id VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT
+template <> struct LvlTypeMap<VkRenderingFragmentDensityMapAttachmentInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT> {
+    typedef VkRenderingFragmentDensityMapAttachmentInfoEXT Type;
 };
 
 // Map type VkPhysicalDeviceShaderCoreProperties2AMD to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD

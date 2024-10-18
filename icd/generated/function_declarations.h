@@ -2421,18 +2421,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2KHR(
     const VkSubmitInfo2*                        pSubmits,
     VkFence                                     fence);
 
-static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarker2AMD(
-    VkCommandBuffer                             commandBuffer,
-    VkPipelineStageFlags2                       stage,
-    VkBuffer                                    dstBuffer,
-    VkDeviceSize                                dstOffset,
-    uint32_t                                    marker);
-
-static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
-    VkQueue                                     queue,
-    uint32_t*                                   pCheckpointDataCount,
-    VkCheckpointData2NV*                        pCheckpointData);
-
 
 
 
@@ -3242,6 +3230,13 @@ static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarkerAMD(
     VkDeviceSize                                dstOffset,
     uint32_t                                    marker);
 
+static VKAPI_ATTR void VKAPI_CALL CmdWriteBufferMarker2AMD(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineStageFlags2                       stage,
+    VkBuffer                                    dstBuffer,
+    VkDeviceSize                                dstOffset,
+    uint32_t                                    marker);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCalibrateableTimeDomainsEXT(
@@ -3311,6 +3306,11 @@ static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointDataNV(
     VkQueue                                     queue,
     uint32_t*                                   pCheckpointDataCount,
     VkCheckpointDataNV*                         pCheckpointData);
+
+static VKAPI_ATTR void VKAPI_CALL GetQueueCheckpointData2NV(
+    VkQueue                                     queue,
+    uint32_t*                                   pCheckpointDataCount,
+    VkCheckpointData2NV*                        pCheckpointData);
 
 
 
@@ -5011,8 +5011,6 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdPipelineBarrier2KHR", (void*)CmdPipelineBarrier2KHR},
     {"vkCmdWriteTimestamp2KHR", (void*)CmdWriteTimestamp2KHR},
     {"vkQueueSubmit2KHR", (void*)QueueSubmit2KHR},
-    {"vkCmdWriteBufferMarker2AMD", (void*)CmdWriteBufferMarker2AMD},
-    {"vkGetQueueCheckpointData2NV", (void*)GetQueueCheckpointData2NV},
     {"vkCmdCopyBuffer2KHR", (void*)CmdCopyBuffer2KHR},
     {"vkCmdCopyImage2KHR", (void*)CmdCopyImage2KHR},
     {"vkCmdCopyBufferToImage2KHR", (void*)CmdCopyBufferToImage2KHR},
@@ -5166,6 +5164,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCompileDeferredNV", (void*)CompileDeferredNV},
     {"vkGetMemoryHostPointerPropertiesEXT", (void*)GetMemoryHostPointerPropertiesEXT},
     {"vkCmdWriteBufferMarkerAMD", (void*)CmdWriteBufferMarkerAMD},
+    {"vkCmdWriteBufferMarker2AMD", (void*)CmdWriteBufferMarker2AMD},
     {"vkGetPhysicalDeviceCalibrateableTimeDomainsEXT", (void*)GetPhysicalDeviceCalibrateableTimeDomainsEXT},
     {"vkGetCalibratedTimestampsEXT", (void*)GetCalibratedTimestampsEXT},
     {"vkCmdDrawMeshTasksNV", (void*)CmdDrawMeshTasksNV},
@@ -5175,6 +5174,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdSetExclusiveScissorNV", (void*)CmdSetExclusiveScissorNV},
     {"vkCmdSetCheckpointNV", (void*)CmdSetCheckpointNV},
     {"vkGetQueueCheckpointDataNV", (void*)GetQueueCheckpointDataNV},
+    {"vkGetQueueCheckpointData2NV", (void*)GetQueueCheckpointData2NV},
     {"vkInitializePerformanceApiINTEL", (void*)InitializePerformanceApiINTEL},
     {"vkUninitializePerformanceApiINTEL", (void*)UninitializePerformanceApiINTEL},
     {"vkCmdSetPerformanceMarkerINTEL", (void*)CmdSetPerformanceMarkerINTEL},
