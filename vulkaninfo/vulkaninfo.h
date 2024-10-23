@@ -71,6 +71,7 @@
 #endif  // _WIN32
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #endif
 
@@ -772,7 +773,7 @@ static void AppDestroyXcbWindow(AppInstance &inst) {
 #ifdef VK_USE_PLATFORM_XLIB_KHR
 static void AppCreateXlibWindow(AppInstance &inst) {
     long visualMask = VisualScreenMask;
-    int numberOfVisuals;
+    int numberOfVisuals{};
 
     inst.xlib_display = XOpenDisplay(nullptr);
     if (inst.xlib_display == nullptr) {
@@ -781,12 +782,17 @@ static void AppCreateXlibWindow(AppInstance &inst) {
 
     XVisualInfo vInfoTemplate = {};
     vInfoTemplate.screen = DefaultScreen(inst.xlib_display);
-    XVisualInfo *visualInfo = XGetVisualInfo(inst.xlib_display, visualMask, &vInfoTemplate, &numberOfVisuals);
+    XVisualInfo *visualInfoBegin = XGetVisualInfo(inst.xlib_display, visualMask, &vInfoTemplate, &numberOfVisuals);
+    XVisualInfo *visualInfoEnd = visualInfoBegin + numberOfVisuals;
+    const Visual *rootVisual = DefaultVisual(inst.xlib_display, vInfoTemplate.screen);
+    const XVisualInfo *foundVisualInfo =
+        std::find_if(visualInfoBegin, visualInfoEnd, [rootVisual](const XVisualInfo &vi) { return vi.visual == rootVisual; });
+    const XVisualInfo *visualInfo = foundVisualInfo == visualInfoEnd ? visualInfoBegin : foundVisualInfo;
     inst.xlib_window = XCreateWindow(inst.xlib_display, RootWindow(inst.xlib_display, vInfoTemplate.screen), 0, 0, inst.width,
                                      inst.height, 0, visualInfo->depth, InputOutput, visualInfo->visual, 0, nullptr);
 
     XSync(inst.xlib_display, false);
-    XFree(visualInfo);
+    XFree(visualInfoBegin);
 }
 
 static VkSurfaceKHR AppCreateXlibSurface(AppInstance &inst) {
