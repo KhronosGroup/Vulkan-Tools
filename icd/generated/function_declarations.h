@@ -415,6 +415,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_device_generated_commands", 1},
     {"VK_MESA_image_alignment_control", 1},
     {"VK_EXT_depth_clamp_control", 1},
+    {"VK_NV_cooperative_matrix2", 1},
 };
 
 
@@ -4469,6 +4470,12 @@ static VKAPI_ATTR void VKAPI_CALL UpdateIndirectExecutionSetShaderEXT(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -5412,6 +5419,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyIndirectExecutionSetEXT", (void*)DestroyIndirectExecutionSetEXT},
     {"vkUpdateIndirectExecutionSetPipelineEXT", (void*)UpdateIndirectExecutionSetPipelineEXT},
     {"vkUpdateIndirectExecutionSetShaderEXT", (void*)UpdateIndirectExecutionSetShaderEXT},
+    {"vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV", (void*)GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},
