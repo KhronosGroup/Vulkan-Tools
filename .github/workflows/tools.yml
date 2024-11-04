@@ -1,5 +1,5 @@
-# Copyright (c) 2021-2023 Valve Corporation
-# Copyright (c) 2021-2023 LunarG, Inc.
+# Copyright (c) 2021-2024 Valve Corporation
+# Copyright (c) 2021-2024 LunarG, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-    linux:
+    linux:        
+        needs: tools_codegen
         runs-on: ${{matrix.os}}
 
         strategy:
@@ -101,7 +102,8 @@ jobs:
         - run: scripts/update_deps.py --dir ext --no-build
         - run: scripts/generate_source.py --verify ext/Vulkan-Headers/registry/
 
-    windows:
+    windows:       
+        needs: tools_codegen
         runs-on: ${{matrix.os}}
 
         strategy:
@@ -134,6 +136,8 @@ jobs:
               run: ctest --output-on-failure
 
     mac:
+        # mac is 10x expensive to run on GitHub machines, so only run if we know something else fast/simple passed as well
+        needs: chromium
         runs-on: macos-latest
         steps:
             - uses: actions/checkout@v4
@@ -159,7 +163,8 @@ jobs:
 
             - run: cmake --install build --prefix /tmp
 
-    android:
+    android:      
+      needs: tools_codegen
       runs-on: ubuntu-22.04
       strategy:
         matrix:
@@ -191,6 +196,7 @@ jobs:
           run: cmake --install build --prefix /tmp
 
     mingw:
+        needs: tools_codegen
         runs-on: windows-latest
         defaults:
           run:
@@ -218,6 +224,7 @@ jobs:
           - run: cmake --install build --prefix build/install
 
     tools_codegen:
+      needs: codegen
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
@@ -230,6 +237,7 @@ jobs:
         - run: git diff --exit-code
 
     chromium:
+      needs: tools_codegen
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
