@@ -415,6 +415,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_device_generated_commands", 1},
     {"VK_MESA_image_alignment_control", 1},
     {"VK_EXT_depth_clamp_control", 1},
+    {"VK_HUAWEI_hdr_vivid", 1},
     {"VK_NV_cooperative_matrix2", 1},
 };
 
@@ -4466,6 +4467,7 @@ static VKAPI_ATTR void VKAPI_CALL UpdateIndirectExecutionSetShaderEXT(
     VkIndirectExecutionSetEXT                   indirectExecutionSet,
     uint32_t                                    executionSetWriteCount,
     const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites);
+
 
 
 
