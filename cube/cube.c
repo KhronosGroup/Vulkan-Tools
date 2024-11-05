@@ -4143,7 +4143,10 @@ static void demo_init_vk(struct demo *demo) {
     }
 
     volkLoadInstance(demo->inst);
+}
 
+static void demo_select_physical_device(struct demo* demo) {
+    VkResult err;
     /* Make initial call to query gpu_count, then second call for gpu info */
     uint32_t gpu_count = 0;
     err = vkEnumeratePhysicalDevices(demo->inst, &gpu_count, NULL);
@@ -4188,7 +4191,10 @@ static void demo_init_vk(struct demo *demo) {
             for (uint32_t i = 0; i < gpu_count; i++) {
                 vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
                 assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
-                count_device_type[physicalDeviceProperties.deviceType]++;
+                VkBool32 supported = 0;
+                vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], 0, demo->surface, &supported);
+                if (supported)
+                    count_device_type[physicalDeviceProperties.deviceType]++;
             }
 
             VkPhysicalDeviceType search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
@@ -4298,6 +4304,24 @@ static void demo_init_vk(struct demo *demo) {
     }
 
     if (demo->validate) {
+        /*
+         * This is info for a temp callback to use during CreateInstance.
+         * After the instance is created, we use the instance-based
+         * function to register the final callback.
+         */
+        VkDebugUtilsMessengerCreateInfoEXT dbg_messenger_create_info;
+        // VK_EXT_debug_utils style
+        dbg_messenger_create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        dbg_messenger_create_info.pNext = NULL;
+        dbg_messenger_create_info.flags = 0;
+        dbg_messenger_create_info.messageSeverity =
+            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        dbg_messenger_create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        dbg_messenger_create_info.pfnUserCallback = debug_messenger_callback;
+        dbg_messenger_create_info.pUserData = demo;
+
         err = vkCreateDebugUtilsMessengerEXT(demo->inst, &dbg_messenger_create_info, NULL, &demo->dbg_messenger);
         switch (err) {
             case VK_SUCCESS:
@@ -4491,8 +4515,6 @@ static VkSurfaceFormatKHR pick_surface_format(const VkSurfaceFormatKHR *surfaceF
 
 static void demo_init_vk_swapchain(struct demo *demo) {
     VkResult U_ASSERT_ONLY err;
-
-    demo_create_surface(demo);
 
     // Iterate over each queue to learn whether it supports presenting:
     VkBool32 *supportsPresent = (VkBool32 *)malloc(demo->queue_family_count * sizeof(VkBool32));
@@ -4868,6 +4890,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     demo.connection = hInstance;
     strncpy(demo.name, "Vulkan Cube", APP_NAME_STR_LEN);
     demo_create_window(&demo);
+    demo_create_surface(&demo);
+    demo_select_physical_device(&demo);
     demo_init_vk_swapchain(&demo);
 
     demo_prepare(&demo);
@@ -4906,6 +4930,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_main(struct demo *demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo_init(demo, argc, (char **)argv);
+    demo_create_surface(demo);
+    demo_select_physical_device(demo);
     demo->caMetalLayer = caMetalLayer;
     demo_init_vk_swapchain(demo);
     demo_prepare(demo);
@@ -4959,6 +4985,8 @@ static void processCommand(struct android_app *app, int32_t cmd) {
                 for (int i = 0; i < argc; i++) free(argv[i]);
 
                 demo.window = (void *)app->window;
+                demo_create_surface(&demo);
+                demo_select_physical_device(&demo);
                 demo_init_vk_swapchain(&demo);
                 demo_prepare(&demo);
                 initialized = true;
@@ -5044,6 +5072,8 @@ int main(int argc, char **argv) {
             break;
 #endif
     }
+    demo_create_surface(&demo);
+    demo_select_physical_device(&demo);
 
     demo_init_vk_swapchain(&demo);
 
