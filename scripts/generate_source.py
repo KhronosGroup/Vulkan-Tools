@@ -76,6 +76,13 @@ def main(argv):
         for path in files_to_gen.keys():
             os.makedirs(os.path.join(temp_dir, path))
 
+    registry = os.path.abspath(os.path.join(args.registry,  'vk.xml'))
+    if not os.path.isfile(registry):
+        registry = os.path.abspath(os.path.join(args.registry, 'Vulkan-Headers/registry/vk.xml'))
+        if not os.path.isfile(registry):
+            print(f'cannot find vk.xml in {args.registry}')
+            return -1
+
     # run each code generator
     for path, filenames in files_to_gen.items():
         for filename in filenames:
@@ -86,7 +93,7 @@ def main(argv):
 
             cmd = [common_codegen.repo_relative(os.path.join('scripts','kvt_genvk.py')),
                 '-api', args.api,
-                '-registry', os.path.abspath(os.path.join(args.registry,  'vk.xml')),
+                '-registry', registry,
                 '-quiet', '-directory', output_path, filename]
             print(' '.join(cmd))
             try:
