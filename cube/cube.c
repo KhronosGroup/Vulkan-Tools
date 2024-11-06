@@ -4184,37 +4184,42 @@ static void demo_select_physical_device(struct demo* demo) {
     } else {
         /* Try to auto select most suitable device */
         if (demo->gpu_number == -1) {
-            uint32_t count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU + 1];
-            memset(count_device_type, 0, sizeof(count_device_type));
-
             VkPhysicalDeviceProperties physicalDeviceProperties;
+            int prev_priority = 0;
             for (uint32_t i = 0; i < gpu_count; i++) {
                 vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
                 assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
+
+                // Continue next gpu if this gpu does not support the surface.
                 VkBool32 supported = 0;
                 vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], 0, demo->surface, &supported);
-                if (supported)
-                    count_device_type[physicalDeviceProperties.deviceType]++;
-            }
+                if (!supported) continue;
 
-            VkPhysicalDeviceType search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-            if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU]) {
-                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU]) {
-                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
-            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU]) {
-                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU;
-            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_CPU]) {
-                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_CPU;
-            } else if (count_device_type[VK_PHYSICAL_DEVICE_TYPE_OTHER]) {
-                search_for_device_type = VK_PHYSICAL_DEVICE_TYPE_OTHER;
-            }
+                int priority = 0;
+                switch (physicalDeviceProperties.deviceType) {
+                    case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+                        priority = 5;
+                        break;
+                    case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+                        priority = 4;
+                        break;
+                    case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+                        priority = 3;
+                        break;
+                    case VK_PHYSICAL_DEVICE_TYPE_CPU:
+                        priority = 2;
+                        break;
+                    case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+                        priority = 1;
+                        break;
+                    default:
+                        priority = -1;
+                        break;
+                }
 
-            for (uint32_t i = 0; i < gpu_count; i++) {
-                vkGetPhysicalDeviceProperties(physical_devices[i], &physicalDeviceProperties);
-                if (physicalDeviceProperties.deviceType == search_for_device_type) {
+                if (priority > prev_priority) {
                     demo->gpu_number = i;
-                    break;
+                    prev_priority = priority;
                 }
             }
         }
