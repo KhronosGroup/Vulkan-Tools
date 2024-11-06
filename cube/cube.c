@@ -4191,7 +4191,7 @@ static void demo_select_physical_device(struct demo* demo) {
                 assert(physicalDeviceProperties.deviceType <= VK_PHYSICAL_DEVICE_TYPE_CPU);
 
                 // Continue next gpu if this gpu does not support the surface.
-                VkBool32 supported = 0;
+                VkBool32 supported = VK_FALSE;
                 vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], 0, demo->surface, &supported);
                 if (!supported) continue;
 
