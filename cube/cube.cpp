@@ -29,6 +29,7 @@
 #include <sstream>
 #include <iostream>
 #include <memory>
+#include <map>
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 #include "xlib_loader.h"
@@ -317,6 +318,7 @@ struct Demo {
     void init(int argc, char **argv);
     void check_and_set_wsi_platform();
     void init_vk();
+    void select_physical_device();
     void init_vk_swapchain();
     void prepare();
     void prepare_buffers();
@@ -1700,7 +1702,9 @@ void Demo::init_vk() {
         VERIFY(create_debug_messenger_return.result == vk::Result::eSuccess);
         debug_messenger = create_debug_messenger_return.value;
     }
+}
 
+void Demo::select_physical_device() {
     auto physical_device_return = inst.enumeratePhysicalDevices();
     VERIFY(physical_device_return.result == vk::Result::eSuccess);
     auto physical_devices = physical_device_return.value;
@@ -1734,32 +1738,33 @@ void Demo::init_vk() {
     } else {
         /* Try to auto select most suitable device */
         if (gpu_number == -1) {
-            constexpr uint32_t device_type_count = static_cast<uint32_t>(vk::PhysicalDeviceType::eCpu) + 1;
-            std::array<uint32_t, device_type_count> count_device_type{};
-
+            int prev_priority = 0;
             for (uint32_t i = 0; i < physical_devices.size(); i++) {
                 const auto physicalDeviceProperties = physical_devices[i].getProperties();
                 assert(physicalDeviceProperties.deviceType <= vk::PhysicalDeviceType::eCpu);
-                count_device_type[static_cast<int>(physicalDeviceProperties.deviceType)]++;
-            }
 
-            std::array<vk::PhysicalDeviceType, device_type_count> const device_type_preference = {
-                vk::PhysicalDeviceType::eDiscreteGpu, vk::PhysicalDeviceType::eIntegratedGpu, vk::PhysicalDeviceType::eVirtualGpu,
-                vk::PhysicalDeviceType::eCpu, vk::PhysicalDeviceType::eOther};
-
-            vk::PhysicalDeviceType search_for_device_type = vk::PhysicalDeviceType::eDiscreteGpu;
-            for (uint32_t i = 0; i < sizeof(device_type_preference) / sizeof(vk::PhysicalDeviceType); i++) {
-                if (count_device_type[static_cast<int>(device_type_preference[i])]) {
-                    search_for_device_type = device_type_preference[i];
-                    break;
+                auto support_result = physical_devices[i].getSurfaceSupportKHR(0, surface);
+                if (support_result.result != vk::Result::eSuccess ||
+                        support_result.value != vk::True) {
+                    continue;
                 }
-            }
 
-            for (uint32_t i = 0; i < physical_devices.size(); i++) {
-                const auto physicalDeviceProperties = physical_devices[i].getProperties();
-                if (physicalDeviceProperties.deviceType == search_for_device_type) {
+                std::map<vk::PhysicalDeviceType, int> device_type_priorities = {
+                    {vk::PhysicalDeviceType::eDiscreteGpu, 5},
+                    {vk::PhysicalDeviceType::eIntegratedGpu, 4},
+                    {vk::PhysicalDeviceType::eVirtualGpu, 3},
+                    {vk::PhysicalDeviceType::eCpu, 2},
+                    {vk::PhysicalDeviceType::eOther, 1},
+                };
+                int priority = -1;
+                if (device_type_priorities.find(physicalDeviceProperties.deviceType) !=
+                        device_type_priorities.end()) {
+                    priority = device_type_priorities[physicalDeviceProperties.deviceType];
+                }
+
+                if (priority > prev_priority) {
                     gpu_number = i;
-                    break;
+                    prev_priority = priority;
                 }
             }
         }
@@ -1877,7 +1882,6 @@ void Demo::create_surface() {
 }
 
 void Demo::init_vk_swapchain() {
-    create_surface();
     // Iterate over each queue to learn whether it supports presenting:
     std::vector<vk::Bool32> supportsPresent;
     for (uint32_t i = 0; i < static_cast<uint32_t>(queue_props.size()); i++) {
@@ -3744,6 +3748,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     demo.connection = hInstance;
     demo.name = "Vulkan Cube";
     demo.create_window();
+    demo.create_surface();
+    demo.select_physical_device();
     demo.init_vk_swapchain();
 
     demo.prepare();
@@ -3825,6 +3831,10 @@ int main(int argc, char **argv) {
 #endif
     }
 
+    demo.create_surface();
+
+    demo.select_physical_device();
+
     demo.init_vk_swapchain();
 
     demo.prepare();
@@ -3879,6 +3889,8 @@ int main(int argc, char **argv) {
 // Global function invoked from NS or UI views and controllers to create demo
 static void demo_main(Demo &demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo.init(argc, (char **)argv);
+    demo.create_surface();
+    demo.select_physical_device();
     demo.caMetalLayer = caMetalLayer;
     demo.init_vk_swapchain();
     demo.prepare();
