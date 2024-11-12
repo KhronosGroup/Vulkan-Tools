@@ -148,7 +148,6 @@ if(BUILD_ICD)
     add_subdirectory(icd)
 endif()
 
-add_subdirectory(windows-runtime-installer)
 
 if(BUILD_TESTS)
     enable_testing()
