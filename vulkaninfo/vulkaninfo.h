@@ -232,15 +232,14 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags
 // Helper for robustly executing the two-call pattern
 template <typename T, typename F, typename... Ts>
 auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vector<T> {
-    uint32_t count = 0;
+    uint32_t count = 32;  // Preallocate enough so that most calls only happen once
     std::vector<T> results;
     VkResult err;
     uint32_t iteration_count = 0;
-    uint32_t max_iterations = 3;
+    uint32_t max_iterations = 5;
     do {
-        err = f(ts..., &count, nullptr);
-        if (err) THROW_VK_ERR(func_name, err);
-        results.resize(count, init);
+        count *= 2;
+        results.resize(count);
         err = f(ts..., &count, results.data());
         results.resize(count);
         iteration_count++;
