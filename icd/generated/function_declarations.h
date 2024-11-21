@@ -71,6 +71,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_GOOGLE_surfaceless_query", 2},
     {"VK_LUNARG_direct_driver_loading", 1},
     {"VK_EXT_layer_settings", 2},
+    {"VK_NV_display_stereo", 1},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -89,8 +90,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_gcn_shader", 1},
     {"VK_NV_dedicated_allocation", 1},
     {"VK_EXT_transform_feedback", 1},
-    {"VK_NVX_binary_import", 1},
-    {"VK_NVX_image_view_handle", 2},
+    {"VK_NVX_binary_import", 2},
+    {"VK_NVX_image_view_handle", 3},
     {"VK_AMD_draw_indirect_count", 2},
     {"VK_AMD_negative_viewport_height", 1},
     {"VK_AMD_gpu_shader_half_float", 2},
@@ -387,6 +388,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_multiview_per_view_render_areas", 1},
     {"VK_KHR_compute_shader_derivatives", 1},
     {"VK_KHR_video_decode_av1", 1},
+    {"VK_KHR_video_encode_av1", 1},
     {"VK_KHR_video_maintenance1", 1},
     {"VK_NV_per_stage_descriptor_set", 1},
     {"VK_QCOM_image_processing2", 1},
@@ -405,6 +407,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_expect_assume", 1},
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
+    {"VK_KHR_video_encode_quantization_map", 2},
     {"VK_NV_raw_access_chains", 1},
     {"VK_KHR_shader_relaxed_extended_instruction", 1},
     {"VK_NV_command_buffer_inheritance", 1},
@@ -417,6 +420,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_depth_clamp_control", 1},
     {"VK_HUAWEI_hdr_vivid", 1},
     {"VK_NV_cooperative_matrix2", 1},
+    {"VK_EXT_vertex_attribute_robustness", 1},
 };
 
 
@@ -2546,6 +2550,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixProperti
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetLineStippleKHR(
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    lineStippleFactor,
@@ -2589,6 +2594,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+
 
 
 
@@ -2716,6 +2722,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdCuLaunchKernelNVX(
 
 
 static VKAPI_ATTR uint32_t VKAPI_CALL GetImageViewHandleNVX(
+    VkDevice                                    device,
+    const VkImageViewHandleInfoNVX*             pInfo);
+
+static VKAPI_ATTR uint64_t VKAPI_CALL GetImageViewHandle64NVX(
     VkDevice                                    device,
     const VkImageViewHandleInfoNVX*             pInfo);
 
@@ -4419,6 +4429,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL GetGeneratedCommandsMemoryRequirementsEXT(
     VkDevice                                    device,
     const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo,
@@ -4476,6 +4487,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexible
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pPropertyCount,
     VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
@@ -5069,6 +5081,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyCuFunctionNVX", (void*)DestroyCuFunctionNVX},
     {"vkCmdCuLaunchKernelNVX", (void*)CmdCuLaunchKernelNVX},
     {"vkGetImageViewHandleNVX", (void*)GetImageViewHandleNVX},
+    {"vkGetImageViewHandle64NVX", (void*)GetImageViewHandle64NVX},
     {"vkGetImageViewAddressNVX", (void*)GetImageViewAddressNVX},
     {"vkCmdDrawIndirectCountAMD", (void*)CmdDrawIndirectCountAMD},
     {"vkCmdDrawIndexedIndirectCountAMD", (void*)CmdDrawIndexedIndirectCountAMD},
