@@ -236,7 +236,8 @@ def makeGenOpts(args):
             apientry='VKAPI_CALL ',
             apientryp='VKAPI_PTR *',
             alignFuncParam=48,
-            expandEnumerants=False)
+            expandEnumerants=False,
+            registryFile=args.registry)
     ]
 
 
