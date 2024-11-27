@@ -4145,7 +4145,7 @@ static void demo_init_vk(struct demo *demo) {
     volkLoadInstance(demo->inst);
 }
 
-static void demo_select_physical_device(struct demo* demo) {
+static void demo_select_physical_device(struct demo *demo) {
     VkResult err;
     /* Make initial call to query gpu_count, then second call for gpu info */
     uint32_t gpu_count = 0;
@@ -4192,8 +4192,8 @@ static void demo_select_physical_device(struct demo* demo) {
 
                 // Continue next gpu if this gpu does not support the surface.
                 VkBool32 supported = VK_FALSE;
-                vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], 0, demo->surface, &supported);
-                if (!supported) continue;
+                VkResult result = vkGetPhysicalDeviceSurfaceSupportKHR(physical_devices[i], 0, demo->surface, &supported);
+                if (result != VK_SUCCESS || !supported) continue;
 
                 int priority = 0;
                 switch (physicalDeviceProperties.deviceType) {
