@@ -79,7 +79,7 @@ std::string to_hex_str(Printer &p, const T i) {
 # used in the .cpp code
 STRUCTURES_TO_GEN = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
                      'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties',
-                     'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT', 'VkPhysicalDeviceHostImageCopyPropertiesEXT']
+                     'VkSurfacePresentScalingCapabilitiesEXT', 'VkSurfacePresentModeCompatibilityEXT', 'VkPhysicalDeviceHostImageCopyProperties']
 ENUMS_TO_GEN = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling']
 FLAGS_TO_GEN = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT', 'VkQueueFlags',
@@ -419,6 +419,8 @@ class VulkanInfoGenerator(OutputGenerator):
                 if comment is not None and comment.find('Promoted from') >= 0:
                     # may need tweaking in the future - some ext names aren't just the upper case version
                     original_ext = comment.split(' ')[2].upper() + '_EXTENSION_NAME'
+                    # insert an underscore before numbers in the name define
+                    original_ext = re.sub(r'([A-Z])(\d+)', r'\1_\2', original_ext)
                 min_val = 2**32
                 max_val = 0
                 for enum in require.findall('enum'):
@@ -647,13 +649,13 @@ def PrintStructure(struct):
                 out += f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n'
                 if v.arrayLength == '8':
                     out += '    }\n'
-            elif struct.name == 'VkQueueFamilyGlobalPriorityPropertiesKHR' and v.name == 'priorities':
+            elif struct.name == 'VkQueueFamilyGlobalPriorityProperties' and v.name == 'priorities':
                 out += f'    ArrayWrapper arr(p,"{v.name}", obj.priorityCount);\n'
                 out += '    for (uint32_t i = 0; i < obj.priorityCount; i++) {\n'
                 out += '       if (p.Type() == OutputType::json)\n'
-                out += '           p.PrintString(std::string("VK_") + VkQueueGlobalPriorityKHRString(obj.priorities[i]));\n'
+                out += '           p.PrintString(std::string("VK_") + VkQueueGlobalPriorityString(obj.priorities[i]));\n'
                 out += '       else\n'
-                out += '           p.PrintString(VkQueueGlobalPriorityKHRString(obj.priorities[i]));\n'
+                out += '           p.PrintString(VkQueueGlobalPriorityString(obj.priorities[i]));\n'
                 out += '    }\n'
             elif v.arrayLength.isdigit():
                 out += f'    {{\n        ArrayWrapper arr(p,"{v.name}", ' + v.arrayLength + ');\n'
