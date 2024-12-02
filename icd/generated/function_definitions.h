@@ -2338,6 +2338,161 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSparseMemoryRequirements(
 }
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetLineStipple(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    lineStippleFactor,
+    uint16_t                                    lineStipplePattern)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL MapMemory2(
+    VkDevice                                    device,
+    const VkMemoryMapInfo*                      pMemoryMapInfo,
+    void**                                      ppData)
+{
+    return MapMemory2KHR(device, pMemoryMapInfo, ppData);
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL UnmapMemory2(
+    VkDevice                                    device,
+    const VkMemoryUnmapInfo*                    pMemoryUnmapInfo)
+{
+    return UnmapMemory2KHR(device, pMemoryUnmapInfo);
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer2(
+    VkCommandBuffer                             commandBuffer,
+    VkBuffer                                    buffer,
+    VkDeviceSize                                offset,
+    VkDeviceSize                                size,
+    VkIndexType                                 indexType)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetRenderingAreaGranularity(
+    VkDevice                                    device,
+    const VkRenderingAreaInfo*                  pRenderingAreaInfo,
+    VkExtent2D*                                 pGranularity)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSubresourceLayout(
+    VkDevice                                    device,
+    const VkDeviceImageSubresourceInfo*         pInfo,
+    VkSubresourceLayout2*                       pLayout)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2(
+    VkDevice                                    device,
+    VkImage                                     image,
+    const VkImageSubresource2*                  pSubresource,
+    VkSubresourceLayout2*                       pLayout)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSet(
+    VkCommandBuffer                             commandBuffer,
+    VkPipelineBindPoint                         pipelineBindPoint,
+    VkPipelineLayout                            layout,
+    uint32_t                                    set,
+    uint32_t                                    descriptorWriteCount,
+    const VkWriteDescriptorSet*                 pDescriptorWrites)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetWithTemplate(
+    VkCommandBuffer                             commandBuffer,
+    VkDescriptorUpdateTemplate                  descriptorUpdateTemplate,
+    VkPipelineLayout                            layout,
+    uint32_t                                    set,
+    const void*                                 pData)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingAttachmentLocations(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingAttachmentLocationInfo*    pLocationInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingInputAttachmentIndices(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingInputAttachmentIndexInfo*  pInputAttachmentIndexInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorSets2(
+    VkCommandBuffer                             commandBuffer,
+    const VkBindDescriptorSetsInfo*             pBindDescriptorSetsInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushConstants2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushConstantsInfo*                  pPushConstantsInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSet2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetInfo*              pPushDescriptorSetInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetWithTemplate2(
+    VkCommandBuffer                             commandBuffer,
+    const VkPushDescriptorSetWithTemplateInfo*  pPushDescriptorSetWithTemplateInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyMemoryToImage(
+    VkDevice                                    device,
+    const VkCopyMemoryToImageInfo*              pCopyMemoryToImageInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToMemory(
+    VkDevice                                    device,
+    const VkCopyImageToMemoryInfo*              pCopyImageToMemoryInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToImage(
+    VkDevice                                    device,
+    const VkCopyImageToImageInfo*               pCopyImageToImageInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayout(
+    VkDevice                                    device,
+    uint32_t                                    transitionCount,
+    const VkHostImageLayoutTransitionInfo*      pTransitions)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+
 static VKAPI_ATTR void VKAPI_CALL DestroySurfaceKHR(
     VkInstance                                  instance,
     VkSurfaceKHR                                surface,
@@ -4654,14 +4809,14 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetFragmentShadingRateKHR(
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingAttachmentLocationsKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingAttachmentLocationInfoKHR* pLocationInfo)
+    const VkRenderingAttachmentLocationInfo*    pLocationInfo)
 {
 //Not a CREATE or DESTROY function
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetRenderingInputAttachmentIndicesKHR(
     VkCommandBuffer                             commandBuffer,
-    const VkRenderingInputAttachmentIndexInfoKHR* pInputAttachmentIndexInfo)
+    const VkRenderingInputAttachmentIndexInfo*  pInputAttachmentIndexInfo)
 {
 //Not a CREATE or DESTROY function
 }
@@ -4783,7 +4938,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPipelineExecutableInternalRepresentatio
 
 static VKAPI_ATTR VkResult VKAPI_CALL MapMemory2KHR(
     VkDevice                                    device,
-    const VkMemoryMapInfoKHR*                   pMemoryMapInfo,
+    const VkMemoryMapInfo*                      pMemoryMapInfo,
     void**                                      ppData)
 {
     return MapMemory(device, pMemoryMapInfo->memory, pMemoryMapInfo->offset, pMemoryMapInfo->size, pMemoryMapInfo->flags, ppData);
@@ -4791,7 +4946,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL MapMemory2KHR(
 
 static VKAPI_ATTR VkResult VKAPI_CALL UnmapMemory2KHR(
     VkDevice                                    device,
-    const VkMemoryUnmapInfoKHR*                 pMemoryUnmapInfo)
+    const VkMemoryUnmapInfo*                    pMemoryUnmapInfo)
 {
     UnmapMemory(device, pMemoryUnmapInfo->memory);
     return VK_SUCCESS;
@@ -4979,7 +5134,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer2KHR(
 
 static VKAPI_ATTR void VKAPI_CALL GetRenderingAreaGranularityKHR(
     VkDevice                                    device,
-    const VkRenderingAreaInfoKHR*               pRenderingAreaInfo,
+    const VkRenderingAreaInfo*                  pRenderingAreaInfo,
     VkExtent2D*                                 pGranularity)
 {
 //Not a CREATE or DESTROY function
@@ -4987,8 +5142,8 @@ static VKAPI_ATTR void VKAPI_CALL GetRenderingAreaGranularityKHR(
 
 static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSubresourceLayoutKHR(
     VkDevice                                    device,
-    const VkDeviceImageSubresourceInfoKHR*      pInfo,
-    VkSubresourceLayout2KHR*                    pLayout)
+    const VkDeviceImageSubresourceInfo*         pInfo,
+    VkSubresourceLayout2*                       pLayout)
 {
 //Not a CREATE or DESTROY function
 }
@@ -4996,8 +5151,8 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceImageSubresourceLayoutKHR(
 static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2KHR(
     VkDevice                                    device,
     VkImage                                     image,
-    const VkImageSubresource2KHR*               pSubresource,
-    VkSubresourceLayout2KHR*                    pLayout)
+    const VkImageSubresource2*                  pSubresource,
+    VkSubresourceLayout2*                       pLayout)
 {
 //Not a CREATE or DESTROY function
 }
@@ -5127,28 +5282,28 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetCalibratedTimestampsKHR(
 
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorSets2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkBindDescriptorSetsInfoKHR*          pBindDescriptorSetsInfo)
+    const VkBindDescriptorSetsInfo*             pBindDescriptorSetsInfo)
 {
 //Not a CREATE or DESTROY function
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushConstants2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushConstantsInfoKHR*               pPushConstantsInfo)
+    const VkPushConstantsInfo*                  pPushConstantsInfo)
 {
 //Not a CREATE or DESTROY function
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSet2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetInfoKHR*           pPushDescriptorSetInfo)
+    const VkPushDescriptorSetInfo*              pPushDescriptorSetInfo)
 {
 //Not a CREATE or DESTROY function
 }
 
 static VKAPI_ATTR void VKAPI_CALL CmdPushDescriptorSetWithTemplate2KHR(
     VkCommandBuffer                             commandBuffer,
-    const VkPushDescriptorSetWithTemplateInfoKHR* pPushDescriptorSetWithTemplateInfo)
+    const VkPushDescriptorSetWithTemplateInfo*  pPushDescriptorSetWithTemplateInfo)
 {
 //Not a CREATE or DESTROY function
 }
@@ -6632,7 +6787,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetStencilOpEXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL CopyMemoryToImageEXT(
     VkDevice                                    device,
-    const VkCopyMemoryToImageInfoEXT*           pCopyMemoryToImageInfo)
+    const VkCopyMemoryToImageInfo*              pCopyMemoryToImageInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6640,7 +6795,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CopyMemoryToImageEXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToMemoryEXT(
     VkDevice                                    device,
-    const VkCopyImageToMemoryInfoEXT*           pCopyImageToMemoryInfo)
+    const VkCopyImageToMemoryInfo*              pCopyImageToMemoryInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6648,7 +6803,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToMemoryEXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToImageEXT(
     VkDevice                                    device,
-    const VkCopyImageToImageInfoEXT*            pCopyImageToImageInfo)
+    const VkCopyImageToImageInfo*               pCopyImageToImageInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6657,7 +6812,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CopyImageToImageEXT(
 static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayoutEXT(
     VkDevice                                    device,
     uint32_t                                    transitionCount,
-    const VkHostImageLayoutTransitionInfoEXT*   pTransitions)
+    const VkHostImageLayoutTransitionInfo*      pTransitions)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -6666,8 +6821,8 @@ static VKAPI_ATTR VkResult VKAPI_CALL TransitionImageLayoutEXT(
 static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
     VkDevice                                    device,
     VkImage                                     image,
-    const VkImageSubresource2KHR*               pSubresource,
-    VkSubresourceLayout2KHR*                    pLayout)
+    const VkImageSubresource2*                  pSubresource,
+    VkSubresourceLayout2*                       pLayout)
 {
 //Not a CREATE or DESTROY function
 }
