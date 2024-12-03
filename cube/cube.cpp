@@ -3889,9 +3889,9 @@ int main(int argc, char **argv) {
 // Global function invoked from NS or UI views and controllers to create demo
 static void demo_main(Demo &demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo.init(argc, (char **)argv);
+    demo.caMetalLayer = caMetalLayer;
     demo.create_surface();
     demo.select_physical_device();
-    demo.caMetalLayer = caMetalLayer;
     demo.init_vk_swapchain();
     demo.prepare();
     demo.spin_angle = 0.4f;
