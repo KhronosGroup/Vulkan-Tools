@@ -4935,9 +4935,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_main(struct demo *demo, void *caMetalLayer, int argc, const char *argv[]) {
     demo_init(demo, argc, (char **)argv);
+    demo->caMetalLayer = caMetalLayer;
     demo_create_surface(demo);
     demo_select_physical_device(demo);
-    demo->caMetalLayer = caMetalLayer;
     demo_init_vk_swapchain(demo);
     demo_prepare(demo);
     demo->spin_angle = 0.4f;
