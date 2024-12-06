@@ -3,7 +3,7 @@
  * Copyright (c) 2019-2022 The Khronos Group Inc.
  * Copyright (c) 2019-2022 Valve Corporation
  * Copyright (c) 2019-2022 LunarG, Inc.
- * Copyright (c) 2023-2023 RasterGrid Kft.
+ * Copyright (c) 2023-2024 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,517 @@ std::string to_hex_str(Printer &p, const T i) {
         return to_hex_str(i);
 }
 
+std::string StdVideoH264ChromaFormatIdcString(StdVideoH264ChromaFormatIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_CHROMA_FORMAT_IDC_MONOCHROME: return "STD_VIDEO_H264_CHROMA_FORMAT_IDC_MONOCHROME";
+        case STD_VIDEO_H264_CHROMA_FORMAT_IDC_420: return "STD_VIDEO_H264_CHROMA_FORMAT_IDC_420";
+        case STD_VIDEO_H264_CHROMA_FORMAT_IDC_422: return "STD_VIDEO_H264_CHROMA_FORMAT_IDC_422";
+        case STD_VIDEO_H264_CHROMA_FORMAT_IDC_444: return "STD_VIDEO_H264_CHROMA_FORMAT_IDC_444";
+        case STD_VIDEO_H264_CHROMA_FORMAT_IDC_INVALID: return "STD_VIDEO_H264_CHROMA_FORMAT_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264ChromaFormatIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264ChromaFormatIdc(Printer &p, std::string name, StdVideoH264ChromaFormatIdc value) {
+    p.PrintKeyString(name, StdVideoH264ChromaFormatIdcString(value));
+}
+std::string StdVideoH264ProfileIdcString(StdVideoH264ProfileIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_PROFILE_IDC_BASELINE: return "STD_VIDEO_H264_PROFILE_IDC_BASELINE";
+        case STD_VIDEO_H264_PROFILE_IDC_MAIN: return "STD_VIDEO_H264_PROFILE_IDC_MAIN";
+        case STD_VIDEO_H264_PROFILE_IDC_HIGH: return "STD_VIDEO_H264_PROFILE_IDC_HIGH";
+        case STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE: return "STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE";
+        case STD_VIDEO_H264_PROFILE_IDC_INVALID: return "STD_VIDEO_H264_PROFILE_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264ProfileIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264ProfileIdc(Printer &p, std::string name, StdVideoH264ProfileIdc value) {
+    p.PrintKeyString(name, StdVideoH264ProfileIdcString(value));
+}
+std::string StdVideoH264LevelIdcString(StdVideoH264LevelIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_LEVEL_IDC_1_0: return "STD_VIDEO_H264_LEVEL_IDC_1_0";
+        case STD_VIDEO_H264_LEVEL_IDC_1_1: return "STD_VIDEO_H264_LEVEL_IDC_1_1";
+        case STD_VIDEO_H264_LEVEL_IDC_1_2: return "STD_VIDEO_H264_LEVEL_IDC_1_2";
+        case STD_VIDEO_H264_LEVEL_IDC_1_3: return "STD_VIDEO_H264_LEVEL_IDC_1_3";
+        case STD_VIDEO_H264_LEVEL_IDC_2_0: return "STD_VIDEO_H264_LEVEL_IDC_2_0";
+        case STD_VIDEO_H264_LEVEL_IDC_2_1: return "STD_VIDEO_H264_LEVEL_IDC_2_1";
+        case STD_VIDEO_H264_LEVEL_IDC_2_2: return "STD_VIDEO_H264_LEVEL_IDC_2_2";
+        case STD_VIDEO_H264_LEVEL_IDC_3_0: return "STD_VIDEO_H264_LEVEL_IDC_3_0";
+        case STD_VIDEO_H264_LEVEL_IDC_3_1: return "STD_VIDEO_H264_LEVEL_IDC_3_1";
+        case STD_VIDEO_H264_LEVEL_IDC_3_2: return "STD_VIDEO_H264_LEVEL_IDC_3_2";
+        case STD_VIDEO_H264_LEVEL_IDC_4_0: return "STD_VIDEO_H264_LEVEL_IDC_4_0";
+        case STD_VIDEO_H264_LEVEL_IDC_4_1: return "STD_VIDEO_H264_LEVEL_IDC_4_1";
+        case STD_VIDEO_H264_LEVEL_IDC_4_2: return "STD_VIDEO_H264_LEVEL_IDC_4_2";
+        case STD_VIDEO_H264_LEVEL_IDC_5_0: return "STD_VIDEO_H264_LEVEL_IDC_5_0";
+        case STD_VIDEO_H264_LEVEL_IDC_5_1: return "STD_VIDEO_H264_LEVEL_IDC_5_1";
+        case STD_VIDEO_H264_LEVEL_IDC_5_2: return "STD_VIDEO_H264_LEVEL_IDC_5_2";
+        case STD_VIDEO_H264_LEVEL_IDC_6_0: return "STD_VIDEO_H264_LEVEL_IDC_6_0";
+        case STD_VIDEO_H264_LEVEL_IDC_6_1: return "STD_VIDEO_H264_LEVEL_IDC_6_1";
+        case STD_VIDEO_H264_LEVEL_IDC_6_2: return "STD_VIDEO_H264_LEVEL_IDC_6_2";
+        case STD_VIDEO_H264_LEVEL_IDC_INVALID: return "STD_VIDEO_H264_LEVEL_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264LevelIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264LevelIdc(Printer &p, std::string name, StdVideoH264LevelIdc value) {
+    p.PrintKeyString(name, StdVideoH264LevelIdcString(value));
+}
+std::string StdVideoH264PocTypeString(StdVideoH264PocType value) {
+    switch (value) {
+        case STD_VIDEO_H264_POC_TYPE_0: return "STD_VIDEO_H264_POC_TYPE_0";
+        case STD_VIDEO_H264_POC_TYPE_1: return "STD_VIDEO_H264_POC_TYPE_1";
+        case STD_VIDEO_H264_POC_TYPE_2: return "STD_VIDEO_H264_POC_TYPE_2";
+        case STD_VIDEO_H264_POC_TYPE_INVALID: return "STD_VIDEO_H264_POC_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264PocType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264PocType(Printer &p, std::string name, StdVideoH264PocType value) {
+    p.PrintKeyString(name, StdVideoH264PocTypeString(value));
+}
+std::string StdVideoH264AspectRatioIdcString(StdVideoH264AspectRatioIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_UNSPECIFIED: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_UNSPECIFIED";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_SQUARE: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_SQUARE";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_12_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_12_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_10_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_10_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_16_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_16_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_40_33: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_40_33";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_24_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_24_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_20_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_20_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_32_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_32_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_80_33: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_80_33";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_18_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_18_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_15_11: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_15_11";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_64_33: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_64_33";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_160_99: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_160_99";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_4_3: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_4_3";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_3_2: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_3_2";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_2_1: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_2_1";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_EXTENDED_SAR: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_EXTENDED_SAR";
+        case STD_VIDEO_H264_ASPECT_RATIO_IDC_INVALID: return "STD_VIDEO_H264_ASPECT_RATIO_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264AspectRatioIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264AspectRatioIdc(Printer &p, std::string name, StdVideoH264AspectRatioIdc value) {
+    p.PrintKeyString(name, StdVideoH264AspectRatioIdcString(value));
+}
+std::string StdVideoH264WeightedBipredIdcString(StdVideoH264WeightedBipredIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_DEFAULT: return "STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_DEFAULT";
+        case STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_EXPLICIT: return "STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_EXPLICIT";
+        case STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_IMPLICIT: return "STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_IMPLICIT";
+        case STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_INVALID: return "STD_VIDEO_H264_WEIGHTED_BIPRED_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264WeightedBipredIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264WeightedBipredIdc(Printer &p, std::string name, StdVideoH264WeightedBipredIdc value) {
+    p.PrintKeyString(name, StdVideoH264WeightedBipredIdcString(value));
+}
+std::string StdVideoH264ModificationOfPicNumsIdcString(StdVideoH264ModificationOfPicNumsIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_SHORT_TERM_SUBTRACT: return "STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_SHORT_TERM_SUBTRACT";
+        case STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_SHORT_TERM_ADD: return "STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_SHORT_TERM_ADD";
+        case STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_LONG_TERM: return "STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_LONG_TERM";
+        case STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_END: return "STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_END";
+        case STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_INVALID: return "STD_VIDEO_H264_MODIFICATION_OF_PIC_NUMS_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264ModificationOfPicNumsIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264ModificationOfPicNumsIdc(Printer &p, std::string name, StdVideoH264ModificationOfPicNumsIdc value) {
+    p.PrintKeyString(name, StdVideoH264ModificationOfPicNumsIdcString(value));
+}
+std::string StdVideoH264MemMgmtControlOpString(StdVideoH264MemMgmtControlOp value) {
+    switch (value) {
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_END: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_END";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_SHORT_TERM: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_SHORT_TERM";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_LONG_TERM: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_LONG_TERM";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_MARK_LONG_TERM: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_MARK_LONG_TERM";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_SET_MAX_LONG_TERM_INDEX: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_SET_MAX_LONG_TERM_INDEX";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_ALL: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_UNMARK_ALL";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_MARK_CURRENT_AS_LONG_TERM: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_MARK_CURRENT_AS_LONG_TERM";
+        case STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_INVALID: return "STD_VIDEO_H264_MEM_MGMT_CONTROL_OP_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264MemMgmtControlOp_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264MemMgmtControlOp(Printer &p, std::string name, StdVideoH264MemMgmtControlOp value) {
+    p.PrintKeyString(name, StdVideoH264MemMgmtControlOpString(value));
+}
+std::string StdVideoH264CabacInitIdcString(StdVideoH264CabacInitIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_CABAC_INIT_IDC_0: return "STD_VIDEO_H264_CABAC_INIT_IDC_0";
+        case STD_VIDEO_H264_CABAC_INIT_IDC_1: return "STD_VIDEO_H264_CABAC_INIT_IDC_1";
+        case STD_VIDEO_H264_CABAC_INIT_IDC_2: return "STD_VIDEO_H264_CABAC_INIT_IDC_2";
+        case STD_VIDEO_H264_CABAC_INIT_IDC_INVALID: return "STD_VIDEO_H264_CABAC_INIT_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264CabacInitIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264CabacInitIdc(Printer &p, std::string name, StdVideoH264CabacInitIdc value) {
+    p.PrintKeyString(name, StdVideoH264CabacInitIdcString(value));
+}
+std::string StdVideoH264DisableDeblockingFilterIdcString(StdVideoH264DisableDeblockingFilterIdc value) {
+    switch (value) {
+        case STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_DISABLED: return "STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_DISABLED";
+        case STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_ENABLED: return "STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_ENABLED";
+        case STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_PARTIAL: return "STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_PARTIAL";
+        case STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_INVALID: return "STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264DisableDeblockingFilterIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264DisableDeblockingFilterIdc(Printer &p, std::string name, StdVideoH264DisableDeblockingFilterIdc value) {
+    p.PrintKeyString(name, StdVideoH264DisableDeblockingFilterIdcString(value));
+}
+std::string StdVideoH264SliceTypeString(StdVideoH264SliceType value) {
+    switch (value) {
+        case STD_VIDEO_H264_SLICE_TYPE_P: return "STD_VIDEO_H264_SLICE_TYPE_P";
+        case STD_VIDEO_H264_SLICE_TYPE_B: return "STD_VIDEO_H264_SLICE_TYPE_B";
+        case STD_VIDEO_H264_SLICE_TYPE_I: return "STD_VIDEO_H264_SLICE_TYPE_I";
+        case STD_VIDEO_H264_SLICE_TYPE_INVALID: return "STD_VIDEO_H264_SLICE_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264SliceType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264SliceType(Printer &p, std::string name, StdVideoH264SliceType value) {
+    p.PrintKeyString(name, StdVideoH264SliceTypeString(value));
+}
+std::string StdVideoH264PictureTypeString(StdVideoH264PictureType value) {
+    switch (value) {
+        case STD_VIDEO_H264_PICTURE_TYPE_P: return "STD_VIDEO_H264_PICTURE_TYPE_P";
+        case STD_VIDEO_H264_PICTURE_TYPE_B: return "STD_VIDEO_H264_PICTURE_TYPE_B";
+        case STD_VIDEO_H264_PICTURE_TYPE_I: return "STD_VIDEO_H264_PICTURE_TYPE_I";
+        case STD_VIDEO_H264_PICTURE_TYPE_IDR: return "STD_VIDEO_H264_PICTURE_TYPE_IDR";
+        case STD_VIDEO_H264_PICTURE_TYPE_INVALID: return "STD_VIDEO_H264_PICTURE_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264PictureType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264PictureType(Printer &p, std::string name, StdVideoH264PictureType value) {
+    p.PrintKeyString(name, StdVideoH264PictureTypeString(value));
+}
+std::string StdVideoH264NonVclNaluTypeString(StdVideoH264NonVclNaluType value) {
+    switch (value) {
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_SPS: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_SPS";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_PPS: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_PPS";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_AUD: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_AUD";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_PREFIX: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_PREFIX";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_END_OF_SEQUENCE: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_END_OF_SEQUENCE";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_END_OF_STREAM: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_END_OF_STREAM";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_PRECODED: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_PRECODED";
+        case STD_VIDEO_H264_NON_VCL_NALU_TYPE_INVALID: return "STD_VIDEO_H264_NON_VCL_NALU_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH264NonVclNaluType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH264NonVclNaluType(Printer &p, std::string name, StdVideoH264NonVclNaluType value) {
+    p.PrintKeyString(name, StdVideoH264NonVclNaluTypeString(value));
+}
+std::string StdVideoDecodeH264FieldOrderCountString(StdVideoDecodeH264FieldOrderCount value) {
+    switch (value) {
+        case STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_TOP: return "STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_TOP";
+        case STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_BOTTOM: return "STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_BOTTOM";
+        case STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_INVALID: return "STD_VIDEO_DECODE_H264_FIELD_ORDER_COUNT_INVALID";
+        default: return std::string("UNKNOWN_StdVideoDecodeH264FieldOrderCount_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoDecodeH264FieldOrderCount(Printer &p, std::string name, StdVideoDecodeH264FieldOrderCount value) {
+    p.PrintKeyString(name, StdVideoDecodeH264FieldOrderCountString(value));
+}
+std::string StdVideoH265ChromaFormatIdcString(StdVideoH265ChromaFormatIdc value) {
+    switch (value) {
+        case STD_VIDEO_H265_CHROMA_FORMAT_IDC_MONOCHROME: return "STD_VIDEO_H265_CHROMA_FORMAT_IDC_MONOCHROME";
+        case STD_VIDEO_H265_CHROMA_FORMAT_IDC_420: return "STD_VIDEO_H265_CHROMA_FORMAT_IDC_420";
+        case STD_VIDEO_H265_CHROMA_FORMAT_IDC_422: return "STD_VIDEO_H265_CHROMA_FORMAT_IDC_422";
+        case STD_VIDEO_H265_CHROMA_FORMAT_IDC_444: return "STD_VIDEO_H265_CHROMA_FORMAT_IDC_444";
+        case STD_VIDEO_H265_CHROMA_FORMAT_IDC_INVALID: return "STD_VIDEO_H265_CHROMA_FORMAT_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265ChromaFormatIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265ChromaFormatIdc(Printer &p, std::string name, StdVideoH265ChromaFormatIdc value) {
+    p.PrintKeyString(name, StdVideoH265ChromaFormatIdcString(value));
+}
+std::string StdVideoH265ProfileIdcString(StdVideoH265ProfileIdc value) {
+    switch (value) {
+        case STD_VIDEO_H265_PROFILE_IDC_MAIN: return "STD_VIDEO_H265_PROFILE_IDC_MAIN";
+        case STD_VIDEO_H265_PROFILE_IDC_MAIN_10: return "STD_VIDEO_H265_PROFILE_IDC_MAIN_10";
+        case STD_VIDEO_H265_PROFILE_IDC_MAIN_STILL_PICTURE: return "STD_VIDEO_H265_PROFILE_IDC_MAIN_STILL_PICTURE";
+        case STD_VIDEO_H265_PROFILE_IDC_FORMAT_RANGE_EXTENSIONS: return "STD_VIDEO_H265_PROFILE_IDC_FORMAT_RANGE_EXTENSIONS";
+        case STD_VIDEO_H265_PROFILE_IDC_SCC_EXTENSIONS: return "STD_VIDEO_H265_PROFILE_IDC_SCC_EXTENSIONS";
+        case STD_VIDEO_H265_PROFILE_IDC_INVALID: return "STD_VIDEO_H265_PROFILE_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265ProfileIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265ProfileIdc(Printer &p, std::string name, StdVideoH265ProfileIdc value) {
+    p.PrintKeyString(name, StdVideoH265ProfileIdcString(value));
+}
+std::string StdVideoH265LevelIdcString(StdVideoH265LevelIdc value) {
+    switch (value) {
+        case STD_VIDEO_H265_LEVEL_IDC_1_0: return "STD_VIDEO_H265_LEVEL_IDC_1_0";
+        case STD_VIDEO_H265_LEVEL_IDC_2_0: return "STD_VIDEO_H265_LEVEL_IDC_2_0";
+        case STD_VIDEO_H265_LEVEL_IDC_2_1: return "STD_VIDEO_H265_LEVEL_IDC_2_1";
+        case STD_VIDEO_H265_LEVEL_IDC_3_0: return "STD_VIDEO_H265_LEVEL_IDC_3_0";
+        case STD_VIDEO_H265_LEVEL_IDC_3_1: return "STD_VIDEO_H265_LEVEL_IDC_3_1";
+        case STD_VIDEO_H265_LEVEL_IDC_4_0: return "STD_VIDEO_H265_LEVEL_IDC_4_0";
+        case STD_VIDEO_H265_LEVEL_IDC_4_1: return "STD_VIDEO_H265_LEVEL_IDC_4_1";
+        case STD_VIDEO_H265_LEVEL_IDC_5_0: return "STD_VIDEO_H265_LEVEL_IDC_5_0";
+        case STD_VIDEO_H265_LEVEL_IDC_5_1: return "STD_VIDEO_H265_LEVEL_IDC_5_1";
+        case STD_VIDEO_H265_LEVEL_IDC_5_2: return "STD_VIDEO_H265_LEVEL_IDC_5_2";
+        case STD_VIDEO_H265_LEVEL_IDC_6_0: return "STD_VIDEO_H265_LEVEL_IDC_6_0";
+        case STD_VIDEO_H265_LEVEL_IDC_6_1: return "STD_VIDEO_H265_LEVEL_IDC_6_1";
+        case STD_VIDEO_H265_LEVEL_IDC_6_2: return "STD_VIDEO_H265_LEVEL_IDC_6_2";
+        case STD_VIDEO_H265_LEVEL_IDC_INVALID: return "STD_VIDEO_H265_LEVEL_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265LevelIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265LevelIdc(Printer &p, std::string name, StdVideoH265LevelIdc value) {
+    p.PrintKeyString(name, StdVideoH265LevelIdcString(value));
+}
+std::string StdVideoH265SliceTypeString(StdVideoH265SliceType value) {
+    switch (value) {
+        case STD_VIDEO_H265_SLICE_TYPE_B: return "STD_VIDEO_H265_SLICE_TYPE_B";
+        case STD_VIDEO_H265_SLICE_TYPE_P: return "STD_VIDEO_H265_SLICE_TYPE_P";
+        case STD_VIDEO_H265_SLICE_TYPE_I: return "STD_VIDEO_H265_SLICE_TYPE_I";
+        case STD_VIDEO_H265_SLICE_TYPE_INVALID: return "STD_VIDEO_H265_SLICE_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265SliceType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265SliceType(Printer &p, std::string name, StdVideoH265SliceType value) {
+    p.PrintKeyString(name, StdVideoH265SliceTypeString(value));
+}
+std::string StdVideoH265PictureTypeString(StdVideoH265PictureType value) {
+    switch (value) {
+        case STD_VIDEO_H265_PICTURE_TYPE_P: return "STD_VIDEO_H265_PICTURE_TYPE_P";
+        case STD_VIDEO_H265_PICTURE_TYPE_B: return "STD_VIDEO_H265_PICTURE_TYPE_B";
+        case STD_VIDEO_H265_PICTURE_TYPE_I: return "STD_VIDEO_H265_PICTURE_TYPE_I";
+        case STD_VIDEO_H265_PICTURE_TYPE_IDR: return "STD_VIDEO_H265_PICTURE_TYPE_IDR";
+        case STD_VIDEO_H265_PICTURE_TYPE_INVALID: return "STD_VIDEO_H265_PICTURE_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265PictureType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265PictureType(Printer &p, std::string name, StdVideoH265PictureType value) {
+    p.PrintKeyString(name, StdVideoH265PictureTypeString(value));
+}
+std::string StdVideoH265AspectRatioIdcString(StdVideoH265AspectRatioIdc value) {
+    switch (value) {
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_UNSPECIFIED: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_UNSPECIFIED";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_SQUARE: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_SQUARE";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_12_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_12_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_10_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_10_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_16_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_16_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_40_33: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_40_33";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_24_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_24_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_20_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_20_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_32_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_32_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_80_33: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_80_33";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_18_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_18_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_15_11: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_15_11";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_64_33: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_64_33";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_160_99: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_160_99";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_4_3: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_4_3";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_3_2: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_3_2";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_2_1: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_2_1";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_EXTENDED_SAR: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_EXTENDED_SAR";
+        case STD_VIDEO_H265_ASPECT_RATIO_IDC_INVALID: return "STD_VIDEO_H265_ASPECT_RATIO_IDC_INVALID";
+        default: return std::string("UNKNOWN_StdVideoH265AspectRatioIdc_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoH265AspectRatioIdc(Printer &p, std::string name, StdVideoH265AspectRatioIdc value) {
+    p.PrintKeyString(name, StdVideoH265AspectRatioIdcString(value));
+}
+std::string StdVideoAV1ProfileString(StdVideoAV1Profile value) {
+    switch (value) {
+        case STD_VIDEO_AV1_PROFILE_MAIN: return "STD_VIDEO_AV1_PROFILE_MAIN";
+        case STD_VIDEO_AV1_PROFILE_HIGH: return "STD_VIDEO_AV1_PROFILE_HIGH";
+        case STD_VIDEO_AV1_PROFILE_PROFESSIONAL: return "STD_VIDEO_AV1_PROFILE_PROFESSIONAL";
+        case STD_VIDEO_AV1_PROFILE_INVALID: return "STD_VIDEO_AV1_PROFILE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1Profile_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1Profile(Printer &p, std::string name, StdVideoAV1Profile value) {
+    p.PrintKeyString(name, StdVideoAV1ProfileString(value));
+}
+std::string StdVideoAV1LevelString(StdVideoAV1Level value) {
+    switch (value) {
+        case STD_VIDEO_AV1_LEVEL_2_0: return "STD_VIDEO_AV1_LEVEL_2_0";
+        case STD_VIDEO_AV1_LEVEL_2_1: return "STD_VIDEO_AV1_LEVEL_2_1";
+        case STD_VIDEO_AV1_LEVEL_2_2: return "STD_VIDEO_AV1_LEVEL_2_2";
+        case STD_VIDEO_AV1_LEVEL_2_3: return "STD_VIDEO_AV1_LEVEL_2_3";
+        case STD_VIDEO_AV1_LEVEL_3_0: return "STD_VIDEO_AV1_LEVEL_3_0";
+        case STD_VIDEO_AV1_LEVEL_3_1: return "STD_VIDEO_AV1_LEVEL_3_1";
+        case STD_VIDEO_AV1_LEVEL_3_2: return "STD_VIDEO_AV1_LEVEL_3_2";
+        case STD_VIDEO_AV1_LEVEL_3_3: return "STD_VIDEO_AV1_LEVEL_3_3";
+        case STD_VIDEO_AV1_LEVEL_4_0: return "STD_VIDEO_AV1_LEVEL_4_0";
+        case STD_VIDEO_AV1_LEVEL_4_1: return "STD_VIDEO_AV1_LEVEL_4_1";
+        case STD_VIDEO_AV1_LEVEL_4_2: return "STD_VIDEO_AV1_LEVEL_4_2";
+        case STD_VIDEO_AV1_LEVEL_4_3: return "STD_VIDEO_AV1_LEVEL_4_3";
+        case STD_VIDEO_AV1_LEVEL_5_0: return "STD_VIDEO_AV1_LEVEL_5_0";
+        case STD_VIDEO_AV1_LEVEL_5_1: return "STD_VIDEO_AV1_LEVEL_5_1";
+        case STD_VIDEO_AV1_LEVEL_5_2: return "STD_VIDEO_AV1_LEVEL_5_2";
+        case STD_VIDEO_AV1_LEVEL_5_3: return "STD_VIDEO_AV1_LEVEL_5_3";
+        case STD_VIDEO_AV1_LEVEL_6_0: return "STD_VIDEO_AV1_LEVEL_6_0";
+        case STD_VIDEO_AV1_LEVEL_6_1: return "STD_VIDEO_AV1_LEVEL_6_1";
+        case STD_VIDEO_AV1_LEVEL_6_2: return "STD_VIDEO_AV1_LEVEL_6_2";
+        case STD_VIDEO_AV1_LEVEL_6_3: return "STD_VIDEO_AV1_LEVEL_6_3";
+        case STD_VIDEO_AV1_LEVEL_7_0: return "STD_VIDEO_AV1_LEVEL_7_0";
+        case STD_VIDEO_AV1_LEVEL_7_1: return "STD_VIDEO_AV1_LEVEL_7_1";
+        case STD_VIDEO_AV1_LEVEL_7_2: return "STD_VIDEO_AV1_LEVEL_7_2";
+        case STD_VIDEO_AV1_LEVEL_7_3: return "STD_VIDEO_AV1_LEVEL_7_3";
+        case STD_VIDEO_AV1_LEVEL_INVALID: return "STD_VIDEO_AV1_LEVEL_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1Level_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1Level(Printer &p, std::string name, StdVideoAV1Level value) {
+    p.PrintKeyString(name, StdVideoAV1LevelString(value));
+}
+std::string StdVideoAV1FrameTypeString(StdVideoAV1FrameType value) {
+    switch (value) {
+        case STD_VIDEO_AV1_FRAME_TYPE_KEY: return "STD_VIDEO_AV1_FRAME_TYPE_KEY";
+        case STD_VIDEO_AV1_FRAME_TYPE_INTER: return "STD_VIDEO_AV1_FRAME_TYPE_INTER";
+        case STD_VIDEO_AV1_FRAME_TYPE_INTRA_ONLY: return "STD_VIDEO_AV1_FRAME_TYPE_INTRA_ONLY";
+        case STD_VIDEO_AV1_FRAME_TYPE_SWITCH: return "STD_VIDEO_AV1_FRAME_TYPE_SWITCH";
+        case STD_VIDEO_AV1_FRAME_TYPE_INVALID: return "STD_VIDEO_AV1_FRAME_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1FrameType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1FrameType(Printer &p, std::string name, StdVideoAV1FrameType value) {
+    p.PrintKeyString(name, StdVideoAV1FrameTypeString(value));
+}
+std::string StdVideoAV1ReferenceNameString(StdVideoAV1ReferenceName value) {
+    switch (value) {
+        case STD_VIDEO_AV1_REFERENCE_NAME_INTRA_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_INTRA_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_LAST_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_LAST_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_LAST2_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_LAST2_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_LAST3_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_LAST3_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_GOLDEN_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_GOLDEN_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_BWDREF_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_BWDREF_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_ALTREF2_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_ALTREF2_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_ALTREF_FRAME: return "STD_VIDEO_AV1_REFERENCE_NAME_ALTREF_FRAME";
+        case STD_VIDEO_AV1_REFERENCE_NAME_INVALID: return "STD_VIDEO_AV1_REFERENCE_NAME_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1ReferenceName_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1ReferenceName(Printer &p, std::string name, StdVideoAV1ReferenceName value) {
+    p.PrintKeyString(name, StdVideoAV1ReferenceNameString(value));
+}
+std::string StdVideoAV1InterpolationFilterString(StdVideoAV1InterpolationFilter value) {
+    switch (value) {
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP";
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP_SMOOTH: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP_SMOOTH";
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP_SHARP: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_EIGHTTAP_SHARP";
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_BILINEAR: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_BILINEAR";
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_SWITCHABLE: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_SWITCHABLE";
+        case STD_VIDEO_AV1_INTERPOLATION_FILTER_INVALID: return "STD_VIDEO_AV1_INTERPOLATION_FILTER_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1InterpolationFilter_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1InterpolationFilter(Printer &p, std::string name, StdVideoAV1InterpolationFilter value) {
+    p.PrintKeyString(name, StdVideoAV1InterpolationFilterString(value));
+}
+std::string StdVideoAV1TxModeString(StdVideoAV1TxMode value) {
+    switch (value) {
+        case STD_VIDEO_AV1_TX_MODE_ONLY_4X4: return "STD_VIDEO_AV1_TX_MODE_ONLY_4X4";
+        case STD_VIDEO_AV1_TX_MODE_LARGEST: return "STD_VIDEO_AV1_TX_MODE_LARGEST";
+        case STD_VIDEO_AV1_TX_MODE_SELECT: return "STD_VIDEO_AV1_TX_MODE_SELECT";
+        case STD_VIDEO_AV1_TX_MODE_INVALID: return "STD_VIDEO_AV1_TX_MODE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1TxMode_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1TxMode(Printer &p, std::string name, StdVideoAV1TxMode value) {
+    p.PrintKeyString(name, StdVideoAV1TxModeString(value));
+}
+std::string StdVideoAV1FrameRestorationTypeString(StdVideoAV1FrameRestorationType value) {
+    switch (value) {
+        case STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_NONE: return "STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_NONE";
+        case STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_WIENER: return "STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_WIENER";
+        case STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_SGRPROJ: return "STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_SGRPROJ";
+        case STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_SWITCHABLE: return "STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_SWITCHABLE";
+        case STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_INVALID: return "STD_VIDEO_AV1_FRAME_RESTORATION_TYPE_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1FrameRestorationType_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1FrameRestorationType(Printer &p, std::string name, StdVideoAV1FrameRestorationType value) {
+    p.PrintKeyString(name, StdVideoAV1FrameRestorationTypeString(value));
+}
+std::string StdVideoAV1ColorPrimariesString(StdVideoAV1ColorPrimaries value) {
+    switch (value) {
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_BT_709: return "STD_VIDEO_AV1_COLOR_PRIMARIES_BT_709";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_UNSPECIFIED: return "STD_VIDEO_AV1_COLOR_PRIMARIES_UNSPECIFIED";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_BT_470_M: return "STD_VIDEO_AV1_COLOR_PRIMARIES_BT_470_M";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_BT_470_B_G: return "STD_VIDEO_AV1_COLOR_PRIMARIES_BT_470_B_G";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_BT_601: return "STD_VIDEO_AV1_COLOR_PRIMARIES_BT_601";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_240: return "STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_240";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_GENERIC_FILM: return "STD_VIDEO_AV1_COLOR_PRIMARIES_GENERIC_FILM";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_BT_2020: return "STD_VIDEO_AV1_COLOR_PRIMARIES_BT_2020";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_XYZ: return "STD_VIDEO_AV1_COLOR_PRIMARIES_XYZ";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_431: return "STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_431";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_432: return "STD_VIDEO_AV1_COLOR_PRIMARIES_SMPTE_432";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_EBU_3213: return "STD_VIDEO_AV1_COLOR_PRIMARIES_EBU_3213";
+        case STD_VIDEO_AV1_COLOR_PRIMARIES_INVALID: return "STD_VIDEO_AV1_COLOR_PRIMARIES_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1ColorPrimaries_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1ColorPrimaries(Printer &p, std::string name, StdVideoAV1ColorPrimaries value) {
+    p.PrintKeyString(name, StdVideoAV1ColorPrimariesString(value));
+}
+std::string StdVideoAV1TransferCharacteristicsString(StdVideoAV1TransferCharacteristics value) {
+    switch (value) {
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_RESERVED_0: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_RESERVED_0";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_709: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_709";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_UNSPECIFIED: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_UNSPECIFIED";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_RESERVED_3: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_RESERVED_3";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_470_M: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_470_M";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_470_B_G: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_470_B_G";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_601: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_601";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_240: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_240";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LINEAR: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LINEAR";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LOG_100: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LOG_100";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LOG_100_SQRT10: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_LOG_100_SQRT10";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_IEC_61966: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_IEC_61966";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_1361: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_1361";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SRGB: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SRGB";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_2020_10_BIT: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_2020_10_BIT";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_2020_12_BIT: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_BT_2020_12_BIT";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_2084: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_2084";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_428: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_SMPTE_428";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_HLG: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_HLG";
+        case STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_INVALID: return "STD_VIDEO_AV1_TRANSFER_CHARACTERISTICS_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1TransferCharacteristics_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1TransferCharacteristics(Printer &p, std::string name, StdVideoAV1TransferCharacteristics value) {
+    p.PrintKeyString(name, StdVideoAV1TransferCharacteristicsString(value));
+}
+std::string StdVideoAV1MatrixCoefficientsString(StdVideoAV1MatrixCoefficients value) {
+    switch (value) {
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_IDENTITY: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_IDENTITY";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_709: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_709";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_UNSPECIFIED: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_UNSPECIFIED";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_RESERVED_3: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_RESERVED_3";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_FCC: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_FCC";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_470_B_G: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_470_B_G";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_601: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_601";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_240: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_240";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_YCGCO: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_YCGCO";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_2020_NCL: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_2020_NCL";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_2020_CL: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_BT_2020_CL";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_2085: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_SMPTE_2085";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_CHROMAT_NCL: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_CHROMAT_NCL";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_CHROMAT_CL: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_CHROMAT_CL";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_ICTCP: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_ICTCP";
+        case STD_VIDEO_AV1_MATRIX_COEFFICIENTS_INVALID: return "STD_VIDEO_AV1_MATRIX_COEFFICIENTS_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1MatrixCoefficients_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1MatrixCoefficients(Printer &p, std::string name, StdVideoAV1MatrixCoefficients value) {
+    p.PrintKeyString(name, StdVideoAV1MatrixCoefficientsString(value));
+}
+std::string StdVideoAV1ChromaSamplePositionString(StdVideoAV1ChromaSamplePosition value) {
+    switch (value) {
+        case STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_UNKNOWN: return "STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_UNKNOWN";
+        case STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_VERTICAL: return "STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_VERTICAL";
+        case STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_COLOCATED: return "STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_COLOCATED";
+        case STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_RESERVED: return "STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_RESERVED";
+        case STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_INVALID: return "STD_VIDEO_AV1_CHROMA_SAMPLE_POSITION_INVALID";
+        default: return std::string("UNKNOWN_StdVideoAV1ChromaSamplePosition_value") + std::to_string(value);
+    }
+}
+void DumpStdVideoAV1ChromaSamplePosition(Printer &p, std::string name, StdVideoAV1ChromaSamplePosition value) {
+    p.PrintKeyString(name, StdVideoAV1ChromaSamplePositionString(value));
+}
 std::string VkColorSpaceKHRString(VkColorSpaceKHR value) {
     switch (value) {
         case (VK_COLOR_SPACE_SRGB_NONLINEAR_KHR): return "COLOR_SPACE_SRGB_NONLINEAR_KHR";
@@ -71,6 +582,24 @@ void DumpVkColorSpaceKHR(Printer &p, std::string name, VkColorSpaceKHR value) {
         p.PrintKeyString(name, std::string("VK_") + VkColorSpaceKHRString(value));
     else
         p.PrintKeyString(name, VkColorSpaceKHRString(value));
+}
+std::string VkComponentSwizzleString(VkComponentSwizzle value) {
+    switch (value) {
+        case (VK_COMPONENT_SWIZZLE_IDENTITY): return "COMPONENT_SWIZZLE_IDENTITY";
+        case (VK_COMPONENT_SWIZZLE_ZERO): return "COMPONENT_SWIZZLE_ZERO";
+        case (VK_COMPONENT_SWIZZLE_ONE): return "COMPONENT_SWIZZLE_ONE";
+        case (VK_COMPONENT_SWIZZLE_R): return "COMPONENT_SWIZZLE_R";
+        case (VK_COMPONENT_SWIZZLE_G): return "COMPONENT_SWIZZLE_G";
+        case (VK_COMPONENT_SWIZZLE_B): return "COMPONENT_SWIZZLE_B";
+        case (VK_COMPONENT_SWIZZLE_A): return "COMPONENT_SWIZZLE_A";
+        default: return std::string("UNKNOWN_VkComponentSwizzle_value") + std::to_string(value);
+    }
+}
+void DumpVkComponentSwizzle(Printer &p, std::string name, VkComponentSwizzle value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkComponentSwizzleString(value));
+    else
+        p.PrintKeyString(name, VkComponentSwizzleString(value));
 }
 std::string VkDriverIdString(VkDriverId value) {
     switch (value) {
@@ -426,6 +955,20 @@ void DumpVkImageTiling(Printer &p, std::string name, VkImageTiling value) {
     else
         p.PrintKeyString(name, VkImageTilingString(value));
 }
+std::string VkImageTypeString(VkImageType value) {
+    switch (value) {
+        case (VK_IMAGE_TYPE_1D): return "IMAGE_TYPE_1D";
+        case (VK_IMAGE_TYPE_2D): return "IMAGE_TYPE_2D";
+        case (VK_IMAGE_TYPE_3D): return "IMAGE_TYPE_3D";
+        default: return std::string("UNKNOWN_VkImageType_value") + std::to_string(value);
+    }
+}
+void DumpVkImageType(Printer &p, std::string name, VkImageType value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkImageTypeString(value));
+    else
+        p.PrintKeyString(name, VkImageTypeString(value));
+}
 std::string VkPhysicalDeviceLayeredApiKHRString(VkPhysicalDeviceLayeredApiKHR value) {
     switch (value) {
         case (VK_PHYSICAL_DEVICE_LAYERED_API_VULKAN_KHR): return "PHYSICAL_DEVICE_LAYERED_API_VULKAN_KHR";
@@ -607,6 +1150,22 @@ void DumpVkShaderFloatControlsIndependence(Printer &p, std::string name, VkShade
         p.PrintKeyString(name, std::string("VK_") + VkShaderFloatControlsIndependenceString(value));
     else
         p.PrintKeyString(name, VkShaderFloatControlsIndependenceString(value));
+}
+std::string VkVideoEncodeTuningModeKHRString(VkVideoEncodeTuningModeKHR value) {
+    switch (value) {
+        case (VK_VIDEO_ENCODE_TUNING_MODE_DEFAULT_KHR): return "VIDEO_ENCODE_TUNING_MODE_DEFAULT_KHR";
+        case (VK_VIDEO_ENCODE_TUNING_MODE_HIGH_QUALITY_KHR): return "VIDEO_ENCODE_TUNING_MODE_HIGH_QUALITY_KHR";
+        case (VK_VIDEO_ENCODE_TUNING_MODE_LOW_LATENCY_KHR): return "VIDEO_ENCODE_TUNING_MODE_LOW_LATENCY_KHR";
+        case (VK_VIDEO_ENCODE_TUNING_MODE_ULTRA_LOW_LATENCY_KHR): return "VIDEO_ENCODE_TUNING_MODE_ULTRA_LOW_LATENCY_KHR";
+        case (VK_VIDEO_ENCODE_TUNING_MODE_LOSSLESS_KHR): return "VIDEO_ENCODE_TUNING_MODE_LOSSLESS_KHR";
+        default: return std::string("UNKNOWN_VkVideoEncodeTuningModeKHR_value") + std::to_string(value);
+    }
+}
+void DumpVkVideoEncodeTuningModeKHR(Printer &p, std::string name, VkVideoEncodeTuningModeKHR value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkVideoEncodeTuningModeKHRString(value));
+    else
+        p.PrintKeyString(name, VkVideoEncodeTuningModeKHRString(value));
 }
 std::vector<const char *> VkCompositeAlphaFlagBitsKHRGetStrings(VkCompositeAlphaFlagBitsKHR value) {
     std::vector<const char *> strings;
@@ -808,6 +1367,57 @@ void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlag
 }
 void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureFlagBits2 value) {
     auto strings = VkFormatFeatureFlagBits2GetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkImageCreateFlagBitsGetStrings(VkImageCreateFlagBits value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_IMAGE_CREATE_SPARSE_BINDING_BIT & value) strings.push_back("IMAGE_CREATE_SPARSE_BINDING_BIT");
+    if (VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT & value) strings.push_back("IMAGE_CREATE_SPARSE_RESIDENCY_BIT");
+    if (VK_IMAGE_CREATE_SPARSE_ALIASED_BIT & value) strings.push_back("IMAGE_CREATE_SPARSE_ALIASED_BIT");
+    if (VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT & value) strings.push_back("IMAGE_CREATE_MUTABLE_FORMAT_BIT");
+    if (VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT & value) strings.push_back("IMAGE_CREATE_CUBE_COMPATIBLE_BIT");
+    if (VK_IMAGE_CREATE_ALIAS_BIT & value) strings.push_back("IMAGE_CREATE_ALIAS_BIT");
+    if (VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT & value) strings.push_back("IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT");
+    if (VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT & value) strings.push_back("IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT");
+    if (VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT & value) strings.push_back("IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT");
+    if (VK_IMAGE_CREATE_EXTENDED_USAGE_BIT & value) strings.push_back("IMAGE_CREATE_EXTENDED_USAGE_BIT");
+    if (VK_IMAGE_CREATE_PROTECTED_BIT & value) strings.push_back("IMAGE_CREATE_PROTECTED_BIT");
+    if (VK_IMAGE_CREATE_DISJOINT_BIT & value) strings.push_back("IMAGE_CREATE_DISJOINT_BIT");
+    if (VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV & value) strings.push_back("IMAGE_CREATE_CORNER_SAMPLED_BIT_NV");
+    if (VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT & value) strings.push_back("IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT");
+    if (VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT & value) strings.push_back("IMAGE_CREATE_SUBSAMPLED_BIT_EXT");
+    if (VK_IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT & value) strings.push_back("IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT");
+    if (VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT & value) strings.push_back("IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT");
+    if (VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT & value) strings.push_back("IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT");
+    if (VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM & value) strings.push_back("IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM");
+    if (VK_IMAGE_CREATE_VIDEO_PROFILE_INDEPENDENT_BIT_KHR & value) strings.push_back("IMAGE_CREATE_VIDEO_PROFILE_INDEPENDENT_BIT_KHR");
+    return strings;
+}
+void DumpVkImageCreateFlags(Printer &p, std::string name, VkImageCreateFlags value) {
+    if (static_cast<VkImageCreateFlagBits>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkImageCreateFlagBitsGetStrings(static_cast<VkImageCreateFlagBits>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkImageCreateFlagBits(Printer &p, std::string name, VkImageCreateFlagBits value) {
+    auto strings = VkImageCreateFlagBitsGetStrings(value);
     if (strings.size() > 0) {
         if (p.Type() == OutputType::json)
             p.PrintKeyString(name, std::string("VK_") + strings.at(0));
@@ -1122,7 +1732,7 @@ std::string VkQueueFlagsString(VkQueueFlags value) {
 }
 std::vector<const char *> VkResolveModeFlagBitsGetStrings(VkResolveModeFlagBits value) {
     std::vector<const char *> strings;
-    if (VK_RESOLVE_MODE_NONE & value) strings.push_back("RESOLVE_MODE_NONE");
+    if (value == 0) { strings.push_back("RESOLVE_MODE_NONE"); return strings; }
     if (VK_RESOLVE_MODE_SAMPLE_ZERO_BIT & value) strings.push_back("RESOLVE_MODE_SAMPLE_ZERO_BIT");
     if (VK_RESOLVE_MODE_AVERAGE_BIT & value) strings.push_back("RESOLVE_MODE_AVERAGE_BIT");
     if (VK_RESOLVE_MODE_MIN_BIT & value) strings.push_back("RESOLVE_MODE_MIN_BIT");
@@ -1393,9 +2003,77 @@ void DumpVkToolPurposeFlagBits(Printer &p, std::string name, VkToolPurposeFlagBi
     }
 }
 
+std::vector<const char *> VkVideoCapabilityFlagBitsKHRGetStrings(VkVideoCapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_CAPABILITY_PROTECTED_CONTENT_BIT_KHR & value) strings.push_back("VIDEO_CAPABILITY_PROTECTED_CONTENT_BIT_KHR");
+    if (VK_VIDEO_CAPABILITY_SEPARATE_REFERENCE_IMAGES_BIT_KHR & value) strings.push_back("VIDEO_CAPABILITY_SEPARATE_REFERENCE_IMAGES_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoCapabilityFlagsKHR(Printer &p, std::string name, VkVideoCapabilityFlagsKHR value) {
+    if (static_cast<VkVideoCapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoCapabilityFlagBitsKHRGetStrings(static_cast<VkVideoCapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoCapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoCapabilityFlagBitsKHR value) {
+    auto strings = VkVideoCapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoChromaSubsamplingFlagBitsKHRGetStrings(VkVideoChromaSubsamplingFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_CHROMA_SUBSAMPLING_INVALID_KHR"); return strings; }
+    if (VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR");
+    if (VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR");
+    if (VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR");
+    if (VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR & value) strings.push_back("VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoChromaSubsamplingFlagsKHR(Printer &p, std::string name, VkVideoChromaSubsamplingFlagsKHR value) {
+    if (static_cast<VkVideoChromaSubsamplingFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoChromaSubsamplingFlagBitsKHRGetStrings(static_cast<VkVideoChromaSubsamplingFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoChromaSubsamplingFlagBitsKHR(Printer &p, std::string name, VkVideoChromaSubsamplingFlagBitsKHR value) {
+    auto strings = VkVideoChromaSubsamplingFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkVideoCodecOperationFlagBitsKHRGetStrings(VkVideoCodecOperationFlagBitsKHR value) {
     std::vector<const char *> strings;
-    if (VK_VIDEO_CODEC_OPERATION_NONE_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_NONE_KHR");
+    if (value == 0) { strings.push_back("VIDEO_CODEC_OPERATION_NONE_KHR"); return strings; }
     if (VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR");
     if (VK_VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR");
     if (VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR & value) strings.push_back("VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR");
@@ -1430,6 +2108,678 @@ void DumpVkVideoCodecOperationFlagBitsKHR(Printer &p, std::string name, VkVideoC
     }
 }
 
+std::vector<const char *> VkVideoComponentBitDepthFlagBitsKHRGetStrings(VkVideoComponentBitDepthFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_INVALID_KHR"); return strings; }
+    if (VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR");
+    if (VK_VIDEO_COMPONENT_BIT_DEPTH_10_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_10_BIT_KHR");
+    if (VK_VIDEO_COMPONENT_BIT_DEPTH_12_BIT_KHR & value) strings.push_back("VIDEO_COMPONENT_BIT_DEPTH_12_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoComponentBitDepthFlagsKHR(Printer &p, std::string name, VkVideoComponentBitDepthFlagsKHR value) {
+    if (static_cast<VkVideoComponentBitDepthFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoComponentBitDepthFlagBitsKHRGetStrings(static_cast<VkVideoComponentBitDepthFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoComponentBitDepthFlagBitsKHR(Printer &p, std::string name, VkVideoComponentBitDepthFlagBitsKHR value) {
+    auto strings = VkVideoComponentBitDepthFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoDecodeCapabilityFlagBitsKHRGetStrings(VkVideoDecodeCapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR & value) strings.push_back("VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR");
+    if (VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR & value) strings.push_back("VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_DISTINCT_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoDecodeCapabilityFlagsKHR(Printer &p, std::string name, VkVideoDecodeCapabilityFlagsKHR value) {
+    if (static_cast<VkVideoDecodeCapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoDecodeCapabilityFlagBitsKHRGetStrings(static_cast<VkVideoDecodeCapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoDecodeCapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoDecodeCapabilityFlagBitsKHR value) {
+    auto strings = VkVideoDecodeCapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoDecodeH264PictureLayoutFlagBitsKHRGetStrings(VkVideoDecodeH264PictureLayoutFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR"); return strings; }
+    if (VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR & value) strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR");
+    if (VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR & value) strings.push_back("VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoDecodeH264PictureLayoutFlagsKHR(Printer &p, std::string name, VkVideoDecodeH264PictureLayoutFlagsKHR value) {
+    if (static_cast<VkVideoDecodeH264PictureLayoutFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoDecodeH264PictureLayoutFlagBitsKHRGetStrings(static_cast<VkVideoDecodeH264PictureLayoutFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoDecodeH264PictureLayoutFlagBitsKHR(Printer &p, std::string name, VkVideoDecodeH264PictureLayoutFlagBitsKHR value) {
+    auto strings = VkVideoDecodeH264PictureLayoutFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoDecodeUsageFlagBitsKHRGetStrings(VkVideoDecodeUsageFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_DECODE_USAGE_DEFAULT_KHR"); return strings; }
+    if (VK_VIDEO_DECODE_USAGE_TRANSCODING_BIT_KHR & value) strings.push_back("VIDEO_DECODE_USAGE_TRANSCODING_BIT_KHR");
+    if (VK_VIDEO_DECODE_USAGE_OFFLINE_BIT_KHR & value) strings.push_back("VIDEO_DECODE_USAGE_OFFLINE_BIT_KHR");
+    if (VK_VIDEO_DECODE_USAGE_STREAMING_BIT_KHR & value) strings.push_back("VIDEO_DECODE_USAGE_STREAMING_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoDecodeUsageFlagsKHR(Printer &p, std::string name, VkVideoDecodeUsageFlagsKHR value) {
+    if (static_cast<VkVideoDecodeUsageFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoDecodeUsageFlagBitsKHRGetStrings(static_cast<VkVideoDecodeUsageFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoDecodeUsageFlagBitsKHR(Printer &p, std::string name, VkVideoDecodeUsageFlagBitsKHR value) {
+    auto strings = VkVideoDecodeUsageFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeAV1CapabilityFlagBitsKHRGetStrings(VkVideoEncodeAV1CapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_AV1_CAPABILITY_PER_RATE_CONTROL_GROUP_MIN_MAX_Q_INDEX_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_CAPABILITY_PER_RATE_CONTROL_GROUP_MIN_MAX_Q_INDEX_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_CAPABILITY_GENERATE_OBU_EXTENSION_HEADER_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_CAPABILITY_GENERATE_OBU_EXTENSION_HEADER_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_CAPABILITY_PRIMARY_REFERENCE_CDF_ONLY_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_CAPABILITY_PRIMARY_REFERENCE_CDF_ONLY_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_CAPABILITY_FRAME_SIZE_OVERRIDE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_CAPABILITY_FRAME_SIZE_OVERRIDE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_CAPABILITY_MOTION_VECTOR_SCALING_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_CAPABILITY_MOTION_VECTOR_SCALING_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeAV1CapabilityFlagsKHR(Printer &p, std::string name, VkVideoEncodeAV1CapabilityFlagsKHR value) {
+    if (static_cast<VkVideoEncodeAV1CapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeAV1CapabilityFlagBitsKHRGetStrings(static_cast<VkVideoEncodeAV1CapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeAV1CapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeAV1CapabilityFlagBitsKHR value) {
+    auto strings = VkVideoEncodeAV1CapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeAV1StdFlagBitsKHRGetStrings(VkVideoEncodeAV1StdFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_AV1_STD_UNIFORM_TILE_SPACING_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_STD_UNIFORM_TILE_SPACING_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_STD_SKIP_MODE_PRESENT_UNSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_STD_SKIP_MODE_PRESENT_UNSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_STD_PRIMARY_REF_FRAME_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_STD_PRIMARY_REF_FRAME_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_STD_DELTA_Q_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_STD_DELTA_Q_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeAV1StdFlagsKHR(Printer &p, std::string name, VkVideoEncodeAV1StdFlagsKHR value) {
+    if (static_cast<VkVideoEncodeAV1StdFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeAV1StdFlagBitsKHRGetStrings(static_cast<VkVideoEncodeAV1StdFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeAV1StdFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeAV1StdFlagBitsKHR value) {
+    auto strings = VkVideoEncodeAV1StdFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeAV1SuperblockSizeFlagBitsKHRGetStrings(VkVideoEncodeAV1SuperblockSizeFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_64_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_64_BIT_KHR");
+    if (VK_VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_128_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_AV1_SUPERBLOCK_SIZE_128_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeAV1SuperblockSizeFlagsKHR(Printer &p, std::string name, VkVideoEncodeAV1SuperblockSizeFlagsKHR value) {
+    if (static_cast<VkVideoEncodeAV1SuperblockSizeFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeAV1SuperblockSizeFlagBitsKHRGetStrings(static_cast<VkVideoEncodeAV1SuperblockSizeFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeAV1SuperblockSizeFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeAV1SuperblockSizeFlagBitsKHR value) {
+    auto strings = VkVideoEncodeAV1SuperblockSizeFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeCapabilityFlagBitsKHRGetStrings(VkVideoEncodeCapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_CAPABILITY_PRECEDING_EXTERNALLY_ENCODED_BYTES_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CAPABILITY_PRECEDING_EXTERNALLY_ENCODED_BYTES_BIT_KHR");
+    if (VK_VIDEO_ENCODE_CAPABILITY_INSUFFICIENT_BITSTREAM_BUFFER_RANGE_DETECTION_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CAPABILITY_INSUFFICIENT_BITSTREAM_BUFFER_RANGE_DETECTION_BIT_KHR");
+    if (VK_VIDEO_ENCODE_CAPABILITY_QUANTIZATION_DELTA_MAP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CAPABILITY_QUANTIZATION_DELTA_MAP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_CAPABILITY_EMPHASIS_MAP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CAPABILITY_EMPHASIS_MAP_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeCapabilityFlagsKHR(Printer &p, std::string name, VkVideoEncodeCapabilityFlagsKHR value) {
+    if (static_cast<VkVideoEncodeCapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeCapabilityFlagBitsKHRGetStrings(static_cast<VkVideoEncodeCapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeCapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeCapabilityFlagBitsKHR value) {
+    auto strings = VkVideoEncodeCapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeContentFlagBitsKHRGetStrings(VkVideoEncodeContentFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_ENCODE_CONTENT_DEFAULT_KHR"); return strings; }
+    if (VK_VIDEO_ENCODE_CONTENT_CAMERA_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CONTENT_CAMERA_BIT_KHR");
+    if (VK_VIDEO_ENCODE_CONTENT_DESKTOP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CONTENT_DESKTOP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_CONTENT_RENDERED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_CONTENT_RENDERED_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeContentFlagsKHR(Printer &p, std::string name, VkVideoEncodeContentFlagsKHR value) {
+    if (static_cast<VkVideoEncodeContentFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeContentFlagBitsKHRGetStrings(static_cast<VkVideoEncodeContentFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeContentFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeContentFlagBitsKHR value) {
+    auto strings = VkVideoEncodeContentFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeFeedbackFlagBitsKHRGetStrings(VkVideoEncodeFeedbackFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeFeedbackFlagsKHR(Printer &p, std::string name, VkVideoEncodeFeedbackFlagsKHR value) {
+    if (static_cast<VkVideoEncodeFeedbackFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeFeedbackFlagBitsKHRGetStrings(static_cast<VkVideoEncodeFeedbackFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeFeedbackFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeFeedbackFlagBitsKHR value) {
+    auto strings = VkVideoEncodeFeedbackFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH264CapabilityFlagBitsKHRGetStrings(VkVideoEncodeH264CapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_HRD_COMPLIANCE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_HRD_COMPLIANCE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_ROW_UNALIGNED_SLICE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_ROW_UNALIGNED_SLICE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_DIFFERENT_SLICE_TYPE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_DIFFERENT_SLICE_TYPE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_PER_SLICE_CONSTANT_QP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_PER_SLICE_CONSTANT_QP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_GENERATE_PREFIX_NALU_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_GENERATE_PREFIX_NALU_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_CAPABILITY_MB_QP_DIFF_WRAPAROUND_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_CAPABILITY_MB_QP_DIFF_WRAPAROUND_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH264CapabilityFlagsKHR(Printer &p, std::string name, VkVideoEncodeH264CapabilityFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH264CapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH264CapabilityFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH264CapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH264CapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH264CapabilityFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH264CapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH264StdFlagBitsKHRGetStrings(VkVideoEncodeH264StdFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H264_STD_SEPARATE_COLOR_PLANE_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_SEPARATE_COLOR_PLANE_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_QPPRIME_Y_ZERO_TRANSFORM_BYPASS_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_QPPRIME_Y_ZERO_TRANSFORM_BYPASS_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_SCALING_MATRIX_PRESENT_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_SCALING_MATRIX_PRESENT_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_CHROMA_QP_INDEX_OFFSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_CHROMA_QP_INDEX_OFFSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_SECOND_CHROMA_QP_INDEX_OFFSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_SECOND_CHROMA_QP_INDEX_OFFSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_PIC_INIT_QP_MINUS26_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_PIC_INIT_QP_MINUS26_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_WEIGHTED_PRED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_WEIGHTED_PRED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_WEIGHTED_BIPRED_IDC_EXPLICIT_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_WEIGHTED_BIPRED_IDC_EXPLICIT_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_WEIGHTED_BIPRED_IDC_IMPLICIT_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_WEIGHTED_BIPRED_IDC_IMPLICIT_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_TRANSFORM_8X8_MODE_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_TRANSFORM_8X8_MODE_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DIRECT_SPATIAL_MV_PRED_FLAG_UNSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DIRECT_SPATIAL_MV_PRED_FLAG_UNSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_ENTROPY_CODING_MODE_FLAG_UNSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_ENTROPY_CODING_MODE_FLAG_UNSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_ENTROPY_CODING_MODE_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_ENTROPY_CODING_MODE_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DIRECT_8X8_INFERENCE_FLAG_UNSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DIRECT_8X8_INFERENCE_FLAG_UNSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_CONSTRAINED_INTRA_PRED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_CONSTRAINED_INTRA_PRED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_DISABLED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_DISABLED_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_ENABLED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_ENABLED_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_PARTIAL_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DEBLOCKING_FILTER_PARTIAL_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_SLICE_QP_DELTA_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_SLICE_QP_DELTA_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H264_STD_DIFFERENT_SLICE_QP_DELTA_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H264_STD_DIFFERENT_SLICE_QP_DELTA_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH264StdFlagsKHR(Printer &p, std::string name, VkVideoEncodeH264StdFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH264StdFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH264StdFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH264StdFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH264StdFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH264StdFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH264StdFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH265CapabilityFlagBitsKHRGetStrings(VkVideoEncodeH265CapabilityFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_HRD_COMPLIANCE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_HRD_COMPLIANCE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_PREDICTION_WEIGHT_TABLE_GENERATED_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_ROW_UNALIGNED_SLICE_SEGMENT_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_ROW_UNALIGNED_SLICE_SEGMENT_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_DIFFERENT_SLICE_SEGMENT_TYPE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_DIFFERENT_SLICE_SEGMENT_TYPE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L0_LIST_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_B_FRAME_IN_L1_LIST_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_PER_PICTURE_TYPE_MIN_MAX_QP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_PER_SLICE_SEGMENT_CONSTANT_QP_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_PER_SLICE_SEGMENT_CONSTANT_QP_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_TILES_PER_SLICE_SEGMENT_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_TILES_PER_SLICE_SEGMENT_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_SLICE_SEGMENTS_PER_TILE_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_MULTIPLE_SLICE_SEGMENTS_PER_TILE_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CAPABILITY_CU_QP_DIFF_WRAPAROUND_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CAPABILITY_CU_QP_DIFF_WRAPAROUND_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH265CapabilityFlagsKHR(Printer &p, std::string name, VkVideoEncodeH265CapabilityFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH265CapabilityFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH265CapabilityFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH265CapabilityFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH265CapabilityFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH265CapabilityFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH265CapabilityFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH265CtbSizeFlagBitsKHRGetStrings(VkVideoEncodeH265CtbSizeFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H265_CTB_SIZE_16_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CTB_SIZE_16_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CTB_SIZE_32_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CTB_SIZE_32_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_CTB_SIZE_64_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_CTB_SIZE_64_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH265CtbSizeFlagsKHR(Printer &p, std::string name, VkVideoEncodeH265CtbSizeFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH265CtbSizeFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH265CtbSizeFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH265CtbSizeFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH265CtbSizeFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH265CtbSizeFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH265CtbSizeFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH265StdFlagBitsKHRGetStrings(VkVideoEncodeH265StdFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H265_STD_SEPARATE_COLOR_PLANE_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SEPARATE_COLOR_PLANE_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_SAMPLE_ADAPTIVE_OFFSET_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SAMPLE_ADAPTIVE_OFFSET_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_SCALING_LIST_DATA_PRESENT_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SCALING_LIST_DATA_PRESENT_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_PCM_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_PCM_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_SPS_TEMPORAL_MVP_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SPS_TEMPORAL_MVP_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_INIT_QP_MINUS26_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_INIT_QP_MINUS26_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_WEIGHTED_PRED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_WEIGHTED_PRED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_WEIGHTED_BIPRED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_WEIGHTED_BIPRED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_LOG2_PARALLEL_MERGE_LEVEL_MINUS2_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_LOG2_PARALLEL_MERGE_LEVEL_MINUS2_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_SIGN_DATA_HIDING_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SIGN_DATA_HIDING_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_TRANSFORM_SKIP_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_TRANSFORM_SKIP_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_TRANSFORM_SKIP_ENABLED_FLAG_UNSET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_TRANSFORM_SKIP_ENABLED_FLAG_UNSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_PPS_SLICE_CHROMA_QP_OFFSETS_PRESENT_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_PPS_SLICE_CHROMA_QP_OFFSETS_PRESENT_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_TRANSQUANT_BYPASS_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_TRANSQUANT_BYPASS_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_CONSTRAINED_INTRA_PRED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_CONSTRAINED_INTRA_PRED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_ENTROPY_CODING_SYNC_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_ENTROPY_CODING_SYNC_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_DEBLOCKING_FILTER_OVERRIDE_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_DEBLOCKING_FILTER_OVERRIDE_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_DEPENDENT_SLICE_SEGMENTS_ENABLED_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_DEPENDENT_SLICE_SEGMENTS_ENABLED_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_DEPENDENT_SLICE_SEGMENT_FLAG_SET_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_DEPENDENT_SLICE_SEGMENT_FLAG_SET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_SLICE_QP_DELTA_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_SLICE_QP_DELTA_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_STD_DIFFERENT_SLICE_QP_DELTA_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_STD_DIFFERENT_SLICE_QP_DELTA_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH265StdFlagsKHR(Printer &p, std::string name, VkVideoEncodeH265StdFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH265StdFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH265StdFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH265StdFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH265StdFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH265StdFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH265StdFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeH265TransformBlockSizeFlagBitsKHRGetStrings(VkVideoEncodeH265TransformBlockSizeFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_4_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_4_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_8_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_8_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_16_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_16_BIT_KHR");
+    if (VK_VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_32_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_H265_TRANSFORM_BLOCK_SIZE_32_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeH265TransformBlockSizeFlagsKHR(Printer &p, std::string name, VkVideoEncodeH265TransformBlockSizeFlagsKHR value) {
+    if (static_cast<VkVideoEncodeH265TransformBlockSizeFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeH265TransformBlockSizeFlagBitsKHRGetStrings(static_cast<VkVideoEncodeH265TransformBlockSizeFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeH265TransformBlockSizeFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeH265TransformBlockSizeFlagBitsKHR value) {
+    auto strings = VkVideoEncodeH265TransformBlockSizeFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeRateControlModeFlagBitsKHRGetStrings(VkVideoEncodeRateControlModeFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_ENCODE_RATE_CONTROL_MODE_DEFAULT_KHR"); return strings; }
+    if (VK_VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR");
+    if (VK_VIDEO_ENCODE_RATE_CONTROL_MODE_CBR_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_RATE_CONTROL_MODE_CBR_BIT_KHR");
+    if (VK_VIDEO_ENCODE_RATE_CONTROL_MODE_VBR_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_RATE_CONTROL_MODE_VBR_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeRateControlModeFlagsKHR(Printer &p, std::string name, VkVideoEncodeRateControlModeFlagsKHR value) {
+    if (static_cast<VkVideoEncodeRateControlModeFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeRateControlModeFlagBitsKHRGetStrings(static_cast<VkVideoEncodeRateControlModeFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeRateControlModeFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeRateControlModeFlagBitsKHR value) {
+    auto strings = VkVideoEncodeRateControlModeFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeUsageFlagBitsKHRGetStrings(VkVideoEncodeUsageFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("VIDEO_ENCODE_USAGE_DEFAULT_KHR"); return strings; }
+    if (VK_VIDEO_ENCODE_USAGE_TRANSCODING_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_USAGE_TRANSCODING_BIT_KHR");
+    if (VK_VIDEO_ENCODE_USAGE_STREAMING_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_USAGE_STREAMING_BIT_KHR");
+    if (VK_VIDEO_ENCODE_USAGE_RECORDING_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_USAGE_RECORDING_BIT_KHR");
+    if (VK_VIDEO_ENCODE_USAGE_CONFERENCING_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_USAGE_CONFERENCING_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodeUsageFlagsKHR(Printer &p, std::string name, VkVideoEncodeUsageFlagsKHR value) {
+    if (static_cast<VkVideoEncodeUsageFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeUsageFlagBitsKHRGetStrings(static_cast<VkVideoEncodeUsageFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeUsageFlagBitsKHR(Printer &p, std::string name, VkVideoEncodeUsageFlagBitsKHR value) {
+    auto strings = VkVideoEncodeUsageFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+void DumpVkComponentMapping(Printer &p, std::string name, const VkComponentMapping &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkComponentSwizzle(p, "r", obj.r);
+    DumpVkComponentSwizzle(p, "g", obj.g);
+    DumpVkComponentSwizzle(p, "b", obj.b);
+    DumpVkComponentSwizzle(p, "a", obj.a);
+}
 void DumpVkConformanceVersion(Printer &p, std::string name, const VkConformanceVersion &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(8);
@@ -1445,6 +2795,12 @@ void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, const V
     p.PrintKeyValue("drmFormatModifierPlaneCount", obj.drmFormatModifierPlaneCount);
     p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "drmFormatModifierTilingFeatures", obj.drmFormatModifierTilingFeatures);
+}
+void DumpVkExtensionProperties(Printer &p, std::string name, const VkExtensionProperties &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(18);
+    p.PrintKeyString("extensionName", obj.extensionName);
+    p.PrintKeyValue("specVersion", obj.specVersion);
 }
 void DumpVkExtent2D(Printer &p, std::string name, const VkExtent2D &obj) {
     ObjectWrapper object{p, name};
@@ -1484,6 +2840,12 @@ void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties
     p.PrintKeyValue("specVersion", obj.specVersion);
     p.PrintKeyValue("implementationVersion", obj.implementationVersion);
     p.PrintKeyString("description", obj.description);
+}
+void DumpVkOffset2D(Printer &p, std::string name, const VkOffset2D &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(1);
+    p.PrintKeyValue("x", obj.x);
+    p.PrintKeyValue("y", obj.y);
 }
 void DumpVkPhysicalDevice16BitStorageFeatures(Printer &p, std::string name, const VkPhysicalDevice16BitStorageFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -3570,6 +4932,199 @@ void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, const V
     p.SetMinKeyWidth(17);
     p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected));
 }
+void DumpVkVideoCapabilitiesKHR(Printer &p, std::string name, const VkVideoCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(33);
+    DumpVkVideoCapabilityFlagsKHR(p, "flags", obj.flags);
+    p.PrintKeyValue("minBitstreamBufferOffsetAlignment", to_hex_str(p, obj.minBitstreamBufferOffsetAlignment));
+    p.PrintKeyValue("minBitstreamBufferSizeAlignment", to_hex_str(p, obj.minBitstreamBufferSizeAlignment));
+    DumpVkExtent2D(p, "pictureAccessGranularity", obj.pictureAccessGranularity);
+    DumpVkExtent2D(p, "minCodedExtent", obj.minCodedExtent);
+    DumpVkExtent2D(p, "maxCodedExtent", obj.maxCodedExtent);
+    p.PrintKeyValue("maxDpbSlots", obj.maxDpbSlots);
+    p.PrintKeyValue("maxActiveReferencePictures", obj.maxActiveReferencePictures);
+    DumpVkExtensionProperties(p, "stdHeaderVersion", obj.stdHeaderVersion);
+}
+void DumpVkVideoDecodeAV1CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeAV1CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoAV1Level(p, "maxLevel", obj.maxLevel);
+}
+void DumpVkVideoDecodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeAV1ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(16);
+    DumpStdVideoAV1Profile(p, "stdProfile", obj.stdProfile);
+    p.PrintKeyBool("filmGrainSupport", static_cast<bool>(obj.filmGrainSupport));
+}
+void DumpVkVideoDecodeCapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoDecodeCapabilityFlagsKHR(p, "flags", obj.flags);
+}
+void DumpVkVideoDecodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeH264CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH264LevelIdc(p, "maxLevelIdc", obj.maxLevelIdc);
+    DumpVkOffset2D(p, "fieldOffsetGranularity", obj.fieldOffsetGranularity);
+}
+void DumpVkVideoDecodeH264ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeH264ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH264ProfileIdc(p, "stdProfileIdc", obj.stdProfileIdc);
+    DumpVkVideoDecodeH264PictureLayoutFlagBitsKHR(p, "pictureLayout", obj.pictureLayout);
+}
+void DumpVkVideoDecodeH265CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeH265CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH265LevelIdc(p, "maxLevelIdc", obj.maxLevelIdc);
+}
+void DumpVkVideoDecodeH265ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeH265ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH265ProfileIdc(p, "stdProfileIdc", obj.stdProfileIdc);
+}
+void DumpVkVideoDecodeUsageInfoKHR(Printer &p, std::string name, const VkVideoDecodeUsageInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoDecodeUsageFlagsKHR(p, "videoUsageHints", obj.videoUsageHints);
+}
+void DumpVkVideoEncodeAV1CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeAV1CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(45);
+    DumpVkVideoEncodeAV1CapabilityFlagsKHR(p, "flags", obj.flags);
+    DumpStdVideoAV1Level(p, "maxLevel", obj.maxLevel);
+    DumpVkExtent2D(p, "codedPictureAlignment", obj.codedPictureAlignment);
+    DumpVkExtent2D(p, "maxTiles", obj.maxTiles);
+    DumpVkExtent2D(p, "minTileSize", obj.minTileSize);
+    DumpVkExtent2D(p, "maxTileSize", obj.maxTileSize);
+    DumpVkVideoEncodeAV1SuperblockSizeFlagsKHR(p, "superblockSizes", obj.superblockSizes);
+    p.PrintKeyValue("maxSingleReferenceCount", obj.maxSingleReferenceCount);
+    p.PrintKeyValue("singleReferenceNameMask", obj.singleReferenceNameMask);
+    p.PrintKeyValue("maxUnidirectionalCompoundReferenceCount", obj.maxUnidirectionalCompoundReferenceCount);
+    p.PrintKeyValue("maxUnidirectionalCompoundGroup1ReferenceCount", obj.maxUnidirectionalCompoundGroup1ReferenceCount);
+    p.PrintKeyValue("unidirectionalCompoundReferenceNameMask", obj.unidirectionalCompoundReferenceNameMask);
+    p.PrintKeyValue("maxBidirectionalCompoundReferenceCount", obj.maxBidirectionalCompoundReferenceCount);
+    p.PrintKeyValue("maxBidirectionalCompoundGroup1ReferenceCount", obj.maxBidirectionalCompoundGroup1ReferenceCount);
+    p.PrintKeyValue("maxBidirectionalCompoundGroup2ReferenceCount", obj.maxBidirectionalCompoundGroup2ReferenceCount);
+    p.PrintKeyValue("bidirectionalCompoundReferenceNameMask", obj.bidirectionalCompoundReferenceNameMask);
+    p.PrintKeyValue("maxTemporalLayerCount", obj.maxTemporalLayerCount);
+    p.PrintKeyValue("maxSpatialLayerCount", obj.maxSpatialLayerCount);
+    p.PrintKeyValue("maxOperatingPoints", obj.maxOperatingPoints);
+    p.PrintKeyValue("minQIndex", obj.minQIndex);
+    p.PrintKeyValue("maxQIndex", obj.maxQIndex);
+    p.PrintKeyBool("prefersGopRemainingFrames", static_cast<bool>(obj.prefersGopRemainingFrames));
+    p.PrintKeyBool("requiresGopRemainingFrames", static_cast<bool>(obj.requiresGopRemainingFrames));
+    DumpVkVideoEncodeAV1StdFlagsKHR(p, "stdSyntaxFlags", obj.stdSyntaxFlags);
+}
+void DumpVkVideoEncodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeAV1ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoAV1Profile(p, "stdProfile", obj.stdProfile);
+}
+void DumpVkVideoEncodeAV1QuantizationMapCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(14);
+    p.PrintKeyValue("minQIndexDelta", obj.minQIndexDelta);
+    p.PrintKeyValue("maxQIndexDelta", obj.maxQIndexDelta);
+}
+void DumpVkVideoEncodeCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(20);
+    DumpVkVideoEncodeCapabilityFlagsKHR(p, "flags", obj.flags);
+    DumpVkVideoEncodeRateControlModeFlagsKHR(p, "rateControlModes", obj.rateControlModes);
+    p.PrintKeyValue("maxRateControlLayers", obj.maxRateControlLayers);
+    p.PrintKeyValue("maxBitrate", obj.maxBitrate);
+    p.PrintKeyValue("maxQualityLevels", obj.maxQualityLevels);
+    DumpVkExtent2D(p, "encodeInputPictureGranularity", obj.encodeInputPictureGranularity);
+    DumpVkVideoEncodeFeedbackFlagsKHR(p, "supportedEncodeFeedbackFlags", obj.supportedEncodeFeedbackFlags);
+}
+void DumpVkVideoEncodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH264CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(32);
+    DumpVkVideoEncodeH264CapabilityFlagsKHR(p, "flags", obj.flags);
+    DumpStdVideoH264LevelIdc(p, "maxLevelIdc", obj.maxLevelIdc);
+    p.PrintKeyValue("maxSliceCount", obj.maxSliceCount);
+    p.PrintKeyValue("maxPPictureL0ReferenceCount", obj.maxPPictureL0ReferenceCount);
+    p.PrintKeyValue("maxBPictureL0ReferenceCount", obj.maxBPictureL0ReferenceCount);
+    p.PrintKeyValue("maxL1ReferenceCount", obj.maxL1ReferenceCount);
+    p.PrintKeyValue("maxTemporalLayerCount", obj.maxTemporalLayerCount);
+    p.PrintKeyBool("expectDyadicTemporalLayerPattern", static_cast<bool>(obj.expectDyadicTemporalLayerPattern));
+    p.PrintKeyValue("minQp", obj.minQp);
+    p.PrintKeyValue("maxQp", obj.maxQp);
+    p.PrintKeyBool("prefersGopRemainingFrames", static_cast<bool>(obj.prefersGopRemainingFrames));
+    p.PrintKeyBool("requiresGopRemainingFrames", static_cast<bool>(obj.requiresGopRemainingFrames));
+    DumpVkVideoEncodeH264StdFlagsKHR(p, "stdSyntaxFlags", obj.stdSyntaxFlags);
+}
+void DumpVkVideoEncodeH264ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeH264ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH264ProfileIdc(p, "stdProfileIdc", obj.stdProfileIdc);
+}
+void DumpVkVideoEncodeH264QuantizationMapCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH264QuantizationMapCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(10);
+    p.PrintKeyValue("minQpDelta", obj.minQpDelta);
+    p.PrintKeyValue("maxQpDelta", obj.maxQpDelta);
+}
+void DumpVkVideoEncodeH265CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH265CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(35);
+    DumpVkVideoEncodeH265CapabilityFlagsKHR(p, "flags", obj.flags);
+    DumpStdVideoH265LevelIdc(p, "maxLevelIdc", obj.maxLevelIdc);
+    p.PrintKeyValue("maxSliceSegmentCount", obj.maxSliceSegmentCount);
+    DumpVkExtent2D(p, "maxTiles", obj.maxTiles);
+    DumpVkVideoEncodeH265CtbSizeFlagsKHR(p, "ctbSizes", obj.ctbSizes);
+    DumpVkVideoEncodeH265TransformBlockSizeFlagsKHR(p, "transformBlockSizes", obj.transformBlockSizes);
+    p.PrintKeyValue("maxPPictureL0ReferenceCount", obj.maxPPictureL0ReferenceCount);
+    p.PrintKeyValue("maxBPictureL0ReferenceCount", obj.maxBPictureL0ReferenceCount);
+    p.PrintKeyValue("maxL1ReferenceCount", obj.maxL1ReferenceCount);
+    p.PrintKeyValue("maxSubLayerCount", obj.maxSubLayerCount);
+    p.PrintKeyBool("expectDyadicTemporalSubLayerPattern", static_cast<bool>(obj.expectDyadicTemporalSubLayerPattern));
+    p.PrintKeyValue("minQp", obj.minQp);
+    p.PrintKeyValue("maxQp", obj.maxQp);
+    p.PrintKeyBool("prefersGopRemainingFrames", static_cast<bool>(obj.prefersGopRemainingFrames));
+    p.PrintKeyBool("requiresGopRemainingFrames", static_cast<bool>(obj.requiresGopRemainingFrames));
+    DumpVkVideoEncodeH265StdFlagsKHR(p, "stdSyntaxFlags", obj.stdSyntaxFlags);
+}
+void DumpVkVideoEncodeH265ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeH265ProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpStdVideoH265ProfileIdc(p, "stdProfileIdc", obj.stdProfileIdc);
+}
+void DumpVkVideoEncodeH265QuantizationMapCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH265QuantizationMapCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(10);
+    p.PrintKeyValue("minQpDelta", obj.minQpDelta);
+    p.PrintKeyValue("maxQpDelta", obj.maxQpDelta);
+}
+void DumpVkVideoEncodeQuantizationMapCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeQuantizationMapCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkExtent2D(p, "maxQuantizationMapExtent", obj.maxQuantizationMapExtent);
+}
+void DumpVkVideoEncodeUsageInfoKHR(Printer &p, std::string name, const VkVideoEncodeUsageInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoEncodeUsageFlagsKHR(p, "videoUsageHints", obj.videoUsageHints);
+    DumpVkVideoEncodeContentFlagsKHR(p, "videoContentHints", obj.videoContentHints);
+    DumpVkVideoEncodeTuningModeKHR(p, "tuningMode", obj.tuningMode);
+}
+void DumpVkVideoFormatAV1QuantizationMapPropertiesKHR(Printer &p, std::string name, const VkVideoFormatAV1QuantizationMapPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoEncodeAV1SuperblockSizeFlagsKHR(p, "compatibleSuperblockSizes", obj.compatibleSuperblockSizes);
+}
+void DumpVkVideoFormatH265QuantizationMapPropertiesKHR(Printer &p, std::string name, const VkVideoFormatH265QuantizationMapPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoEncodeH265CtbSizeFlagsKHR(p, "compatibleCtbSizes", obj.compatibleCtbSizes);
+}
+void DumpVkVideoFormatPropertiesKHR(Printer &p, std::string name, const VkVideoFormatPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkFormat(p, "format", obj.format);
+    DumpVkComponentMapping(p, "componentMapping", obj.componentMapping);
+    DumpVkImageCreateFlags(p, "imageCreateFlags", obj.imageCreateFlags);
+    DumpVkImageType(p, "imageType", obj.imageType);
+    DumpVkImageTiling(p, "imageTiling", obj.imageTiling);
+    DumpVkImageUsageFlags(p, "imageUsageFlags", obj.imageUsageFlags);
+}
+void DumpVkVideoFormatQuantizationMapPropertiesKHR(Printer &p, std::string name, const VkVideoFormatQuantizationMapPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkExtent2D(p, "quantizationMapTexelSize", obj.quantizationMapTexelSize);
+}
+void DumpVkVideoProfileInfoKHR(Printer &p, std::string name, const VkVideoProfileInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoCodecOperationFlagBitsKHR(p, "videoCodecOperation", obj.videoCodecOperation);
+    DumpVkVideoChromaSubsamplingFlagsKHR(p, "chromaSubsampling", obj.chromaSubsampling);
+    DumpVkVideoComponentBitDepthFlagsKHR(p, "lumaBitDepth", obj.lumaBitDepth);
+    DumpVkVideoComponentBitDepthFlagsKHR(p, "chromaBitDepth", obj.chromaBitDepth);
+}
 struct phys_device_props2_chain {
     phys_device_props2_chain() = default;
     phys_device_props2_chain(const phys_device_props2_chain &) = delete;
@@ -3898,344 +5453,344 @@ void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2& start, std::uni
     start.pNext = chain->start_of_chain;
 };
 
-void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gpu, bool show_promoted_structs, void * place) {
+void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gpu, bool show_promoted_structs, const void * place) {
     while (place) {
-        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR) {
-            VkPhysicalDeviceAccelerationStructurePropertiesKHR* props = (VkPhysicalDeviceAccelerationStructurePropertiesKHR*)structure;
+            const VkPhysicalDeviceAccelerationStructurePropertiesKHR* props = (const VkPhysicalDeviceAccelerationStructurePropertiesKHR*)structure;
             DumpVkPhysicalDeviceAccelerationStructurePropertiesKHR(p, "VkPhysicalDeviceAccelerationStructurePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT) {
-            VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT* props = (VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT*)structure;
+            const VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT* props = (const VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT*)structure;
             DumpVkPhysicalDeviceBlendOperationAdvancedPropertiesEXT(p, "VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR) {
-            VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR* props = (VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR*)structure;
+            const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR* props = (const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR*)structure;
             DumpVkPhysicalDeviceComputeShaderDerivativesPropertiesKHR(p, "VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT) {
-            VkPhysicalDeviceConservativeRasterizationPropertiesEXT* props = (VkPhysicalDeviceConservativeRasterizationPropertiesEXT*)structure;
+            const VkPhysicalDeviceConservativeRasterizationPropertiesEXT* props = (const VkPhysicalDeviceConservativeRasterizationPropertiesEXT*)structure;
             DumpVkPhysicalDeviceConservativeRasterizationPropertiesEXT(p, "VkPhysicalDeviceConservativeRasterizationPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR) {
-            VkPhysicalDeviceCooperativeMatrixPropertiesKHR* props = (VkPhysicalDeviceCooperativeMatrixPropertiesKHR*)structure;
+            const VkPhysicalDeviceCooperativeMatrixPropertiesKHR* props = (const VkPhysicalDeviceCooperativeMatrixPropertiesKHR*)structure;
             DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(p, "VkPhysicalDeviceCooperativeMatrixPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT) {
-            VkPhysicalDeviceCustomBorderColorPropertiesEXT* props = (VkPhysicalDeviceCustomBorderColorPropertiesEXT*)structure;
+            const VkPhysicalDeviceCustomBorderColorPropertiesEXT* props = (const VkPhysicalDeviceCustomBorderColorPropertiesEXT*)structure;
             DumpVkPhysicalDeviceCustomBorderColorPropertiesEXT(p, "VkPhysicalDeviceCustomBorderColorPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES) {
-            VkPhysicalDeviceDepthStencilResolveProperties* props = (VkPhysicalDeviceDepthStencilResolveProperties*)structure;
+            const VkPhysicalDeviceDepthStencilResolveProperties* props = (const VkPhysicalDeviceDepthStencilResolveProperties*)structure;
             DumpVkPhysicalDeviceDepthStencilResolveProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceDepthStencilResolveProperties":"VkPhysicalDeviceDepthStencilResolvePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT) {
-            VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT* props = (VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT*)structure;
+            const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT* props = (const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT*)structure;
             DumpVkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT(p, "VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT) {
-            VkPhysicalDeviceDescriptorBufferPropertiesEXT* props = (VkPhysicalDeviceDescriptorBufferPropertiesEXT*)structure;
+            const VkPhysicalDeviceDescriptorBufferPropertiesEXT* props = (const VkPhysicalDeviceDescriptorBufferPropertiesEXT*)structure;
             DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(p, "VkPhysicalDeviceDescriptorBufferPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES) {
-            VkPhysicalDeviceDescriptorIndexingProperties* props = (VkPhysicalDeviceDescriptorIndexingProperties*)structure;
+            const VkPhysicalDeviceDescriptorIndexingProperties* props = (const VkPhysicalDeviceDescriptorIndexingProperties*)structure;
             DumpVkPhysicalDeviceDescriptorIndexingProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceDescriptorIndexingProperties":"VkPhysicalDeviceDescriptorIndexingPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT) {
-            VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT* props = (VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT*)structure;
+            const VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT* props = (const VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT*)structure;
             DumpVkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT(p, "VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT) {
-            VkPhysicalDeviceDiscardRectanglePropertiesEXT* props = (VkPhysicalDeviceDiscardRectanglePropertiesEXT*)structure;
+            const VkPhysicalDeviceDiscardRectanglePropertiesEXT* props = (const VkPhysicalDeviceDiscardRectanglePropertiesEXT*)structure;
             DumpVkPhysicalDeviceDiscardRectanglePropertiesEXT(p, "VkPhysicalDeviceDiscardRectanglePropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
-            VkPhysicalDeviceDriverProperties* props = (VkPhysicalDeviceDriverProperties*)structure;
+            const VkPhysicalDeviceDriverProperties* props = (const VkPhysicalDeviceDriverProperties*)structure;
             DumpVkPhysicalDeviceDriverProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceDriverProperties":"VkPhysicalDeviceDriverPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRM_PROPERTIES_EXT) {
-            VkPhysicalDeviceDrmPropertiesEXT* props = (VkPhysicalDeviceDrmPropertiesEXT*)structure;
+            const VkPhysicalDeviceDrmPropertiesEXT* props = (const VkPhysicalDeviceDrmPropertiesEXT*)structure;
             DumpVkPhysicalDeviceDrmPropertiesEXT(p, "VkPhysicalDeviceDrmPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_PROPERTIES_EXT) {
-            VkPhysicalDeviceExtendedDynamicState3PropertiesEXT* props = (VkPhysicalDeviceExtendedDynamicState3PropertiesEXT*)structure;
+            const VkPhysicalDeviceExtendedDynamicState3PropertiesEXT* props = (const VkPhysicalDeviceExtendedDynamicState3PropertiesEXT*)structure;
             DumpVkPhysicalDeviceExtendedDynamicState3PropertiesEXT(p, "VkPhysicalDeviceExtendedDynamicState3PropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT) {
-            VkPhysicalDeviceExternalMemoryHostPropertiesEXT* props = (VkPhysicalDeviceExternalMemoryHostPropertiesEXT*)structure;
+            const VkPhysicalDeviceExternalMemoryHostPropertiesEXT* props = (const VkPhysicalDeviceExternalMemoryHostPropertiesEXT*)structure;
             DumpVkPhysicalDeviceExternalMemoryHostPropertiesEXT(p, "VkPhysicalDeviceExternalMemoryHostPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES) {
-            VkPhysicalDeviceFloatControlsProperties* props = (VkPhysicalDeviceFloatControlsProperties*)structure;
+            const VkPhysicalDeviceFloatControlsProperties* props = (const VkPhysicalDeviceFloatControlsProperties*)structure;
             DumpVkPhysicalDeviceFloatControlsProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceFloatControlsProperties":"VkPhysicalDeviceFloatControlsPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT) {
-            VkPhysicalDeviceFragmentDensityMap2PropertiesEXT* props = (VkPhysicalDeviceFragmentDensityMap2PropertiesEXT*)structure;
+            const VkPhysicalDeviceFragmentDensityMap2PropertiesEXT* props = (const VkPhysicalDeviceFragmentDensityMap2PropertiesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMap2PropertiesEXT(p, "VkPhysicalDeviceFragmentDensityMap2PropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT) {
-            VkPhysicalDeviceFragmentDensityMapPropertiesEXT* props = (VkPhysicalDeviceFragmentDensityMapPropertiesEXT*)structure;
+            const VkPhysicalDeviceFragmentDensityMapPropertiesEXT* props = (const VkPhysicalDeviceFragmentDensityMapPropertiesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMapPropertiesEXT(p, "VkPhysicalDeviceFragmentDensityMapPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_PROPERTIES_KHR) {
-            VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR* props = (VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR*)structure;
+            const VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR* props = (const VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR*)structure;
             DumpVkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR(p, "VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR) {
-            VkPhysicalDeviceFragmentShadingRatePropertiesKHR* props = (VkPhysicalDeviceFragmentShadingRatePropertiesKHR*)structure;
+            const VkPhysicalDeviceFragmentShadingRatePropertiesKHR* props = (const VkPhysicalDeviceFragmentShadingRatePropertiesKHR*)structure;
             DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(p, "VkPhysicalDeviceFragmentShadingRatePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT) {
-            VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT* props = (VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT*)structure;
+            const VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT* props = (const VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT*)structure;
             DumpVkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT(p, "VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES) {
-            VkPhysicalDeviceHostImageCopyProperties* props = (VkPhysicalDeviceHostImageCopyProperties*)structure;
+            const VkPhysicalDeviceHostImageCopyProperties* props = (const VkPhysicalDeviceHostImageCopyProperties*)structure;
             DumpVkPhysicalDeviceHostImageCopyProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceHostImageCopyProperties":"VkPhysicalDeviceHostImageCopyPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
-            VkPhysicalDeviceIDProperties* props = (VkPhysicalDeviceIDProperties*)structure;
+            const VkPhysicalDeviceIDProperties* props = (const VkPhysicalDeviceIDProperties*)structure;
             DumpVkPhysicalDeviceIDProperties(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceIDProperties":"VkPhysicalDeviceIDPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES) {
-            VkPhysicalDeviceInlineUniformBlockProperties* props = (VkPhysicalDeviceInlineUniformBlockProperties*)structure;
+            const VkPhysicalDeviceInlineUniformBlockProperties* props = (const VkPhysicalDeviceInlineUniformBlockProperties*)structure;
             DumpVkPhysicalDeviceInlineUniformBlockProperties(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceInlineUniformBlockProperties":"VkPhysicalDeviceInlineUniformBlockPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR) {
-            VkPhysicalDeviceLayeredApiPropertiesListKHR* props = (VkPhysicalDeviceLayeredApiPropertiesListKHR*)structure;
+            const VkPhysicalDeviceLayeredApiPropertiesListKHR* props = (const VkPhysicalDeviceLayeredApiPropertiesListKHR*)structure;
             DumpVkPhysicalDeviceLayeredApiPropertiesListKHR(p, "VkPhysicalDeviceLayeredApiPropertiesListKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_PROPERTIES_EXT) {
-            VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT* props = (VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT*)structure;
+            const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT* props = (const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT*)structure;
             DumpVkPhysicalDeviceLegacyVertexAttributesPropertiesEXT(p, "VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES) {
-            VkPhysicalDeviceLineRasterizationProperties* props = (VkPhysicalDeviceLineRasterizationProperties*)structure;
+            const VkPhysicalDeviceLineRasterizationProperties* props = (const VkPhysicalDeviceLineRasterizationProperties*)structure;
             DumpVkPhysicalDeviceLineRasterizationProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceLineRasterizationProperties":"VkPhysicalDeviceLineRasterizationPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES) {
-            VkPhysicalDeviceMaintenance3Properties* props = (VkPhysicalDeviceMaintenance3Properties*)structure;
+            const VkPhysicalDeviceMaintenance3Properties* props = (const VkPhysicalDeviceMaintenance3Properties*)structure;
             DumpVkPhysicalDeviceMaintenance3Properties(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceMaintenance3Properties":"VkPhysicalDeviceMaintenance3PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES) {
-            VkPhysicalDeviceMaintenance4Properties* props = (VkPhysicalDeviceMaintenance4Properties*)structure;
+            const VkPhysicalDeviceMaintenance4Properties* props = (const VkPhysicalDeviceMaintenance4Properties*)structure;
             DumpVkPhysicalDeviceMaintenance4Properties(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceMaintenance4Properties":"VkPhysicalDeviceMaintenance4PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES) {
-            VkPhysicalDeviceMaintenance5Properties* props = (VkPhysicalDeviceMaintenance5Properties*)structure;
+            const VkPhysicalDeviceMaintenance5Properties* props = (const VkPhysicalDeviceMaintenance5Properties*)structure;
             DumpVkPhysicalDeviceMaintenance5Properties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceMaintenance5Properties":"VkPhysicalDeviceMaintenance5PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES) {
-            VkPhysicalDeviceMaintenance6Properties* props = (VkPhysicalDeviceMaintenance6Properties*)structure;
+            const VkPhysicalDeviceMaintenance6Properties* props = (const VkPhysicalDeviceMaintenance6Properties*)structure;
             DumpVkPhysicalDeviceMaintenance6Properties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceMaintenance6Properties":"VkPhysicalDeviceMaintenance6PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR) {
-            VkPhysicalDeviceMaintenance7PropertiesKHR* props = (VkPhysicalDeviceMaintenance7PropertiesKHR*)structure;
+            const VkPhysicalDeviceMaintenance7PropertiesKHR* props = (const VkPhysicalDeviceMaintenance7PropertiesKHR*)structure;
             DumpVkPhysicalDeviceMaintenance7PropertiesKHR(p, "VkPhysicalDeviceMaintenance7PropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT) {
-            VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* props = (VkPhysicalDeviceMapMemoryPlacedPropertiesEXT*)structure;
+            const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* props = (const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT*)structure;
             DumpVkPhysicalDeviceMapMemoryPlacedPropertiesEXT(p, "VkPhysicalDeviceMapMemoryPlacedPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT) {
-            VkPhysicalDeviceMeshShaderPropertiesEXT* props = (VkPhysicalDeviceMeshShaderPropertiesEXT*)structure;
+            const VkPhysicalDeviceMeshShaderPropertiesEXT* props = (const VkPhysicalDeviceMeshShaderPropertiesEXT*)structure;
             DumpVkPhysicalDeviceMeshShaderPropertiesEXT(p, "VkPhysicalDeviceMeshShaderPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT) {
-            VkPhysicalDeviceMultiDrawPropertiesEXT* props = (VkPhysicalDeviceMultiDrawPropertiesEXT*)structure;
+            const VkPhysicalDeviceMultiDrawPropertiesEXT* props = (const VkPhysicalDeviceMultiDrawPropertiesEXT*)structure;
             DumpVkPhysicalDeviceMultiDrawPropertiesEXT(p, "VkPhysicalDeviceMultiDrawPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES) {
-            VkPhysicalDeviceMultiviewProperties* props = (VkPhysicalDeviceMultiviewProperties*)structure;
+            const VkPhysicalDeviceMultiviewProperties* props = (const VkPhysicalDeviceMultiviewProperties*)structure;
             DumpVkPhysicalDeviceMultiviewProperties(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceMultiviewProperties":"VkPhysicalDeviceMultiviewPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_BUFFER_PROPERTIES_EXT) {
-            VkPhysicalDeviceNestedCommandBufferPropertiesEXT* props = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT*)structure;
+            const VkPhysicalDeviceNestedCommandBufferPropertiesEXT* props = (const VkPhysicalDeviceNestedCommandBufferPropertiesEXT*)structure;
             DumpVkPhysicalDeviceNestedCommandBufferPropertiesEXT(p, "VkPhysicalDeviceNestedCommandBufferPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_EXT) {
-            VkPhysicalDeviceOpacityMicromapPropertiesEXT* props = (VkPhysicalDeviceOpacityMicromapPropertiesEXT*)structure;
+            const VkPhysicalDeviceOpacityMicromapPropertiesEXT* props = (const VkPhysicalDeviceOpacityMicromapPropertiesEXT*)structure;
             DumpVkPhysicalDeviceOpacityMicromapPropertiesEXT(p, "VkPhysicalDeviceOpacityMicromapPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT) {
-            VkPhysicalDevicePCIBusInfoPropertiesEXT* props = (VkPhysicalDevicePCIBusInfoPropertiesEXT*)structure;
+            const VkPhysicalDevicePCIBusInfoPropertiesEXT* props = (const VkPhysicalDevicePCIBusInfoPropertiesEXT*)structure;
             DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(p, "VkPhysicalDevicePCIBusInfoPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR) {
-            VkPhysicalDevicePerformanceQueryPropertiesKHR* props = (VkPhysicalDevicePerformanceQueryPropertiesKHR*)structure;
+            const VkPhysicalDevicePerformanceQueryPropertiesKHR* props = (const VkPhysicalDevicePerformanceQueryPropertiesKHR*)structure;
             DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(p, "VkPhysicalDevicePerformanceQueryPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR) {
-            VkPhysicalDevicePipelineBinaryPropertiesKHR* props = (VkPhysicalDevicePipelineBinaryPropertiesKHR*)structure;
+            const VkPhysicalDevicePipelineBinaryPropertiesKHR* props = (const VkPhysicalDevicePipelineBinaryPropertiesKHR*)structure;
             DumpVkPhysicalDevicePipelineBinaryPropertiesKHR(p, "VkPhysicalDevicePipelineBinaryPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES) {
-            VkPhysicalDevicePipelineRobustnessProperties* props = (VkPhysicalDevicePipelineRobustnessProperties*)structure;
+            const VkPhysicalDevicePipelineRobustnessProperties* props = (const VkPhysicalDevicePipelineRobustnessProperties*)structure;
             DumpVkPhysicalDevicePipelineRobustnessProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDevicePipelineRobustnessProperties":"VkPhysicalDevicePipelineRobustnessPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES) {
-            VkPhysicalDevicePointClippingProperties* props = (VkPhysicalDevicePointClippingProperties*)structure;
+            const VkPhysicalDevicePointClippingProperties* props = (const VkPhysicalDevicePointClippingProperties*)structure;
             DumpVkPhysicalDevicePointClippingProperties(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDevicePointClippingProperties":"VkPhysicalDevicePointClippingPropertiesKHR", *props);
             p.AddNewline();
         }
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR && p.Type() != OutputType::json) {
-            VkPhysicalDevicePortabilitySubsetPropertiesKHR* props = (VkPhysicalDevicePortabilitySubsetPropertiesKHR*)structure;
+            const VkPhysicalDevicePortabilitySubsetPropertiesKHR* props = (const VkPhysicalDevicePortabilitySubsetPropertiesKHR*)structure;
             DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(p, "VkPhysicalDevicePortabilitySubsetPropertiesKHR", *props);
             p.AddNewline();
         }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES) {
-            VkPhysicalDeviceProtectedMemoryProperties* props = (VkPhysicalDeviceProtectedMemoryProperties*)structure;
+            const VkPhysicalDeviceProtectedMemoryProperties* props = (const VkPhysicalDeviceProtectedMemoryProperties*)structure;
             DumpVkPhysicalDeviceProtectedMemoryProperties(p, "VkPhysicalDeviceProtectedMemoryProperties", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_PROPERTIES_EXT) {
-            VkPhysicalDeviceProvokingVertexPropertiesEXT* props = (VkPhysicalDeviceProvokingVertexPropertiesEXT*)structure;
+            const VkPhysicalDeviceProvokingVertexPropertiesEXT* props = (const VkPhysicalDeviceProvokingVertexPropertiesEXT*)structure;
             DumpVkPhysicalDeviceProvokingVertexPropertiesEXT(p, "VkPhysicalDeviceProvokingVertexPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES) {
-            VkPhysicalDevicePushDescriptorProperties* props = (VkPhysicalDevicePushDescriptorProperties*)structure;
+            const VkPhysicalDevicePushDescriptorProperties* props = (const VkPhysicalDevicePushDescriptorProperties*)structure;
             DumpVkPhysicalDevicePushDescriptorProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDevicePushDescriptorProperties":"VkPhysicalDevicePushDescriptorPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR) {
-            VkPhysicalDeviceRayTracingPipelinePropertiesKHR* props = (VkPhysicalDeviceRayTracingPipelinePropertiesKHR*)structure;
+            const VkPhysicalDeviceRayTracingPipelinePropertiesKHR* props = (const VkPhysicalDeviceRayTracingPipelinePropertiesKHR*)structure;
             DumpVkPhysicalDeviceRayTracingPipelinePropertiesKHR(p, "VkPhysicalDeviceRayTracingPipelinePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT) {
-            VkPhysicalDeviceRobustness2PropertiesEXT* props = (VkPhysicalDeviceRobustness2PropertiesEXT*)structure;
+            const VkPhysicalDeviceRobustness2PropertiesEXT* props = (const VkPhysicalDeviceRobustness2PropertiesEXT*)structure;
             DumpVkPhysicalDeviceRobustness2PropertiesEXT(p, "VkPhysicalDeviceRobustness2PropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT) {
-            VkPhysicalDeviceSampleLocationsPropertiesEXT* props = (VkPhysicalDeviceSampleLocationsPropertiesEXT*)structure;
+            const VkPhysicalDeviceSampleLocationsPropertiesEXT* props = (const VkPhysicalDeviceSampleLocationsPropertiesEXT*)structure;
             DumpVkPhysicalDeviceSampleLocationsPropertiesEXT(p, "VkPhysicalDeviceSampleLocationsPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES) {
-            VkPhysicalDeviceSamplerFilterMinmaxProperties* props = (VkPhysicalDeviceSamplerFilterMinmaxProperties*)structure;
+            const VkPhysicalDeviceSamplerFilterMinmaxProperties* props = (const VkPhysicalDeviceSamplerFilterMinmaxProperties*)structure;
             DumpVkPhysicalDeviceSamplerFilterMinmaxProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceSamplerFilterMinmaxProperties":"VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES) {
-            VkPhysicalDeviceShaderIntegerDotProductProperties* props = (VkPhysicalDeviceShaderIntegerDotProductProperties*)structure;
+            const VkPhysicalDeviceShaderIntegerDotProductProperties* props = (const VkPhysicalDeviceShaderIntegerDotProductProperties*)structure;
             DumpVkPhysicalDeviceShaderIntegerDotProductProperties(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceShaderIntegerDotProductProperties":"VkPhysicalDeviceShaderIntegerDotProductPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT) {
-            VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT* props = (VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT*)structure;
+            const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT* props = (const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT*)structure;
             DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(p, "VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_PROPERTIES_EXT) {
-            VkPhysicalDeviceShaderObjectPropertiesEXT* props = (VkPhysicalDeviceShaderObjectPropertiesEXT*)structure;
+            const VkPhysicalDeviceShaderObjectPropertiesEXT* props = (const VkPhysicalDeviceShaderObjectPropertiesEXT*)structure;
             DumpVkPhysicalDeviceShaderObjectPropertiesEXT(p, "VkPhysicalDeviceShaderObjectPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_PROPERTIES_EXT) {
-            VkPhysicalDeviceShaderTileImagePropertiesEXT* props = (VkPhysicalDeviceShaderTileImagePropertiesEXT*)structure;
+            const VkPhysicalDeviceShaderTileImagePropertiesEXT* props = (const VkPhysicalDeviceShaderTileImagePropertiesEXT*)structure;
             DumpVkPhysicalDeviceShaderTileImagePropertiesEXT(p, "VkPhysicalDeviceShaderTileImagePropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES) {
-            VkPhysicalDeviceSubgroupProperties* props = (VkPhysicalDeviceSubgroupProperties*)structure;
+            const VkPhysicalDeviceSubgroupProperties* props = (const VkPhysicalDeviceSubgroupProperties*)structure;
             DumpVkPhysicalDeviceSubgroupProperties(p, "VkPhysicalDeviceSubgroupProperties", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES) {
-            VkPhysicalDeviceSubgroupSizeControlProperties* props = (VkPhysicalDeviceSubgroupSizeControlProperties*)structure;
+            const VkPhysicalDeviceSubgroupSizeControlProperties* props = (const VkPhysicalDeviceSubgroupSizeControlProperties*)structure;
             DumpVkPhysicalDeviceSubgroupSizeControlProperties(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceSubgroupSizeControlProperties":"VkPhysicalDeviceSubgroupSizeControlPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES) {
-            VkPhysicalDeviceTexelBufferAlignmentProperties* props = (VkPhysicalDeviceTexelBufferAlignmentProperties*)structure;
+            const VkPhysicalDeviceTexelBufferAlignmentProperties* props = (const VkPhysicalDeviceTexelBufferAlignmentProperties*)structure;
             DumpVkPhysicalDeviceTexelBufferAlignmentProperties(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceTexelBufferAlignmentProperties":"VkPhysicalDeviceTexelBufferAlignmentPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES) {
-            VkPhysicalDeviceTimelineSemaphoreProperties* props = (VkPhysicalDeviceTimelineSemaphoreProperties*)structure;
+            const VkPhysicalDeviceTimelineSemaphoreProperties* props = (const VkPhysicalDeviceTimelineSemaphoreProperties*)structure;
             DumpVkPhysicalDeviceTimelineSemaphoreProperties(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceTimelineSemaphoreProperties":"VkPhysicalDeviceTimelineSemaphorePropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT) {
-            VkPhysicalDeviceTransformFeedbackPropertiesEXT* props = (VkPhysicalDeviceTransformFeedbackPropertiesEXT*)structure;
+            const VkPhysicalDeviceTransformFeedbackPropertiesEXT* props = (const VkPhysicalDeviceTransformFeedbackPropertiesEXT*)structure;
             DumpVkPhysicalDeviceTransformFeedbackPropertiesEXT(p, "VkPhysicalDeviceTransformFeedbackPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES) {
-            VkPhysicalDeviceVertexAttributeDivisorProperties* props = (VkPhysicalDeviceVertexAttributeDivisorProperties*)structure;
+            const VkPhysicalDeviceVertexAttributeDivisorProperties* props = (const VkPhysicalDeviceVertexAttributeDivisorProperties*)structure;
             DumpVkPhysicalDeviceVertexAttributeDivisorProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceVertexAttributeDivisorProperties":"VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT) {
-            VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT* props = (VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT*)structure;
+            const VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT* props = (const VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT*)structure;
             DumpVkPhysicalDeviceVertexAttributeDivisorPropertiesEXT(p, "VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES) {
-            VkPhysicalDeviceVulkan11Properties* props = (VkPhysicalDeviceVulkan11Properties*)structure;
+            const VkPhysicalDeviceVulkan11Properties* props = (const VkPhysicalDeviceVulkan11Properties*)structure;
             DumpVkPhysicalDeviceVulkan11Properties(p, "VkPhysicalDeviceVulkan11Properties", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES) {
-            VkPhysicalDeviceVulkan12Properties* props = (VkPhysicalDeviceVulkan12Properties*)structure;
+            const VkPhysicalDeviceVulkan12Properties* props = (const VkPhysicalDeviceVulkan12Properties*)structure;
             DumpVkPhysicalDeviceVulkan12Properties(p, "VkPhysicalDeviceVulkan12Properties", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES) {
-            VkPhysicalDeviceVulkan13Properties* props = (VkPhysicalDeviceVulkan13Properties*)structure;
+            const VkPhysicalDeviceVulkan13Properties* props = (const VkPhysicalDeviceVulkan13Properties*)structure;
             DumpVkPhysicalDeviceVulkan13Properties(p, "VkPhysicalDeviceVulkan13Properties", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES) {
-            VkPhysicalDeviceVulkan14Properties* props = (VkPhysicalDeviceVulkan14Properties*)structure;
+            const VkPhysicalDeviceVulkan14Properties* props = (const VkPhysicalDeviceVulkan14Properties*)structure;
             DumpVkPhysicalDeviceVulkan14Properties(p, "VkPhysicalDeviceVulkan14Properties", *props);
             p.AddNewline();
         }
@@ -4947,729 +6502,729 @@ void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2& start, std::un
     start.pNext = chain->start_of_chain;
 };
 
-void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_promoted_structs, void * place) {
+void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_promoted_structs, const void * place) {
     while (place) {
-        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES) {
-            VkPhysicalDevice16BitStorageFeatures* props = (VkPhysicalDevice16BitStorageFeatures*)structure;
+            const VkPhysicalDevice16BitStorageFeatures* props = (const VkPhysicalDevice16BitStorageFeatures*)structure;
             DumpVkPhysicalDevice16BitStorageFeatures(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDevice16BitStorageFeatures":"VkPhysicalDevice16BitStorageFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT) {
-            VkPhysicalDevice4444FormatsFeaturesEXT* props = (VkPhysicalDevice4444FormatsFeaturesEXT*)structure;
+            const VkPhysicalDevice4444FormatsFeaturesEXT* props = (const VkPhysicalDevice4444FormatsFeaturesEXT*)structure;
             DumpVkPhysicalDevice4444FormatsFeaturesEXT(p, "VkPhysicalDevice4444FormatsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES) {
-            VkPhysicalDevice8BitStorageFeatures* props = (VkPhysicalDevice8BitStorageFeatures*)structure;
+            const VkPhysicalDevice8BitStorageFeatures* props = (const VkPhysicalDevice8BitStorageFeatures*)structure;
             DumpVkPhysicalDevice8BitStorageFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDevice8BitStorageFeatures":"VkPhysicalDevice8BitStorageFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT) {
-            VkPhysicalDeviceASTCDecodeFeaturesEXT* props = (VkPhysicalDeviceASTCDecodeFeaturesEXT*)structure;
+            const VkPhysicalDeviceASTCDecodeFeaturesEXT* props = (const VkPhysicalDeviceASTCDecodeFeaturesEXT*)structure;
             DumpVkPhysicalDeviceASTCDecodeFeaturesEXT(p, "VkPhysicalDeviceASTCDecodeFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR) {
-            VkPhysicalDeviceAccelerationStructureFeaturesKHR* props = (VkPhysicalDeviceAccelerationStructureFeaturesKHR*)structure;
+            const VkPhysicalDeviceAccelerationStructureFeaturesKHR* props = (const VkPhysicalDeviceAccelerationStructureFeaturesKHR*)structure;
             DumpVkPhysicalDeviceAccelerationStructureFeaturesKHR(p, "VkPhysicalDeviceAccelerationStructureFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ADDRESS_BINDING_REPORT_FEATURES_EXT) {
-            VkPhysicalDeviceAddressBindingReportFeaturesEXT* props = (VkPhysicalDeviceAddressBindingReportFeaturesEXT*)structure;
+            const VkPhysicalDeviceAddressBindingReportFeaturesEXT* props = (const VkPhysicalDeviceAddressBindingReportFeaturesEXT*)structure;
             DumpVkPhysicalDeviceAddressBindingReportFeaturesEXT(p, "VkPhysicalDeviceAddressBindingReportFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT) {
-            VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT* props = (VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT*)structure;
+            const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT* props = (const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT*)structure;
             DumpVkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT(p, "VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_FEATURES_EXT) {
-            VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT* props = (VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT*)structure;
+            const VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT* props = (const VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT*)structure;
             DumpVkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT(p, "VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT) {
-            VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT* props = (VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT*)structure;
+            const VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT* props = (const VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT*)structure;
             DumpVkPhysicalDeviceBlendOperationAdvancedFeaturesEXT(p, "VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT) {
-            VkPhysicalDeviceBorderColorSwizzleFeaturesEXT* props = (VkPhysicalDeviceBorderColorSwizzleFeaturesEXT*)structure;
+            const VkPhysicalDeviceBorderColorSwizzleFeaturesEXT* props = (const VkPhysicalDeviceBorderColorSwizzleFeaturesEXT*)structure;
             DumpVkPhysicalDeviceBorderColorSwizzleFeaturesEXT(p, "VkPhysicalDeviceBorderColorSwizzleFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES) {
-            VkPhysicalDeviceBufferDeviceAddressFeatures* props = (VkPhysicalDeviceBufferDeviceAddressFeatures*)structure;
+            const VkPhysicalDeviceBufferDeviceAddressFeatures* props = (const VkPhysicalDeviceBufferDeviceAddressFeatures*)structure;
             DumpVkPhysicalDeviceBufferDeviceAddressFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceBufferDeviceAddressFeatures":"VkPhysicalDeviceBufferDeviceAddressFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT) {
-            VkPhysicalDeviceBufferDeviceAddressFeaturesEXT* props = (VkPhysicalDeviceBufferDeviceAddressFeaturesEXT*)structure;
+            const VkPhysicalDeviceBufferDeviceAddressFeaturesEXT* props = (const VkPhysicalDeviceBufferDeviceAddressFeaturesEXT*)structure;
             DumpVkPhysicalDeviceBufferDeviceAddressFeaturesEXT(p, "VkPhysicalDeviceBufferDeviceAddressFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT) {
-            VkPhysicalDeviceColorWriteEnableFeaturesEXT* props = (VkPhysicalDeviceColorWriteEnableFeaturesEXT*)structure;
+            const VkPhysicalDeviceColorWriteEnableFeaturesEXT* props = (const VkPhysicalDeviceColorWriteEnableFeaturesEXT*)structure;
             DumpVkPhysicalDeviceColorWriteEnableFeaturesEXT(p, "VkPhysicalDeviceColorWriteEnableFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR) {
-            VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR* props = (VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR*)structure;
+            const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR* props = (const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR*)structure;
             DumpVkPhysicalDeviceComputeShaderDerivativesFeaturesKHR(p, "VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT) {
-            VkPhysicalDeviceConditionalRenderingFeaturesEXT* props = (VkPhysicalDeviceConditionalRenderingFeaturesEXT*)structure;
+            const VkPhysicalDeviceConditionalRenderingFeaturesEXT* props = (const VkPhysicalDeviceConditionalRenderingFeaturesEXT*)structure;
             DumpVkPhysicalDeviceConditionalRenderingFeaturesEXT(p, "VkPhysicalDeviceConditionalRenderingFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR) {
-            VkPhysicalDeviceCooperativeMatrixFeaturesKHR* props = (VkPhysicalDeviceCooperativeMatrixFeaturesKHR*)structure;
+            const VkPhysicalDeviceCooperativeMatrixFeaturesKHR* props = (const VkPhysicalDeviceCooperativeMatrixFeaturesKHR*)structure;
             DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(p, "VkPhysicalDeviceCooperativeMatrixFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT) {
-            VkPhysicalDeviceCustomBorderColorFeaturesEXT* props = (VkPhysicalDeviceCustomBorderColorFeaturesEXT*)structure;
+            const VkPhysicalDeviceCustomBorderColorFeaturesEXT* props = (const VkPhysicalDeviceCustomBorderColorFeaturesEXT*)structure;
             DumpVkPhysicalDeviceCustomBorderColorFeaturesEXT(p, "VkPhysicalDeviceCustomBorderColorFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_BIAS_CONTROL_FEATURES_EXT) {
-            VkPhysicalDeviceDepthBiasControlFeaturesEXT* props = (VkPhysicalDeviceDepthBiasControlFeaturesEXT*)structure;
+            const VkPhysicalDeviceDepthBiasControlFeaturesEXT* props = (const VkPhysicalDeviceDepthBiasControlFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthBiasControlFeaturesEXT(p, "VkPhysicalDeviceDepthBiasControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT) {
-            VkPhysicalDeviceDepthClampControlFeaturesEXT* props = (VkPhysicalDeviceDepthClampControlFeaturesEXT*)structure;
+            const VkPhysicalDeviceDepthClampControlFeaturesEXT* props = (const VkPhysicalDeviceDepthClampControlFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthClampControlFeaturesEXT(p, "VkPhysicalDeviceDepthClampControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT) {
-            VkPhysicalDeviceDepthClampZeroOneFeaturesEXT* props = (VkPhysicalDeviceDepthClampZeroOneFeaturesEXT*)structure;
+            const VkPhysicalDeviceDepthClampZeroOneFeaturesEXT* props = (const VkPhysicalDeviceDepthClampZeroOneFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthClampZeroOneFeaturesEXT(p, "VkPhysicalDeviceDepthClampZeroOneFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT) {
-            VkPhysicalDeviceDepthClipControlFeaturesEXT* props = (VkPhysicalDeviceDepthClipControlFeaturesEXT*)structure;
+            const VkPhysicalDeviceDepthClipControlFeaturesEXT* props = (const VkPhysicalDeviceDepthClipControlFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthClipControlFeaturesEXT(p, "VkPhysicalDeviceDepthClipControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT) {
-            VkPhysicalDeviceDepthClipEnableFeaturesEXT* props = (VkPhysicalDeviceDepthClipEnableFeaturesEXT*)structure;
+            const VkPhysicalDeviceDepthClipEnableFeaturesEXT* props = (const VkPhysicalDeviceDepthClipEnableFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDepthClipEnableFeaturesEXT(p, "VkPhysicalDeviceDepthClipEnableFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT) {
-            VkPhysicalDeviceDescriptorBufferFeaturesEXT* props = (VkPhysicalDeviceDescriptorBufferFeaturesEXT*)structure;
+            const VkPhysicalDeviceDescriptorBufferFeaturesEXT* props = (const VkPhysicalDeviceDescriptorBufferFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(p, "VkPhysicalDeviceDescriptorBufferFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES) {
-            VkPhysicalDeviceDescriptorIndexingFeatures* props = (VkPhysicalDeviceDescriptorIndexingFeatures*)structure;
+            const VkPhysicalDeviceDescriptorIndexingFeatures* props = (const VkPhysicalDeviceDescriptorIndexingFeatures*)structure;
             DumpVkPhysicalDeviceDescriptorIndexingFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceDescriptorIndexingFeatures":"VkPhysicalDeviceDescriptorIndexingFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT) {
-            VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT* props = (VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT*)structure;
+            const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT* props = (const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT(p, "VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT) {
-            VkPhysicalDeviceDeviceMemoryReportFeaturesEXT* props = (VkPhysicalDeviceDeviceMemoryReportFeaturesEXT*)structure;
+            const VkPhysicalDeviceDeviceMemoryReportFeaturesEXT* props = (const VkPhysicalDeviceDeviceMemoryReportFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDeviceMemoryReportFeaturesEXT(p, "VkPhysicalDeviceDeviceMemoryReportFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES) {
-            VkPhysicalDeviceDynamicRenderingFeatures* props = (VkPhysicalDeviceDynamicRenderingFeatures*)structure;
+            const VkPhysicalDeviceDynamicRenderingFeatures* props = (const VkPhysicalDeviceDynamicRenderingFeatures*)structure;
             DumpVkPhysicalDeviceDynamicRenderingFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceDynamicRenderingFeatures":"VkPhysicalDeviceDynamicRenderingFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES) {
-            VkPhysicalDeviceDynamicRenderingLocalReadFeatures* props = (VkPhysicalDeviceDynamicRenderingLocalReadFeatures*)structure;
+            const VkPhysicalDeviceDynamicRenderingLocalReadFeatures* props = (const VkPhysicalDeviceDynamicRenderingLocalReadFeatures*)structure;
             DumpVkPhysicalDeviceDynamicRenderingLocalReadFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceDynamicRenderingLocalReadFeatures":"VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT) {
-            VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT* props = (VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT*)structure;
+            const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT* props = (const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT*)structure;
             DumpVkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT(p, "VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT) {
-            VkPhysicalDeviceExtendedDynamicState2FeaturesEXT* props = (VkPhysicalDeviceExtendedDynamicState2FeaturesEXT*)structure;
+            const VkPhysicalDeviceExtendedDynamicState2FeaturesEXT* props = (const VkPhysicalDeviceExtendedDynamicState2FeaturesEXT*)structure;
             DumpVkPhysicalDeviceExtendedDynamicState2FeaturesEXT(p, "VkPhysicalDeviceExtendedDynamicState2FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT) {
-            VkPhysicalDeviceExtendedDynamicState3FeaturesEXT* props = (VkPhysicalDeviceExtendedDynamicState3FeaturesEXT*)structure;
+            const VkPhysicalDeviceExtendedDynamicState3FeaturesEXT* props = (const VkPhysicalDeviceExtendedDynamicState3FeaturesEXT*)structure;
             DumpVkPhysicalDeviceExtendedDynamicState3FeaturesEXT(p, "VkPhysicalDeviceExtendedDynamicState3FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT) {
-            VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* props = (VkPhysicalDeviceExtendedDynamicStateFeaturesEXT*)structure;
+            const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT* props = (const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT*)structure;
             DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(p, "VkPhysicalDeviceExtendedDynamicStateFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT) {
-            VkPhysicalDeviceFaultFeaturesEXT* props = (VkPhysicalDeviceFaultFeaturesEXT*)structure;
+            const VkPhysicalDeviceFaultFeaturesEXT* props = (const VkPhysicalDeviceFaultFeaturesEXT*)structure;
             DumpVkPhysicalDeviceFaultFeaturesEXT(p, "VkPhysicalDeviceFaultFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT) {
-            VkPhysicalDeviceFragmentDensityMap2FeaturesEXT* props = (VkPhysicalDeviceFragmentDensityMap2FeaturesEXT*)structure;
+            const VkPhysicalDeviceFragmentDensityMap2FeaturesEXT* props = (const VkPhysicalDeviceFragmentDensityMap2FeaturesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMap2FeaturesEXT(p, "VkPhysicalDeviceFragmentDensityMap2FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT) {
-            VkPhysicalDeviceFragmentDensityMapFeaturesEXT* props = (VkPhysicalDeviceFragmentDensityMapFeaturesEXT*)structure;
+            const VkPhysicalDeviceFragmentDensityMapFeaturesEXT* props = (const VkPhysicalDeviceFragmentDensityMapFeaturesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMapFeaturesEXT(p, "VkPhysicalDeviceFragmentDensityMapFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR) {
-            VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR* props = (VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR*)structure;
+            const VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR* props = (const VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR*)structure;
             DumpVkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR(p, "VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT) {
-            VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT* props = (VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT*)structure;
+            const VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT* props = (const VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT*)structure;
             DumpVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT(p, "VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR) {
-            VkPhysicalDeviceFragmentShadingRateFeaturesKHR* props = (VkPhysicalDeviceFragmentShadingRateFeaturesKHR*)structure;
+            const VkPhysicalDeviceFragmentShadingRateFeaturesKHR* props = (const VkPhysicalDeviceFragmentShadingRateFeaturesKHR*)structure;
             DumpVkPhysicalDeviceFragmentShadingRateFeaturesKHR(p, "VkPhysicalDeviceFragmentShadingRateFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT) {
-            VkPhysicalDeviceFrameBoundaryFeaturesEXT* props = (VkPhysicalDeviceFrameBoundaryFeaturesEXT*)structure;
+            const VkPhysicalDeviceFrameBoundaryFeaturesEXT* props = (const VkPhysicalDeviceFrameBoundaryFeaturesEXT*)structure;
             DumpVkPhysicalDeviceFrameBoundaryFeaturesEXT(p, "VkPhysicalDeviceFrameBoundaryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES) {
-            VkPhysicalDeviceGlobalPriorityQueryFeatures* props = (VkPhysicalDeviceGlobalPriorityQueryFeatures*)structure;
+            const VkPhysicalDeviceGlobalPriorityQueryFeatures* props = (const VkPhysicalDeviceGlobalPriorityQueryFeatures*)structure;
             DumpVkPhysicalDeviceGlobalPriorityQueryFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceGlobalPriorityQueryFeatures":"VkPhysicalDeviceGlobalPriorityQueryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT) {
-            VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT* props = (VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT*)structure;
+            const VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT* props = (const VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT*)structure;
             DumpVkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT(p, "VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES) {
-            VkPhysicalDeviceHostImageCopyFeatures* props = (VkPhysicalDeviceHostImageCopyFeatures*)structure;
+            const VkPhysicalDeviceHostImageCopyFeatures* props = (const VkPhysicalDeviceHostImageCopyFeatures*)structure;
             DumpVkPhysicalDeviceHostImageCopyFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceHostImageCopyFeatures":"VkPhysicalDeviceHostImageCopyFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES) {
-            VkPhysicalDeviceHostQueryResetFeatures* props = (VkPhysicalDeviceHostQueryResetFeatures*)structure;
+            const VkPhysicalDeviceHostQueryResetFeatures* props = (const VkPhysicalDeviceHostQueryResetFeatures*)structure;
             DumpVkPhysicalDeviceHostQueryResetFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceHostQueryResetFeatures":"VkPhysicalDeviceHostQueryResetFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT) {
-            VkPhysicalDeviceImage2DViewOf3DFeaturesEXT* props = (VkPhysicalDeviceImage2DViewOf3DFeaturesEXT*)structure;
+            const VkPhysicalDeviceImage2DViewOf3DFeaturesEXT* props = (const VkPhysicalDeviceImage2DViewOf3DFeaturesEXT*)structure;
             DumpVkPhysicalDeviceImage2DViewOf3DFeaturesEXT(p, "VkPhysicalDeviceImage2DViewOf3DFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT) {
-            VkPhysicalDeviceImageCompressionControlFeaturesEXT* props = (VkPhysicalDeviceImageCompressionControlFeaturesEXT*)structure;
+            const VkPhysicalDeviceImageCompressionControlFeaturesEXT* props = (const VkPhysicalDeviceImageCompressionControlFeaturesEXT*)structure;
             DumpVkPhysicalDeviceImageCompressionControlFeaturesEXT(p, "VkPhysicalDeviceImageCompressionControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT) {
-            VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT* props = (VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT*)structure;
+            const VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT* props = (const VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT*)structure;
             DumpVkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT(p, "VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES) {
-            VkPhysicalDeviceImageRobustnessFeatures* props = (VkPhysicalDeviceImageRobustnessFeatures*)structure;
+            const VkPhysicalDeviceImageRobustnessFeatures* props = (const VkPhysicalDeviceImageRobustnessFeatures*)structure;
             DumpVkPhysicalDeviceImageRobustnessFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceImageRobustnessFeatures":"VkPhysicalDeviceImageRobustnessFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_SLICED_VIEW_OF_3D_FEATURES_EXT) {
-            VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT* props = (VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT*)structure;
+            const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT* props = (const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT*)structure;
             DumpVkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT(p, "VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT) {
-            VkPhysicalDeviceImageViewMinLodFeaturesEXT* props = (VkPhysicalDeviceImageViewMinLodFeaturesEXT*)structure;
+            const VkPhysicalDeviceImageViewMinLodFeaturesEXT* props = (const VkPhysicalDeviceImageViewMinLodFeaturesEXT*)structure;
             DumpVkPhysicalDeviceImageViewMinLodFeaturesEXT(p, "VkPhysicalDeviceImageViewMinLodFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES) {
-            VkPhysicalDeviceImagelessFramebufferFeatures* props = (VkPhysicalDeviceImagelessFramebufferFeatures*)structure;
+            const VkPhysicalDeviceImagelessFramebufferFeatures* props = (const VkPhysicalDeviceImagelessFramebufferFeatures*)structure;
             DumpVkPhysicalDeviceImagelessFramebufferFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceImagelessFramebufferFeatures":"VkPhysicalDeviceImagelessFramebufferFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES) {
-            VkPhysicalDeviceIndexTypeUint8Features* props = (VkPhysicalDeviceIndexTypeUint8Features*)structure;
+            const VkPhysicalDeviceIndexTypeUint8Features* props = (const VkPhysicalDeviceIndexTypeUint8Features*)structure;
             DumpVkPhysicalDeviceIndexTypeUint8Features(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceIndexTypeUint8Features":"VkPhysicalDeviceIndexTypeUint8FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES) {
-            VkPhysicalDeviceInlineUniformBlockFeatures* props = (VkPhysicalDeviceInlineUniformBlockFeatures*)structure;
+            const VkPhysicalDeviceInlineUniformBlockFeatures* props = (const VkPhysicalDeviceInlineUniformBlockFeatures*)structure;
             DumpVkPhysicalDeviceInlineUniformBlockFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceInlineUniformBlockFeatures":"VkPhysicalDeviceInlineUniformBlockFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT) {
-            VkPhysicalDeviceLegacyDitheringFeaturesEXT* props = (VkPhysicalDeviceLegacyDitheringFeaturesEXT*)structure;
+            const VkPhysicalDeviceLegacyDitheringFeaturesEXT* props = (const VkPhysicalDeviceLegacyDitheringFeaturesEXT*)structure;
             DumpVkPhysicalDeviceLegacyDitheringFeaturesEXT(p, "VkPhysicalDeviceLegacyDitheringFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT) {
-            VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT* props = (VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT*)structure;
+            const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT* props = (const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT*)structure;
             DumpVkPhysicalDeviceLegacyVertexAttributesFeaturesEXT(p, "VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES) {
-            VkPhysicalDeviceLineRasterizationFeatures* props = (VkPhysicalDeviceLineRasterizationFeatures*)structure;
+            const VkPhysicalDeviceLineRasterizationFeatures* props = (const VkPhysicalDeviceLineRasterizationFeatures*)structure;
             DumpVkPhysicalDeviceLineRasterizationFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceLineRasterizationFeatures":"VkPhysicalDeviceLineRasterizationFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES) {
-            VkPhysicalDeviceMaintenance4Features* props = (VkPhysicalDeviceMaintenance4Features*)structure;
+            const VkPhysicalDeviceMaintenance4Features* props = (const VkPhysicalDeviceMaintenance4Features*)structure;
             DumpVkPhysicalDeviceMaintenance4Features(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceMaintenance4Features":"VkPhysicalDeviceMaintenance4FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES) {
-            VkPhysicalDeviceMaintenance5Features* props = (VkPhysicalDeviceMaintenance5Features*)structure;
+            const VkPhysicalDeviceMaintenance5Features* props = (const VkPhysicalDeviceMaintenance5Features*)structure;
             DumpVkPhysicalDeviceMaintenance5Features(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceMaintenance5Features":"VkPhysicalDeviceMaintenance5FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES) {
-            VkPhysicalDeviceMaintenance6Features* props = (VkPhysicalDeviceMaintenance6Features*)structure;
+            const VkPhysicalDeviceMaintenance6Features* props = (const VkPhysicalDeviceMaintenance6Features*)structure;
             DumpVkPhysicalDeviceMaintenance6Features(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceMaintenance6Features":"VkPhysicalDeviceMaintenance6FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR) {
-            VkPhysicalDeviceMaintenance7FeaturesKHR* props = (VkPhysicalDeviceMaintenance7FeaturesKHR*)structure;
+            const VkPhysicalDeviceMaintenance7FeaturesKHR* props = (const VkPhysicalDeviceMaintenance7FeaturesKHR*)structure;
             DumpVkPhysicalDeviceMaintenance7FeaturesKHR(p, "VkPhysicalDeviceMaintenance7FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT) {
-            VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* props = (VkPhysicalDeviceMapMemoryPlacedFeaturesEXT*)structure;
+            const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* props = (const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMapMemoryPlacedFeaturesEXT(p, "VkPhysicalDeviceMapMemoryPlacedFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT) {
-            VkPhysicalDeviceMemoryPriorityFeaturesEXT* props = (VkPhysicalDeviceMemoryPriorityFeaturesEXT*)structure;
+            const VkPhysicalDeviceMemoryPriorityFeaturesEXT* props = (const VkPhysicalDeviceMemoryPriorityFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(p, "VkPhysicalDeviceMemoryPriorityFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT) {
-            VkPhysicalDeviceMeshShaderFeaturesEXT* props = (VkPhysicalDeviceMeshShaderFeaturesEXT*)structure;
+            const VkPhysicalDeviceMeshShaderFeaturesEXT* props = (const VkPhysicalDeviceMeshShaderFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMeshShaderFeaturesEXT(p, "VkPhysicalDeviceMeshShaderFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT) {
-            VkPhysicalDeviceMultiDrawFeaturesEXT* props = (VkPhysicalDeviceMultiDrawFeaturesEXT*)structure;
+            const VkPhysicalDeviceMultiDrawFeaturesEXT* props = (const VkPhysicalDeviceMultiDrawFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMultiDrawFeaturesEXT(p, "VkPhysicalDeviceMultiDrawFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT) {
-            VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* props = (VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT*)structure;
+            const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT* props = (const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT(p, "VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES) {
-            VkPhysicalDeviceMultiviewFeatures* props = (VkPhysicalDeviceMultiviewFeatures*)structure;
+            const VkPhysicalDeviceMultiviewFeatures* props = (const VkPhysicalDeviceMultiviewFeatures*)structure;
             DumpVkPhysicalDeviceMultiviewFeatures(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceMultiviewFeatures":"VkPhysicalDeviceMultiviewFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT) {
-            VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT* props = (VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT*)structure;
+            const VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT* props = (const VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT*)structure;
             DumpVkPhysicalDeviceMutableDescriptorTypeFeaturesEXT(p, "VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_BUFFER_FEATURES_EXT) {
-            VkPhysicalDeviceNestedCommandBufferFeaturesEXT* props = (VkPhysicalDeviceNestedCommandBufferFeaturesEXT*)structure;
+            const VkPhysicalDeviceNestedCommandBufferFeaturesEXT* props = (const VkPhysicalDeviceNestedCommandBufferFeaturesEXT*)structure;
             DumpVkPhysicalDeviceNestedCommandBufferFeaturesEXT(p, "VkPhysicalDeviceNestedCommandBufferFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT) {
-            VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT* props = (VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT*)structure;
+            const VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT* props = (const VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT*)structure;
             DumpVkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT(p, "VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_EXT) {
-            VkPhysicalDeviceOpacityMicromapFeaturesEXT* props = (VkPhysicalDeviceOpacityMicromapFeaturesEXT*)structure;
+            const VkPhysicalDeviceOpacityMicromapFeaturesEXT* props = (const VkPhysicalDeviceOpacityMicromapFeaturesEXT*)structure;
             DumpVkPhysicalDeviceOpacityMicromapFeaturesEXT(p, "VkPhysicalDeviceOpacityMicromapFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT) {
-            VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT* props = (VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT*)structure;
+            const VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT* props = (const VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT*)structure;
             DumpVkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT(p, "VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR) {
-            VkPhysicalDevicePerformanceQueryFeaturesKHR* props = (VkPhysicalDevicePerformanceQueryFeaturesKHR*)structure;
+            const VkPhysicalDevicePerformanceQueryFeaturesKHR* props = (const VkPhysicalDevicePerformanceQueryFeaturesKHR*)structure;
             DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(p, "VkPhysicalDevicePerformanceQueryFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR) {
-            VkPhysicalDevicePipelineBinaryFeaturesKHR* props = (VkPhysicalDevicePipelineBinaryFeaturesKHR*)structure;
+            const VkPhysicalDevicePipelineBinaryFeaturesKHR* props = (const VkPhysicalDevicePipelineBinaryFeaturesKHR*)structure;
             DumpVkPhysicalDevicePipelineBinaryFeaturesKHR(p, "VkPhysicalDevicePipelineBinaryFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES) {
-            VkPhysicalDevicePipelineCreationCacheControlFeatures* props = (VkPhysicalDevicePipelineCreationCacheControlFeatures*)structure;
+            const VkPhysicalDevicePipelineCreationCacheControlFeatures* props = (const VkPhysicalDevicePipelineCreationCacheControlFeatures*)structure;
             DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDevicePipelineCreationCacheControlFeatures":"VkPhysicalDevicePipelineCreationCacheControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR) {
-            VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR* props = (VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR*)structure;
+            const VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR* props = (const VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR*)structure;
             DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(p, "VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT) {
-            VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT* props = (VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT*)structure;
+            const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT* props = (const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT*)structure;
             DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT(p, "VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT) {
-            VkPhysicalDevicePipelinePropertiesFeaturesEXT* props = (VkPhysicalDevicePipelinePropertiesFeaturesEXT*)structure;
+            const VkPhysicalDevicePipelinePropertiesFeaturesEXT* props = (const VkPhysicalDevicePipelinePropertiesFeaturesEXT*)structure;
             DumpVkPhysicalDevicePipelinePropertiesFeaturesEXT(p, "VkPhysicalDevicePipelinePropertiesFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES) {
-            VkPhysicalDevicePipelineProtectedAccessFeatures* props = (VkPhysicalDevicePipelineProtectedAccessFeatures*)structure;
+            const VkPhysicalDevicePipelineProtectedAccessFeatures* props = (const VkPhysicalDevicePipelineProtectedAccessFeatures*)structure;
             DumpVkPhysicalDevicePipelineProtectedAccessFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDevicePipelineProtectedAccessFeatures":"VkPhysicalDevicePipelineProtectedAccessFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES) {
-            VkPhysicalDevicePipelineRobustnessFeatures* props = (VkPhysicalDevicePipelineRobustnessFeatures*)structure;
+            const VkPhysicalDevicePipelineRobustnessFeatures* props = (const VkPhysicalDevicePipelineRobustnessFeatures*)structure;
             DumpVkPhysicalDevicePipelineRobustnessFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDevicePipelineRobustnessFeatures":"VkPhysicalDevicePipelineRobustnessFeaturesEXT", *props);
             p.AddNewline();
         }
 #ifdef VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR && p.Type() != OutputType::json) {
-            VkPhysicalDevicePortabilitySubsetFeaturesKHR* props = (VkPhysicalDevicePortabilitySubsetFeaturesKHR*)structure;
+            const VkPhysicalDevicePortabilitySubsetFeaturesKHR* props = (const VkPhysicalDevicePortabilitySubsetFeaturesKHR*)structure;
             DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(p, "VkPhysicalDevicePortabilitySubsetFeaturesKHR", *props);
             p.AddNewline();
         }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR) {
-            VkPhysicalDevicePresentIdFeaturesKHR* props = (VkPhysicalDevicePresentIdFeaturesKHR*)structure;
+            const VkPhysicalDevicePresentIdFeaturesKHR* props = (const VkPhysicalDevicePresentIdFeaturesKHR*)structure;
             DumpVkPhysicalDevicePresentIdFeaturesKHR(p, "VkPhysicalDevicePresentIdFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_EXT) {
-            VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT* props = (VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT*)structure;
+            const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT* props = (const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT*)structure;
             DumpVkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT(p, "VkPhysicalDevicePresentModeFifoLatestReadyFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR) {
-            VkPhysicalDevicePresentWaitFeaturesKHR* props = (VkPhysicalDevicePresentWaitFeaturesKHR*)structure;
+            const VkPhysicalDevicePresentWaitFeaturesKHR* props = (const VkPhysicalDevicePresentWaitFeaturesKHR*)structure;
             DumpVkPhysicalDevicePresentWaitFeaturesKHR(p, "VkPhysicalDevicePresentWaitFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT) {
-            VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT* props = (VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT*)structure;
+            const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT* props = (const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT*)structure;
             DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(p, "VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT) {
-            VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT* props = (VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT*)structure;
+            const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT* props = (const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT*)structure;
             DumpVkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT(p, "VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES) {
-            VkPhysicalDevicePrivateDataFeatures* props = (VkPhysicalDevicePrivateDataFeatures*)structure;
+            const VkPhysicalDevicePrivateDataFeatures* props = (const VkPhysicalDevicePrivateDataFeatures*)structure;
             DumpVkPhysicalDevicePrivateDataFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDevicePrivateDataFeatures":"VkPhysicalDevicePrivateDataFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES) {
-            VkPhysicalDeviceProtectedMemoryFeatures* props = (VkPhysicalDeviceProtectedMemoryFeatures*)structure;
+            const VkPhysicalDeviceProtectedMemoryFeatures* props = (const VkPhysicalDeviceProtectedMemoryFeatures*)structure;
             DumpVkPhysicalDeviceProtectedMemoryFeatures(p, "VkPhysicalDeviceProtectedMemoryFeatures", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT) {
-            VkPhysicalDeviceProvokingVertexFeaturesEXT* props = (VkPhysicalDeviceProvokingVertexFeaturesEXT*)structure;
+            const VkPhysicalDeviceProvokingVertexFeaturesEXT* props = (const VkPhysicalDeviceProvokingVertexFeaturesEXT*)structure;
             DumpVkPhysicalDeviceProvokingVertexFeaturesEXT(p, "VkPhysicalDeviceProvokingVertexFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT) {
-            VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT* props = (VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT*)structure;
+            const VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT* props = (const VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT*)structure;
             DumpVkPhysicalDeviceRGBA10X6FormatsFeaturesEXT(p, "VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_FEATURES_EXT) {
-            VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT* props = (VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT*)structure;
+            const VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT* props = (const VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT*)structure;
             DumpVkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT(p, "VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR) {
-            VkPhysicalDeviceRayQueryFeaturesKHR* props = (VkPhysicalDeviceRayQueryFeaturesKHR*)structure;
+            const VkPhysicalDeviceRayQueryFeaturesKHR* props = (const VkPhysicalDeviceRayQueryFeaturesKHR*)structure;
             DumpVkPhysicalDeviceRayQueryFeaturesKHR(p, "VkPhysicalDeviceRayQueryFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR) {
-            VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR* props = (VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR*)structure;
+            const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR* props = (const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR*)structure;
             DumpVkPhysicalDeviceRayTracingMaintenance1FeaturesKHR(p, "VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR) {
-            VkPhysicalDeviceRayTracingPipelineFeaturesKHR* props = (VkPhysicalDeviceRayTracingPipelineFeaturesKHR*)structure;
+            const VkPhysicalDeviceRayTracingPipelineFeaturesKHR* props = (const VkPhysicalDeviceRayTracingPipelineFeaturesKHR*)structure;
             DumpVkPhysicalDeviceRayTracingPipelineFeaturesKHR(p, "VkPhysicalDeviceRayTracingPipelineFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR) {
-            VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* props = (VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR*)structure;
+            const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR* props = (const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR*)structure;
             DumpVkPhysicalDeviceRayTracingPositionFetchFeaturesKHR(p, "VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT) {
-            VkPhysicalDeviceRobustness2FeaturesEXT* props = (VkPhysicalDeviceRobustness2FeaturesEXT*)structure;
+            const VkPhysicalDeviceRobustness2FeaturesEXT* props = (const VkPhysicalDeviceRobustness2FeaturesEXT*)structure;
             DumpVkPhysicalDeviceRobustness2FeaturesEXT(p, "VkPhysicalDeviceRobustness2FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES) {
-            VkPhysicalDeviceSamplerYcbcrConversionFeatures* props = (VkPhysicalDeviceSamplerYcbcrConversionFeatures*)structure;
+            const VkPhysicalDeviceSamplerYcbcrConversionFeatures* props = (const VkPhysicalDeviceSamplerYcbcrConversionFeatures*)structure;
             DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceSamplerYcbcrConversionFeatures":"VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES) {
-            VkPhysicalDeviceScalarBlockLayoutFeatures* props = (VkPhysicalDeviceScalarBlockLayoutFeatures*)structure;
+            const VkPhysicalDeviceScalarBlockLayoutFeatures* props = (const VkPhysicalDeviceScalarBlockLayoutFeatures*)structure;
             DumpVkPhysicalDeviceScalarBlockLayoutFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceScalarBlockLayoutFeatures":"VkPhysicalDeviceScalarBlockLayoutFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES) {
-            VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* props = (VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures*)structure;
+            const VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* props = (const VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures*)structure;
             DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures":"VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT) {
-            VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* props = (VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* props = (const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderAtomicFloat2FeaturesEXT(p, "VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT) {
-            VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* props = (VkPhysicalDeviceShaderAtomicFloatFeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT* props = (const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderAtomicFloatFeaturesEXT(p, "VkPhysicalDeviceShaderAtomicFloatFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES) {
-            VkPhysicalDeviceShaderAtomicInt64Features* props = (VkPhysicalDeviceShaderAtomicInt64Features*)structure;
+            const VkPhysicalDeviceShaderAtomicInt64Features* props = (const VkPhysicalDeviceShaderAtomicInt64Features*)structure;
             DumpVkPhysicalDeviceShaderAtomicInt64Features(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceShaderAtomicInt64Features":"VkPhysicalDeviceShaderAtomicInt64FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR) {
-            VkPhysicalDeviceShaderClockFeaturesKHR* props = (VkPhysicalDeviceShaderClockFeaturesKHR*)structure;
+            const VkPhysicalDeviceShaderClockFeaturesKHR* props = (const VkPhysicalDeviceShaderClockFeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderClockFeaturesKHR(p, "VkPhysicalDeviceShaderClockFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES) {
-            VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures* props = (VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures*)structure;
+            const VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures* props = (const VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures*)structure;
             DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures":"VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES) {
-            VkPhysicalDeviceShaderDrawParametersFeatures* props = (VkPhysicalDeviceShaderDrawParametersFeatures*)structure;
+            const VkPhysicalDeviceShaderDrawParametersFeatures* props = (const VkPhysicalDeviceShaderDrawParametersFeatures*)structure;
             DumpVkPhysicalDeviceShaderDrawParametersFeatures(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceShaderDrawParametersFeatures":"VkPhysicalDeviceShaderDrawParameterFeatures", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES) {
-            VkPhysicalDeviceShaderExpectAssumeFeatures* props = (VkPhysicalDeviceShaderExpectAssumeFeatures*)structure;
+            const VkPhysicalDeviceShaderExpectAssumeFeatures* props = (const VkPhysicalDeviceShaderExpectAssumeFeatures*)structure;
             DumpVkPhysicalDeviceShaderExpectAssumeFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceShaderExpectAssumeFeatures":"VkPhysicalDeviceShaderExpectAssumeFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES) {
-            VkPhysicalDeviceShaderFloat16Int8Features* props = (VkPhysicalDeviceShaderFloat16Int8Features*)structure;
+            const VkPhysicalDeviceShaderFloat16Int8Features* props = (const VkPhysicalDeviceShaderFloat16Int8Features*)structure;
             DumpVkPhysicalDeviceShaderFloat16Int8Features(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceShaderFloat16Int8Features":"VkPhysicalDeviceFloat16Int8FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES) {
-            VkPhysicalDeviceShaderFloatControls2Features* props = (VkPhysicalDeviceShaderFloatControls2Features*)structure;
+            const VkPhysicalDeviceShaderFloatControls2Features* props = (const VkPhysicalDeviceShaderFloatControls2Features*)structure;
             DumpVkPhysicalDeviceShaderFloatControls2Features(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceShaderFloatControls2Features":"VkPhysicalDeviceShaderFloatControls2FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT) {
-            VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT* props = (VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT* props = (const VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT(p, "VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES) {
-            VkPhysicalDeviceShaderIntegerDotProductFeatures* props = (VkPhysicalDeviceShaderIntegerDotProductFeatures*)structure;
+            const VkPhysicalDeviceShaderIntegerDotProductFeatures* props = (const VkPhysicalDeviceShaderIntegerDotProductFeatures*)structure;
             DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceShaderIntegerDotProductFeatures":"VkPhysicalDeviceShaderIntegerDotProductFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR) {
-            VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* props = (VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR*)structure;
+            const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR* props = (const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR(p, "VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT) {
-            VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT* props = (VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT* props = (const VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(p, "VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT) {
-            VkPhysicalDeviceShaderObjectFeaturesEXT* props = (VkPhysicalDeviceShaderObjectFeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderObjectFeaturesEXT* props = (const VkPhysicalDeviceShaderObjectFeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderObjectFeaturesEXT(p, "VkPhysicalDeviceShaderObjectFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_QUAD_CONTROL_FEATURES_KHR) {
-            VkPhysicalDeviceShaderQuadControlFeaturesKHR* props = (VkPhysicalDeviceShaderQuadControlFeaturesKHR*)structure;
+            const VkPhysicalDeviceShaderQuadControlFeaturesKHR* props = (const VkPhysicalDeviceShaderQuadControlFeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderQuadControlFeaturesKHR(p, "VkPhysicalDeviceShaderQuadControlFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR) {
-            VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR* props = (VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR*)structure;
+            const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR* props = (const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR(p, "VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT) {
-            VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT* props = (VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT* props = (const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT(p, "VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES) {
-            VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* props = (VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures*)structure;
+            const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* props = (const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures*)structure;
             DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures":"VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES) {
-            VkPhysicalDeviceShaderSubgroupRotateFeatures* props = (VkPhysicalDeviceShaderSubgroupRotateFeatures*)structure;
+            const VkPhysicalDeviceShaderSubgroupRotateFeatures* props = (const VkPhysicalDeviceShaderSubgroupRotateFeatures*)structure;
             DumpVkPhysicalDeviceShaderSubgroupRotateFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceShaderSubgroupRotateFeatures":"VkPhysicalDeviceShaderSubgroupRotateFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR) {
-            VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR* props = (VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR*)structure;
+            const VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR* props = (const VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR*)structure;
             DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(p, "VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES) {
-            VkPhysicalDeviceShaderTerminateInvocationFeatures* props = (VkPhysicalDeviceShaderTerminateInvocationFeatures*)structure;
+            const VkPhysicalDeviceShaderTerminateInvocationFeatures* props = (const VkPhysicalDeviceShaderTerminateInvocationFeatures*)structure;
             DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceShaderTerminateInvocationFeatures":"VkPhysicalDeviceShaderTerminateInvocationFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_FEATURES_EXT) {
-            VkPhysicalDeviceShaderTileImageFeaturesEXT* props = (VkPhysicalDeviceShaderTileImageFeaturesEXT*)structure;
+            const VkPhysicalDeviceShaderTileImageFeaturesEXT* props = (const VkPhysicalDeviceShaderTileImageFeaturesEXT*)structure;
             DumpVkPhysicalDeviceShaderTileImageFeaturesEXT(p, "VkPhysicalDeviceShaderTileImageFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES) {
-            VkPhysicalDeviceSubgroupSizeControlFeatures* props = (VkPhysicalDeviceSubgroupSizeControlFeatures*)structure;
+            const VkPhysicalDeviceSubgroupSizeControlFeatures* props = (const VkPhysicalDeviceSubgroupSizeControlFeatures*)structure;
             DumpVkPhysicalDeviceSubgroupSizeControlFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceSubgroupSizeControlFeatures":"VkPhysicalDeviceSubgroupSizeControlFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT) {
-            VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT* props = (VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT*)structure;
+            const VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT* props = (const VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT*)structure;
             DumpVkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT(p, "VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT) {
-            VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT* props = (VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT*)structure;
+            const VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT* props = (const VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT*)structure;
             DumpVkPhysicalDeviceSwapchainMaintenance1FeaturesEXT(p, "VkPhysicalDeviceSwapchainMaintenance1FeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES) {
-            VkPhysicalDeviceSynchronization2Features* props = (VkPhysicalDeviceSynchronization2Features*)structure;
+            const VkPhysicalDeviceSynchronization2Features* props = (const VkPhysicalDeviceSynchronization2Features*)structure;
             DumpVkPhysicalDeviceSynchronization2Features(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceSynchronization2Features":"VkPhysicalDeviceSynchronization2FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT) {
-            VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT* props = (VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT*)structure;
+            const VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT* props = (const VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT*)structure;
             DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(p, "VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES) {
-            VkPhysicalDeviceTextureCompressionASTCHDRFeatures* props = (VkPhysicalDeviceTextureCompressionASTCHDRFeatures*)structure;
+            const VkPhysicalDeviceTextureCompressionASTCHDRFeatures* props = (const VkPhysicalDeviceTextureCompressionASTCHDRFeatures*)structure;
             DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceTextureCompressionASTCHDRFeatures":"VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES) {
-            VkPhysicalDeviceTimelineSemaphoreFeatures* props = (VkPhysicalDeviceTimelineSemaphoreFeatures*)structure;
+            const VkPhysicalDeviceTimelineSemaphoreFeatures* props = (const VkPhysicalDeviceTimelineSemaphoreFeatures*)structure;
             DumpVkPhysicalDeviceTimelineSemaphoreFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceTimelineSemaphoreFeatures":"VkPhysicalDeviceTimelineSemaphoreFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT) {
-            VkPhysicalDeviceTransformFeedbackFeaturesEXT* props = (VkPhysicalDeviceTransformFeedbackFeaturesEXT*)structure;
+            const VkPhysicalDeviceTransformFeedbackFeaturesEXT* props = (const VkPhysicalDeviceTransformFeedbackFeaturesEXT*)structure;
             DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(p, "VkPhysicalDeviceTransformFeedbackFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES) {
-            VkPhysicalDeviceUniformBufferStandardLayoutFeatures* props = (VkPhysicalDeviceUniformBufferStandardLayoutFeatures*)structure;
+            const VkPhysicalDeviceUniformBufferStandardLayoutFeatures* props = (const VkPhysicalDeviceUniformBufferStandardLayoutFeatures*)structure;
             DumpVkPhysicalDeviceUniformBufferStandardLayoutFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceUniformBufferStandardLayoutFeatures":"VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES) {
-            VkPhysicalDeviceVariablePointersFeatures* props = (VkPhysicalDeviceVariablePointersFeatures*)structure;
+            const VkPhysicalDeviceVariablePointersFeatures* props = (const VkPhysicalDeviceVariablePointersFeatures*)structure;
             DumpVkPhysicalDeviceVariablePointersFeatures(p, gpu.api_version >= VK_API_VERSION_1_1 ?"VkPhysicalDeviceVariablePointersFeatures":"VkPhysicalDeviceVariablePointersFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES) {
-            VkPhysicalDeviceVertexAttributeDivisorFeatures* props = (VkPhysicalDeviceVertexAttributeDivisorFeatures*)structure;
+            const VkPhysicalDeviceVertexAttributeDivisorFeatures* props = (const VkPhysicalDeviceVertexAttributeDivisorFeatures*)structure;
             DumpVkPhysicalDeviceVertexAttributeDivisorFeatures(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkPhysicalDeviceVertexAttributeDivisorFeatures":"VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT) {
-            VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT* props = (VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT*)structure;
+            const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT* props = (const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT*)structure;
             DumpVkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT(p, "VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT) {
-            VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT* props = (VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT*)structure;
+            const VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT* props = (const VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT*)structure;
             DumpVkPhysicalDeviceVertexInputDynamicStateFeaturesEXT(p, "VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR) {
-            VkPhysicalDeviceVideoEncodeAV1FeaturesKHR* props = (VkPhysicalDeviceVideoEncodeAV1FeaturesKHR*)structure;
+            const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR* props = (const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR*)structure;
             DumpVkPhysicalDeviceVideoEncodeAV1FeaturesKHR(p, "VkPhysicalDeviceVideoEncodeAV1FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR) {
-            VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR* props = (VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR*)structure;
+            const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR* props = (const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR*)structure;
             DumpVkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR(p, "VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR) {
-            VkPhysicalDeviceVideoMaintenance1FeaturesKHR* props = (VkPhysicalDeviceVideoMaintenance1FeaturesKHR*)structure;
+            const VkPhysicalDeviceVideoMaintenance1FeaturesKHR* props = (const VkPhysicalDeviceVideoMaintenance1FeaturesKHR*)structure;
             DumpVkPhysicalDeviceVideoMaintenance1FeaturesKHR(p, "VkPhysicalDeviceVideoMaintenance1FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES) {
-            VkPhysicalDeviceVulkan11Features* props = (VkPhysicalDeviceVulkan11Features*)structure;
+            const VkPhysicalDeviceVulkan11Features* props = (const VkPhysicalDeviceVulkan11Features*)structure;
             DumpVkPhysicalDeviceVulkan11Features(p, "VkPhysicalDeviceVulkan11Features", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES) {
-            VkPhysicalDeviceVulkan12Features* props = (VkPhysicalDeviceVulkan12Features*)structure;
+            const VkPhysicalDeviceVulkan12Features* props = (const VkPhysicalDeviceVulkan12Features*)structure;
             DumpVkPhysicalDeviceVulkan12Features(p, "VkPhysicalDeviceVulkan12Features", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES) {
-            VkPhysicalDeviceVulkan13Features* props = (VkPhysicalDeviceVulkan13Features*)structure;
+            const VkPhysicalDeviceVulkan13Features* props = (const VkPhysicalDeviceVulkan13Features*)structure;
             DumpVkPhysicalDeviceVulkan13Features(p, "VkPhysicalDeviceVulkan13Features", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES) {
-            VkPhysicalDeviceVulkan14Features* props = (VkPhysicalDeviceVulkan14Features*)structure;
+            const VkPhysicalDeviceVulkan14Features* props = (const VkPhysicalDeviceVulkan14Features*)structure;
             DumpVkPhysicalDeviceVulkan14Features(p, "VkPhysicalDeviceVulkan14Features", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES) {
-            VkPhysicalDeviceVulkanMemoryModelFeatures* props = (VkPhysicalDeviceVulkanMemoryModelFeatures*)structure;
+            const VkPhysicalDeviceVulkanMemoryModelFeatures* props = (const VkPhysicalDeviceVulkanMemoryModelFeatures*)structure;
             DumpVkPhysicalDeviceVulkanMemoryModelFeatures(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceVulkanMemoryModelFeatures":"VkPhysicalDeviceVulkanMemoryModelFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_FEATURES_KHR) {
-            VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR* props = (VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR*)structure;
+            const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR* props = (const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR*)structure;
             DumpVkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR(p, "VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT) {
-            VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT* props = (VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT*)structure;
+            const VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT* props = (const VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT*)structure;
             DumpVkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT(p, "VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT) {
-            VkPhysicalDeviceYcbcrImageArraysFeaturesEXT* props = (VkPhysicalDeviceYcbcrImageArraysFeaturesEXT*)structure;
+            const VkPhysicalDeviceYcbcrImageArraysFeaturesEXT* props = (const VkPhysicalDeviceYcbcrImageArraysFeaturesEXT*)structure;
             DumpVkPhysicalDeviceYcbcrImageArraysFeaturesEXT(p, "VkPhysicalDeviceYcbcrImageArraysFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES) {
-            VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures* props = (VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures*)structure;
+            const VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures* props = (const VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures*)structure;
             DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures":"VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeaturesKHR", *props);
             p.AddNewline();
         }
@@ -5723,24 +7278,24 @@ void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR& start, std::un
     start.pNext = chain->start_of_chain;
 };
 
-void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu &gpu, void * place) {
+void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu &gpu, const void * place) {
     while (place) {
-        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR) {
-            VkSharedPresentSurfaceCapabilitiesKHR* props = (VkSharedPresentSurfaceCapabilitiesKHR*)structure;
+            const VkSharedPresentSurfaceCapabilitiesKHR* props = (const VkSharedPresentSurfaceCapabilitiesKHR*)structure;
             DumpVkSharedPresentSurfaceCapabilitiesKHR(p, "VkSharedPresentSurfaceCapabilitiesKHR", *props);
             p.AddNewline();
         }
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         if (structure->sType == VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT) {
-            VkSurfaceCapabilitiesFullScreenExclusiveEXT* props = (VkSurfaceCapabilitiesFullScreenExclusiveEXT*)structure;
+            const VkSurfaceCapabilitiesFullScreenExclusiveEXT* props = (const VkSurfaceCapabilitiesFullScreenExclusiveEXT*)structure;
             DumpVkSurfaceCapabilitiesFullScreenExclusiveEXT(p, "VkSurfaceCapabilitiesFullScreenExclusiveEXT", *props);
             p.AddNewline();
         }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
         if (structure->sType == VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR) {
-            VkSurfaceProtectedCapabilitiesKHR* props = (VkSurfaceProtectedCapabilitiesKHR*)structure;
+            const VkSurfaceProtectedCapabilitiesKHR* props = (const VkSurfaceProtectedCapabilitiesKHR*)structure;
             DumpVkSurfaceProtectedCapabilitiesKHR(p, "VkSurfaceProtectedCapabilitiesKHR", *props);
             p.AddNewline();
         }
@@ -5785,17 +7340,17 @@ void setup_format_properties2_chain(VkFormatProperties2& start, std::unique_ptr<
     start.pNext = chain->start_of_chain;
 };
 
-void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, void * place) {
+void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, const void * place) {
     while (place) {
-        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3) {
-            VkFormatProperties3* props = (VkFormatProperties3*)structure;
+            const VkFormatProperties3* props = (const VkFormatProperties3*)structure;
             DumpVkFormatProperties3(p, gpu.api_version >= VK_API_VERSION_1_3 ?"VkFormatProperties3":"VkFormatProperties3KHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT) {
-            VkSubpassResolvePerformanceQueryEXT* props = (VkSubpassResolvePerformanceQueryEXT*)structure;
+            const VkSubpassResolvePerformanceQueryEXT* props = (const VkSubpassResolvePerformanceQueryEXT*)structure;
             DumpVkSubpassResolvePerformanceQueryEXT(p, "VkSubpassResolvePerformanceQueryEXT", *props);
             p.AddNewline();
         }
@@ -5845,22 +7400,22 @@ void setup_queue_properties2_chain(VkQueueFamilyProperties2& start, std::unique_
     start.pNext = chain->start_of_chain;
 };
 
-void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place) {
+void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, const void * place) {
     while (place) {
-        struct VkBaseOutStructure *structure = (struct VkBaseOutStructure *)place;
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES) {
-            VkQueueFamilyGlobalPriorityProperties* props = (VkQueueFamilyGlobalPriorityProperties*)structure;
+            const VkQueueFamilyGlobalPriorityProperties* props = (const VkQueueFamilyGlobalPriorityProperties*)structure;
             DumpVkQueueFamilyGlobalPriorityProperties(p, gpu.api_version >= VK_API_VERSION_1_4 ?"VkQueueFamilyGlobalPriorityProperties":"VkQueueFamilyGlobalPriorityPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR) {
-            VkQueueFamilyQueryResultStatusPropertiesKHR* props = (VkQueueFamilyQueryResultStatusPropertiesKHR*)structure;
+            const VkQueueFamilyQueryResultStatusPropertiesKHR* props = (const VkQueueFamilyQueryResultStatusPropertiesKHR*)structure;
             DumpVkQueueFamilyQueryResultStatusPropertiesKHR(p, "VkQueueFamilyQueryResultStatusPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR) {
-            VkQueueFamilyVideoPropertiesKHR* props = (VkQueueFamilyVideoPropertiesKHR*)structure;
+            const VkQueueFamilyVideoPropertiesKHR* props = (const VkQueueFamilyVideoPropertiesKHR*)structure;
             DumpVkQueueFamilyVideoPropertiesKHR(p, "VkQueueFamilyVideoPropertiesKHR", *props);
             p.AddNewline();
         }
@@ -5869,6 +7424,321 @@ void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, void * place) {
 }
 
 bool prepare_queue_properties2_twocall_chain_vectors(std::unique_ptr<queue_properties2_chain>& chain) {
+    (void)chain;
+    return false;
+}
+struct video_profile_info_chain {
+    video_profile_info_chain() = default;
+    video_profile_info_chain(const video_profile_info_chain &) = delete;
+    video_profile_info_chain& operator=(const video_profile_info_chain &) = delete;
+    video_profile_info_chain(video_profile_info_chain &&) = delete;
+    video_profile_info_chain& operator=(video_profile_info_chain &&) = delete;
+    void* start_of_chain = nullptr;
+    VkVideoDecodeAV1ProfileInfoKHR VideoDecodeAV1ProfileInfoKHR{};
+    VkVideoDecodeH264ProfileInfoKHR VideoDecodeH264ProfileInfoKHR{};
+    VkVideoDecodeH265ProfileInfoKHR VideoDecodeH265ProfileInfoKHR{};
+    VkVideoDecodeUsageInfoKHR VideoDecodeUsageInfoKHR{};
+    VkVideoEncodeAV1ProfileInfoKHR VideoEncodeAV1ProfileInfoKHR{};
+    VkVideoEncodeH264ProfileInfoKHR VideoEncodeH264ProfileInfoKHR{};
+    VkVideoEncodeH265ProfileInfoKHR VideoEncodeH265ProfileInfoKHR{};
+    VkVideoEncodeUsageInfoKHR VideoEncodeUsageInfoKHR{};
+    void initialize_chain(AppGpu &gpu ) noexcept {
+        VideoDecodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
+        VideoDecodeH264ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR;
+        VideoDecodeH265ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR;
+        VideoDecodeUsageInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_USAGE_INFO_KHR;
+        VideoEncodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
+        VideoEncodeH264ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR;
+        VideoEncodeH265ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR;
+        VideoEncodeUsageInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_USAGE_INFO_KHR;
+        std::vector<VkBaseOutStructure*> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeAV1ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H264_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH264ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H265_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH265ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeUsageInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeAV1ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH264ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH265ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeUsageInfoKHR));
+
+        if (!chain_members.empty()) {
+            for(size_t i = 0; i < chain_members.size() - 1; i++){
+                chain_members[i]->pNext = chain_members[i + 1];
+            }
+            start_of_chain = chain_members[0];
+        }
+    }
+};
+void setup_video_profile_info_chain(VkVideoProfileInfoKHR& start, std::unique_ptr<video_profile_info_chain>& chain, AppGpu &gpu){
+    chain = std::unique_ptr<video_profile_info_chain>(new video_profile_info_chain());
+    chain->initialize_chain(gpu);
+    start.pNext = chain->start_of_chain;
+};
+
+void chain_iterator_video_profile_info(Printer &p, AppGpu &gpu, const void * place) {
+    while (place) {
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
+        p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR) {
+            const VkVideoDecodeAV1ProfileInfoKHR* props = (const VkVideoDecodeAV1ProfileInfoKHR*)structure;
+            DumpVkVideoDecodeAV1ProfileInfoKHR(p, "VkVideoDecodeAV1ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR) {
+            const VkVideoDecodeH264ProfileInfoKHR* props = (const VkVideoDecodeH264ProfileInfoKHR*)structure;
+            DumpVkVideoDecodeH264ProfileInfoKHR(p, "VkVideoDecodeH264ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR) {
+            const VkVideoDecodeH265ProfileInfoKHR* props = (const VkVideoDecodeH265ProfileInfoKHR*)structure;
+            DumpVkVideoDecodeH265ProfileInfoKHR(p, "VkVideoDecodeH265ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_USAGE_INFO_KHR) {
+            const VkVideoDecodeUsageInfoKHR* props = (const VkVideoDecodeUsageInfoKHR*)structure;
+            DumpVkVideoDecodeUsageInfoKHR(p, "VkVideoDecodeUsageInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR) {
+            const VkVideoEncodeAV1ProfileInfoKHR* props = (const VkVideoEncodeAV1ProfileInfoKHR*)structure;
+            DumpVkVideoEncodeAV1ProfileInfoKHR(p, "VkVideoEncodeAV1ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR) {
+            const VkVideoEncodeH264ProfileInfoKHR* props = (const VkVideoEncodeH264ProfileInfoKHR*)structure;
+            DumpVkVideoEncodeH264ProfileInfoKHR(p, "VkVideoEncodeH264ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR) {
+            const VkVideoEncodeH265ProfileInfoKHR* props = (const VkVideoEncodeH265ProfileInfoKHR*)structure;
+            DumpVkVideoEncodeH265ProfileInfoKHR(p, "VkVideoEncodeH265ProfileInfoKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_USAGE_INFO_KHR) {
+            const VkVideoEncodeUsageInfoKHR* props = (const VkVideoEncodeUsageInfoKHR*)structure;
+            DumpVkVideoEncodeUsageInfoKHR(p, "VkVideoEncodeUsageInfoKHR", *props);
+            p.AddNewline();
+        }
+        place = structure->pNext;
+    }
+}
+
+bool prepare_video_profile_info_twocall_chain_vectors(std::unique_ptr<video_profile_info_chain>& chain) {
+    (void)chain;
+    return false;
+}
+struct video_capabilities_chain {
+    video_capabilities_chain() = default;
+    video_capabilities_chain(const video_capabilities_chain &) = delete;
+    video_capabilities_chain& operator=(const video_capabilities_chain &) = delete;
+    video_capabilities_chain(video_capabilities_chain &&) = delete;
+    video_capabilities_chain& operator=(video_capabilities_chain &&) = delete;
+    void* start_of_chain = nullptr;
+    VkVideoDecodeAV1CapabilitiesKHR VideoDecodeAV1CapabilitiesKHR{};
+    VkVideoDecodeCapabilitiesKHR VideoDecodeCapabilitiesKHR{};
+    VkVideoDecodeH264CapabilitiesKHR VideoDecodeH264CapabilitiesKHR{};
+    VkVideoDecodeH265CapabilitiesKHR VideoDecodeH265CapabilitiesKHR{};
+    VkVideoEncodeAV1CapabilitiesKHR VideoEncodeAV1CapabilitiesKHR{};
+    VkVideoEncodeAV1QuantizationMapCapabilitiesKHR VideoEncodeAV1QuantizationMapCapabilitiesKHR{};
+    VkVideoEncodeCapabilitiesKHR VideoEncodeCapabilitiesKHR{};
+    VkVideoEncodeH264CapabilitiesKHR VideoEncodeH264CapabilitiesKHR{};
+    VkVideoEncodeH264QuantizationMapCapabilitiesKHR VideoEncodeH264QuantizationMapCapabilitiesKHR{};
+    VkVideoEncodeH265CapabilitiesKHR VideoEncodeH265CapabilitiesKHR{};
+    VkVideoEncodeH265QuantizationMapCapabilitiesKHR VideoEncodeH265QuantizationMapCapabilitiesKHR{};
+    VkVideoEncodeQuantizationMapCapabilitiesKHR VideoEncodeQuantizationMapCapabilitiesKHR{};
+    void initialize_chain(AppGpu &gpu ) noexcept {
+        VideoDecodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
+        VideoDecodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+        VideoDecodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
+        VideoDecodeH265CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_CAPABILITIES_KHR;
+        VideoEncodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
+        VideoEncodeAV1QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR;
+        VideoEncodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+        VideoEncodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
+        VideoEncodeH264QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
+        VideoEncodeH265CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR;
+        VideoEncodeH265QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
+        VideoEncodeQuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+        std::vector<VkBaseOutStructure*> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeAV1CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H264_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH264CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H265_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeH265CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeAV1CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeAV1QuantizationMapCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH264CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH264QuantizationMapCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH265CapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH265QuantizationMapCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeQuantizationMapCapabilitiesKHR));
+
+        if (!chain_members.empty()) {
+            for(size_t i = 0; i < chain_members.size() - 1; i++){
+                chain_members[i]->pNext = chain_members[i + 1];
+            }
+            start_of_chain = chain_members[0];
+        }
+    }
+};
+void setup_video_capabilities_chain(VkVideoCapabilitiesKHR& start, std::unique_ptr<video_capabilities_chain>& chain, AppGpu &gpu){
+    chain = std::unique_ptr<video_capabilities_chain>(new video_capabilities_chain());
+    chain->initialize_chain(gpu);
+    start.pNext = chain->start_of_chain;
+};
+
+void chain_iterator_video_capabilities(Printer &p, AppGpu &gpu, const void * place) {
+    while (place) {
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
+        p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR) {
+            const VkVideoDecodeAV1CapabilitiesKHR* props = (const VkVideoDecodeAV1CapabilitiesKHR*)structure;
+            DumpVkVideoDecodeAV1CapabilitiesKHR(p, "VkVideoDecodeAV1CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR) {
+            const VkVideoDecodeCapabilitiesKHR* props = (const VkVideoDecodeCapabilitiesKHR*)structure;
+            DumpVkVideoDecodeCapabilitiesKHR(p, "VkVideoDecodeCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR) {
+            const VkVideoDecodeH264CapabilitiesKHR* props = (const VkVideoDecodeH264CapabilitiesKHR*)structure;
+            DumpVkVideoDecodeH264CapabilitiesKHR(p, "VkVideoDecodeH264CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_CAPABILITIES_KHR) {
+            const VkVideoDecodeH265CapabilitiesKHR* props = (const VkVideoDecodeH265CapabilitiesKHR*)structure;
+            DumpVkVideoDecodeH265CapabilitiesKHR(p, "VkVideoDecodeH265CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR) {
+            const VkVideoEncodeAV1CapabilitiesKHR* props = (const VkVideoEncodeAV1CapabilitiesKHR*)structure;
+            DumpVkVideoEncodeAV1CapabilitiesKHR(p, "VkVideoEncodeAV1CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR) {
+            const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR* props = (const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR*)structure;
+            DumpVkVideoEncodeAV1QuantizationMapCapabilitiesKHR(p, "VkVideoEncodeAV1QuantizationMapCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR) {
+            const VkVideoEncodeCapabilitiesKHR* props = (const VkVideoEncodeCapabilitiesKHR*)structure;
+            DumpVkVideoEncodeCapabilitiesKHR(p, "VkVideoEncodeCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR) {
+            const VkVideoEncodeH264CapabilitiesKHR* props = (const VkVideoEncodeH264CapabilitiesKHR*)structure;
+            DumpVkVideoEncodeH264CapabilitiesKHR(p, "VkVideoEncodeH264CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR) {
+            const VkVideoEncodeH264QuantizationMapCapabilitiesKHR* props = (const VkVideoEncodeH264QuantizationMapCapabilitiesKHR*)structure;
+            DumpVkVideoEncodeH264QuantizationMapCapabilitiesKHR(p, "VkVideoEncodeH264QuantizationMapCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR) {
+            const VkVideoEncodeH265CapabilitiesKHR* props = (const VkVideoEncodeH265CapabilitiesKHR*)structure;
+            DumpVkVideoEncodeH265CapabilitiesKHR(p, "VkVideoEncodeH265CapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR) {
+            const VkVideoEncodeH265QuantizationMapCapabilitiesKHR* props = (const VkVideoEncodeH265QuantizationMapCapabilitiesKHR*)structure;
+            DumpVkVideoEncodeH265QuantizationMapCapabilitiesKHR(p, "VkVideoEncodeH265QuantizationMapCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR) {
+            const VkVideoEncodeQuantizationMapCapabilitiesKHR* props = (const VkVideoEncodeQuantizationMapCapabilitiesKHR*)structure;
+            DumpVkVideoEncodeQuantizationMapCapabilitiesKHR(p, "VkVideoEncodeQuantizationMapCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        place = structure->pNext;
+    }
+}
+
+bool prepare_video_capabilities_twocall_chain_vectors(std::unique_ptr<video_capabilities_chain>& chain) {
+    (void)chain;
+    return false;
+}
+struct video_format_properties_chain {
+    video_format_properties_chain() = default;
+    video_format_properties_chain(const video_format_properties_chain &) = delete;
+    video_format_properties_chain& operator=(const video_format_properties_chain &) = delete;
+    video_format_properties_chain(video_format_properties_chain &&) = delete;
+    video_format_properties_chain& operator=(video_format_properties_chain &&) = delete;
+    void* start_of_chain = nullptr;
+    VkVideoFormatAV1QuantizationMapPropertiesKHR VideoFormatAV1QuantizationMapPropertiesKHR{};
+    VkVideoFormatH265QuantizationMapPropertiesKHR VideoFormatH265QuantizationMapPropertiesKHR{};
+    VkVideoFormatQuantizationMapPropertiesKHR VideoFormatQuantizationMapPropertiesKHR{};
+    void initialize_chain(AppGpu &gpu ) noexcept {
+        VideoFormatAV1QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
+        VideoFormatH265QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
+        VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+        std::vector<VkBaseOutStructure*> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoFormatAV1QuantizationMapPropertiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoFormatH265QuantizationMapPropertiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoFormatQuantizationMapPropertiesKHR));
+
+        if (!chain_members.empty()) {
+            for(size_t i = 0; i < chain_members.size() - 1; i++){
+                chain_members[i]->pNext = chain_members[i + 1];
+            }
+            start_of_chain = chain_members[0];
+        }
+    }
+};
+void setup_video_format_properties_chain(VkVideoFormatPropertiesKHR& start, std::unique_ptr<video_format_properties_chain>& chain, AppGpu &gpu){
+    chain = std::unique_ptr<video_format_properties_chain>(new video_format_properties_chain());
+    chain->initialize_chain(gpu);
+    start.pNext = chain->start_of_chain;
+};
+
+void chain_iterator_video_format_properties(Printer &p, AppGpu &gpu, const void * place) {
+    while (place) {
+        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
+        p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR) {
+            const VkVideoFormatAV1QuantizationMapPropertiesKHR* props = (const VkVideoFormatAV1QuantizationMapPropertiesKHR*)structure;
+            DumpVkVideoFormatAV1QuantizationMapPropertiesKHR(p, "VkVideoFormatAV1QuantizationMapPropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR) {
+            const VkVideoFormatH265QuantizationMapPropertiesKHR* props = (const VkVideoFormatH265QuantizationMapPropertiesKHR*)structure;
+            DumpVkVideoFormatH265QuantizationMapPropertiesKHR(p, "VkVideoFormatH265QuantizationMapPropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR) {
+            const VkVideoFormatQuantizationMapPropertiesKHR* props = (const VkVideoFormatQuantizationMapPropertiesKHR*)structure;
+            DumpVkVideoFormatQuantizationMapPropertiesKHR(p, "VkVideoFormatQuantizationMapPropertiesKHR", *props);
+            p.AddNewline();
+        }
+        place = structure->pNext;
+    }
+}
+
+bool prepare_video_format_properties_twocall_chain_vectors(std::unique_ptr<video_format_properties_chain>& chain) {
     (void)chain;
     return false;
 }
@@ -5935,4 +7805,1107 @@ auto format_ranges = std::array{
     FormatRange{0, VK_IMG_FORMAT_PVRTC_EXTENSION_NAME, static_cast<VkFormat>(1000054000), static_cast<VkFormat>(1000054007)},
     FormatRange{0, VK_NV_OPTICAL_FLOW_EXTENSION_NAME, static_cast<VkFormat>(1000464000), static_cast<VkFormat>(1000464000)},
 };
+
+bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVideoFormatPropertiesKHR &format_b) {
+    auto a = reinterpret_cast<const VkBaseInStructure*>(&format_a);
+    auto b = reinterpret_cast<const VkBaseInStructure*>(&format_b);
+    bool same = true;
+    while (same && a != nullptr && b != nullptr) {
+        if (a->sType != b->sType) {
+            // Structure type mismatch (extension structures are expected to be chained in the same order)
+            same = false;
+        } else {
+            switch (a->sType) {
+                case VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR:
+                    same = same && memcmp(reinterpret_cast<const char*>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char*>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkVideoFormatPropertiesKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                case VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR:
+                    same = same && memcmp(reinterpret_cast<const char*>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char*>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkVideoFormatAV1QuantizationMapPropertiesKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                case VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR:
+                    same = same && memcmp(reinterpret_cast<const char*>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char*>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkVideoFormatH265QuantizationMapPropertiesKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                case VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR:
+                    same = same && memcmp(reinterpret_cast<const char*>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char*>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkVideoFormatQuantizationMapPropertiesKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                default:
+                    // Unexpected structure type
+                    same = false;
+                    break;
+            }
+        }
+        a = a->pNext;
+        b = b->pNext;
+    }
+    return same;
+}
+
+std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles(AppGpu &gpu) {
+    std::vector<std::unique_ptr<AppVideoProfile>> result{};
+
+    struct ChromaSubsamplingInfo {
+        VkVideoChromaSubsamplingFlagsKHR value;
+        const char* name;
+    };
+    const std::vector<ChromaSubsamplingInfo> chroma_subsampling_list = {
+        {VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR, "4:2:0"},
+        {VK_VIDEO_CHROMA_SUBSAMPLING_422_BIT_KHR, "4:2:2"},
+        {VK_VIDEO_CHROMA_SUBSAMPLING_444_BIT_KHR, "4:4:4"},
+        {VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR, "monochrome"}
+    };
+
+    struct BitDepthInfo {
+        VkVideoComponentBitDepthFlagsKHR value;
+        const char* name;
+    };
+    const std::vector<BitDepthInfo> bit_depth_list = {
+        {VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR, "8"},
+        {VK_VIDEO_COMPONENT_BIT_DEPTH_10_BIT_KHR, "10"},
+        {VK_VIDEO_COMPONENT_BIT_DEPTH_12_BIT_KHR, "12"}
+    };
+
+    auto find_caps_struct = [](const VkVideoCapabilitiesKHR &capabilities, VkStructureType stype) -> const VkBaseInStructure* {
+        auto p = reinterpret_cast<const VkBaseInStructure*>(&capabilities);
+        while (p != nullptr) {
+            if (p->sType == stype) {
+                return p;
+            }
+            p = p->pNext;
+        }
+        return nullptr;
+    };
+
+    auto base_format = []
+        (const ChromaSubsamplingInfo &chroma_subsampling, const BitDepthInfo &luma_bit_depth, const BitDepthInfo &chroma_bit_depth) {
+            std::string result{};
+            result += " (";
+            result += chroma_subsampling.name;
+            result += " ";
+            result += luma_bit_depth.name;
+            if (luma_bit_depth.value != chroma_bit_depth.value) {
+                result += ":";
+                result += chroma_bit_depth.name;
+            }
+            result += "-bit)";
+            return result;
+        };
+
+    auto add_profile = [&](
+        const std::string &name,
+        const VkVideoProfileInfoKHR &profile_info,
+        AppVideoProfile::CreateProfileInfoChainCb create_profile_info_chain,
+        AppVideoProfile::CreateCapabilitiesChainCb create_capabilities_chain,
+        const AppVideoProfile::CreateFormatPropertiesChainCbList &create_format_properties_chain_list,
+        AppVideoProfile::InitProfileCb init_profile) {
+            auto profile = std::make_unique<AppVideoProfile>(gpu, gpu.phys_device,
+                                                             name, profile_info,
+                                                             create_profile_info_chain,
+                                                             create_capabilities_chain,
+                                                             create_format_properties_chain_list,
+                                                             init_profile);
+            if (profile->supported) {
+                result.push_back(std::move(profile));
+            }
+        };
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H264_EXTENSION_NAME)) {
+        const std::string codec_name = "H.264 Decode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoDecodeH264ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoDecodeH264ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoDecodeH264ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoDecodeH264ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H264_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeH264CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeH264CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeH264CapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Decode Output",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Baseline progressive", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                    });
+                    add_profile(profile_base_name + " Main progressive", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_MAIN;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                    });
+                    add_profile(profile_base_name + " High progressive", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                    });
+                    add_profile(profile_base_name + " High 4:4:4 Predictive progressive", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                    });
+                    add_profile(profile_base_name + " Baseline interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " Main interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_MAIN;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " High interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " High 4:4:4 Predictive interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " Baseline interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " Main interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_MAIN;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " High interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                    });
+                    add_profile(profile_base_name + " High 4:4:4 Predictive interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE;
+                        profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout = VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                    });
+                }
+            }
+        }
+    }
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H265_EXTENSION_NAME)) {
+        const std::string codec_name = "H.265 Decode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_DECODE_H265_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoDecodeH265ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoDecodeH265ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoDecodeH265ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoDecodeH265ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H265_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeH265CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeH265CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeH265CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeH265CapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Decode Output",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Main", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN;
+                    });
+                    add_profile(profile_base_name + " Main 10", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN_10;
+                    });
+                    add_profile(profile_base_name + " Main Still Picture", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN_STILL_PICTURE;
+                    });
+                    add_profile(profile_base_name + " Format range extensions", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_FORMAT_RANGE_EXTENSIONS;
+                    });
+                    add_profile(profile_base_name + " Screen content coding extensions", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_SCC_EXTENSIONS;
+                    });
+                }
+            }
+        }
+    }
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME)) {
+        const std::string codec_name = "AV1 Decode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_DECODE_AV1_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoDecodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoDecodeAV1ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoDecodeAV1ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoDecodeAV1ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME)) {
+                                capabilities_chain->VideoDecodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
+                                capabilities_chain->VideoDecodeAV1CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoDecodeAV1CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoDecodeAV1CapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Decode Output",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Main with film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_MAIN;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_TRUE;
+                    });
+                    add_profile(profile_base_name + " High with film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_HIGH;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_TRUE;
+                    });
+                    add_profile(profile_base_name + " Professional with film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_PROFESSIONAL;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_TRUE;
+                    });
+                    add_profile(profile_base_name + " Main without film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_MAIN;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_FALSE;
+                    });
+                    add_profile(profile_base_name + " High without film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_HIGH;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_FALSE;
+                    });
+                    add_profile(profile_base_name + " Professional without film grain support", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_PROFESSIONAL;
+                        profile.profile_info_chain->VideoDecodeAV1ProfileInfoKHR.filmGrainSupport = VK_FALSE;
+                    });
+                }
+            }
+        }
+    }
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME)) {
+        const std::string codec_name = "H.264 Encode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoEncodeH264ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoEncodeH264ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoEncodeH264ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoEncodeH264ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeH264CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeH264CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeH264CapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeH264QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeH264QuantizationMapCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeH264QuantizationMapCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeH264QuantizationMapCapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Encode Input",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Quantization Delta Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_QUANTIZATION_DELTA_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Emphasis Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_EMPHASIS_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Baseline", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_BASELINE;
+                    });
+                    add_profile(profile_base_name + " Main", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_MAIN;
+                    });
+                    add_profile(profile_base_name + " High", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                    });
+                    add_profile(profile_base_name + " High 4:4:4 Predictive", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE;
+                    });
+                }
+            }
+        }
+    }
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME)) {
+        const std::string codec_name = "H.265 Encode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_ENCODE_H265_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoEncodeH265ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoEncodeH265ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoEncodeH265ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoEncodeH265ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeH265CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeH265CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeH265CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeH265CapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeH265QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeH265QuantizationMapCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeH265QuantizationMapCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeH265QuantizationMapCapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Encode Input",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Quantization Delta Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_QUANTIZATION_DELTA_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Emphasis Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_EMPHASIS_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatH265QuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Main", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN;
+                    });
+                    add_profile(profile_base_name + " Main 10", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN_10;
+                    });
+                    add_profile(profile_base_name + " Main Still Picture", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_MAIN_STILL_PICTURE;
+                    });
+                    add_profile(profile_base_name + " Format range extensions", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_FORMAT_RANGE_EXTENSIONS;
+                    });
+                    add_profile(profile_base_name + " Screen content coding extensions", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeH265ProfileInfoKHR.stdProfileIdc = STD_VIDEO_H265_PROFILE_IDC_SCC_EXTENSIONS;
+                    });
+                }
+            }
+        }
+    }
+
+    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME)) {
+        const std::string codec_name = "AV1 Encode";
+
+        for (auto chroma_subsampling : chroma_subsampling_list) {
+            for (auto luma_bit_depth : bit_depth_list) {
+                for (auto chroma_bit_depth : bit_depth_list) {
+                    if (chroma_subsampling.value == VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR && luma_bit_depth.value != chroma_bit_depth.value) {
+                        // Ignore the chroma bit depth dimension for monochrome
+                        continue;
+                    }
+
+                    std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
+                    VkVideoProfileInfoKHR profile_info{
+                        VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,
+                        nullptr,
+                        VK_VIDEO_CODEC_OPERATION_ENCODE_AV1_BIT_KHR,
+                        chroma_subsampling.value,
+                        luma_bit_depth.value,
+                        chroma_bit_depth.value
+                    };
+
+                    auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {
+                        auto profile_info_chain = std::make_unique<video_profile_info_chain>();
+                        if (profile_info_chain != nullptr) {
+                            profile_info_chain->VideoEncodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
+                            profile_info_chain->VideoEncodeAV1ProfileInfoKHR.pNext = nullptr;
+                            *ppnext = &profile_info_chain->VideoEncodeAV1ProfileInfoKHR;
+                            ppnext = &profile_info_chain->VideoEncodeAV1ProfileInfoKHR.pNext;
+                        }
+                        return profile_info_chain;
+                    };
+
+                    auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {
+                        auto capabilities_chain = std::make_unique<video_capabilities_chain>();
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeQuantizationMapCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeAV1CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeAV1CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeAV1CapabilitiesKHR.pNext;
+                            }
+                        }
+                        return capabilities_chain;
+                    };
+
+                    const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Encode Input",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "DPB",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Quantization Delta Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_QUANTIZATION_DELTA_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                        AppVideoProfile::CreateFormatPropertiesChainCb {
+                            "Emphasis Map",
+                            VK_IMAGE_USAGE_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR,
+                            [&](const VkVideoCapabilitiesKHR &capabilities) -> bool {
+                                bool supported = true;
+                                if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME)) {
+                                    auto caps = reinterpret_cast<const VkVideoEncodeCapabilitiesKHR*>(find_caps_struct(capabilities, VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR));
+                                    if (caps != nullptr) {
+                                        supported = supported && ((caps->flags & VK_VIDEO_ENCODE_CAPABILITY_EMPHASIS_MAP_BIT_KHR) != 0);
+                                    } else {
+                                        supported = false;
+                                    }
+                                } else {
+                                    supported = false;
+                                }
+                                return supported;
+                            },
+                            [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
+                                auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatQuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                if (format_properties_chain != nullptr) {
+                                    if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
+                                        format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
+                                        format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.pNext = nullptr;
+                                        *ppnext = &format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR;
+                                        ppnext = &format_properties_chain->VideoFormatAV1QuantizationMapPropertiesKHR.pNext;
+                                    }
+                                }
+                                return format_properties_chain;
+                            },
+                        },
+                    };
+
+                    add_profile(profile_base_name + " Main", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_MAIN;
+                    });
+                    add_profile(profile_base_name + " High", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_HIGH;
+                    });
+                    add_profile(profile_base_name + " Professional", profile_info,
+                                create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list,
+                                [](AppVideoProfile& profile) {
+                        profile.profile_info_chain->VideoEncodeAV1ProfileInfoKHR.stdProfile = STD_VIDEO_AV1_PROFILE_PROFESSIONAL;
+                    });
+                }
+            }
+        }
+    }
+    return result;
+}
+
 

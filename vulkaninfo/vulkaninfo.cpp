@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2021 The Khronos Group Inc.
  * Copyright (c) 2015-2021 Valve Corporation
  * Copyright (c) 2015-2021 LunarG, Inc.
- * Copyright (c) 2023-2023 RasterGrid Kft.
+ * Copyright (c) 2023-2024 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -618,9 +618,77 @@ void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.AddNewline();
 }
 
+void DumpVkVideoProfileInfoKHRCustom(Printer &p, std::string name, const VkVideoProfileInfoKHR &obj) {
+    // We use custom dumping here because we do not want to output ignored fields
+    // e.g. for monochrome chromaBitDepth is ignored
+    ObjectWrapper object{p, name};
+    DumpVkVideoCodecOperationFlagBitsKHR(p, "videoCodecOperation", obj.videoCodecOperation);
+    DumpVkVideoChromaSubsamplingFlagsKHR(p, "chromaSubsampling", obj.chromaSubsampling);
+    DumpVkVideoComponentBitDepthFlagsKHR(p, "lumaBitDepth", obj.lumaBitDepth);
+    if (obj.chromaSubsampling != VK_VIDEO_CHROMA_SUBSAMPLING_MONOCHROME_BIT_KHR) {
+        DumpVkVideoComponentBitDepthFlagsKHR(p, "chromaBitDepth", obj.chromaBitDepth);
+    } else {
+        DumpVkVideoComponentBitDepthFlagsKHR(p, "chromaBitDepth", 0);
+    }
+}
+
+void GpuDumpVideoProfiles(Printer &p, AppGpu &gpu, bool show_video_props) {
+    p.SetHeader();
+    ArrayWrapper video_profiles_obj(p, "Video Profiles", gpu.video_profiles.size());
+    IndentWrapper indent_outer(p);
+
+    if (p.Type() != OutputType::text || show_video_props) {
+        // Video profile details per profile
+        for (const auto &video_profile : gpu.video_profiles) {
+            p.SetSubHeader();
+            ObjectWrapper video_profile_obj(p, video_profile->name);
+            IndentWrapper indent_inner(p);
+            {
+                p.SetSubHeader();
+                ObjectWrapper profile_info_obj(p, "Video Profile Definition");
+                p.SetSubHeader();
+                DumpVkVideoProfileInfoKHRCustom(p, "VkVideoProfileInfoKHR", video_profile->profile_info);
+                chain_iterator_video_profile_info(p, gpu, video_profile->profile_info.pNext);
+            }
+            {
+                p.SetSubHeader();
+                ObjectWrapper capabilities_obj(p, "Video Profile Capabilities");
+                p.SetSubHeader();
+                DumpVkVideoCapabilitiesKHR(p, "VkVideoCapabilitiesKHR", video_profile->capabilities);
+                chain_iterator_video_capabilities(p, gpu, video_profile->capabilities.pNext);
+            }
+            {
+                p.SetSubHeader();
+                ObjectWrapper video_formats_obj(p, "Video Formats");
+                for (const auto &video_formats_it : video_profile->formats_by_category) {
+                    const auto &video_format_category_name = video_formats_it.first;
+                    const auto &video_format_props = video_formats_it.second;
+                    ArrayWrapper video_format_category(p, video_format_category_name, video_format_props.size());
+                    for (size_t i = 0; i < video_format_props.size(); ++i) {
+                        ObjectWrapper video_format_obj(p, video_format_category_name + " Format #" + std::to_string(i + 1));
+                        p.SetSubHeader();
+                        DumpVkVideoFormatPropertiesKHR(p, "VkVideoFormatPropertiesKHR", video_format_props[i]);
+                        chain_iterator_video_format_properties(p, gpu, video_format_props[i].pNext);
+                    }
+                }
+            }
+
+            p.AddNewline();
+        }
+    } else {
+        // Video profile list only
+        for (const auto &video_profile : gpu.video_profiles) {
+            p.PrintString(video_profile->name);
+        }
+    }
+
+    p.AddNewline();
+}
+
 // Print gpu info for text, html, & vkconfig_output
 // Uses a separate function than schema-json for clarity
-void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats, bool show_promoted_structs) {
+void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats, bool show_promoted_structs,
+             bool show_video_props) {
     ObjectWrapper obj_gpu(p, "GPU" + std::to_string(gpu.id));
     IndentWrapper indent(p);
 
@@ -642,6 +710,10 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats,
 
     if (p.Type() != OutputType::text || show_formats) {
         GpuDevDump(p, gpu);
+    }
+
+    if (!gpu.video_profiles.empty()) {
+        GpuDumpVideoProfiles(p, gpu, show_video_props);
     }
 
     p.AddNewline();
@@ -729,6 +801,30 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
                     p.PrintKeyValue("timestampValidBits", props.timestampValidBits);
                 }
                 chain_iterator_queue_properties2(p, gpu, extended_queue_prop.pNext);
+            }
+        }
+        if (!gpu.video_profiles.empty()) {
+            ArrayWrapper video_profiles(p, "videoProfiles");
+            for (const auto &video_profile : gpu.video_profiles) {
+                ObjectWrapper video_profile_obj(p, "");
+                {
+                    ObjectWrapper profile_info_obj(p, "profile");
+                    DumpVkVideoProfileInfoKHRCustom(p, "VkVideoProfileInfoKHR", video_profile->profile_info);
+                    chain_iterator_video_profile_info(p, gpu, video_profile->profile_info.pNext);
+                }
+                {
+                    ObjectWrapper capabilities_obj(p, "capabilities");
+                    DumpVkVideoCapabilitiesKHR(p, "VkVideoCapabilitiesKHR", video_profile->capabilities);
+                    chain_iterator_video_capabilities(p, gpu, video_profile->capabilities.pNext);
+                }
+                {
+                    ArrayWrapper video_formats(p, "formats");
+                    for (const auto &video_format : video_profile->formats) {
+                        ObjectWrapper video_format_obj(p, "");
+                        DumpVkVideoFormatPropertiesKHR(p, "VkVideoFormatPropertiesKHR", video_format.properties);
+                        chain_iterator_video_format_properties(p, gpu, video_format.properties.pNext);
+                    }
+                }
             }
         }
     }
@@ -945,7 +1041,13 @@ const char *help_message_body =
     " finds.\n"
     "[--show-formats]     Display the format properties of each physical device.\n"
     "                     Note: This only affects text output.\n"
-    "[--show-promoted-structs] Include structs promoted to core in pNext Chains.\n";
+    "[--show-promoted-structs] Include structs promoted to core in pNext Chains.\n"
+    "[--show-video-props]\n"
+    "                     Display the video profile info, video capabilities and\n"
+    "                     video format properties of each video profile supported\n"
+    "                     by each physical device.\n"
+    "                     Note: This only affects text output which by default\n"
+    "                     only contains the list of supported video profile names.\n";
 
 void print_usage(const std::string &executable_name) {
     std::cout << "\n" APP_SHORT_NAME " - Summarize " API_NAME " information in relation to the current environment.\n\n";
@@ -968,6 +1070,7 @@ struct ParsedResults {
     bool show_tool_props;
     bool show_formats;
     bool show_promoted_structs;
+    bool show_video_props;
     bool print_to_file;
     std::string filename;  // set if explicitely given, or if vkconfig_output has a <path> argument
     std::string default_filename;
@@ -1020,6 +1123,8 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
             results.show_formats = true;
         } else if (strcmp(argv[i], "--show-promoted-structs") == 0) {
             results.show_promoted_structs = true;
+        } else if (strcmp(argv[i], "--show-video-props") == 0) {
+            results.show_video_props = true;
         } else if ((strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) && argc > (i + 1)) {
             if (argv[i + 1][0] == '-') {
                 std::cout << "-o or --output must be followed by a filename\n";
@@ -1107,7 +1212,8 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
         IndentWrapper indent(p);
 
         for (auto &gpu : gpus) {
-            DumpGpu(p, *(gpu.get()), parse_data.show_tool_props, parse_data.show_formats, parse_data.show_promoted_structs);
+            DumpGpu(p, *(gpu.get()), parse_data.show_tool_props, parse_data.show_formats, parse_data.show_promoted_structs,
+                    parse_data.show_video_props);
         }
     }
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2021 The Khronos Group Inc.
  * Copyright (c) 2015-2021 Valve Corporation
  * Copyright (c) 2015-2021 LunarG, Inc.
- * Copyright (c) 2023-2023 RasterGrid Kft.
+ * Copyright (c) 2023-2024 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <functional>
 
 #include <assert.h>
 #include <stdint.h>
@@ -260,8 +261,12 @@ struct phys_device_features2_chain;
 struct surface_capabilities2_chain;
 struct format_properties2_chain;
 struct queue_properties2_chain;
+struct video_profile_info_chain;
+struct video_capabilities_chain;
+struct video_format_properties_chain;
 struct AppInstance;
 struct AppGpu;
+struct AppVideoProfile;
 
 void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain,
                                     AppInstance &inst, AppGpu &gpu, bool show_promoted_structs);
@@ -275,6 +280,9 @@ void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<
 void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain, AppGpu &gpu);
 
 bool prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain> &chain);
+
+bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVideoFormatPropertiesKHR &format_b);
+std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles(AppGpu &gpu);
 
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
@@ -323,6 +331,116 @@ struct SurfaceExtension {
     VkSurfaceKHR surface = VK_NULL_HANDLE;
 
     bool operator==(const SurfaceExtension &other) { return name == other.name && surface == other.surface; }
+};
+
+struct AppVideoProfile {
+    bool supported;
+
+    std::string name;
+
+    VkVideoProfileInfoKHR profile_info;
+    std::unique_ptr<video_profile_info_chain> profile_info_chain;
+
+    VkVideoCapabilitiesKHR capabilities;
+    std::unique_ptr<video_capabilities_chain> capabilities_chain;
+
+    struct Format {
+        VkVideoFormatPropertiesKHR properties;
+        std::unique_ptr<video_format_properties_chain> properties_chain;
+    };
+    std::vector<Format> formats;
+    std::unordered_map<std::string, std::vector<VkVideoFormatPropertiesKHR>> formats_by_category;
+
+    using CreateProfileInfoChainCb = std::function<std::unique_ptr<video_profile_info_chain>(const void **)>;
+    using CreateCapabilitiesChainCb = std::function<std::unique_ptr<video_capabilities_chain>(void **)>;
+    struct CreateFormatPropertiesChainCb {
+        std::string format_name;
+        VkImageUsageFlags image_usage_flags;
+        std::function<bool(const VkVideoCapabilitiesKHR &capabilities)> check_required_caps;
+        std::function<std::unique_ptr<video_format_properties_chain>(void **)> callback;
+    };
+    using CreateFormatPropertiesChainCbList = std::vector<CreateFormatPropertiesChainCb>;
+    using InitProfileCb = std::function<void(AppVideoProfile &)>;
+
+    AppVideoProfile(AppGpu &gpu, VkPhysicalDevice phys_device, const std::string &in_name,
+                    const VkVideoProfileInfoKHR &in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
+                    CreateCapabilitiesChainCb create_capabilities_chain,
+                    const CreateFormatPropertiesChainCbList &create_format_properties_chain_list, InitProfileCb init_profile)
+        : supported(true), name(in_name), profile_info(in_profile_info) {
+        profile_info_chain = create_profile_info_chain(&profile_info.pNext);
+        if (profile_info_chain == nullptr) {
+            supported = false;
+            return;
+        }
+
+        capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
+        capabilities.pNext = nullptr;
+        capabilities_chain = create_capabilities_chain(&capabilities.pNext);
+        if (capabilities_chain == nullptr) {
+            supported = false;
+            return;
+        }
+
+        init_profile(*this);
+
+        VkResult result = vkGetPhysicalDeviceVideoCapabilitiesKHR(phys_device, &profile_info, &capabilities);
+        if (result != VK_SUCCESS) {
+            supported = false;
+            return;
+        }
+
+        VkVideoProfileListInfoKHR profile_list = {VK_STRUCTURE_TYPE_VIDEO_PROFILE_LIST_INFO_KHR, nullptr, 1, &profile_info};
+
+        std::vector<VkVideoFormatPropertiesKHR> video_format_props{};
+        std::vector<std::unique_ptr<video_format_properties_chain>> video_format_props_chains{};
+        for (const auto &create_format_properties_chain_info : create_format_properties_chain_list) {
+            if (!create_format_properties_chain_info.check_required_caps(capabilities)) {
+                continue;
+            }
+
+            VkPhysicalDeviceVideoFormatInfoKHR video_format_info = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR,
+                                                                    &profile_list,
+                                                                    create_format_properties_chain_info.image_usage_flags};
+
+            uint32_t video_format_property_count = 0;
+            result =
+                vkGetPhysicalDeviceVideoFormatPropertiesKHR(phys_device, &video_format_info, &video_format_property_count, nullptr);
+            if (result != VK_SUCCESS) {
+                continue;
+            }
+
+            video_format_props.resize(video_format_property_count);
+            video_format_props_chains.resize(video_format_property_count);
+
+            for (uint32_t i = 0; i < video_format_property_count; ++i) {
+                video_format_props[i].sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR;
+                video_format_props_chains[i] = create_format_properties_chain_info.callback(&video_format_props[i].pNext);
+            }
+
+            result = vkGetPhysicalDeviceVideoFormatPropertiesKHR(phys_device, &video_format_info, &video_format_property_count,
+                                                                 video_format_props.data());
+            if (result == VK_SUCCESS) {
+                for (uint32_t i = 0; i < video_format_property_count; ++i) {
+                    const VkVideoFormatPropertiesKHR *existing_format = nullptr;
+                    for (const auto &format : formats) {
+                        if (is_video_format_same(format.properties, video_format_props[i])) {
+                            existing_format = &format.properties;
+                            break;
+                        }
+                    }
+                    if (existing_format == nullptr) {
+                        formats.push_back(Format{video_format_props[i], std::move(video_format_props_chains[i])});
+                        formats_by_category[create_format_properties_chain_info.format_name].push_back(video_format_props[i]);
+                    } else {
+                        formats_by_category[create_format_properties_chain_info.format_name].push_back(*existing_format);
+                    }
+                }
+            }
+
+            video_format_props.clear();
+            video_format_props_chains.clear();
+        }
+    }
 };
 
 class APIVersion {
@@ -1469,6 +1587,8 @@ struct AppGpu {
     std::unique_ptr<phys_device_features2_chain> chain_for_phys_device_features2;
     std::vector<std::unique_ptr<queue_properties2_chain>> chain_for_queue_props2;
 
+    std::vector<std::unique_ptr<AppVideoProfile>> video_profiles;
+
     AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, bool show_promoted_structs)
         : inst(inst), id(id), phys_device(phys_device) {
         vkGetPhysicalDeviceProperties(phys_device, &props);
@@ -1692,6 +1812,9 @@ struct AppGpu {
             }
         }
         // TODO buffer - memory type compatibility
+
+        // Video //
+        video_profiles = enumerate_supported_video_profiles(*this);
     }
     ~AppGpu() { vkDestroyDevice(dev, nullptr); }
 
