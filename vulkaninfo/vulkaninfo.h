@@ -239,7 +239,7 @@ auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vec
     uint32_t max_iterations = 5;
     do {
         count *= 2;
-        results.resize(count);
+        results.resize(count, init);
         err = f(ts..., &count, results.data());
         results.resize(count);
         iteration_count++;
