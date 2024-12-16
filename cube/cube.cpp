@@ -4098,7 +4098,8 @@ int main(int argc, char **argv) {
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
         case (WsiPlatform::display):
-            // nothing to do here
+            // select physical device because display surface creation need gpu is selected.
+            demo.select_physical_device();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_FUCHSIA)
@@ -4113,7 +4114,9 @@ int main(int argc, char **argv) {
 
     demo.create_surface();
 
-    demo.select_physical_device();
+    if (demo.wsi_platform != WsiPlatform::display) {
+        demo.select_physical_device();
+    }
 
     demo.init_vk_swapchain();
 

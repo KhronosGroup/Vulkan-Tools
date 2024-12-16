@@ -5073,12 +5073,15 @@ int main(int argc, char **argv) {
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
         case (WSI_PLATFORM_DISPLAY):
-            // nothing to do here
+            // select physical device because display surface creation need gpu is selected.
+            demo_select_physical_device(&demo);
             break;
 #endif
     }
     demo_create_surface(&demo);
-    demo_select_physical_device(&demo);
+    if (demo.wsi_platform != WSI_PLATFORM_DISPLAY) {
+        demo_select_physical_device(&demo);
+    }
 
     demo_init_vk_swapchain(&demo);
 
