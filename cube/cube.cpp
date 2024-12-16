@@ -3826,7 +3826,7 @@ int main(int argc, char **argv) {
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
         case (WsiPlatform::display):
-            // select physical device because display surface creation need gpu is selected.
+           // select physical device because display surface creation needs a gpu to be selected.
             demo.select_physical_device();
             break;
 #endif
