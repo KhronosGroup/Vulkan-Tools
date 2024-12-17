@@ -83,7 +83,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
                                     const CVTimeStamp* outputTime,
                                     CVOptionFlags flagsIn, CVOptionFlags* flagsOut, void* target) {
     struct Demo* demo = (struct Demo*)target;
-    demo->run();
+    demo->run<WsiPlatform::metal>();
     if (demo->quit) {
         CVDisplayLinkStop(displayLink);
     }
