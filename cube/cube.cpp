@@ -347,10 +347,10 @@ struct Demo {
     bool memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlags requirements_mask, uint32_t &typeIndex);
     vk::SurfaceFormatKHR pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats);
 
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debug_messenger_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                                   VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                                   const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                                   void *pUserData);
+    static VKAPI_ATTR vk::Bool32 VKAPI_CALL debug_messenger_callback(vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                                     vk::DebugUtilsMessageTypeFlagsEXT messageType,
+                                                                     const vk::DebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                                     void *pUserData);
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     void run();
@@ -1353,10 +1353,10 @@ int find_display_gpu(int gpu_number, const std::vector<vk::PhysicalDevice> &phys
         return -1;
 }
 #endif
-VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                              VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                              const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                              void *pUserData) {
+VKAPI_ATTR vk::Bool32 VKAPI_CALL Demo::debug_messenger_callback(vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                                vk::DebugUtilsMessageTypeFlagsEXT messageType,
+                                                                const vk::DebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                                void *pUserData) {
     std::ostringstream message;
     Demo &demo = *static_cast<Demo *>(pUserData);
 
@@ -1385,9 +1385,9 @@ VKAPI_ATTR VkBool32 VKAPI_CALL Demo::debug_messenger_callback(VkDebugUtilsMessag
                     << vk::to_string(vk::ObjectType(pCallbackData->pObjects[object].objectType)) << ", Handle ";
 
             // Print handle correctly if it is a dispatchable handle - aka a pointer
-            VkObjectType t = pCallbackData->pObjects[object].objectType;
-            if (t == VK_OBJECT_TYPE_INSTANCE || t == VK_OBJECT_TYPE_PHYSICAL_DEVICE || t == VK_OBJECT_TYPE_DEVICE ||
-                t == VK_OBJECT_TYPE_COMMAND_BUFFER || t == VK_OBJECT_TYPE_QUEUE) {
+            vk::ObjectType t = pCallbackData->pObjects[object].objectType;
+            if (t == vk::ObjectType::eInstance || t == vk::ObjectType::ePhysicalDevice || t == vk::ObjectType::eDevice ||
+                t == vk::ObjectType::eCommandBuffer || t == vk::ObjectType::eQueue) {
                 message << reinterpret_cast<void *>(static_cast<uintptr_t>(pCallbackData->pObjects[object].objectHandle));
             } else {
                 message << pCallbackData->pObjects[object].objectHandle;
