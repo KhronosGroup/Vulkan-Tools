@@ -100,7 +100,7 @@ std::string VkDriverIdString(VkDriverId value) {
         case (VK_DRIVER_ID_MESA_NVK): return "DRIVER_ID_MESA_NVK";
         case (VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA): return "DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA";
         case (VK_DRIVER_ID_MESA_HONEYKRISP): return "DRIVER_ID_MESA_HONEYKRISP";
-        case (VK_DRIVER_ID_RESERVED_27): return "DRIVER_ID_RESERVED_27";
+        case (VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN): return "DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN";
         default: return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
 }
