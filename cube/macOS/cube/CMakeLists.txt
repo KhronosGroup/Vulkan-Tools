@@ -55,8 +55,7 @@ endif()
 add_dependencies(vkcube MoltenVK_icd-staging-json)
 
 # Include demo source code dir because the MacOS cube's Objective-C source includes the "original" cube application C source code.
-# Also include the MoltenVK helper files.
-target_include_directories(vkcube PRIVATE . ${MOLTENVK_DIR}/MoltenVK/include)
+target_include_directories(vkcube PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 # We do this so vkcube is linked to an individual library and NOT a framework.
 target_link_libraries(vkcube Vulkan::Loader "-framework Cocoa -framework QuartzCore")
