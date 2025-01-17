@@ -4280,6 +4280,33 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VUL
     typedef VkPhysicalDeviceLayeredApiVulkanPropertiesKHR Type;
 };
 
+// Map type VkPhysicalDeviceMaintenance8FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceMaintenance8FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR> {
+    typedef VkPhysicalDeviceMaintenance8FeaturesKHR Type;
+};
+
+// Map type VkMemoryBarrierAccessFlags3KHR to id VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR
+template <> struct LvlTypeMap<VkMemoryBarrierAccessFlags3KHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR> {
+    typedef VkMemoryBarrierAccessFlags3KHR Type;
+};
+
+// Map type VkPhysicalDeviceDepthClampZeroOneFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceDepthClampZeroOneFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR> {
+    typedef VkPhysicalDeviceDepthClampZeroOneFeaturesKHR Type;
+};
+
 // Map type VkDebugReportCallbackCreateInfoEXT to id VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT
 template <> struct LvlTypeMap<VkDebugReportCallbackCreateInfoEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
@@ -7517,15 +7544,6 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPP
     typedef VkDescriptorSetLayoutHostMappingInfoVALVE Type;
 };
 
-// Map type VkPhysicalDeviceDepthClampZeroOneFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT
-template <> struct LvlTypeMap<VkPhysicalDeviceDepthClampZeroOneFeaturesEXT> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT> {
-    typedef VkPhysicalDeviceDepthClampZeroOneFeaturesEXT Type;
-};
-
 // Map type VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT;
@@ -8701,6 +8719,15 @@ template <> struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrix2PropertiesNV> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV> {
     typedef VkPhysicalDeviceCooperativeMatrix2PropertiesNV Type;
+};
+
+// Map type VkPhysicalDevicePipelineOpacityMicromapFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM
+template <> struct LvlTypeMap<VkPhysicalDevicePipelineOpacityMicromapFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM> {
+    typedef VkPhysicalDevicePipelineOpacityMicromapFeaturesARM Type;
 };
 
 // Map type VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
