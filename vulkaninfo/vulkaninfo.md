@@ -75,7 +75,7 @@ OPTIONS:
                     \"VP_VULKANINFO_[DEVICE_NAME]_[DRIVER_VERSION].json\"
                     of the first gpu in the system.
 [-j=<gpu-number>, --json=<gpu-number>]
-                    For a multi-gpu system, a single gpu can be targetted by
+                    For a multi-gpu system, a single gpu can be targeted by
                     specifying the gpu-number associated with the gpu of
                     interest. This number can be determined by running
                     vulkaninfo without any options specified.
