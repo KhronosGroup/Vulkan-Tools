@@ -1032,7 +1032,7 @@ const char *help_message_body =
     "_[DEVICE_NAME]_[DRIVER_VERSION].json\"\n"
     "                     of the first gpu in the system.\n"
     "[-j=<gpu-number>, --json=<gpu-number>]\n"
-    "                     For a multi-gpu system, a single gpu can be targetted by\n"
+    "                     For a multi-gpu system, a single gpu can be targeted by\n"
     "                     specifying the gpu-number associated with the gpu of \n"
     "                     interest. This number can be determined by running\n"
     "                     " APP_SHORT_NAME
