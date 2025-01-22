@@ -2594,7 +2594,7 @@ void Demo::prepare_texture_image(const char *filename, texture_object &tex_obj, 
 
     auto const image_create_info = vk::ImageCreateInfo()
                                        .setImageType(vk::ImageType::e2D)
-                                       .setFormat(vk::Format::eR8G8B8A8Unorm)
+                                       .setFormat(vk::Format::eR8G8B8A8Srgb)
                                        .setExtent({tex_obj.tex_width, tex_obj.tex_height, 1})
                                        .setMipLevels(1)
                                        .setArrayLayers(1)
@@ -2641,7 +2641,7 @@ void Demo::prepare_texture_image(const char *filename, texture_object &tex_obj, 
 }
 
 void Demo::prepare_textures() {
-    vk::Format const tex_format = vk::Format::eR8G8B8A8Unorm;
+    vk::Format const tex_format = vk::Format::eR8G8B8A8Srgb;
     vk::FormatProperties props;
     gpu.getFormatProperties(tex_format, &props);
 
@@ -2689,7 +2689,7 @@ void Demo::prepare_textures() {
                              textures[i].imageLayout, vk::AccessFlagBits::eTransferWrite, vk::PipelineStageFlagBits::eTransfer,
                              vk::PipelineStageFlagBits::eFragmentShader);
         } else {
-            assert(!"No support for R8G8B8A8_UNORM as texture image format");
+            assert(!"No support for R8G8B8A8_SRGB as texture image format");
         }
 
         auto const samplerInfo = vk::SamplerCreateInfo()
