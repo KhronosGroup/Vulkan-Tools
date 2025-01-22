@@ -29,10 +29,26 @@ layout (location = 0) out vec4 uFragColor;
 
 const vec3 lightDir= vec3(0.424, 0.566, 0.707);
 
+float linearToSrgb(float linear) {
+   if (linear <= 0.0031308) {
+      return linear * 12.92;
+   } else {
+      return (1.055 * pow(linear, 1.0/2.4)) - 0.055;
+   }
+}
+
+vec3 linearToSrgb(vec3 linear) {
+   return vec3(linearToSrgb(linear.r), linearToSrgb(linear.g), linearToSrgb(linear.b));
+}
+
+vec4 linearToSrgb(vec4 linear) {
+   return vec4(linearToSrgb(linear.rgb), linear.a);
+}
+
 void main() {
    vec3 dX = dFdx(frag_pos);
    vec3 dY = dFdy(frag_pos);
    vec3 normal = normalize(cross(dX,dY));
    float light = max(0.0, dot(lightDir, normal));
-   uFragColor = light * texture(tex, texcoord.xy);
+   uFragColor = linearToSrgb(light * texture(tex, texcoord.xy));
 }

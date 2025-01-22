@@ -1728,7 +1728,7 @@ static void demo_prepare_texture_buffer(struct demo *demo, const char *filename,
 
 static void demo_prepare_texture_image(struct demo *demo, const char *filename, struct texture_object *tex_obj,
                                        VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props) {
-    const VkFormat tex_format = VK_FORMAT_R8G8B8A8_UNORM;
+    const VkFormat tex_format = VK_FORMAT_R8G8B8A8_SRGB;
     int32_t tex_width;
     int32_t tex_height;
     VkResult U_ASSERT_ONLY err;
@@ -1813,7 +1813,7 @@ static void demo_destroy_texture(struct demo *demo, struct texture_object *tex_o
 }
 
 static void demo_prepare_textures(struct demo *demo) {
-    const VkFormat tex_format = VK_FORMAT_R8G8B8A8_UNORM;
+    const VkFormat tex_format = VK_FORMAT_R8G8B8A8_SRGB;
     VkFormatProperties props;
     uint32_t i;
 
@@ -1870,8 +1870,8 @@ static void demo_prepare_textures(struct demo *demo) {
             demo_pop_cb_label(demo, demo->cmd);  // "StagingTexture"
 
         } else {
-            /* Can't support VK_FORMAT_R8G8B8A8_UNORM !? */
-            assert(!"No support for R8G8B8A8_UNORM as texture image format");
+            /* Can't support VK_FORMAT_R8G8B8A8_SRGB !? */
+            assert(!"No support for R8G8B8A8_SRGB as texture image format");
         }
 
         const VkSamplerCreateInfo sampler = {
