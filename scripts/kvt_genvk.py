@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
-# Copyright (c) 2013-2024 The Khronos Group Inc.
-# Copyright (c) 2023-2024 RasterGrid Kft.
+# Copyright (c) 2013-2025 The Khronos Group Inc.
+# Copyright (c) 2023-2025 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 # limitations under the License.
 
 import argparse
-import cProfile
 import pdb
-import string
 import sys
 import time
 import os
@@ -104,7 +102,7 @@ def makeGenOpts(args):
     # Copyright text prefixing all headers (list of strings).
     prefixStrings = [
         '/*',
-        '** Copyright (c) 2015-2024 The Khronos Group Inc.',
+        '** Copyright (c) 2015-2025 The Khronos Group Inc.',
         '**',
         '** Licensed under the Apache License, Version 2.0 (the "License");',
         '** you may not use this file except in compliance with the License.',

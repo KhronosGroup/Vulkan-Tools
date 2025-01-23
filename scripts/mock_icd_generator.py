@@ -1,10 +1,10 @@
 #!/usr/bin/python3 -i
 #
-# Copyright (c) 2015-2023 The Khronos Group Inc.
-# Copyright (c) 2015-2023 Valve Corporation
-# Copyright (c) 2015-2023 LunarG, Inc.
-# Copyright (c) 2015-2023 Google Inc.
-# Copyright (c) 2023-2023 RasterGrid Kft.
+# Copyright (c) 2015-2025 The Khronos Group Inc.
+# Copyright (c) 2015-2025 Valve Corporation
+# Copyright (c) 2015-2025 LunarG, Inc.
+# Copyright (c) 2015-2025 Google Inc.
+# Copyright (c) 2023-2025 RasterGrid Kft.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -675,6 +675,12 @@ CUSTOM_C_INTERCEPTS = {
         fragment_density_map2_props->subsampledCoarseReconstructionEarlyAccess = VK_FALSE;
         fragment_density_map2_props->maxSubsampledArrayLayers = 2;
         fragment_density_map2_props->maxDescriptorSetSubsampledSamplers = 1;
+    }
+
+    auto *maintenance3_props = lvl_find_mod_in_chain<VkPhysicalDeviceMaintenance3Properties>(pProperties->pNext);
+    if (maintenance3_props) {
+        maintenance3_props->maxMemoryAllocationSize = 1073741824;
+        maintenance3_props->maxPerSetDescriptors = 1024;
     }
 
     const uint32_t num_copy_layouts = 5;

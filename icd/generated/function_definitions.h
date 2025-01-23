@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 2015-2024 The Khronos Group Inc.
+** Copyright (c) 2015-2025 The Khronos Group Inc.
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -4028,6 +4028,12 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
         fragment_density_map2_props->subsampledCoarseReconstructionEarlyAccess = VK_FALSE;
         fragment_density_map2_props->maxSubsampledArrayLayers = 2;
         fragment_density_map2_props->maxDescriptorSetSubsampledSamplers = 1;
+    }
+
+    auto *maintenance3_props = lvl_find_mod_in_chain<VkPhysicalDeviceMaintenance3Properties>(pProperties->pNext);
+    if (maintenance3_props) {
+        maintenance3_props->maxMemoryAllocationSize = 1073741824;
+        maintenance3_props->maxPerSetDescriptors = 1024;
     }
 
     const uint32_t num_copy_layouts = 5;
