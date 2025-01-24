@@ -419,9 +419,11 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_maintenance8", 1},
     {"VK_MESA_image_alignment_control", 1},
     {"VK_EXT_depth_clamp_control", 1},
+    {"VK_KHR_video_maintenance2", 1},
     {"VK_HUAWEI_hdr_vivid", 1},
     {"VK_NV_cooperative_matrix2", 1},
     {"VK_ARM_pipeline_opacity_micromap", 1},
+    {"VK_EXT_external_memory_metal", 1},
     {"VK_KHR_depth_clamp_zero_one", 1},
     {"VK_EXT_vertex_attribute_robustness", 1},
 };
@@ -2698,6 +2700,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDebugReportCallbackEXT(
     VkInstance                                  instance,
     const VkDebugReportCallbackCreateInfoEXT*   pCreateInfo,
@@ -4588,6 +4591,20 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexible
     VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties);
 
 
+#ifdef VK_USE_PLATFORM_METAL_EXT
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandleEXT(
+    VkDevice                                    device,
+    const VkMemoryGetMetalHandleInfoEXT*        pGetMetalHandleInfo,
+    void**                                      pHandle);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
+    VkDevice                                    device,
+    VkExternalMemoryHandleTypeFlagBits          handleType,
+    const void*                                 pHandle,
+    VkMemoryMetalHandlePropertiesEXT*           pMemoryMetalHandleProperties);
+#endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
@@ -5554,6 +5571,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkUpdateIndirectExecutionSetPipelineEXT", (void*)UpdateIndirectExecutionSetPipelineEXT},
     {"vkUpdateIndirectExecutionSetShaderEXT", (void*)UpdateIndirectExecutionSetShaderEXT},
     {"vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV", (void*)GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV},
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    {"vkGetMemoryMetalHandleEXT", (void*)GetMemoryMetalHandleEXT},
+#endif
+#ifdef VK_USE_PLATFORM_METAL_EXT
+    {"vkGetMemoryMetalHandlePropertiesEXT", (void*)GetMemoryMetalHandlePropertiesEXT},
+#endif
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},

@@ -4298,6 +4298,42 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_K
     typedef VkMemoryBarrierAccessFlags3KHR Type;
 };
 
+// Map type VkPhysicalDeviceVideoMaintenance2FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceVideoMaintenance2FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR> {
+    typedef VkPhysicalDeviceVideoMaintenance2FeaturesKHR Type;
+};
+
+// Map type VkVideoDecodeH264InlineSessionParametersInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeH264InlineSessionParametersInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR> {
+    typedef VkVideoDecodeH264InlineSessionParametersInfoKHR Type;
+};
+
+// Map type VkVideoDecodeH265InlineSessionParametersInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeH265InlineSessionParametersInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR> {
+    typedef VkVideoDecodeH265InlineSessionParametersInfoKHR Type;
+};
+
+// Map type VkVideoDecodeAV1InlineSessionParametersInfoKHR to id VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR
+template <> struct LvlTypeMap<VkVideoDecodeAV1InlineSessionParametersInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR> {
+    typedef VkVideoDecodeAV1InlineSessionParametersInfoKHR Type;
+};
+
 // Map type VkPhysicalDeviceDepthClampZeroOneFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR
 template <> struct LvlTypeMap<VkPhysicalDeviceDepthClampZeroOneFeaturesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR;
@@ -8730,6 +8766,39 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACIT
     typedef VkPhysicalDevicePipelineOpacityMicromapFeaturesARM Type;
 };
 
+#ifdef VK_USE_PLATFORM_METAL_EXT
+// Map type VkImportMemoryMetalHandleInfoEXT to id VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT
+template <> struct LvlTypeMap<VkImportMemoryMetalHandleInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT> {
+    typedef VkImportMemoryMetalHandleInfoEXT Type;
+};
+
+#endif // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+// Map type VkMemoryMetalHandlePropertiesEXT to id VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkMemoryMetalHandlePropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT> {
+    typedef VkMemoryMetalHandlePropertiesEXT Type;
+};
+
+#endif // VK_USE_PLATFORM_METAL_EXT
+#ifdef VK_USE_PLATFORM_METAL_EXT
+// Map type VkMemoryGetMetalHandleInfoEXT to id VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EXT
+template <> struct LvlTypeMap<VkMemoryGetMetalHandleInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EXT> {
+    typedef VkMemoryGetMetalHandleInfoEXT Type;
+};
+
+#endif // VK_USE_PLATFORM_METAL_EXT
 // Map type VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT;
