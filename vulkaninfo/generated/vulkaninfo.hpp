@@ -4545,6 +4545,11 @@ void DumpVkPhysicalDeviceVideoMaintenance1FeaturesKHR(Printer &p, std::string na
     p.SetMinKeyWidth(17);
     p.PrintKeyBool("videoMaintenance1", static_cast<bool>(obj.videoMaintenance1));
 }
+void DumpVkPhysicalDeviceVideoMaintenance2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceVideoMaintenance2FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(17);
+    p.PrintKeyBool("videoMaintenance2", static_cast<bool>(obj.videoMaintenance2));
+}
 void DumpVkPhysicalDeviceVulkan11Features(Printer &p, std::string name, const VkPhysicalDeviceVulkan11Features &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(34);
@@ -5995,6 +6000,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceVideoEncodeAV1FeaturesKHR PhysicalDeviceVideoEncodeAV1FeaturesKHR{};
     VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR{};
     VkPhysicalDeviceVideoMaintenance1FeaturesKHR PhysicalDeviceVideoMaintenance1FeaturesKHR{};
+    VkPhysicalDeviceVideoMaintenance2FeaturesKHR PhysicalDeviceVideoMaintenance2FeaturesKHR{};
     VkPhysicalDeviceVulkan11Features PhysicalDeviceVulkan11Features{};
     VkPhysicalDeviceVulkan12Features PhysicalDeviceVulkan12Features{};
     VkPhysicalDeviceVulkan13Features PhysicalDeviceVulkan13Features{};
@@ -6143,6 +6149,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceVideoEncodeAV1FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR;
         PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR;
         PhysicalDeviceVideoMaintenance1FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR;
+        PhysicalDeviceVideoMaintenance2FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR;
         PhysicalDeviceVulkan11Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
         PhysicalDeviceVulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
         PhysicalDeviceVulkan13Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
@@ -6477,6 +6484,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_MAINTENANCE_1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVideoMaintenance1FeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_MAINTENANCE_2_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVideoMaintenance2FeaturesKHR));
         if ((gpu.api_version >= VK_API_VERSION_1_2))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceVulkan11Features));
         if ((gpu.api_version >= VK_API_VERSION_1_2))
@@ -7196,6 +7205,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR) {
             const VkPhysicalDeviceVideoMaintenance1FeaturesKHR* props = (const VkPhysicalDeviceVideoMaintenance1FeaturesKHR*)structure;
             DumpVkPhysicalDeviceVideoMaintenance1FeaturesKHR(p, "VkPhysicalDeviceVideoMaintenance1FeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR) {
+            const VkPhysicalDeviceVideoMaintenance2FeaturesKHR* props = (const VkPhysicalDeviceVideoMaintenance2FeaturesKHR*)structure;
+            DumpVkPhysicalDeviceVideoMaintenance2FeaturesKHR(p, "VkPhysicalDeviceVideoMaintenance2FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES) {
