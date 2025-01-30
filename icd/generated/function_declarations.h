@@ -354,6 +354,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
     {"VK_NV_device_generated_commands_compute", 2},
+    {"VK_NV_ray_tracing_linear_swept_spheres", 1},
     {"VK_NV_linear_color_attachment", 1},
     {"VK_KHR_shader_maximal_reconvergence", 1},
     {"VK_EXT_image_compression_control_swapchain", 1},
@@ -377,6 +378,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_SEC_amigo_profiling", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
     {"VK_NV_ray_tracing_invocation_reorder", 1},
+    {"VK_NV_cooperative_vector", 4},
     {"VK_NV_extended_sparse_address_space", 1},
     {"VK_EXT_mutable_descriptor_type", 1},
     {"VK_EXT_legacy_vertex_attributes", 1},
@@ -415,6 +417,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_shader_atomic_float16_vector", 1},
     {"VK_EXT_shader_replicated_composites", 1},
     {"VK_NV_ray_tracing_validation", 1},
+    {"VK_NV_cluster_acceleration_structure", 2},
+    {"VK_NV_partitioned_acceleration_structure", 1},
     {"VK_EXT_device_generated_commands", 1},
     {"VK_KHR_maintenance8", 1},
     {"VK_MESA_image_alignment_control", 1},
@@ -4237,6 +4241,7 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable);
@@ -4473,6 +4478,21 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeVectorPropertiesNV(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeVectorPropertiesNV*            pProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL ConvertCooperativeVectorMatrixNV(
+    VkDevice                                    device,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    infoCount,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfos);
+
+
 
 
 
@@ -4530,6 +4550,26 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+
+
+static VKAPI_ATTR void VKAPI_CALL GetClusterAccelerationStructureBuildSizesNV(
+    VkDevice                                    device,
+    const VkClusterAccelerationStructureInputInfoNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR*   pSizeInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos);
+
+
+static VKAPI_ATTR void VKAPI_CALL GetPartitionedAccelerationStructuresBuildSizesNV(
+    VkDevice                                    device,
+    const VkPartitionedAccelerationStructureInstancesInputNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR*   pSizeInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo);
 
 
 static VKAPI_ATTR void VKAPI_CALL GetGeneratedCommandsMemoryRequirementsEXT(
@@ -5552,6 +5592,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdSetDepthClampRangeEXT", (void*)CmdSetDepthClampRangeEXT},
     {"vkGetFramebufferTilePropertiesQCOM", (void*)GetFramebufferTilePropertiesQCOM},
     {"vkGetDynamicRenderingTilePropertiesQCOM", (void*)GetDynamicRenderingTilePropertiesQCOM},
+    {"vkGetPhysicalDeviceCooperativeVectorPropertiesNV", (void*)GetPhysicalDeviceCooperativeVectorPropertiesNV},
+    {"vkConvertCooperativeVectorMatrixNV", (void*)ConvertCooperativeVectorMatrixNV},
+    {"vkCmdConvertCooperativeVectorMatrixNV", (void*)CmdConvertCooperativeVectorMatrixNV},
     {"vkSetLatencySleepModeNV", (void*)SetLatencySleepModeNV},
     {"vkLatencySleepNV", (void*)LatencySleepNV},
     {"vkSetLatencyMarkerNV", (void*)SetLatencyMarkerNV},
@@ -5561,6 +5604,10 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},
 #endif
+    {"vkGetClusterAccelerationStructureBuildSizesNV", (void*)GetClusterAccelerationStructureBuildSizesNV},
+    {"vkCmdBuildClusterAccelerationStructureIndirectNV", (void*)CmdBuildClusterAccelerationStructureIndirectNV},
+    {"vkGetPartitionedAccelerationStructuresBuildSizesNV", (void*)GetPartitionedAccelerationStructuresBuildSizesNV},
+    {"vkCmdBuildPartitionedAccelerationStructuresNV", (void*)CmdBuildPartitionedAccelerationStructuresNV},
     {"vkGetGeneratedCommandsMemoryRequirementsEXT", (void*)GetGeneratedCommandsMemoryRequirementsEXT},
     {"vkCmdPreprocessGeneratedCommandsEXT", (void*)CmdPreprocessGeneratedCommandsEXT},
     {"vkCmdExecuteGeneratedCommandsEXT", (void*)CmdExecuteGeneratedCommandsEXT},

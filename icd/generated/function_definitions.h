@@ -7731,6 +7731,7 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable)
@@ -8120,6 +8121,32 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDynamicRenderingTilePropertiesQCOM(
 
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeVectorPropertiesNV(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t*                                   pPropertyCount,
+    VkCooperativeVectorPropertiesNV*            pProperties)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR VkResult VKAPI_CALL ConvertCooperativeVectorMatrixNV(
+    VkDevice                                    device,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdConvertCooperativeVectorMatrixNV(
+    VkCommandBuffer                             commandBuffer,
+    uint32_t                                    infoCount,
+    const VkConvertCooperativeVectorMatrixInfoNV* pInfos)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 
 
 
@@ -8201,6 +8228,38 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+
+
+static VKAPI_ATTR void VKAPI_CALL GetClusterAccelerationStructureBuildSizesNV(
+    VkDevice                                    device,
+    const VkClusterAccelerationStructureInputInfoNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR*   pSizeInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildClusterAccelerationStructureIndirectNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos)
+{
+//Not a CREATE or DESTROY function
+}
+
+
+static VKAPI_ATTR void VKAPI_CALL GetPartitionedAccelerationStructuresBuildSizesNV(
+    VkDevice                                    device,
+    const VkPartitionedAccelerationStructureInstancesInputNV* pInfo,
+    VkAccelerationStructureBuildSizesInfoKHR*   pSizeInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+static VKAPI_ATTR void VKAPI_CALL CmdBuildPartitionedAccelerationStructuresNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo)
+{
+//Not a CREATE or DESTROY function
+}
 
 
 static VKAPI_ATTR void VKAPI_CALL GetGeneratedCommandsMemoryRequirementsEXT(
