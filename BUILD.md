@@ -12,7 +12,7 @@
 
 ## Requirements
 
-1. CMake >= 3.17.2
+1. CMake >= 3.22.1
 1. C++17 compatible toolchain
 1. Git
 1. Python >= 3.10
@@ -179,7 +179,7 @@ See the [CMake documentation](https://cmake.org/cmake/help/latest/generator/Xcod
 
 ## Building For Android
 
-- CMake 3.21+
+- CMake 3.22.1+
 - NDK r25+
 - Ninja 1.10+
 - Android SDK Build-Tools 34.0.0+

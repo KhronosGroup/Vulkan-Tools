@@ -62,7 +62,7 @@ jobs:
                 sudo apt install --yes libwayland-dev xorg-dev wayland-protocols
             - uses: lukka/get-cmake@latest
               with:
-                cmakeVersion: 3.17.2
+                cmakeVersion: 3.22.1
             - name: Setup ccache
               uses: hendrikmuhs/ccache-action@v1.2
               with:
