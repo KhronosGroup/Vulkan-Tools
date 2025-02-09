@@ -352,42 +352,28 @@ struct Demo {
                                                                      const vk::DebugUtilsMessengerCallbackDataEXT *pCallbackData,
                                                                      void *pUserData);
 
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-    void run();
-    void create_window();
-#endif
+    template<WsiPlatform WSI_PLATFORM>
+    void create_window() = delete;
+    template<WsiPlatform WSI_PLATFORM>
+    void run() = delete;
+    template<WsiPlatform WSI_PLATFORM>
+    void execute();
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
     const char *init_xlib_connection();
-    void create_xlib_window();
     void handle_xlib_event(const XEvent *event);
-    void run_xlib();
 #endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     const char *init_xcb_connection();
     void handle_xcb_event(const xcb_generic_event_t *event);
-    void run_xcb();
-    void create_xcb_window();
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
     const char *init_wayland_connection();
-    void run_wayland();
-    void create_wayland_window();
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     void handle_directfb_event(const DFBInputEvent *event);
-    void run_directfb();
-    void create_directfb_window();
-#endif
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-    void run();
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
     vk::Result create_display_surface();
-    void run_display();
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-    void run();
-    void create_window();
 #endif
 
     std::string name = "vkcubepp";  // Name to put on the window/icon
@@ -2928,7 +2914,8 @@ vk::SurfaceFormatKHR Demo::pick_surface_format(const std::vector<vk::SurfaceForm
 }
 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-void Demo::run() {
+template<>
+void Demo::run<WsiPlatform::win32>() {
     if (!prepared) {
         return;
     }
@@ -2941,7 +2928,8 @@ void Demo::run() {
     }
 }
 
-void Demo::create_window() {
+template<>
+void Demo::create_window<WsiPlatform::win32>() {
     WNDCLASSEX win_class;
 
     // Initialize the window class structure:
@@ -2997,7 +2985,8 @@ void Demo::create_window() {
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 
-void Demo::create_xlib_window() {
+template<>
+void Demo::create_window<WsiPlatform::xlib>() {
     const char *display_envar = getenv("DISPLAY");
     if (display_envar == nullptr || display_envar[0] == '\0') {
         printf("Environment variable DISPLAY requires a valid value.\nExiting ...\n");
@@ -3067,7 +3056,8 @@ void Demo::handle_xlib_event(const XEvent *event) {
     }
 }
 
-void Demo::run_xlib() {
+template<>
+void Demo::run<WsiPlatform::xlib>() {
     while (!quit) {
         XEvent event;
 
@@ -3133,7 +3123,8 @@ void Demo::handle_xcb_event(const xcb_generic_event_t *event) {
     }
 }
 
-void Demo::run_xcb() {
+template<>
+void Demo::run<WsiPlatform::xcb>() {
     xcb_flush(connection);
 
     while (!quit) {
@@ -3158,7 +3149,8 @@ void Demo::run_xcb() {
     }
 }
 
-void Demo::create_xcb_window() {
+template<>
+void Demo::create_window<WsiPlatform::xcb>() {
     uint32_t value_mask, value_list[32];
 
     xcb_window = xcb_generate_id(connection);
@@ -3192,7 +3184,8 @@ void Demo::create_xcb_window() {
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 
-void Demo::run_wayland() {
+template<>
+void Demo::run<WsiPlatform::wayland>() {
     while (!quit) {
         if (pause) {
             wl_display_dispatch(wayland_display);
@@ -3239,7 +3232,8 @@ static void handle_toplevel_close(void *data, xdg_toplevel *xdg_toplevel) {
 
 static const xdg_toplevel_listener toplevel_listener = {handle_toplevel_configure, handle_toplevel_close};
 
-void Demo::create_wayland_window() {
+template<>
+void Demo::create_window<WsiPlatform::wayland>() {
     if (!wm_base) {
         printf("Compositor did not provide the standard protocol xdg-wm-base\n");
         fflush(stdout);
@@ -3299,7 +3293,8 @@ void Demo::handle_directfb_event(const DFBInputEvent *event) {
     }
 }
 
-void Demo::run_directfb() {
+template<>
+void Demo::run<WsiPlatform::directfb>() {
     while (!quit) {
         DFBInputEvent event;
 
@@ -3318,7 +3313,8 @@ void Demo::run_directfb() {
     }
 }
 
-void Demo::create_directfb_window() {
+template<>
+void Demo::create_window<WsiPlatform::directfb>() {
     DFBResult ret;
 
     ret = DirectFBInit(nullptr, nullptr);
@@ -3356,7 +3352,8 @@ void Demo::create_directfb_window() {
 }
 #endif
 #if defined(VK_USE_PLATFORM_METAL_EXT)
-void Demo::run() {
+template<>
+void Demo::run<WsiPlatform::metal>() {
     draw();
     curFrame++;
     if (frameCount != UINT32_MAX && curFrame == frameCount) {
@@ -3461,7 +3458,8 @@ vk::Result Demo::create_display_surface() {
     return inst.createDisplayPlaneSurfaceKHR(&createInfo, nullptr, &surface);
 }
 
-void Demo::run_display() {
+template<>
+void Demo::run<WsiPlatform::display>() {
     while (!quit) {
         draw();
         curFrame++;
@@ -3476,7 +3474,8 @@ void Demo::run_display() {
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 #include <sys/keycodes.h>
 
-void Demo::run() {
+template<>
+void Demo::run<WsiPlatform::qnx>() {
     int size[2] = {0, 0};
     screen_window_t win;
     int val;
@@ -3579,7 +3578,8 @@ void Demo::run() {
     }
 }
 
-void Demo::create_window() {
+template<>
+void Demo::create_window<WsiPlatform::qnx>() {
     const char *idstr = APP_SHORT_NAME;
     int size[2];
     int usage = SCREEN_USAGE_VULKAN;
@@ -3652,7 +3652,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
             break;
         case WM_PAINT:
             if (!demo.in_callback) {
-                demo.run();
+                demo.run<WsiPlatform::win32>();
             }
             break;
         case WM_GETMINMAXINFO:  // set window's minimum size
@@ -3747,7 +3747,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
     demo.connection = hInstance;
     demo.name = "Vulkan Cube";
-    demo.create_window();
+    demo.create_window<WsiPlatform::win32>();
     demo.create_surface();
     demo.select_physical_device();
     demo.init_vk_swapchain();
@@ -3786,6 +3786,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 
 #elif defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__QNX__) || defined(__GNU__)
 
+template<WsiPlatform WSI_PLATFORM>
+void Demo::execute() {
+    create_window<WSI_PLATFORM>();
+
+    create_surface();
+
+    select_physical_device();
+
+    init_vk_swapchain();
+
+    prepare();
+
+    run<WSI_PLATFORM>();
+}
+
+template<>
+void Demo::execute<WsiPlatform::display>() {
+    select_physical_device();
+
+    create_surface();
+
+    init_vk_swapchain();
+
+    prepare();
+
+    run<WsiPlatform::display>();
+}
+
 int main(int argc, char **argv) {
     Demo demo;
 
@@ -3801,80 +3829,33 @@ int main(int argc, char **argv) {
             break;
 #if defined(VK_USE_PLATFORM_XCB_KHR)
         case (WsiPlatform::xcb):
-            demo.create_xcb_window();
+            demo.execute<WsiPlatform::xcb>();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
         case (WsiPlatform::xlib):
-            demo.create_xlib_window();
+            demo.execute<WsiPlatform::xlib>();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
         case (WsiPlatform::wayland):
-            demo.create_wayland_window();
+            demo.execute<WsiPlatform::wayland>();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
         case (WsiPlatform::directfb):
-            demo.create_directfb_window();
+            demo.execute<WsiPlatform::directfb>();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
         case (WsiPlatform::qnx):
-            demo.create_window();
+            demo.execute<WsiPlatform::qnx>();
             break;
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
         case (WsiPlatform::display):
             // nothing to do here
-            break;
-#endif
-    }
-
-    demo.create_surface();
-
-    demo.select_physical_device();
-
-    demo.init_vk_swapchain();
-
-    demo.prepare();
-
-    switch (demo.wsi_platform) {
-        default:
-        case (WsiPlatform::auto_):
-            fprintf(stderr,
-                    "WSI platform should have already been set, indicating a bug. Please set a WSI platform manually with "
-                    "--wsi\n");
-            exit(1);
-            break;
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        case (WsiPlatform::xcb):
-            demo.run_xcb();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        case (WsiPlatform::xlib):
-            demo.run_xlib();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        case (WsiPlatform::wayland):
-            demo.run_wayland();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        case (WsiPlatform::directfb):
-            demo.run_directfb();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        case (WsiPlatform::display):
-            demo.run_display();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        case (WsiPlatform::qnx):
-            demo.run();
+            demo.execute<WsiPlatform::display>();
             break;
 #endif
     }
