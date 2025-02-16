@@ -23,6 +23,7 @@ group("cube") {
   testonly = true
   deps = [
     ":vkcube-on-fb",
+    ":vkcube-on-fb-protected",
     ":vkcube-on-scenic",
   ]
 }
@@ -46,6 +47,25 @@ fuchsia_test_package("vkcube-on-fb") {
   }
 }
 
+fuchsia_test_component("vkcube-on-fb-protected-component") {
+  deps = [
+    ":vkcube",
+    "//src/lib/vulkan/swapchain:image_pipe_swapchain_fb_layer",
+    "//src/lib/vulkan/validation_layers",
+  ]
+
+  manifest = "fuchsia/meta/vkcube-on-fb-protected.cml"
+  test_type = "system"
+}
+
+fuchsia_test_package("vkcube-on-fb-protected") {
+  test_components = [ ":vkcube-on-fb-protected-component" ]
+  test_specs = {
+    # vkcube runs forever, so only run manually.
+    environments = []
+  }
+}
+
 fuchsia_component("vkcube-on-scenic-component") {
   component_name = "vkcube-on-scenic"
   deps = [
@@ -57,8 +77,22 @@ fuchsia_component("vkcube-on-scenic-component") {
   manifest = "fuchsia/meta/vkcube-on-scenic.cml"
 }
 
+fuchsia_component("vkcube-on-scenic-protected-component") {
+  component_name = "vkcube-on-scenic-protected"
+  deps = [
+    ":vkcube",
+    "//src/lib/vulkan/swapchain:image_pipe_swapchain_layer",
+    "//src/lib/vulkan/validation_layers",
+  ]
+
+  manifest = "fuchsia/meta/vkcube-on-scenic-protected.cml"
+}
+
 fuchsia_package("vkcube-on-scenic") {
-  deps = [ ":vkcube-on-scenic-component" ]
+  deps = [
+    ":vkcube-on-scenic-component",
+    ":vkcube-on-scenic-protected-component",
+  ]
 }
 
 config("cube_config") {
