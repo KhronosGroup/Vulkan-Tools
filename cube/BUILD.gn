@@ -1,0 +1,152 @@
+# Copyright (C) 2025 The Fuchsia Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+assert(is_fuchsia, "This build file works on Fuchsia GN build only.")
+
+import("//build/compiled_action.gni")
+import("//build/components.gni")
+import("//build_overrides/vulkan_tools.gni")
+import("//src/lib/vulkan/layers.gni")
+
+group("cube") {
+  testonly = true
+  deps = [
+    ":vkcube-on-fb",
+    ":vkcube-on-scenic",
+  ]
+}
+
+fuchsia_test_component("vkcube-on-fb-component") {
+  component_name = "vkcube-on-fb"
+  deps = [
+    ":vkcube",
+    "//src/lib/vulkan/swapchain:image_pipe_swapchain_fb_layer",
+    "//src/lib/vulkan/validation_layers",
+  ]
+  manifest = "fuchsia/meta/vkcube-on-fb.cml"
+  test_type = "system"
+}
+
+fuchsia_test_package("vkcube-on-fb") {
+  test_components = [ ":vkcube-on-fb-component" ]
+  test_specs = {
+    # vkcube runs forever, so only run manually.
+    environments = []
+  }
+}
+
+fuchsia_component("vkcube-on-scenic-component") {
+  component_name = "vkcube-on-scenic"
+  deps = [
+    ":vkcube",
+    "//src/lib/vulkan/swapchain:image_pipe_swapchain_layer",
+    "//src/lib/vulkan/validation_layers",
+  ]
+
+  manifest = "fuchsia/meta/vkcube-on-scenic.cml"
+}
+
+fuchsia_package("vkcube-on-scenic") {
+  deps = [ ":vkcube-on-scenic-component" ]
+}
+
+config("cube_config") {
+  cube_frag_inc = "$target_gen_dir/cube.frag.inc"
+  cube_vert_inc = "$target_gen_dir/cube.vert.inc"
+
+  cube_frag_inc_rebased = rebase_path(cube_frag_inc, root_build_dir)
+  cube_vert_inc_rebased = rebase_path(cube_vert_inc, root_build_dir)
+
+  inputs = [
+    cube_frag_inc,
+    cube_vert_inc,
+  ]
+
+  defines = [
+    "CUBE_FRAG_INC=\"$cube_frag_inc_rebased\"",
+    "CUBE_VERT_INC=\"$cube_vert_inc_rebased\"",
+    "VULKAN_HPP_NO_NODISCARD_WARNINGS",
+  ]
+
+  include_dirs = [ root_build_dir ]
+
+  cflags = [ "-Wno-implicit-int-float-conversion" ]
+}
+
+executable("vkcube") {
+  defines = []
+  if (defined(texture_ppm_h)) {
+    path = rebase_path(texture_ppm_h, root_build_dir)
+    defines += [ "TEXTURE_PPM_H=\"$path\"" ]
+  }
+
+  sources = [
+    "cube.cpp",
+    "fuchsia/flatland_view.cpp",
+    "fuchsia/flatland_view.h",
+  ]
+
+  configs += [
+    ":cube_config",
+    "${volk_dir}:volk_config",
+  ]
+
+  deps = [
+    ":glslang_frag",
+    ":glslang_vert",
+    "//sdk/fidl/fuchsia.ui.app:fuchsia.ui.app_cpp",
+    "//sdk/fidl/fuchsia.ui.composition:fuchsia.ui.composition_cpp",
+    "//sdk/fidl/fuchsia.ui.views:fuchsia.ui.views_cpp",
+    "//sdk/lib/async-loop:async-loop-cpp",
+    "//sdk/lib/component/incoming/cpp",
+    "//sdk/lib/component/outgoing/cpp",
+    "//sdk/lib/syslog/cpp",
+    "//sdk/lib/ui/scenic/cpp",
+    "//third_party/Vulkan-Headers/src:vulkan_headers",
+    "//third_party/Vulkan-Loader:libvulkan",
+    "//zircon/system/ulib/syslog",
+  ]
+}
+
+compiled_action("glslang_frag") {
+  tool = "//third_party/glslang:glslang_validator"
+  outputs = [ "$target_gen_dir/cube.frag.inc" ]
+
+  sources = [ "cube.frag" ]
+
+  args = [
+    "--quiet",
+    "-V",
+    "-x",
+    "-o",
+    rebase_path("$target_gen_dir/cube.frag.inc", root_build_dir),
+    rebase_path("cube.frag", root_build_dir),
+  ]
+}
+
+compiled_action("glslang_vert") {
+  tool = "//third_party/glslang:glslang_validator"
+  outputs = [ "$target_gen_dir/cube.vert.inc" ]
+
+  sources = [ "cube.vert" ]
+
+  args = [
+    "--quiet",
+    "-V",
+    "-x",
+    "-o",
+    rebase_path("$target_gen_dir/cube.vert.inc", root_build_dir),
+    rebase_path("cube.vert", root_build_dir),
+  ]
+}
