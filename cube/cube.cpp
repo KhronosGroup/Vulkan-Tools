@@ -1064,7 +1064,7 @@ void Demo::init(int argc, char **argv) {
         if ((strcmp(argv[i], "--wsi") == 0) && (i < argc - 1)) {
             std::string selection_input = argv[i + 1];
             for (char &c : selection_input) {
-                c = std::tolower(c);
+                c = static_cast<char>(std::tolower(c));
             }
             WsiPlatform selection = wsi_from_string(selection_input);
             if (selection == WsiPlatform::invalid) {
@@ -2689,7 +2689,7 @@ void Demo::prepare_textures() {
                              textures[i].imageLayout, vk::AccessFlagBits::eTransferWrite, vk::PipelineStageFlagBits::eTransfer,
                              vk::PipelineStageFlagBits::eFragmentShader);
         } else {
-            assert(!"No support for R8G8B8A8_SRGB as texture image format");
+            assert(false && "No support for R8G8B8A8_SRGB as texture image format");
         }
 
         auto const samplerInfo = vk::SamplerCreateInfo()
