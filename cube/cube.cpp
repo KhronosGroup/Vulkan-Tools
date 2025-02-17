@@ -1209,6 +1209,25 @@ const char *Demo::init_wayland_connection() {
 #endif
 
 void Demo::check_and_set_wsi_platform() {
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (wsi_platform == WsiPlatform::wayland || wsi_platform == WsiPlatform::auto_) {
+        auto found = std::find_if(enabled_instance_extensions.begin(), enabled_instance_extensions.end(),
+                                  [](const char *str) { return 0 == strcmp(str, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME); });
+        if (found != enabled_instance_extensions.end()) {
+            const char *error_msg = init_wayland_connection();
+            if (error_msg != NULL) {
+                if (wsi_platform == WsiPlatform::wayland) {
+                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
+                    fflush(stdout);
+                    exit(1);
+                }
+            } else {
+                wsi_platform = WsiPlatform::wayland;
+                return;
+            }
+        }
+    }
+#endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     if (wsi_platform == WsiPlatform::xcb || wsi_platform == WsiPlatform::auto_) {
         auto found = std::find_if(enabled_instance_extensions.begin(), enabled_instance_extensions.end(),
@@ -1242,25 +1261,6 @@ void Demo::check_and_set_wsi_platform() {
                 }
             } else {
                 wsi_platform = WsiPlatform::xlib;
-                return;
-            }
-        }
-    }
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    if (wsi_platform == WsiPlatform::wayland || wsi_platform == WsiPlatform::auto_) {
-        auto found = std::find_if(enabled_instance_extensions.begin(), enabled_instance_extensions.end(),
-                                  [](const char *str) { return 0 == strcmp(str, VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME); });
-        if (found != enabled_instance_extensions.end()) {
-            const char *error_msg = init_wayland_connection();
-            if (error_msg != NULL) {
-                if (wsi_platform == WsiPlatform::wayland) {
-                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
-                    fflush(stdout);
-                    exit(1);
-                }
-            } else {
-                wsi_platform = WsiPlatform::wayland;
                 return;
             }
         }
