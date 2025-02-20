@@ -879,7 +879,9 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
     p.PrintKeyString("api-version", APIVersion(apiVersion).str());
     p.PrintKeyString("label", device_label);
     p.PrintKeyString("description", std::string("Exported from ") + APP_SHORT_NAME);
-    { ObjectWrapper contributors(p, "contributors"); }
+    {
+        ObjectWrapper contributors(p, "contributors");
+    }
     {
         ArrayWrapper contributors(p, "history");
         ObjectWrapper element(p, "");
