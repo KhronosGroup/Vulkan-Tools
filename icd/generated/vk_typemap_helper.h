@@ -6292,6 +6292,7 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREAT
     typedef VkDeviceDiagnosticsConfigCreateInfoNV Type;
 };
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkCudaModuleCreateInfoNV to id VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV
 template <> struct LvlTypeMap<VkCudaModuleCreateInfoNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV;
@@ -6301,6 +6302,8 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CUDA_MODULE_CREATE_INFO_NV> {
     typedef VkCudaModuleCreateInfoNV Type;
 };
 
+#endif // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkCudaFunctionCreateInfoNV to id VK_STRUCTURE_TYPE_CUDA_FUNCTION_CREATE_INFO_NV
 template <> struct LvlTypeMap<VkCudaFunctionCreateInfoNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_CUDA_FUNCTION_CREATE_INFO_NV;
@@ -6310,6 +6313,8 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CUDA_FUNCTION_CREATE_INFO_NV> {
     typedef VkCudaFunctionCreateInfoNV Type;
 };
 
+#endif // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkCudaLaunchInfoNV to id VK_STRUCTURE_TYPE_CUDA_LAUNCH_INFO_NV
 template <> struct LvlTypeMap<VkCudaLaunchInfoNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_CUDA_LAUNCH_INFO_NV;
@@ -6319,6 +6324,8 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CUDA_LAUNCH_INFO_NV> {
     typedef VkCudaLaunchInfoNV Type;
 };
 
+#endif // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDeviceCudaKernelLaunchFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_FEATURES_NV
 template <> struct LvlTypeMap<VkPhysicalDeviceCudaKernelLaunchFeaturesNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_FEATURES_NV;
@@ -6328,6 +6335,8 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAU
     typedef VkPhysicalDeviceCudaKernelLaunchFeaturesNV Type;
 };
 
+#endif // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDeviceCudaKernelLaunchPropertiesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV
 template <> struct LvlTypeMap<VkPhysicalDeviceCudaKernelLaunchPropertiesNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAUNCH_PROPERTIES_NV;
@@ -6337,6 +6346,7 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAU
     typedef VkPhysicalDeviceCudaKernelLaunchPropertiesNV Type;
 };
 
+#endif // VK_ENABLE_BETA_EXTENSIONS
 // Map type VkQueryLowLatencySupportNV to id VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV
 template <> struct LvlTypeMap<VkQueryLowLatencySupportNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV;
@@ -9006,6 +9016,28 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUT
     typedef VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT Type;
 };
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+// Map type VkSetPresentConfigNV to id VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV
+template <> struct LvlTypeMap<VkSetPresentConfigNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV> {
+    typedef VkSetPresentConfigNV Type;
+};
+
+#endif // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+// Map type VkPhysicalDevicePresentMeteringFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV
+template <> struct LvlTypeMap<VkPhysicalDevicePresentMeteringFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV> {
+    typedef VkPhysicalDevicePresentMeteringFeaturesNV Type;
+};
+
+#endif // VK_ENABLE_BETA_EXTENSIONS
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <> struct LvlTypeMap<VkAccelerationStructureGeometryTrianglesDataKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
