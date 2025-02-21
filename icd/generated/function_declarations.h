@@ -430,6 +430,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_metal", 1},
     {"VK_KHR_depth_clamp_zero_one", 1},
     {"VK_EXT_vertex_attribute_robustness", 1},
+    {"VK_NV_present_metering", 1},
 };
 
 
@@ -3756,6 +3757,7 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(
 
 
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCudaModuleNV(
     VkDevice                                    device,
@@ -3788,6 +3790,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyCudaFunctionNV(
 static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(
     VkCommandBuffer                             commandBuffer,
     const VkCudaLaunchInfoNV*                   pLaunchInfo);
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 #ifdef VK_USE_PLATFORM_METAL_EXT
@@ -4646,6 +4649,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
 #endif /* VK_USE_PLATFORM_METAL_EXT */
 
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
+
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
@@ -5439,12 +5445,24 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyPrivateDataSlotEXT", (void*)DestroyPrivateDataSlotEXT},
     {"vkSetPrivateDataEXT", (void*)SetPrivateDataEXT},
     {"vkGetPrivateDataEXT", (void*)GetPrivateDataEXT},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCreateCudaModuleNV", (void*)CreateCudaModuleNV},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkGetCudaModuleCacheNV", (void*)GetCudaModuleCacheNV},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCreateCudaFunctionNV", (void*)CreateCudaFunctionNV},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkDestroyCudaModuleNV", (void*)DestroyCudaModuleNV},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkDestroyCudaFunctionNV", (void*)DestroyCudaFunctionNV},
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCmdCudaLaunchKernelNV", (void*)CmdCudaLaunchKernelNV},
+#endif
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkExportMetalObjectsEXT", (void*)ExportMetalObjectsEXT},
 #endif
