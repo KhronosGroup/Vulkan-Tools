@@ -483,6 +483,10 @@ struct Demo {
     bool invalid_gpu_selection = false;
     int32_t gpu_number = 0;
 
+    // If true, the Demo renders on the protected memory. This requires the
+    // physical device to support protected memory.
+    bool protected_output = false;
+
     vk::Instance inst;
     vk::DebugUtilsMessengerEXT debug_messenger;
     vk::PhysicalDevice gpu;
@@ -799,14 +803,16 @@ void Demo::create_device() {
     float priorities = 0.0;
 
     std::vector<vk::DeviceQueueCreateInfo> queues;
-    queues.push_back(vk::DeviceQueueCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setQueuePriorities(priorities));
+    const vk::DeviceQueueCreateFlags queue_create_flags = protected_output ? vk::DeviceQueueCreateFlagBits::eProtected : vk::DeviceQueueCreateFlags{};
+    queues.push_back(vk::DeviceQueueCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setQueuePriorities(priorities).setFlags(queue_create_flags));
 
     if (separate_present_queue) {
         queues.push_back(
             vk::DeviceQueueCreateInfo().setQueueFamilyIndex(present_queue_family_index).setQueuePriorities(priorities));
     }
 
-    auto deviceInfo = vk::DeviceCreateInfo().setQueueCreateInfos(queues).setPEnabledExtensionNames(enabled_device_extensions);
+    auto const protected_memory_features = vk::PhysicalDeviceProtectedMemoryFeatures().setProtectedMemory(protected_output);
+    auto deviceInfo = vk::DeviceCreateInfo().setPNext(&protected_memory_features).setQueueCreateInfos(queues).setPEnabledExtensionNames(enabled_device_extensions);
     auto device_return = gpu.createDevice(deviceInfo);
     VERIFY(device_return.result == vk::Result::eSuccess);
     device = device_return.value;
@@ -854,8 +860,10 @@ void Demo::draw() {
     // engine has fully released ownership to the application, and it is
     // okay to render to the image.
     vk::PipelineStageFlags const pipe_stage_flags = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+    auto protected_submit_info = vk::ProtectedSubmitInfo().setProtectedSubmit(protected_output);
 
     auto submit_result = graphics_queue.submit(vk::SubmitInfo()
+                                                   .setPNext(&protected_submit_info)
                                                    .setWaitDstStageMask(pipe_stage_flags)
                                                    .setWaitSemaphores(image_acquired_semaphores[frame_index])
                                                    .setCommandBuffers(swapchain_image_resources[current_buffer].cmd)
@@ -981,7 +989,10 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
 }
 
 void Demo::prepare_init_cmd() {
-    auto cmd_pool_return = device.createCommandPool(vk::CommandPoolCreateInfo().setQueueFamilyIndex(graphics_queue_family_index));
+    vk::CommandPoolCreateFlags cmd_pool_create_flags =
+        protected_output ? vk::CommandPoolCreateFlagBits::eProtected : vk::CommandPoolCreateFlags{};
+    auto cmd_pool_return = device.createCommandPool(
+        vk::CommandPoolCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setFlags(cmd_pool_create_flags));
     VERIFY(cmd_pool_return.result == vk::Result::eSuccess);
     cmd_pool = cmd_pool_return.value;
 
@@ -1009,7 +1020,8 @@ void Demo::flush_init_cmd() {
     VERIFY(fence_return.result == vk::Result::eSuccess);
     auto fence = fence_return.value;
 
-    result = graphics_queue.submit(vk::SubmitInfo().setCommandBuffers(cmd), fence);
+    auto const protected_submit_info = vk::ProtectedSubmitInfo().setProtectedSubmit(protected_output);
+    result = graphics_queue.submit(vk::SubmitInfo().setPNext(&protected_submit_info).setCommandBuffers(cmd), fence);
     VERIFY(result == vk::Result::eSuccess);
 
     result = device.waitForFences(fence, VK_TRUE, UINT64_MAX);
@@ -1098,6 +1110,10 @@ void Demo::init(int argc, char **argv) {
             force_errors = true;
             continue;
         }
+        if (strcmp(argv[i], "--protected_output") == 0) {
+            protected_output = true;
+            continue;
+        }
         if ((strcmp(argv[i], "--wsi") == 0) && (i < argc - 1)) {
             std::string selection_input = argv[i + 1];
             for (char &c : selection_input) {
@@ -1166,6 +1182,7 @@ void Demo::init(int argc, char **argv) {
               << "\t[--present_mode <present mode enum>]\n"
               << "\t[--width <width>] [--height <height>]\n"
               << "\t[--force_errors]\n"
+              << "\t[--protected_output]\n"
               << "\t[--wsi <" << wsi_platforms << ">]\n"
               << "\t<present_mode_enum>\n"
               << "\t\tVK_PRESENT_MODE_IMMEDIATE_KHR = " << VK_PRESENT_MODE_IMMEDIATE_KHR << "\n"
@@ -1500,6 +1517,17 @@ void Demo::init_vk() {
     }
 
     VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+
+    uint32_t apiVersion = 0;
+    vk::Result enumerate_instance_version_result = vk::enumerateInstanceVersion(&apiVersion);
+    if (protected_output) {
+        if (enumerate_instance_version_result != vk::Result::eSuccess) {
+            ERR_EXIT("Failed to query instance version.", "vkCreateInstance Failure");
+        }
+        if (apiVersion < VK_MAKE_VERSION(1, 1, 0)) {
+            ERR_EXIT("Need Vulkan 1.1 instance for protected output.", "vkCreateInstance Failure");
+        }
+    }
 
     std::vector<char const *> instance_validation_layers = {"VK_LAYER_KHRONOS_validation"};
 
@@ -1893,6 +1921,10 @@ void Demo::select_physical_device() {
 
     gpu.getProperties(&gpu_props);
 
+    if (protected_output && gpu_props.apiVersion < VK_MAKE_VERSION(1, 1, 0)) {
+        ERR_EXIT("Need Vulkan 1.1 physical device for protected output.", "VkPhysicalDevice failure");
+    }
+
     /* Call with nullptr data to get count */
     queue_props = gpu.getQueueFamilyProperties();
     assert(queue_props.size() >= 1);
@@ -2035,7 +2067,16 @@ void Demo::init_vk_swapchain() {
 
     create_device();
 
-    graphics_queue = device.getQueue(graphics_queue_family_index, 0);
+    if (protected_output) {
+        auto const queue_info2 = vk::DeviceQueueInfo2()
+                                     .setFlags(vk::DeviceQueueCreateFlagBits::eProtected)
+                                     .setQueueFamilyIndex(graphics_queue_family_index)
+                                     .setQueueIndex(0);
+        device.getQueue2(&queue_info2, &graphics_queue);
+    } else {
+        graphics_queue = device.getQueue(graphics_queue_family_index, 0);
+    }
+
     if (!separate_present_queue) {
         present_queue = graphics_queue;
     } else {
@@ -2263,6 +2304,8 @@ void Demo::prepare_buffers() {
         }
     }
 
+    const vk::SwapchainCreateFlagsKHR swapchain_create_flags =
+        protected_output ? vk::SwapchainCreateFlagBitsKHR::eProtected : vk::SwapchainCreateFlagsKHR{};
     auto swapchain_return = device.createSwapchainKHR(vk::SwapchainCreateInfoKHR()
                                                           .setSurface(surface)
                                                           .setMinImageCount(desiredNumOfSwapchainImages)
@@ -2276,7 +2319,8 @@ void Demo::prepare_buffers() {
                                                           .setCompositeAlpha(compositeAlpha)
                                                           .setPresentMode(swapchainPresentMode)
                                                           .setClipped(true)
-                                                          .setOldSwapchain(oldSwapchain));
+                                                          .setOldSwapchain(oldSwapchain)
+                                                          .setFlags(swapchain_create_flags));
     VERIFY(swapchain_return.result == vk::Result::eSuccess);
     swapchain = swapchain_return.value;
 
