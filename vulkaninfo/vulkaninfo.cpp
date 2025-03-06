@@ -634,7 +634,7 @@ void DumpVkVideoProfileInfoKHRCustom(Printer &p, std::string name, const VkVideo
 
 void GpuDumpVideoProfiles(Printer &p, AppGpu &gpu, bool show_video_props) {
     p.SetHeader();
-    ArrayWrapper video_profiles_obj(p, "Video Profiles", gpu.video_profiles.size());
+    ObjectWrapper video_profiles_obj(p, "Video Profiles", gpu.video_profiles.size());
     IndentWrapper indent_outer(p);
 
     if (p.Type() != OutputType::text || show_video_props) {
@@ -879,7 +879,9 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
     p.PrintKeyString("api-version", APIVersion(apiVersion).str());
     p.PrintKeyString("label", device_label);
     p.PrintKeyString("description", std::string("Exported from ") + APP_SHORT_NAME);
-    { ObjectWrapper contributors(p, "contributors"); }
+    {
+        ObjectWrapper contributors(p, "contributors");
+    }
     {
         ArrayWrapper contributors(p, "history");
         ObjectWrapper element(p, "");
