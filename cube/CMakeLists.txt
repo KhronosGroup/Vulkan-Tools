@@ -316,6 +316,72 @@ if (WAYLAND_CLIENT_LINK_LIBRARIES)
 endif()
 
 # ----------------------------------------------------------------------------
+# vkcube-heap
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
+    add_executable(vkcube-heap)
+    target_sources(vkcube-heap PRIVATE
+        cube-heap.c
+        ${PROJECT_SOURCE_DIR}/cube/cube.vert
+        ${PROJECT_SOURCE_DIR}/cube/cube.frag
+        cube.vert.inc
+        cube.vert.heap.inc
+        cube.vert.legacy.inc
+        cube.frag.inc
+        cube.frag.heap.inc
+        cube.frag.legacy.inc
+    )
+    target_link_libraries(vkcube-heap  Threads::Threads)
+    if(BUILD_WSI_XCB_SUPPORT)
+        target_sources(vkcube-heap PRIVATE xcb_loader.h)
+        target_include_directories(vkcube-heap PRIVATE ${xcb_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_XLIB_SUPPORT)
+        target_sources(vkcube-heap PRIVATE xlib_loader.h)
+        target_include_directories(vkcube-heap PRIVATE ${XLIB_INCLUDE_DIRS})
+    endif()
+    if(BUILD_WSI_WAYLAND_SUPPORT)
+        target_include_directories(vkcube-heap PRIVATE ${WAYLAND_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+        target_sources(vkcube-heap PRIVATE PRIVATE ${WAYLAND_ADDITIONAL_SOURCES})
+    endif()
+    if(BUILD_WSI_DIRECTFB_SUPPORT)
+        target_link_libraries(vkcube-heap PkgConfig::DirectFB)
+    endif()
+    include(CheckLibraryExists)
+    CHECK_LIBRARY_EXISTS("rt" clock_gettime "" NEED_RT)
+    if (NEED_RT)
+        target_link_libraries(vkcube-heap  rt)
+    endif()
+elseif(WIN32)
+    add_executable(vkcube-heap WIN32)
+    target_sources(vkcube-heap PRIVATE
+        cube.c
+        ${PROJECT_SOURCE_DIR}/cube/cube.vert
+        ${PROJECT_SOURCE_DIR}/cube/cube.frag
+        cube.vert.inc
+        cube.frag.inc
+    )
+else()
+    message(FATAL_ERROR "Unsupported Platform!")
+endif()
+
+target_compile_definitions(vkcube-heap PRIVATE ${ENABLED_CUBE_PLATFORMS})
+target_include_directories(vkcube-heap PRIVATE .)
+target_link_libraries(vkcube-heap  Vulkan::Headers volk::volk_headers)
+
+install(TARGETS vkcube-heap)
+
+if (XCB_LINK_LIBRARIES)
+    target_compile_definitions(vkcube-heap PRIVATE "XCB_LIBRARY=\"${XCB_LINK_LIBRARIES}\"")
+endif()
+if (X11_LINK_LIBRARIES)
+    target_compile_definitions(vkcube-heap PRIVATE "XLIB_LIBRARY=\"${X11_LINK_LIBRARIES}\"")
+endif()
+if (WAYLAND_CLIENT_LINK_LIBRARIES)
+    target_compile_definitions(vkcube-heap PRIVATE "WAYLAND_LIBRARY=\"${WAYLAND_CLIENT_LINK_LIBRARIES}\"")
+endif()
+
+# ----------------------------------------------------------------------------
 # vkcubepp
 
 if(APPLE)
