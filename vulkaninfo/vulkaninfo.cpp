@@ -663,7 +663,7 @@ void GpuDumpVideoProfiles(Printer &p, AppGpu &gpu, bool show_video_props) {
                 for (const auto &video_formats_it : video_profile->formats_by_category) {
                     const auto &video_format_category_name = video_formats_it.first;
                     const auto &video_format_props = video_formats_it.second;
-                    ArrayWrapper video_format_category(p, video_format_category_name, video_format_props.size());
+                    ObjectWrapper video_format_category(p, video_format_category_name, video_format_props.size());
                     for (size_t i = 0; i < video_format_props.size(); ++i) {
                         ObjectWrapper video_format_obj(p, video_format_category_name + " Format #" + std::to_string(i + 1));
                         p.SetSubHeader();
@@ -879,9 +879,7 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
     p.PrintKeyString("api-version", APIVersion(apiVersion).str());
     p.PrintKeyString("label", device_label);
     p.PrintKeyString("description", std::string("Exported from ") + APP_SHORT_NAME);
-    {
-        ObjectWrapper contributors(p, "contributors");
-    }
+    { ObjectWrapper contributors(p, "contributors"); }
     {
         ArrayWrapper contributors(p, "history");
         ObjectWrapper element(p, "");
