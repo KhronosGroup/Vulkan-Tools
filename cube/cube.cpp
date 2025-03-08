@@ -812,7 +812,7 @@ void Demo::create_device() {
     }
 
     auto const protected_memory_features = vk::PhysicalDeviceProtectedMemoryFeatures().setProtectedMemory(protected_output);
-    auto deviceInfo = vk::DeviceCreateInfo().setPNext(&protected_memory_features).setQueueCreateInfos(queues).setPEnabledExtensionNames(enabled_device_extensions);
+    auto deviceInfo = vk::DeviceCreateInfo().setPNext(protected_output ? &protected_memory_features : nullptr).setQueueCreateInfos(queues).setPEnabledExtensionNames(enabled_device_extensions);
     auto device_return = gpu.createDevice(deviceInfo);
     VERIFY(device_return.result == vk::Result::eSuccess);
     device = device_return.value;
@@ -863,7 +863,7 @@ void Demo::draw() {
     auto protected_submit_info = vk::ProtectedSubmitInfo().setProtectedSubmit(protected_output);
 
     auto submit_result = graphics_queue.submit(vk::SubmitInfo()
-                                                   .setPNext(&protected_submit_info)
+                                                   .setPNext(protected_output ? &protected_submit_info : nullptr)
                                                    .setWaitDstStageMask(pipe_stage_flags)
                                                    .setWaitSemaphores(image_acquired_semaphores[frame_index])
                                                    .setCommandBuffers(swapchain_image_resources[current_buffer].cmd)
@@ -1021,7 +1021,7 @@ void Demo::flush_init_cmd() {
     auto fence = fence_return.value;
 
     auto const protected_submit_info = vk::ProtectedSubmitInfo().setProtectedSubmit(protected_output);
-    result = graphics_queue.submit(vk::SubmitInfo().setPNext(&protected_submit_info).setCommandBuffers(cmd), fence);
+    result = graphics_queue.submit(vk::SubmitInfo().setPNext(protected_output ? &protected_submit_info : nullptr).setCommandBuffers(cmd), fence);
     VERIFY(result == vk::Result::eSuccess);
 
     result = device.waitForFences(fence, VK_TRUE, UINT64_MAX);
