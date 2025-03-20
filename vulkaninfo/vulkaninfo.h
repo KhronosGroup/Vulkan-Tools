@@ -1836,7 +1836,7 @@ struct AppGpu {
 
         // True if this extension is present
         if (format_range.extension_name != nullptr) {
-            return inst.CheckExtensionEnabled(format_range.extension_name);
+            return CheckPhysicalDeviceExtensionIncluded(format_range.extension_name);
         }
 
         // True if standard and supported by both this instance and this GPU
