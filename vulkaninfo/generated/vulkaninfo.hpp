@@ -1397,8 +1397,8 @@ std::vector<const char *> VkImageCreateFlagBitsGetStrings(VkImageCreateFlagBits 
     if (VK_IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT & value) strings.push_back("IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT");
     if (VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT & value) strings.push_back("IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT");
     if (VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT & value) strings.push_back("IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT");
-    if (VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM & value) strings.push_back("IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_QCOM");
     if (VK_IMAGE_CREATE_VIDEO_PROFILE_INDEPENDENT_BIT_KHR & value) strings.push_back("IMAGE_CREATE_VIDEO_PROFILE_INDEPENDENT_BIT_KHR");
+    if (VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT & value) strings.push_back("IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT");
     return strings;
 }
 void DumpVkImageCreateFlags(Printer &p, std::string name, VkImageCreateFlags value) {
@@ -3366,6 +3366,15 @@ void DumpVkPhysicalDeviceFragmentDensityMapFeaturesEXT(Printer &p, std::string n
     p.PrintKeyBool("fragmentDensityMapDynamic", static_cast<bool>(obj.fragmentDensityMapDynamic));
     p.PrintKeyBool("fragmentDensityMapNonSubsampledImages", static_cast<bool>(obj.fragmentDensityMapNonSubsampledImages));
 }
+void DumpVkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("fragmentDensityMapOffset", static_cast<bool>(obj.fragmentDensityMapOffset));
+}
+void DumpVkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkExtent2D(p, "fragmentDensityOffsetGranularity", obj.fragmentDensityOffsetGranularity);
+}
 void DumpVkPhysicalDeviceFragmentDensityMapPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceFragmentDensityMapPropertiesEXT &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(26);
@@ -4232,6 +4241,13 @@ void DumpVkPhysicalDeviceShaderAtomicInt64Features(Printer &p, std::string name,
     p.SetMinKeyWidth(24);
     p.PrintKeyBool("shaderBufferInt64Atomics", static_cast<bool>(obj.shaderBufferInt64Atomics));
     p.PrintKeyBool("shaderSharedInt64Atomics", static_cast<bool>(obj.shaderSharedInt64Atomics));
+}
+void DumpVkPhysicalDeviceShaderBfloat16FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceShaderBfloat16FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(31);
+    p.PrintKeyBool("shaderBFloat16Type", static_cast<bool>(obj.shaderBFloat16Type));
+    p.PrintKeyBool("shaderBFloat16DotProduct", static_cast<bool>(obj.shaderBFloat16DotProduct));
+    p.PrintKeyBool("shaderBFloat16CooperativeMatrix", static_cast<bool>(obj.shaderBFloat16CooperativeMatrix));
 }
 void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceShaderClockFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -5161,6 +5177,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceExternalMemoryHostPropertiesEXT PhysicalDeviceExternalMemoryHostPropertiesEXT{};
     VkPhysicalDeviceFloatControlsProperties PhysicalDeviceFloatControlsProperties{};
     VkPhysicalDeviceFragmentDensityMap2PropertiesEXT PhysicalDeviceFragmentDensityMap2PropertiesEXT{};
+    VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT PhysicalDeviceFragmentDensityMapOffsetPropertiesEXT{};
     VkPhysicalDeviceFragmentDensityMapPropertiesEXT PhysicalDeviceFragmentDensityMapPropertiesEXT{};
     VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR PhysicalDeviceFragmentShaderBarycentricPropertiesKHR{};
     VkPhysicalDeviceFragmentShadingRatePropertiesKHR PhysicalDeviceFragmentShadingRatePropertiesKHR{};
@@ -5236,6 +5253,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceExternalMemoryHostPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
         PhysicalDeviceFloatControlsProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
         PhysicalDeviceFragmentDensityMap2PropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT;
+        PhysicalDeviceFragmentDensityMapOffsetPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT;
         PhysicalDeviceFragmentDensityMapPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT;
         PhysicalDeviceFragmentShaderBarycentricPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_PROPERTIES_KHR;
         PhysicalDeviceFragmentShadingRatePropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
@@ -5328,6 +5346,9 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFloatControlsProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMap2PropertiesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_QCOM_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMapOffsetPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMapPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME))
@@ -5556,6 +5577,11 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT) {
             const VkPhysicalDeviceFragmentDensityMap2PropertiesEXT* props = (const VkPhysicalDeviceFragmentDensityMap2PropertiesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMap2PropertiesEXT(p, "VkPhysicalDeviceFragmentDensityMap2PropertiesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT) {
+            const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT* props = (const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT*)structure;
+            DumpVkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT(p, "VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT) {
@@ -5897,6 +5923,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceFaultFeaturesEXT PhysicalDeviceFaultFeaturesEXT{};
     VkPhysicalDeviceFragmentDensityMap2FeaturesEXT PhysicalDeviceFragmentDensityMap2FeaturesEXT{};
     VkPhysicalDeviceFragmentDensityMapFeaturesEXT PhysicalDeviceFragmentDensityMapFeaturesEXT{};
+    VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT PhysicalDeviceFragmentDensityMapOffsetFeaturesEXT{};
     VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR PhysicalDeviceFragmentShaderBarycentricFeaturesKHR{};
     VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragmentShaderInterlockFeaturesEXT{};
     VkPhysicalDeviceFragmentShadingRateFeaturesKHR PhysicalDeviceFragmentShadingRateFeaturesKHR{};
@@ -5965,6 +5992,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT PhysicalDeviceShaderAtomicFloat2FeaturesEXT{};
     VkPhysicalDeviceShaderAtomicFloatFeaturesEXT PhysicalDeviceShaderAtomicFloatFeaturesEXT{};
     VkPhysicalDeviceShaderAtomicInt64Features PhysicalDeviceShaderAtomicInt64Features{};
+    VkPhysicalDeviceShaderBfloat16FeaturesKHR PhysicalDeviceShaderBfloat16FeaturesKHR{};
     VkPhysicalDeviceShaderClockFeaturesKHR PhysicalDeviceShaderClockFeaturesKHR{};
     VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures PhysicalDeviceShaderDemoteToHelperInvocationFeatures{};
     VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawParametersFeatures{};
@@ -6047,6 +6075,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceFaultFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT;
         PhysicalDeviceFragmentDensityMap2FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT;
         PhysicalDeviceFragmentDensityMapFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT;
+        PhysicalDeviceFragmentDensityMapOffsetFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT;
         PhysicalDeviceFragmentShaderBarycentricFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
         PhysicalDeviceFragmentShaderInterlockFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
         PhysicalDeviceFragmentShadingRateFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
@@ -6115,6 +6144,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceShaderAtomicFloat2FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT;
         PhysicalDeviceShaderAtomicFloatFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT;
         PhysicalDeviceShaderAtomicInt64Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
+        PhysicalDeviceShaderBfloat16FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR;
         PhysicalDeviceShaderClockFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
         PhysicalDeviceShaderDemoteToHelperInvocationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES;
         PhysicalDeviceShaderDrawParametersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
@@ -6239,6 +6269,9 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMap2FeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMapFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_QCOM_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_FRAGMENT_DENSITY_MAP_OFFSET_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentDensityMapOffsetFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME)
          || gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceFragmentShaderBarycentricFeaturesKHR));
@@ -6399,6 +6432,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderAtomicInt64Features));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_BFLOAT16_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderBfloat16FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_CLOCK_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderClockFeaturesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME))
@@ -6699,6 +6734,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT) {
             const VkPhysicalDeviceFragmentDensityMapFeaturesEXT* props = (const VkPhysicalDeviceFragmentDensityMapFeaturesEXT*)structure;
             DumpVkPhysicalDeviceFragmentDensityMapFeaturesEXT(p, "VkPhysicalDeviceFragmentDensityMapFeaturesEXT", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT) {
+            const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT* props = (const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT*)structure;
+            DumpVkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT(p, "VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR) {
@@ -7031,6 +7071,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES) {
             const VkPhysicalDeviceShaderAtomicInt64Features* props = (const VkPhysicalDeviceShaderAtomicInt64Features*)structure;
             DumpVkPhysicalDeviceShaderAtomicInt64Features(p, gpu.api_version >= VK_API_VERSION_1_2 ?"VkPhysicalDeviceShaderAtomicInt64Features":"VkPhysicalDeviceShaderAtomicInt64FeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR) {
+            const VkPhysicalDeviceShaderBfloat16FeaturesKHR* props = (const VkPhysicalDeviceShaderBfloat16FeaturesKHR*)structure;
+            DumpVkPhysicalDeviceShaderBfloat16FeaturesKHR(p, "VkPhysicalDeviceShaderBfloat16FeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR) {
