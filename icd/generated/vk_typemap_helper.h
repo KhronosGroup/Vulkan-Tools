@@ -3403,6 +3403,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KH
     typedef VkDisplayPlaneCapabilities2KHR Type;
 };
 
+// Map type VkPhysicalDeviceShaderBfloat16FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderBfloat16FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR> {
+    typedef VkPhysicalDeviceShaderBfloat16FeaturesKHR Type;
+};
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDevicePortabilitySubsetFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR
 template <> struct LvlTypeMap<VkPhysicalDevicePortabilitySubsetFeaturesKHR> {
@@ -7644,31 +7653,31 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_
     typedef VkRenderPassStripeSubmitInfoARM Type;
 };
 
-// Map type VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM
-template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM;
+// Map type VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM> {
-    typedef VkPhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT> {
+    typedef VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT Type;
 };
 
-// Map type VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM
-template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM;
+// Map type VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM> {
-    typedef VkPhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT Type;
 };
 
-// Map type VkSubpassFragmentDensityMapOffsetEndInfoQCOM to id VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM
-template <> struct LvlTypeMap<VkSubpassFragmentDensityMapOffsetEndInfoQCOM> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM;
+// Map type VkRenderPassFragmentDensityMapOffsetEndInfoEXT to id VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT
+template <> struct LvlTypeMap<VkRenderPassFragmentDensityMapOffsetEndInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM> {
-    typedef VkSubpassFragmentDensityMapOffsetEndInfoQCOM Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT> {
+    typedef VkRenderPassFragmentDensityMapOffsetEndInfoEXT Type;
 };
 
 // Map type VkPhysicalDeviceCopyMemoryIndirectFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_NV
@@ -9038,6 +9047,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERIN
 };
 
 #endif // VK_ENABLE_BETA_EXTENSIONS
+// Map type VkRenderingEndInfoEXT to id VK_STRUCTURE_TYPE_RENDERING_END_INFO_EXT
+template <> struct LvlTypeMap<VkRenderingEndInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDERING_END_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDERING_END_INFO_EXT> {
+    typedef VkRenderingEndInfoEXT Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <> struct LvlTypeMap<VkAccelerationStructureGeometryTrianglesDataKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;

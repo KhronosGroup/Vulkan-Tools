@@ -164,6 +164,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_AMD_shader_fragment_mask", 1},
     {"VK_EXT_inline_uniform_block", 1},
     {"VK_EXT_shader_stencil_export", 1},
+    {"VK_KHR_shader_bfloat16", 1},
     {"VK_EXT_sample_locations", 1},
     {"VK_KHR_relaxed_block_layout", 1},
     {"VK_KHR_get_memory_requirements2", 1},
@@ -350,7 +351,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_depth_clamp_zero_one", 1},
     {"VK_EXT_non_seamless_cube_map", 1},
     {"VK_ARM_render_pass_striped", 1},
-    {"VK_QCOM_fragment_density_map_offset", 2},
+    {"VK_QCOM_fragment_density_map_offset", 3},
     {"VK_NV_copy_memory_indirect", 1},
     {"VK_NV_memory_decompression", 1},
     {"VK_NV_device_generated_commands_compute", 2},
@@ -431,6 +432,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_depth_clamp_zero_one", 1},
     {"VK_EXT_vertex_attribute_robustness", 1},
     {"VK_NV_present_metering", 1},
+    {"VK_EXT_fragment_density_map_offset", 1},
 };
 
 
@@ -2280,6 +2282,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetDisplayPlaneCapabilities2KHR(
     VkPhysicalDevice                            physicalDevice,
     const VkDisplayPlaneInfo2KHR*               pDisplayPlaneInfo,
     VkDisplayPlaneCapabilities2KHR*             pCapabilities);
+
 
 
 
@@ -4653,6 +4656,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkRenderingEndInfoEXT*                pRenderingEndInfo);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -5642,6 +5650,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkGetMemoryMetalHandlePropertiesEXT", (void*)GetMemoryMetalHandlePropertiesEXT},
 #endif
+    {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},
