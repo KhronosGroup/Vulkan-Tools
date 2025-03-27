@@ -93,6 +93,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
         pkg_check_modules(WAYLAND_CLIENT REQUIRED IMPORTED_TARGET wayland-client)
         pkg_get_variable(WAYLAND_INCLUDE_DIRS wayland-client includedir)
 
+        pkg_check_modules(WAYLAND_SCANNER REQUIRED wayland-scanner)
         pkg_get_variable(WAYLAND_SCANNER_EXECUTABLE wayland-scanner wayland_scanner)
         message(DEBUG "WAYLAND_SCANNER_EXECUTABLE = ${WAYLAND_SCANNER_EXECUTABLE}")
 
@@ -100,6 +101,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
         message(DEBUG "WAYLAND_CLIENT_PATH = ${WAYLAND_CLIENT_PATH}")
         set(WAYLAND_CODE_PROTOCOL ${WAYLAND_CLIENT_PATH}/wayland.xml)
 
+        pkg_check_modules(WAYLAND_PROTOCOLS REQUIRED wayland-protocols)
         pkg_get_variable(WAYLAND_PROTOCOLS_PATH wayland-protocols pkgdatadir)
         message(DEBUG "WAYLAND_PROTOCOLS_PATH = ${WAYLAND_PROTOCOLS_PATH}")
         set(XDG_SHELL_PROTOCOL ${WAYLAND_PROTOCOLS_PATH}/stable/xdg-shell/xdg-shell.xml)
