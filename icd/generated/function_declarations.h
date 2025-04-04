@@ -285,6 +285,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_device_diagnostics_config", 2},
     {"VK_QCOM_render_pass_store_ops", 2},
     {"VK_NV_cuda_kernel_launch", 2},
+    {"VK_QCOM_tile_shading", 1},
     {"VK_NV_low_latency", 1},
     {"VK_EXT_metal_objects", 2},
     {"VK_KHR_synchronization2", 1},
@@ -412,6 +413,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_KHR_video_encode_quantization_map", 2},
     {"VK_NV_raw_access_chains", 1},
+    {"VK_NV_external_compute_queue", 1},
     {"VK_KHR_shader_relaxed_extended_instruction", 1},
     {"VK_NV_command_buffer_inheritance", 1},
     {"VK_KHR_maintenance7", 1},
@@ -3796,6 +3798,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchTileQCOM(
+    VkCommandBuffer                             commandBuffer);
+
+static VKAPI_ATTR void VKAPI_CALL CmdBeginPerTileExecutionQCOM(
+    VkCommandBuffer                             commandBuffer,
+    const VkPerTileBeginInfoQCOM*               pPerTileBeginInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdEndPerTileExecutionQCOM(
+    VkCommandBuffer                             commandBuffer,
+    const VkPerTileEndInfoQCOM*                 pPerTileEndInfo);
+
+
 #ifdef VK_USE_PLATFORM_METAL_EXT
 
 static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(
@@ -4552,6 +4566,23 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateExternalComputeQueueNV(
+    VkDevice                                    device,
+    const VkExternalComputeQueueCreateInfoNV*   pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkExternalComputeQueueNV*                   pExternalQueue);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyExternalComputeQueueNV(
+    VkDevice                                    device,
+    VkExternalComputeQueueNV                    externalQueue,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL GetExternalComputeQueueDataNV(
+    VkExternalComputeQueueNV                    externalQueue,
+    VkExternalComputeQueueDataParamsNV*         params,
+    void*                                       pData);
 
 
 
@@ -5471,6 +5502,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_ENABLE_BETA_EXTENSIONS
     {"vkCmdCudaLaunchKernelNV", (void*)CmdCudaLaunchKernelNV},
 #endif
+    {"vkCmdDispatchTileQCOM", (void*)CmdDispatchTileQCOM},
+    {"vkCmdBeginPerTileExecutionQCOM", (void*)CmdBeginPerTileExecutionQCOM},
+    {"vkCmdEndPerTileExecutionQCOM", (void*)CmdEndPerTileExecutionQCOM},
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkExportMetalObjectsEXT", (void*)ExportMetalObjectsEXT},
 #endif
@@ -5630,6 +5664,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},
 #endif
+    {"vkCreateExternalComputeQueueNV", (void*)CreateExternalComputeQueueNV},
+    {"vkDestroyExternalComputeQueueNV", (void*)DestroyExternalComputeQueueNV},
+    {"vkGetExternalComputeQueueDataNV", (void*)GetExternalComputeQueueDataNV},
     {"vkGetClusterAccelerationStructureBuildSizesNV", (void*)GetClusterAccelerationStructureBuildSizesNV},
     {"vkCmdBuildClusterAccelerationStructureIndirectNV", (void*)CmdBuildClusterAccelerationStructureIndirectNV},
     {"vkGetPartitionedAccelerationStructuresBuildSizesNV", (void*)GetPartitionedAccelerationStructuresBuildSizesNV},
