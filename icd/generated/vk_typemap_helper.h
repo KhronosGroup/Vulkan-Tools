@@ -6356,6 +6356,60 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUDA_KERNEL_LAU
 };
 
 #endif // VK_ENABLE_BETA_EXTENSIONS
+// Map type VkPhysicalDeviceTileShadingFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_FEATURES_QCOM
+template <> struct LvlTypeMap<VkPhysicalDeviceTileShadingFeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_FEATURES_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceTileShadingFeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceTileShadingPropertiesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_PROPERTIES_QCOM
+template <> struct LvlTypeMap<VkPhysicalDeviceTileShadingPropertiesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_PROPERTIES_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_PROPERTIES_QCOM> {
+    typedef VkPhysicalDeviceTileShadingPropertiesQCOM Type;
+};
+
+// Map type VkRenderPassTileShadingCreateInfoQCOM to id VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM
+template <> struct LvlTypeMap<VkRenderPassTileShadingCreateInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM> {
+    typedef VkRenderPassTileShadingCreateInfoQCOM Type;
+};
+
+// Map type VkPerTileBeginInfoQCOM to id VK_STRUCTURE_TYPE_PER_TILE_BEGIN_INFO_QCOM
+template <> struct LvlTypeMap<VkPerTileBeginInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PER_TILE_BEGIN_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PER_TILE_BEGIN_INFO_QCOM> {
+    typedef VkPerTileBeginInfoQCOM Type;
+};
+
+// Map type VkPerTileEndInfoQCOM to id VK_STRUCTURE_TYPE_PER_TILE_END_INFO_QCOM
+template <> struct LvlTypeMap<VkPerTileEndInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PER_TILE_END_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PER_TILE_END_INFO_QCOM> {
+    typedef VkPerTileEndInfoQCOM Type;
+};
+
+// Map type VkDispatchTileInfoQCOM to id VK_STRUCTURE_TYPE_DISPATCH_TILE_INFO_QCOM
+template <> struct LvlTypeMap<VkDispatchTileInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DISPATCH_TILE_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DISPATCH_TILE_INFO_QCOM> {
+    typedef VkDispatchTileInfoQCOM Type;
+};
+
 // Map type VkQueryLowLatencySupportNV to id VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV
 template <> struct LvlTypeMap<VkQueryLowLatencySupportNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV;
@@ -8585,6 +8639,42 @@ template <> struct LvlTypeMap<VkPhysicalDeviceRawAccessChainsFeaturesNV> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV> {
     typedef VkPhysicalDeviceRawAccessChainsFeaturesNV Type;
+};
+
+// Map type VkExternalComputeQueueDeviceCreateInfoNV to id VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DEVICE_CREATE_INFO_NV
+template <> struct LvlTypeMap<VkExternalComputeQueueDeviceCreateInfoNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DEVICE_CREATE_INFO_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DEVICE_CREATE_INFO_NV> {
+    typedef VkExternalComputeQueueDeviceCreateInfoNV Type;
+};
+
+// Map type VkExternalComputeQueueCreateInfoNV to id VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_CREATE_INFO_NV
+template <> struct LvlTypeMap<VkExternalComputeQueueCreateInfoNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_CREATE_INFO_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_CREATE_INFO_NV> {
+    typedef VkExternalComputeQueueCreateInfoNV Type;
+};
+
+// Map type VkExternalComputeQueueDataParamsNV to id VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV
+template <> struct LvlTypeMap<VkExternalComputeQueueDataParamsNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV> {
+    typedef VkExternalComputeQueueDataParamsNV Type;
+};
+
+// Map type VkPhysicalDeviceExternalComputeQueuePropertiesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_COMPUTE_QUEUE_PROPERTIES_NV
+template <> struct LvlTypeMap<VkPhysicalDeviceExternalComputeQueuePropertiesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_COMPUTE_QUEUE_PROPERTIES_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_COMPUTE_QUEUE_PROPERTIES_NV> {
+    typedef VkPhysicalDeviceExternalComputeQueuePropertiesNV Type;
 };
 
 // Map type VkPhysicalDeviceCommandBufferInheritanceFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV
