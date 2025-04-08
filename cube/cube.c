@@ -2656,7 +2656,9 @@ static void demo_run(struct demo *demo) {
     if (!demo->prepared) return;
 
     demo_draw(demo);
-    demo->curFrame++;
+    if (demo->is_minimized) {
+        demo->curFrame++;
+    }
     if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
         PostQuitMessage(validation_error);
     }
@@ -2844,7 +2846,9 @@ static void demo_run_xlib(struct demo *demo) {
         }
 
         demo_draw(demo);
-        demo->curFrame++;
+        if (demo->is_minimized) {
+            demo->curFrame++;
+        }
         if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
     }
 }
@@ -2910,7 +2914,9 @@ static void demo_run_xcb(struct demo *demo) {
         }
 
         demo_draw(demo);
-        demo->curFrame++;
+        if (demo->is_minimized) {
+            demo->curFrame++;
+        }
         if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
     }
 }
@@ -2969,7 +2975,9 @@ static void demo_run(struct demo *demo) {
             wl_display_dispatch_pending(demo->wayland_display);
 
             demo_draw(demo);
-            demo->curFrame++;
+            if (demo->is_minimized) {
+                demo->curFrame++;
+            }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
         }
     }
@@ -3115,7 +3123,9 @@ static void demo_run_directfb(struct demo *demo) {
             if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event))) demo_handle_directfb_event(demo, &event);
 
             demo_draw(demo);
-            demo->curFrame++;
+            if (demo->is_minimized) {
+                demo->curFrame++;
+            }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
         }
     }
@@ -3126,13 +3136,17 @@ static void demo_run(struct demo *demo) {
     if (!demo->prepared) return;
 
     demo_draw(demo);
-    demo->curFrame++;
+    if (demo->is_minimized) {
+        demo->curFrame++;
+    }
 }
 #endif
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 static void demo_run(struct demo *demo) {
     demo_draw(demo);
-    demo->curFrame++;
+    if (demo->is_minimized) {
+        demo->curFrame++;
+    }
     if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
         demo->quit = TRUE;
     }
@@ -3377,7 +3391,9 @@ static void demo_run(struct demo *demo) {
         if (demo->pause) {
         } else {
             demo_draw(demo);
-            demo->curFrame++;
+            if (demo->is_minimized) {
+                demo->curFrame++;
+            }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
                 demo->quit = true;
             }

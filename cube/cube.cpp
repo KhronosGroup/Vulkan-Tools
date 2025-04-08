@@ -3081,7 +3081,9 @@ void Demo::run<WsiPlatform::win32>() {
     }
 
     draw();
-    curFrame++;
+    if (!is_minimized) {
+        curFrame++;
+    }
 
     if (frameCount != UINT32_MAX && curFrame == frameCount) {
         PostQuitMessage(validation_error);
@@ -3231,7 +3233,9 @@ void Demo::run<WsiPlatform::xlib>() {
         }
 
         draw();
-        curFrame++;
+        if (!is_minimized) {
+            curFrame++;
+        }
 
         if (frameCount != UINT32_MAX && curFrame == frameCount) {
             quit = true;
@@ -3302,7 +3306,9 @@ void Demo::run<WsiPlatform::xcb>() {
         }
 
         draw();
-        curFrame++;
+        if (!is_minimized) {
+            curFrame++;
+        }
         if (frameCount != UINT32_MAX && curFrame == frameCount) {
             quit = true;
         }
@@ -3352,7 +3358,9 @@ void Demo::run<WsiPlatform::wayland>() {
         } else {
             wl_display_dispatch_pending(wayland_display);
             draw();
-            curFrame++;
+            if (!is_minimized) {
+                curFrame++;
+            }
             if (frameCount != UINT32_MAX && curFrame == frameCount) {
                 quit = true;
             }
@@ -3465,7 +3473,9 @@ void Demo::run<WsiPlatform::directfb>() {
             if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event))) handle_directfb_event(&event);
 
             draw();
-            curFrame++;
+            if (!is_minimized) {
+                curFrame++;
+            }
             if (frameCount != UINT32_MAX && curFrame == frameCount) {
                 quit = true;
             }
@@ -3515,7 +3525,9 @@ void Demo::create_window<WsiPlatform::directfb>() {
 template <>
 void Demo::run<WsiPlatform::metal>() {
     draw();
-    curFrame++;
+    if (!is_minimized) {
+        curFrame++;
+    }
     if (frameCount != UINT32_MAX && curFrame == frameCount) {
         quit = true;
     }
@@ -3730,7 +3742,9 @@ void Demo::run<WsiPlatform::qnx>() {
         } else {
             update_data_buffer();
             draw();
-            curFrame++;
+            if (!is_minimized) {
+                curFrame++;
+            }
             if (frameCount != UINT32_MAX && curFrame == frameCount) {
                 quit = true;
             }
@@ -3900,7 +3914,9 @@ void Demo::run<WsiPlatform::fuchsia_display>() {
 
         draw();
 
-        curFrame++;
+        if (!is_minimized) {
+            curFrame++;
+        }
         elapsed_frames++;
 
         if (frameCount != UINT32_MAX && curFrame == frameCount) {
