@@ -315,27 +315,34 @@ const char *wsi_to_string(WsiPlatform wsi_platform) {
     }
 };
 
-struct SwapchainImageResources {
-    vk::Image image;
+struct SubmissionResources {
+    vk::Fence fence;
+    vk::Semaphore image_acquired_semaphore;
     vk::CommandBuffer cmd;
     vk::CommandBuffer graphics_to_present_cmd;
-    vk::ImageView view;
     vk::Buffer uniform_buffer;
     vk::DeviceMemory uniform_memory;
     void *uniform_memory_ptr = nullptr;
-    vk::Framebuffer framebuffer;
     vk::DescriptorSet descriptor_set;
 };
 
+struct SwapchainImageResources {
+    vk::Image image;
+    vk::ImageView view;
+    vk::Framebuffer framebuffer;
+    vk::Semaphore draw_complete_semaphore;
+    vk::Semaphore image_ownership_semaphore;
+};
+
 struct Demo {
-    void build_image_ownership_cmd(const SwapchainImageResources &swapchain_image_resource);
+    void build_image_ownership_cmd(const SubmissionResources &submission_resource,
+                                   const SwapchainImageResources &swapchain_image_resource);
     vk::Bool32 check_layers(const std::vector<const char *> &check_names, const std::vector<vk::LayerProperties> &layers);
     void cleanup();
-    void destroy_swapchain_related_resources();
     void create_device();
     void destroy_texture(texture_object &tex_objs);
     void draw();
-    void draw_build_cmd(const SwapchainImageResources &swapchain_image_resource);
+    void draw_build_cmd(const SubmissionResources &submission_resource, const SwapchainImageResources &swapchain_image_resource);
     void prepare_init_cmd();
     void flush_init_cmd();
     void init(int argc, char **argv);
@@ -343,14 +350,13 @@ struct Demo {
     void init_vk();
     void select_physical_device();
     void init_vk_swapchain();
+
     void prepare();
-    void prepare_buffers();
     void prepare_cube_data_buffers();
-    void prepare_depth();
     void prepare_descriptor_layout();
     void prepare_descriptor_pool();
     void prepare_descriptor_set();
-    void prepare_framebuffers();
+    void prepare_submission_sync_objects();
     vk::ShaderModule prepare_shader_module(const uint32_t *code, size_t size);
     vk::ShaderModule prepare_vs();
     vk::ShaderModule prepare_fs();
@@ -363,9 +369,13 @@ struct Demo {
 
     void resize();
     void create_surface();
+    void prepare_swapchain();
+    void prepare_framebuffers();
+    void prepare_depth();
+
     void set_image_layout(vk::Image image, vk::ImageAspectFlags aspectMask, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
                           vk::AccessFlags srcAccessMask, vk::PipelineStageFlags src_stages, vk::PipelineStageFlags dest_stages);
-    void update_data_buffer();
+    void update_data_buffer(void *uniform_memory_ptr);
     bool loadTexture(const char *filename, uint8_t *rgba_data, vk::SubresourceLayout &layout, uint32_t &width, uint32_t &height);
     bool memory_type_from_properties(uint32_t typeBits, vk::MemoryPropertyFlags requirements_mask, uint32_t &typeIndex);
     vk::SurfaceFormatKHR pick_surface_format(const std::vector<vk::SurfaceFormatKHR> &surface_formats);
@@ -461,7 +471,9 @@ struct Demo {
 #endif
     WsiPlatform wsi_platform = WsiPlatform::auto_;
     vk::SurfaceKHR surface;
-    bool prepared = false;
+    bool initialized;
+    bool swapchain_ready;
+    bool is_minimized;
     bool use_staging_buffer = false;
     bool separate_present_queue = false;
     bool invalid_gpu_selection = false;
@@ -479,12 +491,11 @@ struct Demo {
     vk::Queue present_queue;
     uint32_t graphics_queue_family_index = 0;
     uint32_t present_queue_family_index = 0;
-    std::array<vk::Semaphore, FRAME_LAG> image_acquired_semaphores;
-    std::array<vk::Semaphore, FRAME_LAG> draw_complete_semaphores;
-    std::array<vk::Semaphore, FRAME_LAG> image_ownership_semaphores;
     vk::PhysicalDeviceProperties gpu_props;
     std::vector<vk::QueueFamilyProperties> queue_props;
     vk::PhysicalDeviceMemoryProperties memory_properties;
+    std::array<SubmissionResources, FRAME_LAG> submission_resources;
+    uint32_t current_submission_index = 0;
 
     std::vector<const char *> enabled_instance_extensions;
     std::vector<const char *> enabled_layers;
@@ -496,10 +507,8 @@ struct Demo {
     vk::ColorSpaceKHR color_space;
 
     vk::SwapchainKHR swapchain;
-    std::vector<SwapchainImageResources> swapchain_image_resources;
+    std::vector<SwapchainImageResources> swapchain_resources;
     vk::PresentModeKHR presentMode = vk::PresentModeKHR::eFifo;
-    std::array<vk::Fence, FRAME_LAG> fences;
-    uint32_t frame_index = 0;
     bool first_swapchain_frame;
 
     vk::CommandPool cmd_pool;
@@ -556,9 +565,6 @@ struct Demo {
     bool use_break = false;
     bool suppress_popups = false;
     bool force_errors = false;
-    bool is_minimized = false;
-
-    uint32_t current_buffer = 0;
 };
 
 #ifdef _WIN32
@@ -672,8 +678,12 @@ static void registry_handle_global_remove(void *data, wl_registry *registry, uin
 static const wl_registry_listener registry_listener = {registry_handle_global, registry_handle_global_remove};
 #endif
 
-void Demo::build_image_ownership_cmd(const SwapchainImageResources &swapchain_image_resource) {
-    auto result = swapchain_image_resource.graphics_to_present_cmd.begin(
+void Demo::build_image_ownership_cmd(const SubmissionResources &submission_resource,
+                                     const SwapchainImageResources &swapchain_image_resource) {
+    auto result = submission_resource.graphics_to_present_cmd.reset();
+    VERIFY(result == vk::Result::eSuccess);
+
+    result = submission_resource.graphics_to_present_cmd.begin(
         vk::CommandBufferBeginInfo().setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse));
     VERIFY(result == vk::Result::eSuccess);
 
@@ -688,11 +698,11 @@ void Demo::build_image_ownership_cmd(const SwapchainImageResources &swapchain_im
             .setImage(swapchain_image_resource.image)
             .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
 
-    swapchain_image_resource.graphics_to_present_cmd.pipelineBarrier(vk::PipelineStageFlagBits::eBottomOfPipe,
-                                                                     vk::PipelineStageFlagBits::eBottomOfPipe,
-                                                                     vk::DependencyFlagBits(), {}, {}, image_ownership_barrier);
+    submission_resource.graphics_to_present_cmd.pipelineBarrier(vk::PipelineStageFlagBits::eBottomOfPipe,
+                                                                vk::PipelineStageFlagBits::eBottomOfPipe, vk::DependencyFlagBits(),
+                                                                {}, {}, image_ownership_barrier);
 
-    result = swapchain_image_resource.graphics_to_present_cmd.end();
+    result = submission_resource.graphics_to_present_cmd.end();
     VERIFY(result == vk::Result::eSuccess);
 }
 
@@ -714,23 +724,52 @@ vk::Bool32 Demo::check_layers(const std::vector<const char *> &check_names, cons
 }
 
 void Demo::cleanup() {
-    prepared = false;
+    initialized = false;
     auto result = device.waitIdle();
     VERIFY(result == vk::Result::eSuccess);
-    if (!is_minimized) {
-        destroy_swapchain_related_resources();
+
+    device.destroyCommandPool(cmd_pool);
+    if (separate_present_queue) {
+        device.destroyCommandPool(present_cmd_pool);
     }
-    // Wait for fences from present operations
-    for (uint32_t i = 0; i < FRAME_LAG; i++) {
-        device.destroyFence(fences[i]);
-        device.destroySemaphore(image_acquired_semaphores[i]);
-        device.destroySemaphore(draw_complete_semaphores[i]);
+
+    device.destroyDescriptorPool(desc_pool);
+
+    device.destroyPipeline(pipeline);
+    device.destroyPipelineCache(pipelineCache);
+    device.destroyRenderPass(render_pass);
+    device.destroyPipelineLayout(pipeline_layout);
+    device.destroyDescriptorSetLayout(desc_layout);
+
+    for (const auto &tex : textures) {
+        device.destroyImageView(tex.view);
+        device.destroyImage(tex.image);
+        device.freeMemory(tex.mem);
+        device.destroySampler(tex.sampler);
+    }
+
+    device.destroyImageView(depth.view);
+    device.destroyImage(depth.image);
+    device.freeMemory(depth.mem);
+
+    for (auto &swapchain_resource : swapchain_resources) {
+        device.destroyFramebuffer(swapchain_resource.framebuffer);
+        device.destroyImageView(swapchain_resource.view);
+        device.destroySemaphore(swapchain_resource.draw_complete_semaphore);
         if (separate_present_queue) {
-            device.destroySemaphore(image_ownership_semaphores[i]);
+            device.destroySemaphore(swapchain_resource.image_ownership_semaphore);
         }
     }
 
     device.destroySwapchainKHR(swapchain);
+
+    for (const auto &submission_resource : submission_resources) {
+        device.destroyFence(submission_resource.fence);
+        device.destroySemaphore(submission_resource.image_acquired_semaphore);
+        device.destroyBuffer(submission_resource.uniform_buffer);
+        device.unmapMemory(submission_resource.uniform_memory);
+        device.freeMemory(submission_resource.uniform_memory);
+    }
 
     device.destroy();
     inst.destroySurfaceKHR(surface);
@@ -788,8 +827,12 @@ void Demo::create_device() {
     float priorities = 0.0;
 
     std::vector<vk::DeviceQueueCreateInfo> queues;
-    const vk::DeviceQueueCreateFlags queue_create_flags = protected_output ? vk::DeviceQueueCreateFlagBits::eProtected : vk::DeviceQueueCreateFlags{};
-    queues.push_back(vk::DeviceQueueCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setQueuePriorities(priorities).setFlags(queue_create_flags));
+    const vk::DeviceQueueCreateFlags queue_create_flags =
+        protected_output ? vk::DeviceQueueCreateFlagBits::eProtected : vk::DeviceQueueCreateFlags{};
+    queues.push_back(vk::DeviceQueueCreateInfo()
+                         .setQueueFamilyIndex(graphics_queue_family_index)
+                         .setQueuePriorities(priorities)
+                         .setFlags(queue_create_flags));
 
     if (separate_present_queue) {
         queues.push_back(
@@ -797,7 +840,10 @@ void Demo::create_device() {
     }
 
     auto const protected_memory_features = vk::PhysicalDeviceProtectedMemoryFeatures().setProtectedMemory(protected_output);
-    auto deviceInfo = vk::DeviceCreateInfo().setPNext(protected_output ? &protected_memory_features : nullptr).setQueueCreateInfos(queues).setPEnabledExtensionNames(enabled_device_extensions);
+    auto deviceInfo = vk::DeviceCreateInfo()
+                          .setPNext(protected_output ? &protected_memory_features : nullptr)
+                          .setQueueCreateInfos(queues)
+                          .setPEnabledExtensionNames(enabled_device_extensions);
     auto device_return = gpu.createDevice(deviceInfo);
     VERIFY(device_return.result == vk::Result::eSuccess);
     device = device_return.value;
@@ -812,15 +858,22 @@ void Demo::destroy_texture(texture_object &tex_objs) {
 }
 
 void Demo::draw() {
+    // Don't draw if initialization isn't complete, if the swapchain became outdated, or if the window is minimized
+    if (!initialized || !swapchain_ready || is_minimized) {
+        return;
+    }
+
+    auto &current_submission = submission_resources[current_submission_index];
+
     // Ensure no more than FRAME_LAG renderings are outstanding
-    const vk::Result wait_result = device.waitForFences(fences[frame_index], VK_TRUE, UINT64_MAX);
+    const vk::Result wait_result = device.waitForFences(current_submission.fence, VK_TRUE, UINT64_MAX);
     VERIFY(wait_result == vk::Result::eSuccess || wait_result == vk::Result::eTimeout);
-    device.resetFences({fences[frame_index]});
 
     vk::Result acquire_result;
+    uint32_t current_swapchain_image_index = 0;
     do {
-        acquire_result =
-            device.acquireNextImageKHR(swapchain, UINT64_MAX, image_acquired_semaphores[frame_index], vk::Fence(), &current_buffer);
+        acquire_result = device.acquireNextImageKHR(swapchain, UINT64_MAX, current_submission.image_acquired_semaphore, vk::Fence(),
+                                                    &current_swapchain_image_index);
         if (acquire_result == vk::Result::eErrorOutOfDateKHR) {
             // demo.swapchain is out of date (e.g. the window was resized) and
             // must be recreated:
@@ -836,9 +889,24 @@ void Demo::draw() {
         } else {
             VERIFY(acquire_result == vk::Result::eSuccess);
         }
+        // If we minimized then stop trying to draw
+        if (!swapchain_ready) {
+            return;
+        }
     } while (acquire_result != vk::Result::eSuccess);
 
-    update_data_buffer();
+    auto &current_swapchain_resource = swapchain_resources[current_swapchain_image_index];
+
+    update_data_buffer(submission_resources[current_submission_index].uniform_memory_ptr);
+
+    draw_build_cmd(current_submission, current_swapchain_resource);
+
+    if (separate_present_queue) {
+        build_image_ownership_cmd(current_submission, current_swapchain_resource);
+    }
+
+    // Only reset right before submitting so we can't deadlock on an un-signalled fence that has nothing submitted to it
+    device.resetFences({current_submission.fence});
 
     // Wait for the image acquired semaphore to be signaled to ensure
     // that the image won't be rendered to until the presentation
@@ -850,10 +918,10 @@ void Demo::draw() {
     auto submit_result = graphics_queue.submit(vk::SubmitInfo()
                                                    .setPNext(protected_output ? &protected_submit_info : nullptr)
                                                    .setWaitDstStageMask(pipe_stage_flags)
-                                                   .setWaitSemaphores(image_acquired_semaphores[frame_index])
-                                                   .setCommandBuffers(swapchain_image_resources[current_buffer].cmd)
-                                                   .setSignalSemaphores(draw_complete_semaphores[frame_index]),
-                                               fences[frame_index]);
+                                                   .setWaitSemaphores(current_submission.image_acquired_semaphore)
+                                                   .setCommandBuffers(current_submission.cmd)
+                                                   .setSignalSemaphores(current_swapchain_resource.draw_complete_semaphore),
+                                               current_submission.fence);
     VERIFY(submit_result == vk::Result::eSuccess);
 
     if (separate_present_queue) {
@@ -864,23 +932,23 @@ void Demo::draw() {
         auto change_owner_result =
             present_queue.submit(vk::SubmitInfo()
                                      .setWaitDstStageMask(pipe_stage_flags)
-                                     .setWaitSemaphores(draw_complete_semaphores[frame_index])
-                                     .setCommandBuffers(swapchain_image_resources[current_buffer].graphics_to_present_cmd)
-                                     .setSignalSemaphores(image_ownership_semaphores[frame_index]));
+                                     .setWaitSemaphores(current_swapchain_resource.draw_complete_semaphore)
+                                     .setCommandBuffers(current_submission.graphics_to_present_cmd)
+                                     .setSignalSemaphores(current_swapchain_resource.image_ownership_semaphore));
         VERIFY(change_owner_result == vk::Result::eSuccess);
     }
 
     const auto presentInfo = vk::PresentInfoKHR()
-                                 .setWaitSemaphores(separate_present_queue ? image_ownership_semaphores[frame_index]
-                                                                           : draw_complete_semaphores[frame_index])
+                                 .setWaitSemaphores(separate_present_queue ? current_swapchain_resource.image_ownership_semaphore
+                                                                           : current_swapchain_resource.draw_complete_semaphore)
                                  .setSwapchains(swapchain)
-                                 .setImageIndices(current_buffer);
+                                 .setImageIndices(current_swapchain_image_index);
 
     // If we are using separate queues we have to wait for image ownership,
     // otherwise wait for draw complete
     auto present_result = present_queue.presentKHR(&presentInfo);
-    frame_index += 1;
-    frame_index %= FRAME_LAG;
+    current_submission_index += 1;
+    current_submission_index %= FRAME_LAG;
     first_swapchain_frame = false;
     if (present_result == vk::Result::eErrorOutOfDateKHR) {
         // swapchain is out of date (e.g. the window was resized) and
@@ -892,6 +960,8 @@ void Demo::draw() {
         auto caps_result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
         VERIFY(caps_result == vk::Result::eSuccess);
         if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
+            width = surfCapabilities.currentExtent.width;
+            height = surfCapabilities.currentExtent.height;
             resize();
         }
     } else if (present_result == vk::Result::eErrorSurfaceLostKHR) {
@@ -903,12 +973,14 @@ void Demo::draw() {
     }
 }
 
-void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resource) {
-    const auto commandBuffer = swapchain_image_resource.cmd;
+void Demo::draw_build_cmd(const SubmissionResources &submission_resource, const SwapchainImageResources &swapchain_image_resource) {
+    const auto commandBuffer = submission_resource.cmd;
     vk::ClearValue const clearValues[2] = {vk::ClearColorValue(std::array<float, 4>({{0.2f, 0.2f, 0.2f, 0.2f}})),
                                            vk::ClearDepthStencilValue(1.0f, 0u)};
+    auto result = commandBuffer.reset();
+    VERIFY(result == vk::Result::eSuccess);
 
-    auto result = commandBuffer.begin(vk::CommandBufferBeginInfo().setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse));
+    result = commandBuffer.begin(vk::CommandBufferBeginInfo().setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse));
     VERIFY(result == vk::Result::eSuccess);
 
     commandBuffer.beginRenderPass(vk::RenderPassBeginInfo()
@@ -920,8 +992,7 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
                                   vk::SubpassContents::eInline);
 
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
-    commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline_layout, 0, swapchain_image_resource.descriptor_set,
-                                     {});
+    commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline_layout, 0, submission_resource.descriptor_set, {});
     float viewport_dimension;
     float viewport_x = 0.0f;
     float viewport_y = 0.0f;
@@ -977,6 +1048,7 @@ void Demo::draw_build_cmd(const SwapchainImageResources &swapchain_image_resourc
 void Demo::prepare_init_cmd() {
     vk::CommandPoolCreateFlags cmd_pool_create_flags =
         protected_output ? vk::CommandPoolCreateFlagBits::eProtected : vk::CommandPoolCreateFlags{};
+    cmd_pool_create_flags |= vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
     auto cmd_pool_return = device.createCommandPool(
         vk::CommandPoolCreateInfo().setQueueFamilyIndex(graphics_queue_family_index).setFlags(cmd_pool_create_flags));
     VERIFY(cmd_pool_return.result == vk::Result::eSuccess);
@@ -1007,7 +1079,8 @@ void Demo::flush_init_cmd() {
     auto fence = fence_return.value;
 
     auto const protected_submit_info = vk::ProtectedSubmitInfo().setProtectedSubmit(protected_output);
-    result = graphics_queue.submit(vk::SubmitInfo().setPNext(protected_output ? &protected_submit_info : nullptr).setCommandBuffers(cmd), fence);
+    result = graphics_queue.submit(
+        vk::SubmitInfo().setPNext(protected_output ? &protected_submit_info : nullptr).setCommandBuffers(cmd), fence);
     VERIFY(result == vk::Result::eSuccess);
 
     result = device.waitForFences(fence, VK_TRUE, UINT64_MAX);
@@ -1184,6 +1257,8 @@ void Demo::init(int argc, char **argv) {
 #endif
         exit(1);
     }
+
+    initialized = false;
 
     init_vk();
 
@@ -1834,21 +1909,17 @@ void Demo::select_physical_device() {
                 assert(physicalDeviceProperties.deviceType <= vk::PhysicalDeviceType::eCpu);
 
                 auto support_result = physical_devices[i].getSurfaceSupportKHR(0, surface);
-                if (support_result.result != vk::Result::eSuccess ||
-                        support_result.value != vk::True) {
+                if (support_result.result != vk::Result::eSuccess || support_result.value != vk::True) {
                     continue;
                 }
 
                 std::map<vk::PhysicalDeviceType, int> device_type_priorities = {
-                    {vk::PhysicalDeviceType::eDiscreteGpu, 5},
-                    {vk::PhysicalDeviceType::eIntegratedGpu, 4},
-                    {vk::PhysicalDeviceType::eVirtualGpu, 3},
-                    {vk::PhysicalDeviceType::eCpu, 2},
+                    {vk::PhysicalDeviceType::eDiscreteGpu, 5}, {vk::PhysicalDeviceType::eIntegratedGpu, 4},
+                    {vk::PhysicalDeviceType::eVirtualGpu, 3},  {vk::PhysicalDeviceType::eCpu, 2},
                     {vk::PhysicalDeviceType::eOther, 1},
                 };
                 int priority = -1;
-                if (device_type_priorities.find(physicalDeviceProperties.deviceType) !=
-                        device_type_priorities.end()) {
+                if (device_type_priorities.find(physicalDeviceProperties.deviceType) != device_type_priorities.end()) {
                     priority = device_type_priorities[physicalDeviceProperties.deviceType];
                 }
 
@@ -2081,56 +2152,28 @@ void Demo::init_vk_swapchain() {
     first_swapchain_frame = true;
     curFrame = 0;
 
-    // Create semaphores to synchronize acquiring presentable buffers before
-    // rendering and waiting for drawing to be complete before presenting
-    auto const semaphoreCreateInfo = vk::SemaphoreCreateInfo();
-
-    // Create fences that we can use to throttle if we get too far
-    // ahead of the image presents
-    auto const fence_ci = vk::FenceCreateInfo().setFlags(vk::FenceCreateFlagBits::eSignaled);
-    for (uint32_t i = 0; i < FRAME_LAG; i++) {
-        vk::Result result = device.createFence(&fence_ci, nullptr, &fences[i]);
-        VERIFY(result == vk::Result::eSuccess);
-
-        result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &image_acquired_semaphores[i]);
-        VERIFY(result == vk::Result::eSuccess);
-
-        result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &draw_complete_semaphores[i]);
-        VERIFY(result == vk::Result::eSuccess);
-
-        if (separate_present_queue) {
-            result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &image_ownership_semaphores[i]);
-            VERIFY(result == vk::Result::eSuccess);
-        }
-    }
-    frame_index = 0;
-
     // Get Memory information and properties
     memory_properties = gpu.getMemoryProperties();
 }
 
 void Demo::prepare() {
-    prepare_buffers();
-    if (is_minimized) {
-        prepared = false;
-        return;
-    }
     prepare_init_cmd();
-    prepare_depth();
     prepare_textures();
     prepare_cube_data_buffers();
 
     prepare_descriptor_layout();
+    // Only need to know the format of the depth buffer before we create the renderpass
+    depth.format = vk::Format::eD16Unorm;
     prepare_render_pass();
     prepare_pipeline();
 
-    for (auto &swapchain_image_resource : swapchain_image_resources) {
+    for (auto &submission_resource : submission_resources) {
         auto alloc_return = device.allocateCommandBuffers(vk::CommandBufferAllocateInfo()
                                                               .setCommandPool(cmd_pool)
                                                               .setLevel(vk::CommandBufferLevel::ePrimary)
                                                               .setCommandBufferCount(1));
         VERIFY(alloc_return.result == vk::Result::eSuccess);
-        swapchain_image_resource.cmd = alloc_return.value[0];
+        submission_resource.cmd = alloc_return.value[0];
     }
 
     if (separate_present_queue) {
@@ -2139,14 +2182,13 @@ void Demo::prepare() {
         VERIFY(present_cmd_pool_return.result == vk::Result::eSuccess);
         present_cmd_pool = present_cmd_pool_return.value;
 
-        for (auto &swapchain_image_resource : swapchain_image_resources) {
+        for (auto &submission_resource : submission_resources) {
             auto alloc_cmd_return = device.allocateCommandBuffers(vk::CommandBufferAllocateInfo()
                                                                       .setCommandPool(present_cmd_pool)
                                                                       .setLevel(vk::CommandBufferLevel::ePrimary)
                                                                       .setCommandBufferCount(1));
             VERIFY(alloc_cmd_return.result == vk::Result::eSuccess);
-            swapchain_image_resource.graphics_to_present_cmd = alloc_cmd_return.value[0];
-            build_image_ownership_cmd(swapchain_image_resource);
+            submission_resource.graphics_to_present_cmd = alloc_cmd_return.value[0];
         }
     }
 
@@ -2155,9 +2197,7 @@ void Demo::prepare() {
 
     prepare_framebuffers();
 
-    for (const auto &swapchain_image_resource : swapchain_image_resources) {
-        draw_build_cmd(swapchain_image_resource);
-    }
+    prepare_submission_sync_objects();
 
     /*
      * Prepare functions above may generate pipeline commands
@@ -2168,12 +2208,14 @@ void Demo::prepare() {
         destroy_texture(staging_texture);
     }
 
-    current_buffer = 0;
-    prepared = true;
-    first_swapchain_frame = true;
+    initialized = true;
+
+    prepare_swapchain();
 }
 
-void Demo::prepare_buffers() {
+// Creates the swapchain, swapchain image views, depth buffer, framebuffers, and sempahores.
+// This function returns early if it fails to create a swapchain, setting swapchain_ready to false.
+void Demo::prepare_swapchain() {
     vk::SwapchainKHR oldSwapchain = swapchain;
 
     // Check the surface capabilities and formats
@@ -2323,22 +2365,41 @@ void Demo::prepare_buffers() {
 
     auto swapchain_images_return = device.getSwapchainImagesKHR(swapchain);
     VERIFY(swapchain_images_return.result == vk::Result::eSuccess);
-    swapchain_image_resources.resize(swapchain_images_return.value.size());
+    swapchain_resources.resize(swapchain_images_return.value.size());
 
-    for (uint32_t i = 0; i < swapchain_image_resources.size(); ++i) {
+    for (uint32_t i = 0; i < swapchain_resources.size(); ++i) {
         auto color_image_view = vk::ImageViewCreateInfo()
                                     .setViewType(vk::ImageViewType::e2D)
                                     .setFormat(format)
                                     .setSubresourceRange(vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1));
 
-        swapchain_image_resources[i].image = swapchain_images_return.value[i];
+        swapchain_resources[i].image = swapchain_images_return.value[i];
 
-        color_image_view.image = swapchain_image_resources[i].image;
+        color_image_view.image = swapchain_resources[i].image;
 
         auto image_view_return = device.createImageView(color_image_view);
         VERIFY(image_view_return.result == vk::Result::eSuccess);
-        swapchain_image_resources[i].view = image_view_return.value;
+        swapchain_resources[i].view = image_view_return.value;
     }
+
+    // Create semaphores to synchronize acquiring presentable buffers before
+    // rendering and waiting for drawing to be complete before presenting
+    auto const semaphoreCreateInfo = vk::SemaphoreCreateInfo();
+
+    for (auto &swapchain_resource : swapchain_resources) {
+        auto result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &swapchain_resource.draw_complete_semaphore);
+        VERIFY(result == vk::Result::eSuccess);
+
+        if (separate_present_queue) {
+            result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &swapchain_resource.image_ownership_semaphore);
+            VERIFY(result == vk::Result::eSuccess);
+        }
+    }
+
+    prepare_depth();
+    prepare_framebuffers();
+    swapchain_ready = true;
+    first_swapchain_frame = true;
 }
 
 void Demo::prepare_cube_data_buffers() {
@@ -2365,12 +2426,12 @@ void Demo::prepare_cube_data_buffers() {
 
     auto const buf_info = vk::BufferCreateInfo().setSize(sizeof(data)).setUsage(vk::BufferUsageFlagBits::eUniformBuffer);
 
-    for (auto &swapchain_image_resource : swapchain_image_resources) {
-        auto result = device.createBuffer(&buf_info, nullptr, &swapchain_image_resource.uniform_buffer);
+    for (auto &submission_resource : submission_resources) {
+        auto result = device.createBuffer(&buf_info, nullptr, &submission_resource.uniform_buffer);
         VERIFY(result == vk::Result::eSuccess);
 
         vk::MemoryRequirements mem_reqs;
-        device.getBufferMemoryRequirements(swapchain_image_resource.uniform_buffer, &mem_reqs);
+        device.getBufferMemoryRequirements(submission_resource.uniform_buffer, &mem_reqs);
 
         auto mem_alloc = vk::MemoryAllocateInfo().setAllocationSize(mem_reqs.size).setMemoryTypeIndex(0);
 
@@ -2379,16 +2440,16 @@ void Demo::prepare_cube_data_buffers() {
             mem_alloc.memoryTypeIndex);
         VERIFY(pass);
 
-        result = device.allocateMemory(&mem_alloc, nullptr, &swapchain_image_resource.uniform_memory);
+        result = device.allocateMemory(&mem_alloc, nullptr, &submission_resource.uniform_memory);
         VERIFY(result == vk::Result::eSuccess);
 
-        result = device.mapMemory(swapchain_image_resource.uniform_memory, 0, VK_WHOLE_SIZE, vk::MemoryMapFlags(),
-                                  &swapchain_image_resource.uniform_memory_ptr);
+        result = device.mapMemory(submission_resource.uniform_memory, 0, VK_WHOLE_SIZE, vk::MemoryMapFlags(),
+                                  &submission_resource.uniform_memory_ptr);
         VERIFY(result == vk::Result::eSuccess);
 
-        memcpy(swapchain_image_resource.uniform_memory_ptr, &data, sizeof data);
+        memcpy(submission_resource.uniform_memory_ptr, &data, sizeof data);
 
-        result = device.bindBufferMemory(swapchain_image_resource.uniform_buffer, swapchain_image_resource.uniform_memory, 0);
+        result = device.bindBufferMemory(submission_resource.uniform_buffer, submission_resource.uniform_memory, 0);
         VERIFY(result == vk::Result::eSuccess);
     }
 }
@@ -2470,13 +2531,13 @@ void Demo::prepare_descriptor_pool() {
     std::array<vk::DescriptorPoolSize, 2> const poolSizes = {
         vk::DescriptorPoolSize()
             .setType(vk::DescriptorType::eUniformBuffer)
-            .setDescriptorCount(static_cast<uint32_t>(swapchain_image_resources.size())),
+            .setDescriptorCount(static_cast<uint32_t>(submission_resources.size())),
         vk::DescriptorPoolSize()
             .setType(vk::DescriptorType::eCombinedImageSampler)
-            .setDescriptorCount(static_cast<uint32_t>(swapchain_image_resources.size()) * texture_count)};
+            .setDescriptorCount(static_cast<uint32_t>(submission_resources.size()) * texture_count)};
 
     auto const descriptor_pool =
-        vk::DescriptorPoolCreateInfo().setMaxSets(static_cast<uint32_t>(swapchain_image_resources.size())).setPoolSizes(poolSizes);
+        vk::DescriptorPoolCreateInfo().setMaxSets(static_cast<uint32_t>(submission_resources.size())).setPoolSizes(poolSizes);
 
     auto result = device.createDescriptorPool(&descriptor_pool, nullptr, &desc_pool);
     VERIFY(result == vk::Result::eSuccess);
@@ -2502,13 +2563,13 @@ void Demo::prepare_descriptor_set() {
         .setDescriptorType(vk::DescriptorType::eCombinedImageSampler)
         .setImageInfo(tex_descs);
 
-    for (auto &swapchain_image_resource : swapchain_image_resources) {
-        auto result = device.allocateDescriptorSets(&alloc_info, &swapchain_image_resource.descriptor_set);
+    for (auto &submission_resource : submission_resources) {
+        auto result = device.allocateDescriptorSets(&alloc_info, &submission_resource.descriptor_set);
         VERIFY(result == vk::Result::eSuccess);
 
-        buffer_info.setBuffer(swapchain_image_resource.uniform_buffer);
-        writes[0].setDstSet(swapchain_image_resource.descriptor_set);
-        writes[1].setDstSet(swapchain_image_resource.descriptor_set);
+        buffer_info.setBuffer(submission_resource.uniform_buffer);
+        writes[0].setDstSet(submission_resource.descriptor_set);
+        writes[1].setDstSet(submission_resource.descriptor_set);
         device.updateDescriptorSets(writes, {});
     }
 }
@@ -2517,7 +2578,7 @@ void Demo::prepare_framebuffers() {
     std::array<vk::ImageView, 2> attachments;
     attachments[1] = depth.view;
 
-    for (auto &swapchain_image_resource : swapchain_image_resources) {
+    for (auto &swapchain_image_resource : swapchain_resources) {
         attachments[0] = swapchain_image_resource.view;
         auto const framebuffer_return = device.createFramebuffer(vk::FramebufferCreateInfo()
                                                                      .setRenderPass(render_pass)
@@ -2527,6 +2588,23 @@ void Demo::prepare_framebuffers() {
                                                                      .setLayers(1));
         VERIFY(framebuffer_return.result == vk::Result::eSuccess);
         swapchain_image_resource.framebuffer = framebuffer_return.value;
+    }
+}
+
+void Demo::prepare_submission_sync_objects() {
+    // Create semaphores to synchronize acquiring presentable buffers before
+    // rendering and waiting for drawing to be complete before presenting
+    auto const semaphoreCreateInfo = vk::SemaphoreCreateInfo();
+
+    // Create fences that we can use to throttle if we get too far
+    // ahead of the image presents
+    auto const fence_ci = vk::FenceCreateInfo().setFlags(vk::FenceCreateFlagBits::eSignaled);
+    for (auto &submission_resource : submission_resources) {
+        vk::Result result = device.createFence(&fence_ci, nullptr, &submission_resource.fence);
+        VERIFY(result == vk::Result::eSuccess);
+
+        result = device.createSemaphore(&semaphoreCreateInfo, nullptr, &submission_resource.image_acquired_semaphore);
+        VERIFY(result == vk::Result::eSuccess);
     }
 }
 
@@ -2879,63 +2957,47 @@ vk::ShaderModule Demo::prepare_vs() {
     return vert_shader_module;
 }
 
-void Demo::destroy_swapchain_related_resources() {
-    device.destroyDescriptorPool(desc_pool);
-
-    device.destroyPipeline(pipeline);
-    device.destroyPipelineCache(pipelineCache);
-    device.destroyRenderPass(render_pass);
-    device.destroyPipelineLayout(pipeline_layout);
-    device.destroyDescriptorSetLayout(desc_layout);
-
-    for (const auto &tex : textures) {
-        device.destroyImageView(tex.view);
-        device.destroyImage(tex.image);
-        device.freeMemory(tex.mem);
-        device.destroySampler(tex.sampler);
-    }
-
-    device.destroyImageView(depth.view);
-    device.destroyImage(depth.image);
-    device.freeMemory(depth.mem);
-
-    for (const auto &resource : swapchain_image_resources) {
-        device.destroyFramebuffer(resource.framebuffer);
-        device.destroyImageView(resource.view);
-        device.freeCommandBuffers(cmd_pool, {resource.cmd});
-        device.destroyBuffer(resource.uniform_buffer);
-        device.unmapMemory(resource.uniform_memory);
-        device.freeMemory(resource.uniform_memory);
-    }
-
-    device.destroyCommandPool(cmd_pool);
-    if (separate_present_queue) {
-        device.destroyCommandPool(present_cmd_pool);
-    }
-}
-
 void Demo::resize() {
     // Don't react to resize until after first initialization.
-    if (!prepared) {
-        if (is_minimized) {
-            prepare();
-        }
+    if (!initialized) {
         return;
+    }
+
+    // Don't do anything if the surface has zero size, as vulkan disallows creating swapchains with zero area
+    // We use is_minimized to track this because zero size window usually occurs from minimizing
+    if (width == 0 || height == 0) {
+        is_minimized = true;
+        return;
+    } else {
+        is_minimized = false;
     }
 
     // In order to properly resize the window, we must re-create the
     // swapchain
-    // AND redo the command buffers, etc.
     //
-    // First, perform part of the cleanup() function:
-    prepared = false;
-    auto result = device.waitIdle();
-    VERIFY(result == vk::Result::eSuccess);
-    destroy_swapchain_related_resources();
+    // First, destroy the old swapchain and its associated resources, setting swapchain_ready to false to prevent draw from running
+    if (swapchain_ready) {
+        swapchain_ready = false;
+        auto result = device.waitIdle();
+        VERIFY(result == vk::Result::eSuccess);
 
-    // Second, re-perform the prepare() function, which will re-create the
-    // swapchain.
-    prepare();
+        device.destroyImageView(depth.view);
+        device.destroyImage(depth.image);
+        device.freeMemory(depth.mem);
+        depth = {};
+
+        for (auto &swapchain_resource : swapchain_resources) {
+            device.destroyFramebuffer(swapchain_resource.framebuffer);
+            device.destroyImageView(swapchain_resource.view);
+            device.destroySemaphore(swapchain_resource.draw_complete_semaphore);
+            if (separate_present_queue) {
+                device.destroySemaphore(swapchain_resource.image_ownership_semaphore);
+            }
+        }
+        swapchain_resources.clear();
+    }
+    // Second, recreate the swapchain, depth buffer, and framebuffers.
+    prepare_swapchain();
 }
 
 void Demo::set_image_layout(vk::Image image, vk::ImageAspectFlags aspectMask, vk::ImageLayout oldLayout, vk::ImageLayout newLayout,
@@ -2986,7 +3048,7 @@ void Demo::set_image_layout(vk::Image image, vk::ImageAspectFlags aspectMask, vk
                             .setSubresourceRange(vk::ImageSubresourceRange(aspectMask, 0, 1, 0, 1)));
 }
 
-void Demo::update_data_buffer() {
+void Demo::update_data_buffer(void *uniform_memory_ptr) {
     mat4x4 VP;
     mat4x4_mul(VP, projection_matrix, view_matrix);
 
@@ -2999,7 +3061,7 @@ void Demo::update_data_buffer() {
     mat4x4 MVP;
     mat4x4_mul(MVP, VP, model_matrix);
 
-    memcpy(swapchain_image_resources[current_buffer].uniform_memory_ptr, (const void *)&MVP[0][0], sizeof(MVP));
+    memcpy(uniform_memory_ptr, (const void *)&MVP[0][0], sizeof(MVP));
 }
 
 /* Convert ppm image data from header file into RGBA texture image */
@@ -3015,19 +3077,16 @@ bool Demo::loadTexture(const char *filename, uint8_t *rgba_data, vk::Subresource
     if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "P6\n", 3)) {
         return false;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     sscanf(cPtr, "%u %u", &width, &height);
     if (rgba_data == nullptr) {
         return true;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "255\n", 4)) {
         return false;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     for (uint32_t y = 0; y < height; y++) {
         uint8_t *rowPtr = rgba_data;
         for (uint32_t x = 0; x < width; x++) {
@@ -3080,7 +3139,7 @@ vk::SurfaceFormatKHR Demo::pick_surface_format(const std::vector<vk::SurfaceForm
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <>
 void Demo::run<WsiPlatform::win32>() {
-    if (!prepared) {
+    if (!initialized || !swapchain_ready) {
         return;
     }
 
@@ -3235,14 +3294,15 @@ void Demo::run<WsiPlatform::xlib>() {
             XNextEvent(xlib_display, &event);
             handle_xlib_event(&event);
         }
+        if (initialized && swapchain_ready) {
+            draw();
+            if (!is_minimized) {
+                curFrame++;
+            }
 
-        draw();
-        if (!is_minimized) {
-            curFrame++;
-        }
-
-        if (frameCount != UINT32_MAX && curFrame == frameCount) {
-            quit = true;
+            if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                quit = true;
+            }
         }
     }
 }
@@ -3308,13 +3368,14 @@ void Demo::run<WsiPlatform::xcb>() {
             free(event);
             event = xcb_poll_for_event(connection);
         }
-
-        draw();
-        if (!is_minimized) {
-            curFrame++;
-        }
-        if (frameCount != UINT32_MAX && curFrame == frameCount) {
-            quit = true;
+        if (initialized && swapchain_ready) {
+            draw();
+            if (!is_minimized) {
+                curFrame++;
+            }
+            if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                quit = true;
+            }
         }
     }
 }
@@ -3361,12 +3422,14 @@ void Demo::run<WsiPlatform::wayland>() {
             wl_display_dispatch(wayland_display);
         } else {
             wl_display_dispatch_pending(wayland_display);
-            draw();
-            if (!is_minimized) {
-                curFrame++;
-            }
-            if (frameCount != UINT32_MAX && curFrame == frameCount) {
-                quit = true;
+            if (initialized && swapchain_ready) {
+                draw();
+                if (!is_minimized) {
+                    curFrame++;
+                }
+                if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                    quit = true;
+                }
             }
         }
     }
@@ -3475,13 +3538,14 @@ void Demo::run<WsiPlatform::directfb>() {
             if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event))) handle_directfb_event(&event);
         } else {
             if (!event_buffer->GetEvent(event_buffer, DFB_EVENT(&event))) handle_directfb_event(&event);
-
-            draw();
-            if (!is_minimized) {
-                curFrame++;
-            }
-            if (frameCount != UINT32_MAX && curFrame == frameCount) {
-                quit = true;
+            if (initialized && swapchain_ready) {
+                draw();
+                if (!is_minimized) {
+                    curFrame++;
+                }
+                if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                    quit = true;
+                }
             }
         }
     }
@@ -3528,6 +3592,9 @@ void Demo::create_window<WsiPlatform::directfb>() {
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 template <>
 void Demo::run<WsiPlatform::metal>() {
+    if (!initialized || !swapchain_ready) {
+        return;
+    }
     draw();
     if (!is_minimized) {
         curFrame++;
@@ -3742,7 +3809,7 @@ void Demo::run<WsiPlatform::qnx>() {
             }
         }
 
-        if (pause) {
+        if (pause || !initialized || !swapchain_ready) {
         } else {
             update_data_buffer();
             draw();
@@ -3850,7 +3917,7 @@ void Demo::create_window<WsiPlatform::fuchsia_scenic>() {
         auto resize_callback = [this](uint32_t width, uint32_t height) {
             this->width = width;
             this->height = height;
-            if (prepared) {
+            if (initialized) {
                 resize();
             }
         };
@@ -3915,16 +3982,17 @@ void Demo::run<WsiPlatform::fuchsia_display>() {
             num_frames = static_cast<uint32_t>(fps);
             elapsed_frames = 0;
         }
+        if (initialized && swapchain_ready) {
+            draw();
 
-        draw();
+            if (!is_minimized) {
+                curFrame++;
+            }
+            elapsed_frames++;
 
-        if (!is_minimized) {
-            curFrame++;
-        }
-        elapsed_frames++;
-
-        if (frameCount != UINT32_MAX && curFrame == frameCount) {
-            quit = true;
+            if (frameCount != UINT32_MAX && curFrame == frameCount) {
+                quit = true;
+            }
         }
     }
 }
