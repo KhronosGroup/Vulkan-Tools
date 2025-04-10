@@ -500,6 +500,7 @@ struct Demo {
     vk::PresentModeKHR presentMode = vk::PresentModeKHR::eFifo;
     std::array<vk::Fence, FRAME_LAG> fences;
     uint32_t frame_index = 0;
+    bool first_swapchain_frame;
 
     vk::CommandPool cmd_pool;
     vk::CommandPool present_cmd_pool;
@@ -880,6 +881,7 @@ void Demo::draw() {
     auto present_result = present_queue.presentKHR(&presentInfo);
     frame_index += 1;
     frame_index %= FRAME_LAG;
+    first_swapchain_frame = false;
     if (present_result == vk::Result::eErrorOutOfDateKHR) {
         // swapchain is out of date (e.g. the window was resized) and
         // must be recreated:
@@ -2076,6 +2078,7 @@ void Demo::init_vk_swapchain() {
     color_space = surfaceFormat.colorSpace;
 
     quit = false;
+    first_swapchain_frame = true;
     curFrame = 0;
 
     // Create semaphores to synchronize acquiring presentable buffers before
@@ -2167,6 +2170,7 @@ void Demo::prepare() {
 
     current_buffer = 0;
     prepared = true;
+    first_swapchain_frame = true;
 }
 
 void Demo::prepare_buffers() {
