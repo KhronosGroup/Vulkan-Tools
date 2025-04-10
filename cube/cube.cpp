@@ -32,6 +32,8 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include <functional>
+#include <string>
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 #include "xlib_loader.h"
@@ -228,90 +230,77 @@ enum class WsiPlatform {
     invalid,  // Sentinel just to indicate invalid user input
 };
 
-WsiPlatform wsi_from_string(std::string const &str) {
-    if (str == "auto") return WsiPlatform::auto_;
+struct platform_info {
+    const char* name;
+    WsiPlatform platform;
+    const char *surface_extension_name;
+};
+
+constexpr platform_info platform_data_[] = {
+    {"auto", WsiPlatform::auto_, ""},
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-    if (str == "win32") return WsiPlatform::win32;
+    {"win32", WsiPlatform::win32, vk::KHRWin32SurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_METAL_EXT)
-    if (str == "metal") return WsiPlatform::metal;
+    {"metal", WsiPlatform::metal, vk::EXTMetalSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    if (str == "android") return WsiPlatform::android;
+    {"android", WsiPlatform::android, vk::KHRAndroidSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
-    if (str == "qnx") return WsiPlatform::qnx;
+    {"qnx", WsiPlatform::qnx, vk::QNXScreenSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
-    if (str == "xcb") return WsiPlatform::xcb;
+    {"xcb", WsiPlatform::xcb, vk::KHRXcbSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
-    if (str == "xlib") return WsiPlatform::xlib;
+    {"xlib", WsiPlatform::xlib, vk::KHRXlibSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    if (str == "wayland") return WsiPlatform::wayland;
+    {"wayland", WsiPlatform::wayland, vk::KHRWaylandSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-    if (str == "directfb") return WsiPlatform::directfb;
+    {"directfb", WsiPlatform::directfb, vk::EXTDirectfbSurfaceExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-    if (str == "display") return WsiPlatform::display;
+    {"display", WsiPlatform::display, vk::KHRDisplayExtensionName},
 #endif
 #if defined(VK_USE_PLATFORM_FUCHSIA)
-    if (str == "fuchsia_display") return WsiPlatform::fuchsia_display;
-    if (str == "fuchsia_scenic") return WsiPlatform::fuchsia_scenic;
+    {"fuchsia_display", WsiPlatform::fuchsia_display, vk::FUCHSIAImagepipeSurfaceExtensionName},
+    {"fuchsia_scenic", WsiPlatform::fuchsia_scenic, vk::FUCHSIAImagepipeSurfaceExtensionName},
 #endif
-    return WsiPlatform::invalid;
+};
+
+template<typename T, size_t N>
+constexpr auto construct_array(const T (&data)[N]) {
+    std::array<T, N> res{};
+
+    for (size_t i = 0; i < N; ++i) {
+        res[i] = data[i];
+    }
+
+    return res;
+}
+
+constexpr auto platform_data = construct_array(platform_data_);
+
+WsiPlatform wsi_from_string(std::string const &str) {
+    auto ite = std::find_if(platform_data.begin(), platform_data.end(), [&str](auto &data) { return data.name == str; });
+
+    if (ite != platform_data.end()) {
+        return ite->platform;
+    } else {
+        return WsiPlatform::invalid;
+    }
 };
 
 const char *wsi_to_string(WsiPlatform wsi_platform) {
-    switch (wsi_platform) {
-        case (WsiPlatform::auto_):
-            return "auto";
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-        case (WsiPlatform::win32):
-            return "win32";
-#endif
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-        case (WsiPlatform::metal):
-            return "metal";
-#endif
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-        case (WsiPlatform::android):
-            return "android";
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        case (WsiPlatform::qnx):
-            return "qnx";
-#endif
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        case (WsiPlatform::xcb):
-            return "xcb";
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        case (WsiPlatform::xlib):
-            return "xlib";
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        case (WsiPlatform::wayland):
-            return "wayland";
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        case (WsiPlatform::directfb):
-            return "directfb";
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        case (WsiPlatform::display):
-            return "display";
-#endif
-#if defined(VK_USE_PLATFORM_FUCHSIA)
-        case (WsiPlatform::fuchsia_display):
-            return "fuchsia_display";
-        case (WsiPlatform::fuchsia_scenic):
-            return "fuchsia_scenic";
-#endif
-        default:
-            return "unknown";
+    auto ite = std::find_if(platform_data.begin(), platform_data.end(), [&wsi_platform](auto &data) { return data.platform == wsi_platform; });
+
+    if (ite != platform_data.end()) {
+        return ite->name;
+    } else {
+        return "unknown";
     }
 };
 
@@ -1118,47 +1107,13 @@ void Demo::init(int argc, char **argv) {
         }
 
         std::string wsi_platforms;
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        wsi_platforms.append("xcb");
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("xlib");
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("wayland");
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("directfb");
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("display");
-#endif
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("metal");
-#endif
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("win32");
-#endif
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("android");
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("qnx");
-#endif
-#if defined(VK_USE_PLATFORM_FUCHSIA)
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("fuchsia_display");
-        if (!wsi_platforms.empty()) wsi_platforms.append("|");
-        wsi_platforms.append("fuchsia_scenic");
-#endif
+
+        wsi_platforms.append(platform_data[0].name);
+        for (size_t index = 1; index < platform_data.size(); ++index) {
+            wsi_platforms.append("|");
+            wsi_platforms.append(platform_data[index].name);
+        }
+
         std::stringstream usage;
         usage << "Usage:\n  " << APP_SHORT_NAME << "\t[--use_staging] [--validate]\n"
               << "\t[--break] [--c <framecount>] [--suppress_popups]\n"
@@ -1568,69 +1523,15 @@ void Demo::init_vk() {
         } else if (!strcmp(VK_KHR_SURFACE_EXTENSION_NAME, extension.extensionName)) {
             surfaceExtFound = 1;
             enabled_instance_extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+        } else {
+            auto ite = std::find_if(platform_data.begin(), platform_data.end(), [platform = wsi_platform, &extension](auto &info) {
+                return !strcmp(info.surface_extension_name, extension.extensionName) && (platform == WsiPlatform::auto_ || platform == info.platform);
+            });
+            if (ite != platform_data.end()) {
+                platformSurfaceExtFound = 1;
+                enabled_instance_extensions.push_back(ite->surface_extension_name);
+            }
         }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-        else if (!strcmp(VK_KHR_WIN32_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::win32)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        else if (!strcmp(VK_KHR_XLIB_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::xlib)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        else if (!strcmp(VK_KHR_XCB_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::xcb)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        else if (!strcmp(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::wayland)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        else if (!strcmp(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::directfb)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        else if (!strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::display)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-        else if (!strcmp(VK_EXT_METAL_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::metal)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        else if (!strcmp(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME, extension.extensionName) &&
-                 (wsi_platform == WsiPlatform::auto_ || wsi_platform == WsiPlatform::qnx)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_QNX_SCREEN_SURFACE_EXTENSION_NAME);
-        }
-#endif
-#if defined(VK_USE_PLATFORM_FUCHSIA)
-        else if (!strcmp(VK_FUCHSIA_IMAGEPIPE_SURFACE_EXTENSION_NAME, extension.extensionName)) {
-            platformSurfaceExtFound = 1;
-            enabled_instance_extensions.push_back(VK_FUCHSIA_IMAGEPIPE_SURFACE_EXTENSION_NAME);
-        }
-#endif
     }
 
     if (!surfaceExtFound) {
@@ -1642,95 +1543,27 @@ void Demo::init_vk() {
     }
 
     if (!platformSurfaceExtFound) {
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-        if (wsi_platform == WsiPlatform::win32) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
+        auto ite = std::find_if(
+            platform_data.begin(), platform_data.end(),
+            [platform = wsi_platform](auto &info) { return info.platform == platform; }
+        );
+        if (ite != platform_data.end()) {
+            char buf[512];
+            snprintf(buf, sizeof(buf),
+                      "vkEnumerateInstanceExtensionProperties failed to find the %s"
+                      " extension.\n\n"
+                      "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                      "Please look at the Getting Started guide for additional information.\n",
+                ite->surface_extension_name);
+            ERR_EXIT(buf,
                      "vkCreateInstance Failure");
+        } else {
+            ERR_EXIT(
+                "vkEnumerateInstanceExtensionProperties failed to find any supported WSI surface extension.\n\n"
+                "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
+                "Please look at the Getting Started guide for additional information.\n",
+                "vkCreateInstance Failure");
         }
-#endif
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        if (wsi_platform == WsiPlatform::xcb) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XCB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        if (wsi_platform == WsiPlatform::wayland) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        if (wsi_platform == WsiPlatform::xlib) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        if (wsi_platform == WsiPlatform::directfb) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        if (wsi_platform == WsiPlatform::display) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_DISPLAY_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-        if (wsi_platform == WsiPlatform::metal) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
-                     " extension.\n\nDo you have a compatible "
-                     "Vulkan installable client driver (ICD) installed?\nPlease "
-                     "look at the Getting Started guide for additional "
-                     "information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        if (wsi_platform == WsiPlatform::qnx) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
-                     " extension.\n\nDo you have a compatible "
-                     "Vulkan installable client driver (ICD) installed?\nPlease "
-                     "look at the Getting Started guide for additional "
-                     "information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-#if defined(VK_USE_PLATFORM_FUCHSIA)
-        if (wsi_platform == WsiPlatform::fuchsia_display || wsi_platform == WsiPlatform::fuchsia_scenic) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_FUCHSIA_IMAGEPIPE_SURFACE_EXTENSION_NAME
-                     " extension.\n\nDo you have a compatible "
-                     "Vulkan installable client driver (ICD) installed?\nPlease "
-                     "look at the Getting Started guide for additional "
-                     "information.\n",
-                     "vkCreateInstance Failure");
-        }
-#endif
-        ERR_EXIT(
-            "vkEnumerateInstanceExtensionProperties failed to find any supported WSI surface extension.\n\n"
-            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-            "Please look at the Getting Started guide for additional information.\n",
-            "vkCreateInstance Failure");
     }
 
     bool auto_wsi_platform = wsi_platform == WsiPlatform::auto_;
@@ -4094,57 +3927,75 @@ void Demo::execute<WsiPlatform::display>() {
     run<WsiPlatform::display>();
 }
 
+template<WsiPlatform platform>
+auto get_dispatcher_element(Demo& demo) {
+    return std::pair<WsiPlatform, std::function<void()>>{ platform, [&demo](){demo.execute<platform>();} };
+}
+
+constexpr auto get_count_of_platform_run_from_main() {
+    size_t count = 0;
+    for (auto& data : platform_data) {
+        if (data.platform == WsiPlatform::xcb ||
+            data.platform == WsiPlatform::xlib ||
+            data.platform == WsiPlatform::wayland ||
+            data.platform == WsiPlatform::directfb ||
+            data.platform == WsiPlatform::display ||
+            data.platform == WsiPlatform::qnx ||
+            data.platform == WsiPlatform::fuchsia_display ||
+            data.platform == WsiPlatform::fuchsia_scenic) {
+            count++;
+        }
+    }
+    return count;
+}
+
+constexpr auto get_platform_run_from_main() {
+    std::array<WsiPlatform, get_count_of_platform_run_from_main()> platform_run_from_main{};
+    int i = 0;
+    for (auto& data : platform_data) {
+        if (data.platform == WsiPlatform::xcb ||
+            data.platform == WsiPlatform::xlib ||
+            data.platform == WsiPlatform::wayland ||
+            data.platform == WsiPlatform::directfb ||
+            data.platform == WsiPlatform::display ||
+            data.platform == WsiPlatform::qnx ||
+            data.platform == WsiPlatform::fuchsia_display ||
+            data.platform == WsiPlatform::fuchsia_scenic) {
+            platform_run_from_main[i++] = data.platform;
+        }
+    }
+    return platform_run_from_main;
+}
+
+constexpr auto platform_run_from_main = get_platform_run_from_main();
+
+template<size_t i=0>
+auto construct_dispatcher(std::map<WsiPlatform, std::function<void()>>& map, Demo& demo) {
+    map.emplace(
+        get_dispatcher_element<platform_run_from_main[i]>(demo)
+    );
+    construct_dispatcher<i+1>(map, demo);
+}
+template<>
+auto construct_dispatcher<platform_run_from_main.size()>(std::map<WsiPlatform, std::function<void()>>& map, Demo& demo) {
+}
+
 int main(int argc, char **argv) {
     Demo demo;
 
     demo.init(argc, argv);
 
-    switch (demo.wsi_platform) {
-        default:
-        case (WsiPlatform::auto_):
-            fprintf(stderr,
-                    "WSI platform should have already been set, indicating a bug. Please set a WSI platform manually with "
-                    "--wsi\n");
-            exit(1);
-            break;
-#if defined(VK_USE_PLATFORM_XCB_KHR)
-        case (WsiPlatform::xcb):
-            demo.execute<WsiPlatform::xcb>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-        case (WsiPlatform::xlib):
-            demo.execute<WsiPlatform::xlib>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        case (WsiPlatform::wayland):
-            demo.execute<WsiPlatform::wayland>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        case (WsiPlatform::directfb):
-            demo.execute<WsiPlatform::directfb>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        case (WsiPlatform::display):
-            demo.execute<WsiPlatform::display>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        case (WsiPlatform::qnx):
-            demo.execute<WsiPlatform::qnx>();
-            break;
-#endif
-#if defined(VK_USE_PLATFORM_FUCHSIA)
-        case (WsiPlatform::fuchsia_display):
-            demo.execute<WsiPlatform::fuchsia_display>();
-            break;
-        case (WsiPlatform::fuchsia_scenic):
-            demo.execute<WsiPlatform::fuchsia_scenic>();
-            break;
-#endif
+    auto platform_map = std::map<WsiPlatform, std::function<void()>>{};
+    construct_dispatcher(platform_map, demo);
+
+    if (platform_map.find(demo.wsi_platform) != platform_map.end()) {
+        platform_map[demo.wsi_platform]();
+    }
+    else {
+        fprintf(stderr,
+            "WSI platform should have already been set, indicating a bug. Please set a WSI platform manually with "
+            "--wsi\n");
+        exit(1);
     }
 
     demo.cleanup();
