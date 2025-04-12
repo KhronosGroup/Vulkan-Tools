@@ -60,7 +60,9 @@ jobs:
             - run: |
                 sudo apt-get -qq update
                 sudo apt install --yes libwayland-dev xorg-dev wayland-protocols
-            - uses: lukka/get-cmake@latest
+            - name: Test CMake min
+              if: ${{ matrix.os == 'ubuntu-22.04' }}
+              uses: lukka/get-cmake@latest
               with:
                 cmakeVersion: 3.22.1
             - name: Setup ccache
@@ -118,7 +120,6 @@ jobs:
             - uses: actions/setup-python@v5
               with:
                 python-version: '3.10'
-            - uses: lukka/get-cmake@latest
             - uses: ilammy/msvc-dev-cmd@v1
               with:
                 arch: ${{ matrix.arch }}
@@ -146,8 +147,6 @@ jobs:
             - uses: actions/setup-python@v5
               with:
                 python-version: '3.8'
-            - uses: lukka/get-cmake@latest
-
             - name: Setup ccache
               uses: hendrikmuhs/ccache-action@v1.2
               with:
@@ -177,7 +176,6 @@ jobs:
         - uses: actions/setup-python@v5
           with:
             python-version: '3.8'
-        - uses: lukka/get-cmake@latest
         - name: Configure
           run: |
             cmake -S . -B build/ --toolchain $ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
@@ -214,7 +212,6 @@ jobs:
           - uses: actions/setup-python@v5
             with:
               python-version: '3.10'
-          - uses: lukka/get-cmake@latest
           - name: GCC Version
             run: gcc --version # If this fails MINGW is not setup correctly
           - name: Configure
