@@ -2718,7 +2718,7 @@ static void demo_run(struct demo *demo) {
     if (!demo->initialized || !demo->swapchain_ready) return;
 
     demo_draw(demo);
-    if (demo->is_minimized) {
+    if (!demo->is_minimized) {
         demo->curFrame++;
     }
     if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
@@ -2908,7 +2908,7 @@ static void demo_run_xlib(struct demo *demo) {
         }
         if (demo->initialized && demo->swapchain_ready) {
             demo_draw(demo);
-            if (demo->is_minimized) {
+            if (!demo->is_minimized) {
                 demo->curFrame++;
             }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
@@ -2977,7 +2977,7 @@ static void demo_run_xcb(struct demo *demo) {
         }
         if (demo->initialized && demo->swapchain_ready) {
             demo_draw(demo);
-            if (demo->is_minimized) {
+            if (!demo->is_minimized) {
                 demo->curFrame++;
             }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
@@ -3039,7 +3039,7 @@ static void demo_run(struct demo *demo) {
             wl_display_dispatch_pending(demo->wayland_display);
             if (demo->initialized && demo->swapchain_ready) {
                 demo_draw(demo);
-                if (demo->is_minimized) {
+                if (!demo->is_minimized) {
                     demo->curFrame++;
                 }
                 if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
@@ -3188,7 +3188,7 @@ static void demo_run_directfb(struct demo *demo) {
             if (!demo->event_buffer->GetEvent(demo->event_buffer, DFB_EVENT(&event))) demo_handle_directfb_event(demo, &event);
             if (demo->initialized && demo->swapchain_ready) {
                 demo_draw(demo);
-                if (demo->is_minimized) {
+                if (!demo->is_minimized) {
                     demo->curFrame++;
                 }
                 if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) demo->quit = true;
@@ -3202,7 +3202,7 @@ static void demo_run(struct demo *demo) {
     if (!demo->initialized || !demo->swapchain_ready) return;
 
     demo_draw(demo);
-    if (demo->is_minimized) {
+    if (!demo->is_minimized) {
         demo->curFrame++;
     }
 }
@@ -3212,7 +3212,7 @@ static void demo_run(struct demo *demo) {
     if (!demo->initialized || !demo->swapchain_ready) return;
 
     demo_draw(demo);
-    if (demo->is_minimized) {
+    if (!demo->is_minimized) {
         demo->curFrame++;
     }
     if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
@@ -3459,7 +3459,7 @@ static void demo_run(struct demo *demo) {
         if (demo->pause || !demo->initialized || !demo->swapchain_ready) {
         } else {
             demo_draw(demo);
-            if (demo->is_minimized) {
+            if (!demo->is_minimized) {
                 demo->curFrame++;
             }
             if (demo->frameCount != INT32_MAX && demo->curFrame == demo->frameCount) {
