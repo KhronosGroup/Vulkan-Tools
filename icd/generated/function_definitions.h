@@ -8248,6 +8248,14 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdBindTileMemoryQCOM(
+    VkCommandBuffer                             commandBuffer,
+    const VkTileMemoryBindInfoQCOM*             pTileMemoryBindInfo)
+{
+//Not a CREATE or DESTROY function
+}
+
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateExternalComputeQueueNV(
