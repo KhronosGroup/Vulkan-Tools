@@ -8614,6 +8614,51 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL
     typedef VkPhysicalDeviceDescriptorPoolOverallocationFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceTileMemoryHeapFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_FEATURES_QCOM
+template <> struct LvlTypeMap<VkPhysicalDeviceTileMemoryHeapFeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_FEATURES_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceTileMemoryHeapFeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceTileMemoryHeapPropertiesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM
+template <> struct LvlTypeMap<VkPhysicalDeviceTileMemoryHeapPropertiesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM> {
+    typedef VkPhysicalDeviceTileMemoryHeapPropertiesQCOM Type;
+};
+
+// Map type VkTileMemoryRequirementsQCOM to id VK_STRUCTURE_TYPE_TILE_MEMORY_REQUIREMENTS_QCOM
+template <> struct LvlTypeMap<VkTileMemoryRequirementsQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_TILE_MEMORY_REQUIREMENTS_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_TILE_MEMORY_REQUIREMENTS_QCOM> {
+    typedef VkTileMemoryRequirementsQCOM Type;
+};
+
+// Map type VkTileMemoryBindInfoQCOM to id VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM
+template <> struct LvlTypeMap<VkTileMemoryBindInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM> {
+    typedef VkTileMemoryBindInfoQCOM Type;
+};
+
+// Map type VkTileMemorySizeInfoQCOM to id VK_STRUCTURE_TYPE_TILE_MEMORY_SIZE_INFO_QCOM
+template <> struct LvlTypeMap<VkTileMemorySizeInfoQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_TILE_MEMORY_SIZE_INFO_QCOM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_TILE_MEMORY_SIZE_INFO_QCOM> {
+    typedef VkTileMemorySizeInfoQCOM Type;
+};
+
 // Map type VkDisplaySurfaceStereoCreateInfoNV to id VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV
 template <> struct LvlTypeMap<VkDisplaySurfaceStereoCreateInfoNV> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV;

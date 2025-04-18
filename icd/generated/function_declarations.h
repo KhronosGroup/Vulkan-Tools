@@ -411,6 +411,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_expect_assume", 1},
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
+    {"VK_QCOM_tile_memory_heap", 1},
     {"VK_KHR_video_encode_quantization_map", 2},
     {"VK_NV_raw_access_chains", 1},
     {"VK_NV_external_compute_queue", 1},
@@ -4566,6 +4567,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetScreenBufferPropertiesQNX(
 
 
 
+static VKAPI_ATTR void VKAPI_CALL CmdBindTileMemoryQCOM(
+    VkCommandBuffer                             commandBuffer,
+    const VkTileMemoryBindInfoQCOM*             pTileMemoryBindInfo);
+
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateExternalComputeQueueNV(
@@ -5664,6 +5670,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},
 #endif
+    {"vkCmdBindTileMemoryQCOM", (void*)CmdBindTileMemoryQCOM},
     {"vkCreateExternalComputeQueueNV", (void*)CreateExternalComputeQueueNV},
     {"vkDestroyExternalComputeQueueNV", (void*)DestroyExternalComputeQueueNV},
     {"vkGetExternalComputeQueueDataNV", (void*)GetExternalComputeQueueDataNV},
