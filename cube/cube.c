@@ -1704,19 +1704,16 @@ bool loadTexture(const char *filename, uint8_t *rgba_data, VkSubresourceLayout *
     if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "P6\n", 3)) {
         return false;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     sscanf(cPtr, "%u %u", width, height);
     if (rgba_data == NULL) {
         return true;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     if ((unsigned char *)cPtr >= (lunarg_ppm + lunarg_ppm_len) || strncmp(cPtr, "255\n", 4)) {
         return false;
     }
-    while (strncmp(cPtr++, "\n", 1))
-        ;
+    while (strncmp(cPtr++, "\n", 1));
     for (int y = 0; y < *height; y++) {
         uint8_t *rowPtr = rgba_data;
         for (int x = 0; x < *width; x++) {

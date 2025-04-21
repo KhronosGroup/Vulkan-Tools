@@ -1896,7 +1896,9 @@ void Demo::select_physical_device() {
             exit(1);
         }
 #else
-        printf("WSI selection was set to DISPLAY but vkcubepp was not compiled with support for the DISPLAY platform, exiting \n");
+        printf(
+            "WSI selection was set to DISPLAY but vkcubepp was not compiled with support for the DISPLAY platform, exiting "
+            "\n");
         fflush(stdout);
         exit(1);
 #endif
@@ -2975,7 +2977,8 @@ void Demo::resize() {
     // In order to properly resize the window, we must re-create the
     // swapchain
     //
-    // First, destroy the old swapchain and its associated resources, setting swapchain_ready to false to prevent draw from running
+    // First, destroy the old swapchain and its associated resources, setting swapchain_ready to false to prevent draw from
+    // running
     if (swapchain_ready) {
         swapchain_ready = false;
         auto result = device.waitIdle();
