@@ -4060,98 +4060,95 @@ static void demo_init_vk(struct demo *demo) {
 
     if (!surfaceExtFound) {
         ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_SURFACE_EXTENSION_NAME
-                 " extension.\n\n"
-                 "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                 "Please look at the Getting Started guide for additional information.\n",
+                 " instance extension.\n\n"
+                 "This indicates that no compatible Vulkan installable client driver (ICD) is present or that the system is not "
+                 "configured to present to the screen. \n",
                  "vkCreateInstance Failure");
     }
     if (!platformSurfaceExtFound) {
+        switch (demo->wsi_platform) {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_WIN32) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_WIN32):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform win32 is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_METAL_EXT)
-        if (demo->wsi_platform == WSI_PLATFORM_METAL) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_METAL):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_METAL_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform metal is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_XCB) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XCB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_XCB):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XCB_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform xcb is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_WAYLAND):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform wayland is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_DISPLAY_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_DISPLAY) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_DISPLAY_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_DISPLAY):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_DISPLAY_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform display is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_ANDROID) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_ANDROID):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform android is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
-        if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_XLIB):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_KHR_XLIB_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform xlib is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
-        if (demo->wsi_platform == WSI_PLATFORM_DIRECTFB) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_DIRECTFB):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_EXT_DIRECTFB_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform directfb is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
-        if (demo->wsi_platform == WSI_PLATFORM_WIN32) {
-            ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
-                     " extension.\n\n"
-                     "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-                     "Please look at the Getting Started guide for additional information.\n",
-                     "vkCreateInstance Failure");
-        }
+            case (WSI_PLATFORM_QNX):
+                ERR_EXIT("vkEnumerateInstanceExtensionProperties failed to find the " VK_QNX_SCREEN_SURFACE_EXTENSION_NAME
+                         " instance extension.\n\n"
+                         "The selected WSI platform qnx is not available, please choose a different WSI platform\n",
+                         "vkCreateInstance Failure");
+                break;
 #endif
-        ERR_EXIT(
-            "vkEnumerateInstanceExtensionProperties failed to find any supported WSI surface extension.\n\n"
-            "Do you have a compatible Vulkan installable client driver (ICD) installed?\n"
-            "Please look at the Getting Started guide for additional information.\n",
-            "vkCreateInstance Failure");
+            default:
+            case (WSI_PLATFORM_AUTO):
+                // Getting here indicates we are using the WSI extension that is default on this platform
+                ERR_EXIT(
+                    "vkEnumerateInstanceExtensionProperties failed to find any supported WSI surface instance extensions.\n\n"
+                    "This indicates that no compatible Vulkan installable client driver (ICD) is present or that the system is not "
+                    "configured to present to the screen. \n",
+                    "vkCreateInstance Failure");
+                break;
+        }
     }
 
     bool auto_wsi_platform = demo->wsi_platform == WSI_PLATFORM_AUTO;
