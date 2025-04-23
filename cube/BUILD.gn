@@ -133,7 +133,6 @@ executable("vkcube") {
 
   configs += [
     ":cube_config",
-    "${volk_dir}:volk_config",
   ]
 
   deps = [

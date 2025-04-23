@@ -26,24 +26,6 @@
             ]
         },
         {
-            "name": "volk",
-            "api": "vulkan",
-            "url": "https://github.com/zeux/volk",
-            "sub_dir": "volk",
-            "build_dir": "volk/build",
-            "install_dir": "volk/build/install",
-            "cmake_options": [
-                "-DVOLK_INSTALL=ON"
-            ],
-            "commit": "43c29e655cb8117fd9cfb65ad9cefe2d40965102",
-            "deps": [
-                {
-                    "var_name": "VULKAN_HEADERS_INSTALL_DIR",
-                    "repo_name": "Vulkan-Headers"
-                }
-            ]
-        },
-        {
             "name": "googletest",
             "url": "https://github.com/google/googletest.git",
             "sub_dir": "googletest",
@@ -90,7 +72,6 @@
     ],
     "install_names": {
         "Vulkan-Headers": "VULKAN_HEADERS_INSTALL_DIR",
-        "volk": "VOLK_INSTALL_DIR",
         "MoltenVK": "MOLTENVK_REPO_ROOT",
         "googletest": "GOOGLETEST_INSTALL_DIR",
         "Vulkan-Loader": "VULKAN_LOADER_INSTALL_DIR"

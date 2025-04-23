@@ -43,7 +43,6 @@ executable("vulkaninfo") {
 
   configs += [
     ":vulkaninfo_warnings",
-    "${volk_dir}:volk_config",
   ]
   if (is_fuchsia) {
     configs -= [ "//build/config:no_exceptions" ]

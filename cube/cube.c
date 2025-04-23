@@ -55,11 +55,9 @@
 #define APP_NAME_STR_LEN 80
 #endif  // _WIN32
 
-// Volk requires VK_NO_PROTOTYPES before including vulkan.h
-#define VK_NO_PROTOTYPES
+#include "cube_functions.h"
+
 #include <vulkan/vulkan.h>
-#define VOLK_IMPLEMENTATION
-#include "volk.h"
 
 #include "linmath.h"
 #include "object_type_string_helper.h"
@@ -2659,6 +2657,7 @@ static void demo_cleanup(struct demo *demo) {
 #endif
 
     vkDestroyInstance(demo->inst, NULL);
+    unload_vulkan_library();
 }
 
 static void demo_resize(struct demo *demo) {
@@ -3922,7 +3921,7 @@ static void demo_init_vk(struct demo *demo) {
     demo->is_minimized = false;
     demo->cmd_pool = VK_NULL_HANDLE;
 
-    err = volkInitialize();
+    err = load_vulkan_library();
     if (err != VK_SUCCESS) {
         ERR_EXIT(
             "Unable to find the Vulkan runtime on the system.\n\n"
@@ -4220,7 +4219,7 @@ static void demo_init_vk(struct demo *demo) {
             "vkCreateInstance Failure");
     }
 
-    volkLoadInstance(demo->inst);
+    load_vulkan_instance_functions(demo->inst);
 }
 
 static void demo_select_physical_device(struct demo *demo) {
@@ -4467,7 +4466,7 @@ static void demo_create_device(struct demo *demo) {
     err = vkCreateDevice(demo->gpu, &device, NULL, &demo->device);
     assert(!err);
 
-    volkLoadDevice(demo->device);
+    load_vulkan_device_functions(demo->device);
 }
 
 static void demo_create_surface(struct demo *demo) {
