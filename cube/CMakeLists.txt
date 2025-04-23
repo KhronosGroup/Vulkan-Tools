@@ -285,7 +285,7 @@ endif()
 
 target_compile_definitions(vkcube PRIVATE ${ENABLED_CUBE_PLATFORMS})
 target_include_directories(vkcube PRIVATE .)
-target_link_libraries(vkcube  Vulkan::Headers volk::volk_headers)
+target_link_libraries(vkcube  Vulkan::Headers)
 
 if (ANDROID)
     install(TARGETS vkcube DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -358,7 +358,7 @@ endif()
 
 target_include_directories(vkcubepp PRIVATE .)
 target_compile_definitions(vkcubepp PRIVATE ${ENABLED_CUBE_PLATFORMS})
-target_link_libraries(vkcubepp  Vulkan::Headers volk::volk_headers)
+target_link_libraries(vkcubepp Vulkan::Headers)
 
 if (XCB_LINK_LIBRARIES )
     target_compile_definitions(vkcubepp PUBLIC "XCB_LIBRARY=\"${XCB_LINK_LIBRARIES}\"")
