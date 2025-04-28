@@ -249,7 +249,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
         cube.vert.inc
         cube.frag.inc
     )
-    target_link_libraries(vkcube  Threads::Threads)
+    target_link_libraries(vkcube dl Threads::Threads)
     if(BUILD_WSI_XCB_SUPPORT)
         target_sources(vkcube PRIVATE xcb_loader.h)
         target_include_directories(vkcube PRIVATE ${xcb_INCLUDE_DIRS})
@@ -329,7 +329,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
                    ${PROJECT_SOURCE_DIR}/cube/cube.frag
                    cube.vert.inc
                    cube.frag.inc)
-    target_link_libraries(vkcubepp  Threads::Threads)
+    target_link_libraries(vkcubepp dl Threads::Threads)
 
     if(BUILD_WSI_XCB_SUPPORT)
         target_sources(vkcubepp PRIVATE xcb_loader.h)
