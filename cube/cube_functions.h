@@ -274,6 +274,7 @@ static void load_vulkan_instance_functions(VkInstance instance) {
     LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceSurfacePresentModesKHR);
     LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceSurfaceSupportKHR);
     LOAD_INSTANCE_FUNCTION(instance, vkGetDeviceProcAddr);
+    LOAD_INSTANCE_FUNCTION(instance, vkCreateDisplayPlaneSurfaceKHR);
 }
 static void load_vulkan_device_functions(VkDevice device) {
     LOAD_DEVICE_FUNCTION(device, vkAcquireNextImageKHR);
@@ -298,7 +299,6 @@ static void load_vulkan_device_functions(VkDevice device) {
     LOAD_DEVICE_FUNCTION(device, vkCreateCommandPool);
     LOAD_DEVICE_FUNCTION(device, vkCreateDescriptorPool);
     LOAD_DEVICE_FUNCTION(device, vkCreateDescriptorSetLayout);
-    LOAD_DEVICE_FUNCTION(device, vkCreateDisplayPlaneSurfaceKHR);
     LOAD_DEVICE_FUNCTION(device, vkCreateFence);
     LOAD_DEVICE_FUNCTION(device, vkCreateFramebuffer);
     LOAD_DEVICE_FUNCTION(device, vkCreateGraphicsPipelines);
