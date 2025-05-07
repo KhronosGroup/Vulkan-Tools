@@ -3745,6 +3745,30 @@ static const char *demo_init_wayland_connection(struct demo *demo) {
 // If the wsi_platform is AUTO, this function also sets wsi_platform to the first available WSI platform
 // Otherwise, it errors out if the specified wsi_platform isn't available
 static void demo_check_and_set_wsi_platform(struct demo *demo) {
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND || demo->wsi_platform == WSI_PLATFORM_AUTO) {
+        bool wayland_extension_available = false;
+        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
+            if (strcmp(demo->extension_names[i], VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME) == 0) {
+                wayland_extension_available = true;
+                break;
+            }
+        }
+        if (wayland_extension_available) {
+            const char *error_msg = demo_init_wayland_connection(demo);
+            if (error_msg != NULL) {
+                if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
+                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
+                    fflush(stdout);
+                    exit(1);
+                }
+            } else {
+                demo->wsi_platform = WSI_PLATFORM_WAYLAND;
+                return;
+            }
+        }
+    }
+#endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     if (demo->wsi_platform == WSI_PLATFORM_XCB || demo->wsi_platform == WSI_PLATFORM_AUTO) {
         bool xcb_extension_available = false;
@@ -3788,30 +3812,6 @@ static void demo_check_and_set_wsi_platform(struct demo *demo) {
                 }
             } else {
                 demo->wsi_platform = WSI_PLATFORM_XLIB;
-                return;
-            }
-        }
-    }
-#endif
-#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND || demo->wsi_platform == WSI_PLATFORM_AUTO) {
-        bool wayland_extension_available = false;
-        for (uint32_t i = 0; i < demo->enabled_extension_count; i++) {
-            if (strcmp(demo->extension_names[i], VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME) == 0) {
-                wayland_extension_available = true;
-                break;
-            }
-        }
-        if (wayland_extension_available) {
-            const char *error_msg = demo_init_wayland_connection(demo);
-            if (error_msg != NULL) {
-                if (demo->wsi_platform == WSI_PLATFORM_WAYLAND) {
-                    fprintf(stderr, "%s\nExiting ...\n", error_msg);
-                    fflush(stdout);
-                    exit(1);
-                }
-            } else {
-                demo->wsi_platform = WSI_PLATFORM_WAYLAND;
                 return;
             }
         }
