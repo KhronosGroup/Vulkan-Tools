@@ -437,6 +437,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_robustness2", 1},
     {"VK_NV_present_metering", 1},
     {"VK_EXT_fragment_density_map_offset", 1},
+    {"VK_EXT_zero_initialize_device_memory", 1},
 };
 
 
@@ -4698,6 +4699,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
 static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingEndInfoEXT*                pRenderingEndInfo);
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(

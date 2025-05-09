@@ -8452,6 +8452,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
 }
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
