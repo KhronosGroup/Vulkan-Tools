@@ -434,6 +434,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_external_memory_metal", 1},
     {"VK_KHR_depth_clamp_zero_one", 1},
     {"VK_EXT_vertex_attribute_robustness", 1},
+    {"VK_ARM_format_pack", 1},
     {"VK_KHR_robustness2", 1},
     {"VK_NV_present_metering", 1},
     {"VK_EXT_fragment_density_map_offset", 1},
@@ -3803,7 +3804,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(
 
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchTileQCOM(
-    VkCommandBuffer                             commandBuffer);
+    VkCommandBuffer                             commandBuffer,
+    const VkDispatchTileInfoQCOM*               pDispatchTileInfo);
 
 static VKAPI_ATTR void VKAPI_CALL CmdBeginPerTileExecutionQCOM(
     VkCommandBuffer                             commandBuffer,
@@ -4690,6 +4692,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     const void*                                 pHandle,
     VkMemoryMetalHandlePropertiesEXT*           pMemoryMetalHandleProperties);
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

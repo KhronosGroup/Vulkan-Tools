@@ -7043,7 +7043,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdCudaLaunchKernelNV(
 
 
 static VKAPI_ATTR void VKAPI_CALL CmdDispatchTileQCOM(
-    VkCommandBuffer                             commandBuffer)
+    VkCommandBuffer                             commandBuffer,
+    const VkDispatchTileInfoQCOM*               pDispatchTileInfo)
 {
 //Not a CREATE or DESTROY function
 }
@@ -8438,6 +8439,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
