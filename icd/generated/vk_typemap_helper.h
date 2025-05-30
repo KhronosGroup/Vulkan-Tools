@@ -9160,6 +9160,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUT
     typedef VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT Type;
 };
 
+// Map type VkPhysicalDeviceFormatPackFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FORMAT_PACK_FEATURES_ARM
+template <> struct LvlTypeMap<VkPhysicalDeviceFormatPackFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FORMAT_PACK_FEATURES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FORMAT_PACK_FEATURES_ARM> {
+    typedef VkPhysicalDeviceFormatPackFeaturesARM Type;
+};
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkSetPresentConfigNV to id VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV
 template <> struct LvlTypeMap<VkSetPresentConfigNV> {
