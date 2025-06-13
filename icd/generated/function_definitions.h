@@ -8518,6 +8518,20 @@ static VKAPI_ATTR void VKAPI_CALL UpdateIndirectExecutionSetShaderEXT(
 
 
 
+#ifdef VK_USE_PLATFORM_OHOS
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateSurfaceOHOS(
+    VkInstance                                  instance,
+    const VkSurfaceCreateInfoOHOS*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSurfaceKHR*                               pSurface)
+{
+    unique_lock_t lock(global_lock);
+    *pSurface = (VkSurfaceKHR)global_unique_handle++;
+    return VK_SUCCESS;
+}
+#endif /* VK_USE_PLATFORM_OHOS */
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
@@ -8551,6 +8565,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 

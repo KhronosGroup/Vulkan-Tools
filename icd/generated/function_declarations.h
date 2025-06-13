@@ -72,6 +72,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_LUNARG_direct_driver_loading", 1},
     {"VK_EXT_layer_settings", 2},
     {"VK_NV_display_stereo", 1},
+    {"VK_OHOS_surface", 1},
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -442,6 +443,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_depth_clamp_zero_one", 1},
     {"VK_EXT_vertex_attribute_robustness", 1},
     {"VK_ARM_format_pack", 1},
+    {"VK_VALVE_fragment_density_map_layered", 1},
     {"VK_KHR_robustness2", 1},
     {"VK_NV_present_metering", 1},
     {"VK_EXT_fragment_density_map_offset", 1},
@@ -4746,6 +4748,15 @@ static VKAPI_ATTR void VKAPI_CALL UpdateIndirectExecutionSetShaderEXT(
 
 
 
+#ifdef VK_USE_PLATFORM_OHOS
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateSurfaceOHOS(
+    VkInstance                                  instance,
+    const VkSurfaceCreateInfoOHOS*              pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkSurfaceKHR*                               pSurface);
+#endif /* VK_USE_PLATFORM_OHOS */
+
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
@@ -4767,6 +4778,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     const void*                                 pHandle,
     VkMemoryMetalHandlePropertiesEXT*           pMemoryMetalHandleProperties);
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+
 
 
 
@@ -5781,6 +5793,9 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkDestroyIndirectExecutionSetEXT", (void*)DestroyIndirectExecutionSetEXT},
     {"vkUpdateIndirectExecutionSetPipelineEXT", (void*)UpdateIndirectExecutionSetPipelineEXT},
     {"vkUpdateIndirectExecutionSetShaderEXT", (void*)UpdateIndirectExecutionSetShaderEXT},
+#ifdef VK_USE_PLATFORM_OHOS
+    {"vkCreateSurfaceOHOS", (void*)CreateSurfaceOHOS},
+#endif
     {"vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV", (void*)GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV},
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkGetMemoryMetalHandleEXT", (void*)GetMemoryMetalHandleEXT},
