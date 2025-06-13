@@ -9424,6 +9424,17 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_C
     typedef VkPipelineViewportDepthClampControlCreateInfoEXT Type;
 };
 
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkOHSurfaceCreateInfoOHOS to id VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS
+template <> struct LvlTypeMap<VkOHSurfaceCreateInfoOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS> {
+    typedef VkOHSurfaceCreateInfoOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
 // Map type VkPhysicalDeviceHdrVividFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI
 template <> struct LvlTypeMap<VkPhysicalDeviceHdrVividFeaturesHUAWEI> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI;
@@ -9527,6 +9538,33 @@ template <> struct LvlTypeMap<VkPhysicalDeviceFormatPackFeaturesARM> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FORMAT_PACK_FEATURES_ARM> {
     typedef VkPhysicalDeviceFormatPackFeaturesARM Type;
+};
+
+// Map type VkPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_FEATURES_VALVE
+template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_FEATURES_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_FEATURES_VALVE> {
+    typedef VkPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE Type;
+};
+
+// Map type VkPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_PROPERTIES_VALVE
+template <> struct LvlTypeMap<VkPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_PROPERTIES_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_PROPERTIES_VALVE> {
+    typedef VkPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE Type;
+};
+
+// Map type VkPipelineFragmentDensityMapLayeredCreateInfoVALVE to id VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREATE_INFO_VALVE
+template <> struct LvlTypeMap<VkPipelineFragmentDensityMapLayeredCreateInfoVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREATE_INFO_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREATE_INFO_VALVE> {
+    typedef VkPipelineFragmentDensityMapLayeredCreateInfoVALVE Type;
 };
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

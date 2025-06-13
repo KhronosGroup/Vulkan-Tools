@@ -61,6 +61,7 @@ platform_dict = {
     'directfb' : 'VK_USE_PLATFORM_DIRECTFB_EXT',
     'screen' : 'VK_USE_PLATFORM_SCREEN_QNX',
     'sci' : 'VK_USE_PLATFORM_SCI',
+    'ohos' : 'VK_USE_PLATFORM_OHOS',
 }
 
 #
