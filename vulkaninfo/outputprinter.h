@@ -352,7 +352,7 @@ class Printer {
                 }
                 out << std::string(static_cast<size_t>(get_top().indents), '\t');
                 // Objects with no name are elements in an array of objects
-                if (object_name == "" || get_top().element_index != -1) {
+                if (get_top().is_array || object_name == "" || get_top().element_index != -1) {
                     out << "{\n";
                     get_top().element_index = -1;
                 } else {
@@ -370,12 +370,13 @@ class Printer {
                 }
                 out << std::string(static_cast<size_t>(get_top().indents), '\t');
 
-                if (get_top().element_index != -1) {
-                    out << "\"" << object_name << "[" << get_top().element_index << "]\": {\n";
+                if (get_top().is_array && get_top().element_index != -1) {
+                    out << "\"" << object_name << "[" << get_top().element_index << "]\": ";
                     get_top().element_index = -1;
-                } else {
-                    out << "\"" << object_name << "\": {\n";
+                } else if (!get_top().is_array) {
+                    out << "\"" << object_name << "\": ";
                 }
+                out << "{\n";
                 if (!value_description.empty()) {
                     value_description = {};
                 }
@@ -438,9 +439,11 @@ class Printer {
                 } else {
                     get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << array_name << "\": " << "[\n";
-                assert(get_top().is_array == false &&
-                       "Cant start an array object inside another array, must be enclosed in an object");
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
+                if (!get_top().is_array) {
+                    out << "\"" << array_name << "\": ";
+                }
+                out << "[\n";
                 break;
             default:
                 break;
@@ -513,7 +516,10 @@ class Printer {
                 } else {
                     get_top().is_first_item = false;
                 }
-                out << std::string(static_cast<size_t>(get_top().indents), '\t') << "\"" << key << "\": ";
+                out << std::string(static_cast<size_t>(get_top().indents), '\t');
+                if (!get_top().is_array) {
+                    out << "\"" << key << "\": ";
+                }
                 if (!value_description.empty()) {
                     out << "\"" << value << " (" << value_description << ")\"";
                     value_description = {};
