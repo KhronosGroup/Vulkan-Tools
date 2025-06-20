@@ -393,6 +393,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_dynamic_rendering_unused_attachments", 1},
     {"VK_NV_low_latency2", 2},
     {"VK_KHR_cooperative_matrix", 2},
+    {"VK_ARM_data_graph", 1},
     {"VK_QCOM_multiview_per_view_render_areas", 1},
     {"VK_KHR_compute_shader_derivatives", 1},
     {"VK_KHR_video_decode_av1", 1},
@@ -428,7 +429,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_replicated_composites", 1},
     {"VK_EXT_shader_float8", 1},
     {"VK_NV_ray_tracing_validation", 1},
-    {"VK_NV_cluster_acceleration_structure", 2},
+    {"VK_NV_cluster_acceleration_structure", 3},
     {"VK_NV_partitioned_acceleration_structure", 1},
     {"VK_EXT_device_generated_commands", 1},
     {"VK_KHR_maintenance8", 1},
@@ -4627,6 +4628,71 @@ static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandNV(
     const VkOutOfBandQueueTypeInfoNV*           pQueueTypeInfo);
 
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreateDataGraphPipelinesARM(
+    VkDevice                                    device,
+    VkDeferredOperationKHR                      deferredOperation,
+    VkPipelineCache                             pipelineCache,
+    uint32_t                                    createInfoCount,
+    const VkDataGraphPipelineCreateInfoARM*     pCreateInfos,
+    const VkAllocationCallbacks*                pAllocator,
+    VkPipeline*                                 pPipelines);
+
+static VKAPI_ATTR VkResult VKAPI_CALL CreateDataGraphPipelineSessionARM(
+    VkDevice                                    device,
+    const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo,
+    const VkAllocationCallbacks*                pAllocator,
+    VkDataGraphPipelineSessionARM*              pSession);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDataGraphPipelineSessionBindPointRequirementsARM(
+    VkDevice                                    device,
+    const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo,
+    uint32_t*                                   pBindPointRequirementCount,
+    VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements);
+
+static VKAPI_ATTR void VKAPI_CALL GetDataGraphPipelineSessionMemoryRequirementsARM(
+    VkDevice                                    device,
+    const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo,
+    VkMemoryRequirements2*                      pMemoryRequirements);
+
+static VKAPI_ATTR VkResult VKAPI_CALL BindDataGraphPipelineSessionMemoryARM(
+    VkDevice                                    device,
+    uint32_t                                    bindInfoCount,
+    const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos);
+
+static VKAPI_ATTR void VKAPI_CALL DestroyDataGraphPipelineSessionARM(
+    VkDevice                                    device,
+    VkDataGraphPipelineSessionARM               session,
+    const VkAllocationCallbacks*                pAllocator);
+
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchDataGraphARM(
+    VkCommandBuffer                             commandBuffer,
+    VkDataGraphPipelineSessionARM               session,
+    const VkDataGraphPipelineDispatchInfoARM*   pInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDataGraphPipelineAvailablePropertiesARM(
+    VkDevice                                    device,
+    const VkDataGraphPipelineInfoARM*           pPipelineInfo,
+    uint32_t*                                   pPropertiesCount,
+    VkDataGraphPipelinePropertyARM*             pProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDataGraphPipelinePropertiesARM(
+    VkDevice                                    device,
+    const VkDataGraphPipelineInfoARM*           pPipelineInfo,
+    uint32_t                                    propertiesCount,
+    VkDataGraphPipelinePropertyQueryResultARM*  pProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t*                                   pQueueFamilyDataGraphPropertyCount,
+    VkQueueFamilyDataGraphPropertiesARM*        pQueueFamilyDataGraphProperties);
+
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(
+    VkPhysicalDevice                            physicalDevice,
+    const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo,
+    VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties);
+
+
 
 
 
@@ -5772,6 +5838,17 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkSetLatencyMarkerNV", (void*)SetLatencyMarkerNV},
     {"vkGetLatencyTimingsNV", (void*)GetLatencyTimingsNV},
     {"vkQueueNotifyOutOfBandNV", (void*)QueueNotifyOutOfBandNV},
+    {"vkCreateDataGraphPipelinesARM", (void*)CreateDataGraphPipelinesARM},
+    {"vkCreateDataGraphPipelineSessionARM", (void*)CreateDataGraphPipelineSessionARM},
+    {"vkGetDataGraphPipelineSessionBindPointRequirementsARM", (void*)GetDataGraphPipelineSessionBindPointRequirementsARM},
+    {"vkGetDataGraphPipelineSessionMemoryRequirementsARM", (void*)GetDataGraphPipelineSessionMemoryRequirementsARM},
+    {"vkBindDataGraphPipelineSessionMemoryARM", (void*)BindDataGraphPipelineSessionMemoryARM},
+    {"vkDestroyDataGraphPipelineSessionARM", (void*)DestroyDataGraphPipelineSessionARM},
+    {"vkCmdDispatchDataGraphARM", (void*)CmdDispatchDataGraphARM},
+    {"vkGetDataGraphPipelineAvailablePropertiesARM", (void*)GetDataGraphPipelineAvailablePropertiesARM},
+    {"vkGetDataGraphPipelinePropertiesARM", (void*)GetDataGraphPipelinePropertiesARM},
+    {"vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM", (void*)GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM},
+    {"vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM", (void*)GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM},
     {"vkCmdSetAttachmentFeedbackLoopEnableEXT", (void*)CmdSetAttachmentFeedbackLoopEnableEXT},
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
     {"vkGetScreenBufferPropertiesQNX", (void*)GetScreenBufferPropertiesQNX},

@@ -8775,6 +8775,186 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV
     typedef VkLatencySurfaceCapabilitiesNV Type;
 };
 
+// Map type VkPhysicalDeviceDataGraphFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_FEATURES_ARM
+template <> struct LvlTypeMap<VkPhysicalDeviceDataGraphFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_FEATURES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_FEATURES_ARM> {
+    typedef VkPhysicalDeviceDataGraphFeaturesARM Type;
+};
+
+// Map type VkDataGraphPipelineConstantARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineConstantARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_ARM> {
+    typedef VkDataGraphPipelineConstantARM Type;
+};
+
+// Map type VkDataGraphPipelineResourceInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineResourceInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_ARM> {
+    typedef VkDataGraphPipelineResourceInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineCompilerControlCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_COMPILER_CONTROL_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineCompilerControlCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_COMPILER_CONTROL_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_COMPILER_CONTROL_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineCompilerControlCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineShaderModuleCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SHADER_MODULE_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineShaderModuleCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SHADER_MODULE_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SHADER_MODULE_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineShaderModuleCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineSessionCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineSessionCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineSessionCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineSessionBindPointRequirementsInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENTS_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineSessionBindPointRequirementsInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENTS_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENTS_INFO_ARM> {
+    typedef VkDataGraphPipelineSessionBindPointRequirementsInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineSessionBindPointRequirementARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENT_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineSessionBindPointRequirementARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENT_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENT_ARM> {
+    typedef VkDataGraphPipelineSessionBindPointRequirementARM Type;
+};
+
+// Map type VkDataGraphPipelineSessionMemoryRequirementsInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_MEMORY_REQUIREMENTS_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineSessionMemoryRequirementsInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_MEMORY_REQUIREMENTS_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_MEMORY_REQUIREMENTS_INFO_ARM> {
+    typedef VkDataGraphPipelineSessionMemoryRequirementsInfoARM Type;
+};
+
+// Map type VkBindDataGraphPipelineSessionMemoryInfoARM to id VK_STRUCTURE_TYPE_BIND_DATA_GRAPH_PIPELINE_SESSION_MEMORY_INFO_ARM
+template <> struct LvlTypeMap<VkBindDataGraphPipelineSessionMemoryInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BIND_DATA_GRAPH_PIPELINE_SESSION_MEMORY_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_BIND_DATA_GRAPH_PIPELINE_SESSION_MEMORY_INFO_ARM> {
+    typedef VkBindDataGraphPipelineSessionMemoryInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_INFO_ARM> {
+    typedef VkDataGraphPipelineInfoARM Type;
+};
+
+// Map type VkDataGraphPipelinePropertyQueryResultARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_PROPERTY_QUERY_RESULT_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelinePropertyQueryResultARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_PROPERTY_QUERY_RESULT_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_PROPERTY_QUERY_RESULT_ARM> {
+    typedef VkDataGraphPipelinePropertyQueryResultARM Type;
+};
+
+// Map type VkDataGraphPipelineIdentifierCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_IDENTIFIER_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineIdentifierCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_IDENTIFIER_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_IDENTIFIER_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineIdentifierCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineDispatchInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_DISPATCH_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineDispatchInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_DISPATCH_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_DISPATCH_INFO_ARM> {
+    typedef VkDataGraphPipelineDispatchInfoARM Type;
+};
+
+// Map type VkQueueFamilyDataGraphPropertiesARM to id VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM
+template <> struct LvlTypeMap<VkQueueFamilyDataGraphPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM> {
+    typedef VkQueueFamilyDataGraphPropertiesARM Type;
+};
+
+// Map type VkDataGraphProcessingEngineCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PROCESSING_ENGINE_CREATE_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphProcessingEngineCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PROCESSING_ENGINE_CREATE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PROCESSING_ENGINE_CREATE_INFO_ARM> {
+    typedef VkDataGraphProcessingEngineCreateInfoARM Type;
+};
+
+// Map type VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_INFO_ARM
+template <> struct LvlTypeMap<VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_INFO_ARM> {
+    typedef VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM Type;
+};
+
+// Map type VkQueueFamilyDataGraphProcessingEnginePropertiesARM to id VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_PROPERTIES_ARM
+template <> struct LvlTypeMap<VkQueueFamilyDataGraphProcessingEnginePropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_PROPERTIES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_PROPERTIES_ARM> {
+    typedef VkQueueFamilyDataGraphProcessingEnginePropertiesARM Type;
+};
+
+// Map type VkDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_TENSOR_SEMI_STRUCTURED_SPARSITY_INFO_ARM
+template <> struct LvlTypeMap<VkDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_TENSOR_SEMI_STRUCTURED_SPARSITY_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_TENSOR_SEMI_STRUCTURED_SPARSITY_INFO_ARM> {
+    typedef VkDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM Type;
+};
+
 // Map type VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM
 template <> struct LvlTypeMap<VkPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM;
