@@ -223,6 +223,7 @@ CUSTOM_C_INTERCEPTS = {
         if (*pPresentModeCount >= 3) pPresentModes[2] = VK_PRESENT_MODE_FIFO_KHR;
         if (*pPresentModeCount >= 2) pPresentModes[1] = VK_PRESENT_MODE_MAILBOX_KHR;
         if (*pPresentModeCount >= 1) pPresentModes[0] = VK_PRESENT_MODE_IMMEDIATE_KHR;
+        *pPresentModeCount = *pPresentModeCount < 6 ? *pPresentModeCount : 6;
     }
     return VK_SUCCESS;
 ''',
