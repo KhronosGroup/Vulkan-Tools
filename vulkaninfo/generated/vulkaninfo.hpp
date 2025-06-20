@@ -3685,8 +3685,8 @@ void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string na
 void DumpVkPhysicalDeviceLayeredApiPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceLayeredApiPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(15);
-    p.PrintKeyValue("vendorID", obj.vendorID);
-    p.PrintKeyValue("deviceID", obj.deviceID);
+    p.PrintKeyValue("vendorID", to_hex_str(p, obj.vendorID));
+    p.PrintKeyValue("deviceID", to_hex_str(p, obj.deviceID));
     DumpVkPhysicalDeviceLayeredApiKHR(p, "layeredAPI", obj.layeredAPI);
     p.PrintKeyString("deviceName", obj.deviceName);
 }
