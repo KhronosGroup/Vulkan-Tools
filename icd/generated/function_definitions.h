@@ -328,6 +328,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(
                 pProperties[i].specVersion = name_ver_pair.second;
                 ++i;
             }
+            *pPropertyCount = i;
             if (i != device_extension_map.size()) {
                 return VK_INCOMPLETE;
             }
