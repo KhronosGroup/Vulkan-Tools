@@ -4074,6 +4074,21 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceProperties2KHR(
         std::strncpy(driver_properties->driverInfo, "Branch: --unknown-- Tag Info: --unknown--", VK_MAX_DRIVER_INFO_SIZE);
 #endif
     }
+
+    auto *layered_properties = lvl_find_mod_in_chain<VkPhysicalDeviceLayeredApiPropertiesListKHR>(pProperties->pNext);
+    if (layered_properties) {
+        layered_properties->layeredApiCount = 1;
+        if (layered_properties->pLayeredApis) {
+            layered_properties->pLayeredApis[0] = VkPhysicalDeviceLayeredApiPropertiesKHR{
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR,
+                nullptr,
+                0xba5eba11,
+                0xf005ba11,
+                VK_PHYSICAL_DEVICE_LAYERED_API_VULKAN_KHR
+            };
+            std::strncpy(layered_properties->pLayeredApis[0].deviceName, "Fake Driver", VK_MAX_PHYSICAL_DEVICE_NAME_SIZE);
+        }
+    }
 }
 
 static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceFormatProperties2KHR(
