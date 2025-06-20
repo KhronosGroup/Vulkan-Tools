@@ -204,6 +204,7 @@ CUSTOM_C_INTERCEPTS = {
                 pProperties[i].specVersion = name_ver_pair.second;
                 ++i;
             }
+            *pPropertyCount = i;
             if (i != device_extension_map.size()) {
                 return VK_INCOMPLETE;
             }
