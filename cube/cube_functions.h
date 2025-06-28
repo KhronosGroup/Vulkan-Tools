@@ -93,6 +93,7 @@ PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabili
 PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
 PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
+PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR;
 
 // While technically a device function, it needs to be loaded with get instance proc addr
 PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
@@ -120,7 +121,6 @@ PFN_vkCreateBuffer vkCreateBuffer;
 PFN_vkCreateCommandPool vkCreateCommandPool;
 PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
 PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
-PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR;
 PFN_vkCreateFence vkCreateFence;
 PFN_vkCreateFramebuffer vkCreateFramebuffer;
 PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
