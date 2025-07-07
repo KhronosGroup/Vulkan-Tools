@@ -5245,6 +5245,16 @@ static VKAPI_ATTR VkResult VKAPI_CALL ReleaseCapturedPipelineDataKHR(
 }
 
 
+
+static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesKHR(
+    VkDevice                                    device,
+    const VkReleaseSwapchainImagesInfoKHR*      pReleaseInfo)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pPropertyCount,
@@ -5358,6 +5368,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
 {
 //Not a CREATE or DESTROY function
 }
+
+
 
 
 
@@ -6875,7 +6887,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
     VkDevice                                    device,
-    const VkReleaseSwapchainImagesInfoEXT*      pReleaseInfo)
+    const VkReleaseSwapchainImagesInfoKHR*      pReleaseInfo)
 {
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -8705,6 +8717,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
 {
 //Not a CREATE or DESTROY function
 }
+
 
 
 

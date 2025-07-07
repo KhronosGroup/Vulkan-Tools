@@ -70,6 +70,7 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
     {"VK_KHR_portability_enumeration", 1},
     {"VK_GOOGLE_surfaceless_query", 2},
     {"VK_LUNARG_direct_driver_loading", 1},
+    {"VK_KHR_surface_maintenance1", 1},
     {"VK_EXT_layer_settings", 2},
     {"VK_NV_display_stereo", 1},
     {"VK_OHOS_surface", 1},
@@ -270,7 +271,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_inherited_viewport_scissor", 1},
     {"VK_KHR_shader_integer_dot_product", 1},
     {"VK_EXT_texel_buffer_alignment", 1},
-    {"VK_QCOM_render_pass_transform", 4},
+    {"VK_QCOM_render_pass_transform", 5},
     {"VK_EXT_depth_bias_control", 1},
     {"VK_EXT_device_memory_report", 2},
     {"VK_EXT_robustness2", 1},
@@ -382,6 +383,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_pipeline_binary", 1},
     {"VK_QCOM_tile_properties", 1},
     {"VK_SEC_amigo_profiling", 1},
+    {"VK_KHR_swapchain_maintenance1", 1},
     {"VK_QCOM_multiview_per_view_viewports", 1},
     {"VK_NV_ray_tracing_invocation_reorder", 1},
     {"VK_NV_cooperative_vector", 4},
@@ -419,6 +421,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_QCOM_tile_memory_heap", 1},
+    {"VK_KHR_video_encode_intra_refresh", 1},
     {"VK_KHR_video_encode_quantization_map", 2},
     {"VK_NV_raw_access_chains", 1},
     {"VK_NV_external_compute_queue", 1},
@@ -449,6 +452,8 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_present_metering", 1},
     {"VK_EXT_fragment_density_map_offset", 1},
     {"VK_EXT_zero_initialize_device_memory", 1},
+    {"VK_KHR_present_mode_fifo_latest_ready", 1},
+    {"VK_SEC_pipeline_cache_incremental_mode", 1},
 };
 
 
@@ -2667,6 +2672,12 @@ static VKAPI_ATTR VkResult VKAPI_CALL ReleaseCapturedPipelineDataKHR(
     const VkAllocationCallbacks*                pAllocator);
 
 
+
+static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesKHR(
+    VkDevice                                    device,
+    const VkReleaseSwapchainImagesInfoKHR*      pReleaseInfo);
+
+
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixPropertiesKHR(
     VkPhysicalDevice                            physicalDevice,
     uint32_t*                                   pPropertyCount,
@@ -2726,6 +2737,8 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+
+
 
 
 
@@ -3698,7 +3711,7 @@ static VKAPI_ATTR void VKAPI_CALL GetImageSubresourceLayout2EXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL ReleaseSwapchainImagesEXT(
     VkDevice                                    device,
-    const VkReleaseSwapchainImagesInfoEXT*      pReleaseInfo);
+    const VkReleaseSwapchainImagesInfoKHR*      pReleaseInfo);
 
 
 
@@ -4858,6 +4871,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
 
 
 
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -5439,6 +5453,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPipelineKeyKHR", (void*)GetPipelineKeyKHR},
     {"vkGetPipelineBinaryDataKHR", (void*)GetPipelineBinaryDataKHR},
     {"vkReleaseCapturedPipelineDataKHR", (void*)ReleaseCapturedPipelineDataKHR},
+    {"vkReleaseSwapchainImagesKHR", (void*)ReleaseSwapchainImagesKHR},
     {"vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR", (void*)GetPhysicalDeviceCooperativeMatrixPropertiesKHR},
     {"vkCmdSetLineStippleKHR", (void*)CmdSetLineStippleKHR},
     {"vkGetPhysicalDeviceCalibrateableTimeDomainsKHR", (void*)GetPhysicalDeviceCalibrateableTimeDomainsKHR},
