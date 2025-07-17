@@ -88,9 +88,6 @@ static PFN_xcb_screen_next cube_xcb_screen_next = NULL;
 
 void *initialize_xcb() {
     void *xcb_library = NULL;
-#if defined(XCB_LIBRARY)
-    xcb_library = dlopen(XCB_LIBRARY, RTLD_NOW | RTLD_LOCAL);
-#endif
     if (NULL == xcb_library) {
         xcb_library = dlopen("libxcb.so.1", RTLD_NOW | RTLD_LOCAL);
     }
