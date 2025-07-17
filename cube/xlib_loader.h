@@ -72,9 +72,6 @@ static PFN_XFlush cube_XFlush = NULL;
 
 void* initialize_xlib() {
     void* xlib_library = NULL;
-#if defined(XLIB_LIBRARY)
-    xlib_library = dlopen(XLIB_LIBRARY, RTLD_NOW | RTLD_LOCAL);
-#endif
     if (NULL == xlib_library) {
         xlib_library = dlopen("libX11.so.6", RTLD_NOW | RTLD_LOCAL);
     }
