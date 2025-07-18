@@ -1351,8 +1351,6 @@ static void demo_draw(struct demo *demo) {
         assert(!err);
         if (surfCapabilities.currentExtent.width != (uint32_t)demo->width ||
             surfCapabilities.currentExtent.height != (uint32_t)demo->height) {
-            demo->width = surfCapabilities.currentExtent.width;
-            demo->height = surfCapabilities.currentExtent.height;
             demo_resize(demo);
         }
     } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
