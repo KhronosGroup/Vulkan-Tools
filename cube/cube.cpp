@@ -955,8 +955,6 @@ void Demo::draw() {
         auto caps_result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
         VERIFY(caps_result == vk::Result::eSuccess);
         if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
-            width = surfCapabilities.currentExtent.width;
-            height = surfCapabilities.currentExtent.height;
             resize();
         }
     } else if (present_result == vk::Result::eErrorSurfaceLostKHR) {
