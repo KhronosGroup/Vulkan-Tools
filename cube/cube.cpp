@@ -901,7 +901,8 @@ void Demo::draw() {
     }
 
     // Only reset right before submitting so we can't deadlock on an un-signalled fence that has nothing submitted to it
-    device.resetFences({current_submission.fence});
+    auto reset_result = device.resetFences({current_submission.fence});
+    VERIFY(reset_result == vk::Result::eSuccess);
 
     // Wait for the image acquired semaphore to be signaled to ensure
     // that the image won't be rendered to until the presentation
