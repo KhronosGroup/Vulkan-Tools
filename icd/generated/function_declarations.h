@@ -334,6 +334,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_color_write_enable", 1},
     {"VK_EXT_primitives_generated_query", 1},
     {"VK_KHR_ray_tracing_maintenance1", 1},
+    {"VK_KHR_shader_untyped_pointers", 1},
     {"VK_EXT_global_priority_query", 1},
     {"VK_EXT_image_view_min_lod", 1},
     {"VK_EXT_multi_draw", 1},
@@ -376,6 +377,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_ANDROID_external_format_resolve", 1},
     {"VK_KHR_maintenance5", 1},
     {"VK_AMD_anti_lag", 1},
+    {"VK_AMDX_dense_geometry_format", 1},
     {"VK_KHR_present_id2", 1},
     {"VK_KHR_present_wait2", 1},
     {"VK_KHR_ray_tracing_position_fetch", 1},
@@ -2592,6 +2594,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysIndirect2KHR(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(
     VkDevice                                    device,
     const VkDeviceBufferMemoryRequirements*     pInfo,
@@ -4547,6 +4550,9 @@ static VKAPI_ATTR void VKAPI_CALL CmdOpticalFlowExecuteNV(
 static VKAPI_ATTR void VKAPI_CALL AntiLagUpdateAMD(
     VkDevice                                    device,
     const VkAntiLagDataAMD*                     pData);
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(

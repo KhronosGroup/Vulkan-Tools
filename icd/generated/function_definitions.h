@@ -5118,6 +5118,7 @@ static VKAPI_ATTR void VKAPI_CALL CmdTraceRaysIndirect2KHR(
 
 
 
+
 static VKAPI_ATTR void VKAPI_CALL GetDeviceBufferMemoryRequirementsKHR(
     VkDevice                                    device,
     const VkDeviceBufferMemoryRequirements*     pInfo,
@@ -8212,6 +8213,9 @@ static VKAPI_ATTR void VKAPI_CALL AntiLagUpdateAMD(
 {
 //Not a CREATE or DESTROY function
 }
+
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+#endif /* VK_ENABLE_BETA_EXTENSIONS */
 
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateShadersEXT(
