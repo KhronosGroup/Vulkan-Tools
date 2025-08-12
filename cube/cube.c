@@ -2991,6 +2991,15 @@ static void demo_create_xcb_window(struct demo *demo) {
     xcb_create_window(demo->connection, XCB_COPY_FROM_PARENT, demo->xcb_window, demo->screen->root, 0, 0, demo->width, demo->height,
                       0, XCB_WINDOW_CLASS_INPUT_OUTPUT, demo->screen->root_visual, value_mask, value_list);
 
+    char *name = "Vkcube X11";
+    xcb_intern_atom_cookie_t net_wm_name_cookie = xcb_intern_atom(demo->connection, 0, strlen("_NET_WM_NAME"), "_NET_WM_NAME");
+    xcb_intern_atom_cookie_t utf8_string_cookie = xcb_intern_atom(demo->connection, 0, strlen("UTF8_STRING"), "UTF8_STRING");
+    xcb_intern_atom_reply_t *net_wm_name_reply = xcb_intern_atom_reply(demo->connection, net_wm_name_cookie, NULL);
+    xcb_intern_atom_reply_t *utf8_string_reply = xcb_intern_atom_reply(demo->connection, utf8_string_cookie, NULL);
+    xcb_change_property(demo->connection, XCB_PROP_MODE_REPLACE,
+                        demo->xcb_window, net_wm_name_reply->atom,
+                        utf8_string_reply->atom, 8, strlen(name), name);
+
     /* Magic code that will send notification when window is destroyed */
     xcb_intern_atom_cookie_t cookie = xcb_intern_atom(demo->connection, 1, 12, "WM_PROTOCOLS");
     xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(demo->connection, cookie, 0);
