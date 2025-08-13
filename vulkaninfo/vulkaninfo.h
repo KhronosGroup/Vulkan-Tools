@@ -365,7 +365,7 @@ struct AppVideoProfile {
                     const VkVideoProfileInfoKHR &in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
                     CreateCapabilitiesChainCb create_capabilities_chain,
                     const CreateFormatPropertiesChainCbList &create_format_properties_chain_list, InitProfileCb init_profile)
-        : supported(true), name(in_name), profile_info(in_profile_info) {
+        : supported(true), name(in_name), profile_info(in_profile_info), capabilities({}) {
         profile_info_chain = create_profile_info_chain(&profile_info.pNext);
         if (profile_info_chain == nullptr) {
             supported = false;
