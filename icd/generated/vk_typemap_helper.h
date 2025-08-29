@@ -9681,13 +9681,13 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_C
 };
 
 #ifdef VK_USE_PLATFORM_OHOS
-// Map type VkOHSurfaceCreateInfoOHOS to id VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS
-template <> struct LvlTypeMap<VkOHSurfaceCreateInfoOHOS> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS;
+// Map type VkSurfaceCreateInfoOHOS to id VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS
+template <> struct LvlTypeMap<VkSurfaceCreateInfoOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_OH_SURFACE_CREATE_INFO_OHOS> {
-    typedef VkOHSurfaceCreateInfoOHOS Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS> {
+    typedef VkSurfaceCreateInfoOHOS Type;
 };
 
 #endif // VK_USE_PLATFORM_OHOS
