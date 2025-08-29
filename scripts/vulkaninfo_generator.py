@@ -783,7 +783,8 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                     newProfiles = {}
                     for profileStructMemberValue, profileStructMemberName in profileStructMember.values.items():
                         for profileName, profile in profiles.items():
-                            newProfileName = f'{profileName} {profileStructMemberName}'
+                            # Only add video profile name suffix to the full descriptive name if not empty to avoid excess whitespace
+                            newProfileName = profileName if profileStructMemberName == '' else f'{profileName} {profileStructMemberName}'
                             newProfiles[newProfileName] = profile + [{
                                 "struct": profileStruct.struct,
                                 "member": profileStructMember.name,
