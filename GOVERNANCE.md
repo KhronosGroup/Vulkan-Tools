@@ -1,6 +1,6 @@
 ## Khronos Group Vulkan-Tools Repository Management
 
-# **Open Source Project – Objectives**
+# **Open Source Project - Objectives**
 
 * Assist Vulkan Users
   - The goal is for tool and utility behavior to assist in the development of vulkan applications.
