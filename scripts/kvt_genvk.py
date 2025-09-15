@@ -359,9 +359,9 @@ if __name__ == '__main__':
     from cgenerator import CGeneratorOptions, COutputGenerator
 
     # Generator Modifications
-    from mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
-    from vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
-    from vulkaninfo_generator import VulkanInfoGenerator, VulkanInfoGeneratorOptions
+    from generators.mock_icd_generator import MockICDGeneratorOptions, MockICDOutputGenerator
+    from generators.vulkan_tools_helper_file_generator import HelperFileOutputGenerator, HelperFileOutputGeneratorOptions
+    from generators.vulkaninfo_generator import VulkanInfoGenerator, VulkanInfoGeneratorOptions
     # Temporary workaround for vkconventions python2 compatibility
     import abc
     abc.ABC = abc.ABCMeta('ABC', (object,), {})
