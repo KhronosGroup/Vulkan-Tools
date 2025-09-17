@@ -3895,7 +3895,7 @@ static void demo_check_and_set_wsi_platform(struct demo *demo) {
             }
         }
         if (qnx_extension_available) {
-            demo->wsi_platform = WSI_PLATFORM_ANDROID;
+            demo->wsi_platform = WSI_PLATFORM_QNX;
             return;
         }
     }
