@@ -3791,7 +3791,7 @@ void Demo::run<WsiPlatform::qnx>() {
 
         if (pause || !initialized || !swapchain_ready) {
         } else {
-            update_data_buffer();
+            update_data_buffer(submission_resources[current_submission_index].uniform_memory_ptr);
             draw();
             if (!is_minimized) {
                 curFrame++;
