@@ -4149,6 +4149,7 @@ void Demo::execute() {
     run<WSI_PLATFORM>();
 }
 
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
 template <>
 void Demo::execute<WsiPlatform::display>() {
     select_physical_device();
@@ -4161,6 +4162,7 @@ void Demo::execute<WsiPlatform::display>() {
 
     run<WsiPlatform::display>();
 }
+#endif
 
 int main(int argc, char **argv) {
     Demo demo;
