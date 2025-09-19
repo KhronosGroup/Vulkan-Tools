@@ -336,6 +336,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_ray_tracing_maintenance1", 1},
     {"VK_KHR_shader_untyped_pointers", 1},
     {"VK_EXT_global_priority_query", 1},
+    {"VK_VALVE_video_encode_rgb_conversion", 1},
     {"VK_EXT_image_view_min_lod", 1},
     {"VK_EXT_multi_draw", 1},
     {"VK_EXT_image_2d_view_of_3d", 1},
@@ -4110,6 +4111,7 @@ static VKAPI_ATTR void                                    VKAPI_CALL CmdSetColor
     VkCommandBuffer                             commandBuffer,
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables);
+
 
 
 

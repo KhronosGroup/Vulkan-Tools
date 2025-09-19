@@ -8976,6 +8976,14 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             }
                         }
                         if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE;
+                                ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
                             if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME)) {
                                 capabilities_chain->VideoEncodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
                                 capabilities_chain->VideoEncodeH264CapabilitiesKHR.pNext = nullptr;
@@ -9166,6 +9174,14 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext = nullptr;
                                 *ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR;
                                 ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE;
+                                ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext;
                             }
                         }
                         if (capabilities_chain != nullptr) {
@@ -9381,6 +9397,14 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext = nullptr;
                                 *ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR;
                                 ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
+                                capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE;
+                                ppnext = &capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.pNext;
                             }
                         }
                         if (capabilities_chain != nullptr) {
