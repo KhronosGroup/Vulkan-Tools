@@ -2910,6 +2910,108 @@ void DumpVkVideoEncodeRateControlModeFlagBitsKHR(Printer &p, std::string name, V
     }
 }
 
+std::vector<const char *> VkVideoEncodeRgbChromaOffsetFlagBitsVALVEGetStrings(VkVideoEncodeRgbChromaOffsetFlagBitsVALVE value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_RGB_CHROMA_OFFSET_COSITED_EVEN_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_CHROMA_OFFSET_COSITED_EVEN_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_CHROMA_OFFSET_MIDPOINT_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_CHROMA_OFFSET_MIDPOINT_BIT_VALVE");
+    return strings;
+}
+void DumpVkVideoEncodeRgbChromaOffsetFlagsVALVE(Printer &p, std::string name, VkVideoEncodeRgbChromaOffsetFlagsVALVE value) {
+    if (static_cast<VkVideoEncodeRgbChromaOffsetFlagBitsVALVE>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeRgbChromaOffsetFlagBitsVALVEGetStrings(static_cast<VkVideoEncodeRgbChromaOffsetFlagBitsVALVE>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeRgbChromaOffsetFlagBitsVALVE(Printer &p, std::string name, VkVideoEncodeRgbChromaOffsetFlagBitsVALVE value) {
+    auto strings = VkVideoEncodeRgbChromaOffsetFlagBitsVALVEGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeRgbModelConversionFlagBitsVALVEGetStrings(VkVideoEncodeRgbModelConversionFlagBitsVALVE value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_RGB_MODEL_CONVERSION_RGB_IDENTITY_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_MODEL_CONVERSION_RGB_IDENTITY_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_IDENTITY_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_IDENTITY_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_709_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_709_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_601_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_601_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_2020_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_MODEL_CONVERSION_YCBCR_2020_BIT_VALVE");
+    return strings;
+}
+void DumpVkVideoEncodeRgbModelConversionFlagsVALVE(Printer &p, std::string name, VkVideoEncodeRgbModelConversionFlagsVALVE value) {
+    if (static_cast<VkVideoEncodeRgbModelConversionFlagBitsVALVE>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeRgbModelConversionFlagBitsVALVEGetStrings(static_cast<VkVideoEncodeRgbModelConversionFlagBitsVALVE>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeRgbModelConversionFlagBitsVALVE(Printer &p, std::string name, VkVideoEncodeRgbModelConversionFlagBitsVALVE value) {
+    auto strings = VkVideoEncodeRgbModelConversionFlagBitsVALVEGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkVideoEncodeRgbRangeCompressionFlagBitsVALVEGetStrings(VkVideoEncodeRgbRangeCompressionFlagBitsVALVE value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_VIDEO_ENCODE_RGB_RANGE_COMPRESSION_FULL_RANGE_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_RANGE_COMPRESSION_FULL_RANGE_BIT_VALVE");
+    if (VK_VIDEO_ENCODE_RGB_RANGE_COMPRESSION_NARROW_RANGE_BIT_VALVE & value) strings.push_back("VIDEO_ENCODE_RGB_RANGE_COMPRESSION_NARROW_RANGE_BIT_VALVE");
+    return strings;
+}
+void DumpVkVideoEncodeRgbRangeCompressionFlagsVALVE(Printer &p, std::string name, VkVideoEncodeRgbRangeCompressionFlagsVALVE value) {
+    if (static_cast<VkVideoEncodeRgbRangeCompressionFlagBitsVALVE>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkVideoEncodeRgbRangeCompressionFlagBitsVALVEGetStrings(static_cast<VkVideoEncodeRgbRangeCompressionFlagBitsVALVE>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodeRgbRangeCompressionFlagBitsVALVE(Printer &p, std::string name, VkVideoEncodeRgbRangeCompressionFlagBitsVALVE value) {
+    auto strings = VkVideoEncodeRgbRangeCompressionFlagBitsVALVEGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkVideoEncodeUsageFlagBitsKHRGetStrings(VkVideoEncodeUsageFlagBitsKHR value) {
     std::vector<const char *> strings;
     if (value == 0) { strings.push_back("VIDEO_ENCODE_USAGE_DEFAULT_KHR"); return strings; }
@@ -5370,9 +5472,21 @@ void DumpVkVideoEncodeIntraRefreshCapabilitiesKHR(Printer &p, std::string name, 
     p.PrintKeyBool("partitionIndependentIntraRefreshRegions", static_cast<bool>(obj.partitionIndependentIntraRefreshRegions));
     p.PrintKeyBool("nonRectangularIntraRefreshRegions", static_cast<bool>(obj.nonRectangularIntraRefreshRegions));
 }
+void DumpVkVideoEncodeProfileRgbConversionInfoVALVE(Printer &p, std::string name, const VkVideoEncodeProfileRgbConversionInfoVALVE &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(26);
+    p.PrintKeyBool("performEncodeRgbConversion", static_cast<bool>(obj.performEncodeRgbConversion));
+}
 void DumpVkVideoEncodeQuantizationMapCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeQuantizationMapCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkExtent2D(p, "maxQuantizationMapExtent", obj.maxQuantizationMapExtent);
+}
+void DumpVkVideoEncodeRgbConversionCapabilitiesVALVE(Printer &p, std::string name, const VkVideoEncodeRgbConversionCapabilitiesVALVE &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkVideoEncodeRgbModelConversionFlagsVALVE(p, "rgbModels", obj.rgbModels);
+    DumpVkVideoEncodeRgbRangeCompressionFlagsVALVE(p, "rgbRanges", obj.rgbRanges);
+    DumpVkVideoEncodeRgbChromaOffsetFlagsVALVE(p, "xChromaOffsets", obj.xChromaOffsets);
+    DumpVkVideoEncodeRgbChromaOffsetFlagsVALVE(p, "yChromaOffsets", obj.yChromaOffsets);
 }
 void DumpVkVideoEncodeUsageInfoKHR(Printer &p, std::string name, const VkVideoEncodeUsageInfoKHR &obj) {
     ObjectWrapper object{p, name};
@@ -7894,6 +8008,7 @@ struct video_profile_info_chain {
     VkVideoEncodeAV1ProfileInfoKHR VideoEncodeAV1ProfileInfoKHR{};
     VkVideoEncodeH264ProfileInfoKHR VideoEncodeH264ProfileInfoKHR{};
     VkVideoEncodeH265ProfileInfoKHR VideoEncodeH265ProfileInfoKHR{};
+    VkVideoEncodeProfileRgbConversionInfoVALVE VideoEncodeProfileRgbConversionInfoVALVE{};
     VkVideoEncodeUsageInfoKHR VideoEncodeUsageInfoKHR{};
     void initialize_chain(AppGpu &gpu ) noexcept {
         VideoDecodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
@@ -7904,6 +8019,7 @@ struct video_profile_info_chain {
         VideoEncodeAV1ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
         VideoEncodeH264ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR;
         VideoEncodeH265ProfileInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR;
+        VideoEncodeProfileRgbConversionInfoVALVE.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE;
         VideoEncodeUsageInfoKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_USAGE_INFO_KHR;
         std::vector<VkBaseOutStructure*> chain_members{};
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME))
@@ -7922,6 +8038,8 @@ struct video_profile_info_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH264ProfileInfoKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H265_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeH265ProfileInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeProfileRgbConversionInfoVALVE));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeUsageInfoKHR));
 
@@ -7983,6 +8101,11 @@ void chain_iterator_video_profile_info(Printer &p, AppGpu &gpu, const void * pla
             DumpVkVideoEncodeH265ProfileInfoKHR(p, "VkVideoEncodeH265ProfileInfoKHR", *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE) {
+            const VkVideoEncodeProfileRgbConversionInfoVALVE* props = (const VkVideoEncodeProfileRgbConversionInfoVALVE*)structure;
+            DumpVkVideoEncodeProfileRgbConversionInfoVALVE(p, "VkVideoEncodeProfileRgbConversionInfoVALVE", *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_USAGE_INFO_KHR) {
             const VkVideoEncodeUsageInfoKHR* props = (const VkVideoEncodeUsageInfoKHR*)structure;
             DumpVkVideoEncodeUsageInfoKHR(p, "VkVideoEncodeUsageInfoKHR", *props);
@@ -8017,6 +8140,7 @@ struct video_capabilities_chain {
     VkVideoEncodeH265QuantizationMapCapabilitiesKHR VideoEncodeH265QuantizationMapCapabilitiesKHR{};
     VkVideoEncodeIntraRefreshCapabilitiesKHR VideoEncodeIntraRefreshCapabilitiesKHR{};
     VkVideoEncodeQuantizationMapCapabilitiesKHR VideoEncodeQuantizationMapCapabilitiesKHR{};
+    VkVideoEncodeRgbConversionCapabilitiesVALVE VideoEncodeRgbConversionCapabilitiesVALVE{};
     void initialize_chain(AppGpu &gpu ) noexcept {
         VideoDecodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
         VideoDecodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
@@ -8032,6 +8156,7 @@ struct video_capabilities_chain {
         VideoEncodeH265QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
         VideoEncodeIntraRefreshCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR;
         VideoEncodeQuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+        VideoEncodeRgbConversionCapabilitiesVALVE.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
         std::vector<VkBaseOutStructure*> chain_members{};
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_AV1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoDecodeAV1CapabilitiesKHR));
@@ -8061,6 +8186,8 @@ struct video_capabilities_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeIntraRefreshCapabilitiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeQuantizationMapCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&VideoEncodeRgbConversionCapabilitiesVALVE));
 
         if (!chain_members.empty()) {
             for(size_t i = 0; i < chain_members.size() - 1; i++){
@@ -8148,6 +8275,11 @@ void chain_iterator_video_capabilities(Printer &p, AppGpu &gpu, const void * pla
         if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR) {
             const VkVideoEncodeQuantizationMapCapabilitiesKHR* props = (const VkVideoEncodeQuantizationMapCapabilitiesKHR*)structure;
             DumpVkVideoEncodeQuantizationMapCapabilitiesKHR(p, "VkVideoEncodeQuantizationMapCapabilitiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE) {
+            const VkVideoEncodeRgbConversionCapabilitiesVALVE* props = (const VkVideoEncodeRgbConversionCapabilitiesVALVE*)structure;
+            DumpVkVideoEncodeRgbConversionCapabilitiesVALVE(p, "VkVideoEncodeRgbConversionCapabilitiesVALVE", *props);
             p.AddNewline();
         }
         place = structure->pNext;
