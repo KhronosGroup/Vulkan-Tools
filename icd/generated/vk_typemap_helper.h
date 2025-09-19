@@ -7521,6 +7521,42 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENE
     typedef VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT Type;
 };
 
+// Map type VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_RGB_CONVERSION_FEATURES_VALVE
+template <> struct LvlTypeMap<VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_RGB_CONVERSION_FEATURES_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_RGB_CONVERSION_FEATURES_VALVE> {
+    typedef VkPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE Type;
+};
+
+// Map type VkVideoEncodeRgbConversionCapabilitiesVALVE to id VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE
+template <> struct LvlTypeMap<VkVideoEncodeRgbConversionCapabilitiesVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE> {
+    typedef VkVideoEncodeRgbConversionCapabilitiesVALVE Type;
+};
+
+// Map type VkVideoEncodeProfileRgbConversionInfoVALVE to id VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE
+template <> struct LvlTypeMap<VkVideoEncodeProfileRgbConversionInfoVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE> {
+    typedef VkVideoEncodeProfileRgbConversionInfoVALVE Type;
+};
+
+// Map type VkVideoEncodeSessionRgbConversionCreateInfoVALVE to id VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_RGB_CONVERSION_CREATE_INFO_VALVE
+template <> struct LvlTypeMap<VkVideoEncodeSessionRgbConversionCreateInfoVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_RGB_CONVERSION_CREATE_INFO_VALVE;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_RGB_CONVERSION_CREATE_INFO_VALVE> {
+    typedef VkVideoEncodeSessionRgbConversionCreateInfoVALVE Type;
+};
+
 // Map type VkPhysicalDeviceImageViewMinLodFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceImageViewMinLodFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT;
