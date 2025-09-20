@@ -2854,6 +2854,7 @@ static void demo_create_xlib_window(struct demo *demo) {
     XMapWindow(demo->xlib_display, demo->xlib_window);
     XFlush(demo->xlib_display);
     demo->xlib_wm_delete_window = XInternAtom(demo->xlib_display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(demo->xlib_display, demo->xlib_window, &demo->xlib_wm_delete_window, 1);
 }
 static void demo_handle_xlib_event(struct demo *demo, const XEvent *event) {
     switch (event->type) {
