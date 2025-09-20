@@ -119,56 +119,65 @@ EXTENSION_CATEGORIES = OrderedDict((
          'type': EXTENSION_TYPE_BOTH,
          'holder_type': 'VkPhysicalDeviceProperties2',
          'print_iterator': True,
-         'can_show_promoted_structs': True}),
+         'can_show_promoted_structs': True,
+         'ignore_vendor_exclusion': False}),
     ('phys_device_mem_props2',
         {'extends': 'VkPhysicalDeviceMemoryProperties2',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type':'VkPhysicalDeviceMemoryProperties2',
          'print_iterator': False,
-         'can_show_promoted_structs': False}),
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': False}),
     ('phys_device_features2',
         {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type': 'VkPhysicalDeviceFeatures2',
          'print_iterator': True,
-         'can_show_promoted_structs': True}),
+         'can_show_promoted_structs': True,
+         'ignore_vendor_exclusion': False}),
     ('surface_capabilities2',
         {'extends': 'VkSurfaceCapabilities2KHR',
          'type': EXTENSION_TYPE_BOTH,
          'holder_type': 'VkSurfaceCapabilities2KHR',
          'print_iterator': True,
          'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': False,
          'exclude': ['VkSurfacePresentScalingCapabilitiesKHR', 'VkSurfacePresentModeCompatibilityKHR']}),
     ('format_properties2',
         {'extends': 'VkFormatProperties2',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type':'VkFormatProperties2',
          'print_iterator': True,
-         'can_show_promoted_structs': False}),
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': False}),
     ('queue_properties2',
         {'extends': 'VkQueueFamilyProperties2',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type': 'VkQueueFamilyProperties2',
          'print_iterator': True,
-         'can_show_promoted_structs': False}),
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': False}),
     ('video_profile_info',
         {'extends': 'VkVideoProfileInfoKHR',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type': 'VkVideoProfileInfoKHR',
          'print_iterator': True,
-         'can_show_promoted_structs': False}),
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': True}),
     ('video_capabilities',
         {'extends': 'VkVideoCapabilitiesKHR',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type': 'VkVideoCapabilitiesKHR',
          'print_iterator': True,
-         'can_show_promoted_structs': False}),
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': True,}),
     ('video_format_properties',
         {'extends': 'VkVideoFormatPropertiesKHR',
          'type': EXTENSION_TYPE_DEVICE,
          'holder_type': 'VkVideoFormatPropertiesKHR',
          'print_iterator': True,
-         'can_show_promoted_structs': False})
+         'can_show_promoted_structs': False,
+         'ignore_vendor_exclusion': True})
                                    ))
 class VulkanInfoGeneratorOptions(GeneratorOptions):
     def __init__(self,
@@ -856,16 +865,21 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
             self.all_structures.append(VulkanStructure(
                 name, typeinfo.elem, self.constants, self.extTypes))
 
+        is_vendor_type = False
         for vendor in self.vendor_abbreviations:
             for node in typeinfo.elem.findall('member'):
                 if node.get('values') is not None:
                     if node.get('values').find(vendor) != -1:
-                        return
+                        is_vendor_type = True
+                        break
+            if is_vendor_type:
+                break
 
         for key, value in EXTENSION_CATEGORIES.items():
             if str(typeinfo.elem.get('structextends')).find(value.get('extends')) != -1:
                 if value.get('exclude') is None or name not in value.get('exclude'):
-                    self.extension_sets[key].add(name)
+                    if not is_vendor_type or value.get('ignore_vendor_exclusion'):
+                        self.extension_sets[key].add(name)
 
     # finds all the ranges of formats from core (1.0), core versions (1.1+), and extensions
     def findFormatRanges(self):
