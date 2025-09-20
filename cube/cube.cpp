@@ -442,6 +442,7 @@ struct Demo {
     wl_seat *seat = nullptr;
     wl_pointer *pointer = nullptr;
     wl_keyboard *keyboard = nullptr;
+    int pending_width, pending_height;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     IDirectFB *dfb = nullptr;
@@ -2197,6 +2198,12 @@ void Demo::prepare() {
 void Demo::prepare_swapchain() {
     vk::SwapchainKHR oldSwapchain = swapchain;
 
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (wsi_platform == WsiPlatform::wayland && !xdg_surface_has_been_configured) {
+        return;
+    }
+#endif
+
     // Check the surface capabilities and formats
     auto surface_capabilities_return = gpu.getSurfaceCapabilitiesKHR(surface);
     VERIFY(surface_capabilities_return.result == vk::Result::eSuccess);
@@ -3419,10 +3426,14 @@ void Demo::run<WsiPlatform::wayland>() {
 static void handle_surface_configure(void *data, xdg_surface *xdg_surface, uint32_t serial) {
     Demo &demo = *static_cast<Demo *>(data);
     xdg_surface_ack_configure(xdg_surface, serial);
-    if (demo.xdg_surface_has_been_configured) {
-        demo.resize();
-    }
     demo.xdg_surface_has_been_configured = true;
+    if (demo.pending_width > 0) {
+        demo.width = demo.pending_width;
+    }
+    if (demo.pending_height > 0) {
+        demo.height = demo.pending_height;
+    }
+    demo.resize();
 }
 
 static const xdg_surface_listener surface_listener = {handle_surface_configure};
@@ -3433,10 +3444,10 @@ static void handle_toplevel_configure(void *data, xdg_toplevel *xdg_toplevel, in
     /* zero values imply the program may choose its own size, so in that case
      * stay with the existing value (which on startup is the default) */
     if (width > 0) {
-        demo.width = static_cast<uint32_t>(width);
+        demo.pending_width = static_cast<uint32_t>(width);
     }
     if (height > 0) {
-        demo.height = static_cast<uint32_t>(height);
+        demo.pending_height = static_cast<uint32_t>(height);
     }
     // This will be followed by a surface configure
 }
