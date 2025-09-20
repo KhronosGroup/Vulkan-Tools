@@ -443,6 +443,7 @@ struct demo {
     struct wl_seat *seat;
     struct wl_pointer *pointer;
     struct wl_keyboard *keyboard;
+    int pending_width, pending_height;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     IDirectFB *dfb;
@@ -1371,6 +1372,12 @@ static void demo_prepare_framebuffers(struct demo *demo);
 static void demo_prepare_swapchain(struct demo *demo) {
     VkResult U_ASSERT_ONLY err;
     VkSwapchainKHR oldSwapchain = demo->swapchain;
+
+#if defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_WAYLAND && !demo->xdg_surface_has_been_configured) {
+        return;
+    }
+#endif
 
     // Check the surface capabilities and formats
     VkSurfaceCapabilitiesKHR surfCapabilities;
@@ -3054,10 +3061,14 @@ static void demo_run(struct demo *demo) {
 static void handle_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t serial) {
     struct demo *demo = (struct demo *)data;
     xdg_surface_ack_configure(xdg_surface, serial);
-    if (demo->xdg_surface_has_been_configured) {
-        demo_resize(demo);
-    }
     demo->xdg_surface_has_been_configured = 1;
+    if (demo->pending_width > 0) {
+        demo->width = demo->pending_width;
+    }
+    if (demo->pending_height > 0) {
+        demo->height = demo->pending_height;
+    }
+    demo_resize(demo);
 }
 
 static const struct xdg_surface_listener xdg_surface_listener = {handle_surface_configure};
@@ -3068,10 +3079,10 @@ static void handle_toplevel_configure(void *data, struct xdg_toplevel *xdg_tople
     /* zero values imply the program may choose its own size, so in that case
      * stay with the existing value (which on startup is the default) */
     if (width > 0) {
-        demo->width = width;
+        demo->pending_width = width;
     }
     if (height > 0) {
-        demo->height = height;
+        demo->pending_height = height;
     }
     /* This should be followed by a surface configure */
 }
