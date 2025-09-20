@@ -3224,6 +3224,7 @@ void Demo::create_window<WsiPlatform::xlib>() {
     XMapWindow(xlib_display, xlib_window);
     XFlush(xlib_display);
     xlib_wm_delete_window = XInternAtom(xlib_display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(xlib_display, xlib_window, &xlib_wm_delete_window, 1);
 }
 
 void Demo::handle_xlib_event(const XEvent *event) {
