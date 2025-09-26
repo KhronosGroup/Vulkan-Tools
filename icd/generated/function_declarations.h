@@ -424,6 +424,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_maintenance6", 1},
     {"VK_NV_descriptor_pool_overallocation", 1},
     {"VK_QCOM_tile_memory_heap", 1},
+    {"VK_KHR_copy_memory_indirect", 1},
     {"VK_KHR_video_encode_intra_refresh", 1},
     {"VK_KHR_video_encode_quantization_map", 2},
     {"VK_NV_raw_access_chains", 1},
@@ -2741,6 +2742,15 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetDescriptorBufferOffsets2EXT(
 static VKAPI_ATTR void VKAPI_CALL CmdBindDescriptorBufferEmbeddedSamplers2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo);
+
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyMemoryIndirectInfoKHR*          pCopyMemoryIndirectInfo);
+
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectKHR(
+    VkCommandBuffer                             commandBuffer,
+    const VkCopyMemoryToImageIndirectInfoKHR*   pCopyMemoryToImageIndirectInfo);
 
 
 
@@ -5472,6 +5482,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdPushDescriptorSetWithTemplate2KHR", (void*)CmdPushDescriptorSetWithTemplate2KHR},
     {"vkCmdSetDescriptorBufferOffsets2EXT", (void*)CmdSetDescriptorBufferOffsets2EXT},
     {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT", (void*)CmdBindDescriptorBufferEmbeddedSamplers2EXT},
+    {"vkCmdCopyMemoryIndirectKHR", (void*)CmdCopyMemoryIndirectKHR},
+    {"vkCmdCopyMemoryToImageIndirectKHR", (void*)CmdCopyMemoryToImageIndirectKHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
     {"vkDebugReportMessageEXT", (void*)DebugReportMessageEXT},
