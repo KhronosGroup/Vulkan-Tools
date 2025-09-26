@@ -4343,6 +4343,42 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED
     typedef VkBindDescriptorBufferEmbeddedSamplersInfoEXT Type;
 };
 
+// Map type VkCopyMemoryIndirectInfoKHR to id VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR
+template <> struct LvlTypeMap<VkCopyMemoryIndirectInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR> {
+    typedef VkCopyMemoryIndirectInfoKHR Type;
+};
+
+// Map type VkCopyMemoryToImageIndirectInfoKHR to id VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR
+template <> struct LvlTypeMap<VkCopyMemoryToImageIndirectInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR> {
+    typedef VkCopyMemoryToImageIndirectInfoKHR Type;
+};
+
+// Map type VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR> {
+    typedef VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR Type;
+};
+
+// Map type VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR Type;
+};
+
 // Map type VkVideoEncodeIntraRefreshCapabilitiesKHR to id VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR
 template <> struct LvlTypeMap<VkVideoEncodeIntraRefreshCapabilitiesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR;
@@ -7966,15 +8002,6 @@ template <> struct LvlTypeMap<VkPhysicalDeviceCopyMemoryIndirectFeaturesNV> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_NV> {
     typedef VkPhysicalDeviceCopyMemoryIndirectFeaturesNV Type;
-};
-
-// Map type VkPhysicalDeviceCopyMemoryIndirectPropertiesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_NV
-template <> struct LvlTypeMap<VkPhysicalDeviceCopyMemoryIndirectPropertiesNV> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_NV;
-};
-
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_NV> {
-    typedef VkPhysicalDeviceCopyMemoryIndirectPropertiesNV Type;
 };
 
 // Map type VkPhysicalDeviceMemoryDecompressionFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_FEATURES_NV

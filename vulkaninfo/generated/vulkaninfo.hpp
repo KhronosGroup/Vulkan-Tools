@@ -1470,6 +1470,7 @@ std::vector<const char *> VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlag
     if (VK_FORMAT_FEATURE_2_OPTICAL_FLOW_VECTOR_BIT_NV & value) strings.push_back("FORMAT_FEATURE_2_OPTICAL_FLOW_VECTOR_BIT_NV");
     if (VK_FORMAT_FEATURE_2_OPTICAL_FLOW_COST_BIT_NV & value) strings.push_back("FORMAT_FEATURE_2_OPTICAL_FLOW_COST_BIT_NV");
     if (VK_FORMAT_FEATURE_2_TENSOR_DATA_GRAPH_BIT_ARM & value) strings.push_back("FORMAT_FEATURE_2_TENSOR_DATA_GRAPH_BIT_ARM");
+    if (VK_FORMAT_FEATURE_2_COPY_IMAGE_INDIRECT_DST_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_COPY_IMAGE_INDIRECT_DST_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR");
     return strings;
@@ -3262,6 +3263,16 @@ void DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(Printer &p, std::string na
 void DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkShaderStageFlags(p, "cooperativeMatrixSupportedStages", obj.cooperativeMatrixSupportedStages);
+}
+void DumpVkPhysicalDeviceCopyMemoryIndirectFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(25);
+    p.PrintKeyBool("indirectMemoryCopy", static_cast<bool>(obj.indirectMemoryCopy));
+    p.PrintKeyBool("indirectMemoryToImageCopy", static_cast<bool>(obj.indirectMemoryToImageCopy));
+}
+void DumpVkPhysicalDeviceCopyMemoryIndirectPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkQueueFlags(p, "supportedQueues", obj.supportedQueues);
 }
 void DumpVkPhysicalDeviceCustomBorderColorFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceCustomBorderColorFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
@@ -5534,6 +5545,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR PhysicalDeviceComputeShaderDerivativesPropertiesKHR{};
     VkPhysicalDeviceConservativeRasterizationPropertiesEXT PhysicalDeviceConservativeRasterizationPropertiesEXT{};
     VkPhysicalDeviceCooperativeMatrixPropertiesKHR PhysicalDeviceCooperativeMatrixPropertiesKHR{};
+    VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR PhysicalDeviceCopyMemoryIndirectPropertiesKHR{};
     VkPhysicalDeviceCustomBorderColorPropertiesEXT PhysicalDeviceCustomBorderColorPropertiesEXT{};
     VkPhysicalDeviceDepthStencilResolveProperties PhysicalDeviceDepthStencilResolveProperties{};
     VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT{};
@@ -5611,6 +5623,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceComputeShaderDerivativesPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR;
         PhysicalDeviceConservativeRasterizationPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
         PhysicalDeviceCooperativeMatrixPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
+        PhysicalDeviceCopyMemoryIndirectPropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR;
         PhysicalDeviceCustomBorderColorPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
         PhysicalDeviceDepthStencilResolveProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
         PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT;
@@ -5688,6 +5701,9 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceConservativeRasterizationPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COOPERATIVE_MATRIX_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCooperativeMatrixPropertiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_COPY_MEMORY_INDIRECT_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COPY_MEMORY_INDIRECT_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCopyMemoryIndirectPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomBorderColorPropertiesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME))
@@ -5887,6 +5903,11 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR) {
             const VkPhysicalDeviceCooperativeMatrixPropertiesKHR* props = (const VkPhysicalDeviceCooperativeMatrixPropertiesKHR*)structure;
             DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(p, "VkPhysicalDeviceCooperativeMatrixPropertiesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR) {
+            const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR* props = (const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR*)structure;
+            DumpVkPhysicalDeviceCopyMemoryIndirectPropertiesKHR(p, "VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT) {
@@ -6284,6 +6305,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR PhysicalDeviceComputeShaderDerivativesFeaturesKHR{};
     VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditionalRenderingFeaturesEXT{};
     VkPhysicalDeviceCooperativeMatrixFeaturesKHR PhysicalDeviceCooperativeMatrixFeaturesKHR{};
+    VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR PhysicalDeviceCopyMemoryIndirectFeaturesKHR{};
     VkPhysicalDeviceCustomBorderColorFeaturesEXT PhysicalDeviceCustomBorderColorFeaturesEXT{};
     VkPhysicalDeviceDepthBiasControlFeaturesEXT PhysicalDeviceDepthBiasControlFeaturesEXT{};
     VkPhysicalDeviceDepthClampControlFeaturesEXT PhysicalDeviceDepthClampControlFeaturesEXT{};
@@ -6445,6 +6467,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceComputeShaderDerivativesFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR;
         PhysicalDeviceConditionalRenderingFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT;
         PhysicalDeviceCooperativeMatrixFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR;
+        PhysicalDeviceCopyMemoryIndirectFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR;
         PhysicalDeviceCustomBorderColorFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT;
         PhysicalDeviceDepthBiasControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_BIAS_CONTROL_FEATURES_EXT;
         PhysicalDeviceDepthClampControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT;
@@ -6625,6 +6648,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceConditionalRenderingFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COOPERATIVE_MATRIX_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCooperativeMatrixFeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COPY_MEMORY_INDIRECT_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCopyMemoryIndirectFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomBorderColorFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEPTH_BIAS_CONTROL_EXTENSION_NAME))
@@ -7058,6 +7083,11 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR) {
             const VkPhysicalDeviceCooperativeMatrixFeaturesKHR* props = (const VkPhysicalDeviceCooperativeMatrixFeaturesKHR*)structure;
             DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(p, "VkPhysicalDeviceCooperativeMatrixFeaturesKHR", *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR) {
+            const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR* props = (const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR*)structure;
+            DumpVkPhysicalDeviceCopyMemoryIndirectFeaturesKHR(p, "VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR", *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT) {
