@@ -1914,8 +1914,17 @@ void Demo::select_physical_device() {
     gpu = physical_devices[gpu_number];
     {
         auto physicalDeviceProperties = gpu.getProperties();
-        fprintf(stderr, "Selected GPU %d: %s, type: %s\n", gpu_number, physicalDeviceProperties.deviceName.data(),
-                to_string(physicalDeviceProperties.deviceType).c_str());
+
+        uint32_t api_major = VK_API_VERSION_MAJOR(physicalDeviceProperties.apiVersion);
+        uint32_t api_minor = VK_API_VERSION_MINOR(physicalDeviceProperties.apiVersion);
+        uint32_t api_patch = VK_API_VERSION_PATCH(physicalDeviceProperties.apiVersion);
+        uint32_t major = VK_API_VERSION_MAJOR(physicalDeviceProperties.driverVersion);
+        uint32_t minor = VK_API_VERSION_MINOR(physicalDeviceProperties.driverVersion);
+        uint32_t patch = VK_API_VERSION_PATCH(physicalDeviceProperties.driverVersion);
+        fprintf(stderr, "Selected GPU %d: %s, type: %s, apiVersion: %d (%d.%d.%d), driverVersion: %d (%d.%d.%d) \n", gpu_number,
+                physicalDeviceProperties.deviceName.data(), to_string(physicalDeviceProperties.deviceType).c_str(),
+                physicalDeviceProperties.apiVersion, api_major, api_minor, api_patch, physicalDeviceProperties.driverVersion, major,
+                minor, patch);
     }
 
     /* Look for device extensions */
