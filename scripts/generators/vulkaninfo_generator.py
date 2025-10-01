@@ -19,16 +19,9 @@
 #
 # Author: Charles Giessen <charles@lunarg.com>
 
-import re
-import os
-import sys
-import copy
-import operator
+from base_generator import BaseGenerator
+
 from collections import OrderedDict
-import generator as gen
-from common_codegen import GetFeatureProtect
-from generator import GeneratorOptions, OutputGenerator
-import xml.etree.ElementTree as etree
 
 LICENSE_HEADER = '''
 /*
@@ -117,28 +110,24 @@ EXTENSION_CATEGORIES = OrderedDict((
     ('phys_device_props2',
         {'extends': 'VkPhysicalDeviceProperties2',
          'type': EXTENSION_TYPE_BOTH,
-         'holder_type': 'VkPhysicalDeviceProperties2',
          'print_iterator': True,
          'can_show_promoted_structs': True,
          'ignore_vendor_exclusion': False}),
     ('phys_device_mem_props2',
         {'extends': 'VkPhysicalDeviceMemoryProperties2',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type':'VkPhysicalDeviceMemoryProperties2',
          'print_iterator': False,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': False}),
     ('phys_device_features2',
-        {'extends': 'VkPhysicalDeviceFeatures2,VkDeviceCreateInfo',
+        {'extends': 'VkPhysicalDeviceFeatures2',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type': 'VkPhysicalDeviceFeatures2',
          'print_iterator': True,
          'can_show_promoted_structs': True,
          'ignore_vendor_exclusion': False}),
     ('surface_capabilities2',
         {'extends': 'VkSurfaceCapabilities2KHR',
          'type': EXTENSION_TYPE_BOTH,
-         'holder_type': 'VkSurfaceCapabilities2KHR',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': False,
@@ -146,421 +135,221 @@ EXTENSION_CATEGORIES = OrderedDict((
     ('format_properties2',
         {'extends': 'VkFormatProperties2',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type':'VkFormatProperties2',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': False}),
     ('queue_properties2',
         {'extends': 'VkQueueFamilyProperties2',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type': 'VkQueueFamilyProperties2',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': False}),
     ('video_profile_info',
         {'extends': 'VkVideoProfileInfoKHR',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type': 'VkVideoProfileInfoKHR',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': True}),
     ('video_capabilities',
         {'extends': 'VkVideoCapabilitiesKHR',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type': 'VkVideoCapabilitiesKHR',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': True,}),
     ('video_format_properties',
         {'extends': 'VkVideoFormatPropertiesKHR',
          'type': EXTENSION_TYPE_DEVICE,
-         'holder_type': 'VkVideoFormatPropertiesKHR',
          'print_iterator': True,
          'can_show_promoted_structs': False,
          'ignore_vendor_exclusion': True})
                                    ))
-class VulkanInfoGeneratorOptions(GeneratorOptions):
-    def __init__(self,
-                 conventions=None,
-                 input=None,
-                 filename=None,
-                 directory='.',
-                 genpath = None,
-                 apiname=None,
-                 profile=None,
-                 versions='.*',
-                 emitversions='.*',
-                 defaultExtensions=None,
-                 addExtensions=None,
-                 removeExtensions=None,
-                 emitExtensions=None,
-                 sortProcedure=None,
-                 prefixText='',
-                 genFuncPointers=True,
-                 protectFile=True,
-                 protectFeature=True,
-                 protectProto=None,
-                 protectProtoStr=None,
-                 apicall='',
-                 apientry='',
-                 apientryp='',
-                 indentFuncProto=True,
-                 indentFuncPointer=False,
-                 alignFuncParam=0,
-                 expandEnumerants=True,
-                 registryFile='vk.xml'
-                 ):
-        GeneratorOptions.__init__(self,
-                 conventions = conventions,
-                 filename = filename,
-                 directory = directory,
-                 genpath = genpath,
-                 apiname = apiname,
-                 profile = profile,
-                 versions = versions,
-                 emitversions = emitversions,
-                 defaultExtensions = defaultExtensions,
-                 addExtensions = addExtensions,
-                 removeExtensions = removeExtensions,
-                 emitExtensions = emitExtensions,
-                 sortProcedure = sortProcedure)
-        self.input = input
-        self.prefixText = prefixText
-        self.genFuncPointers = genFuncPointers
-        self.protectFile = protectFile
-        self.protectFeature = protectFeature
-        self.protectProto = protectProto
-        self.protectProtoStr = protectProtoStr
-        self.apicall = apicall
-        self.apientry = apientry
-        self.apientryp = apientryp
-        self.indentFuncProto = indentFuncProto
-        self.indentFuncPointer = indentFuncPointer
-        self.alignFuncParam = alignFuncParam
-        self.registryFile = registryFile
-
-# VulkanInfoGenerator - subclass of OutputGenerator.
-# Generates a vulkan info output helper function
-
-
-class VulkanInfoGenerator(OutputGenerator):
-
-    def __init__(self,
-                 errFile=sys.stderr,
-                 warnFile=sys.stderr,
-                 diagFile=sys.stdout):
-        OutputGenerator.__init__(self, errFile, warnFile, diagFile)
-
-        self.constants = OrderedDict()
-
-        self.types_to_gen = set()
-
-        self.extension_sets = OrderedDict()
-        for ext_cat in EXTENSION_CATEGORIES.keys():
-            self.extension_sets[ext_cat] = set()
-
-        self.enums = []
-        self.flags = []
-        self.bitmasks = []
+class VulkanInfoGenerator(BaseGenerator):
+    def __init__(self):
+        BaseGenerator.__init__(self)
         self.format_ranges = []
-        self.all_structures = []
-        self.aliases = OrderedDict()
 
-        self.extFuncs = OrderedDict()
-        self.extTypes = OrderedDict()
-
-        self.vendor_abbreviations = []
-        self.vulkan_versions = []
-
-    def beginFile(self, genOpts):
-        gen.OutputGenerator.beginFile(self, genOpts)
-
-        for node in self.registry.reg.findall('enums'):
-            if node.get('name') == 'API Constants':
-                for item in node.findall('enum'):
-                    self.constants[item.get('name')] = item.get('value')
-
-        for node in self.registry.reg.find('extensions').findall('extension'):
-            ext = VulkanExtension(node)
-            for item in ext.vktypes:
-                if item not in self.extTypes:
-                    self.extTypes[item] = []
-                self.extTypes[item].append(ext)
-            for item in ext.vkfuncs:
-                self.extFuncs[item] = ext
-
-        # need list of venders to blacklist vendor extensions
-        for tag in self.registry.reg.find('tags'):
-            if tag.get('name') not in ['KHR', 'EXT']:
-                self.vendor_abbreviations.append('_' + tag.get('name'))
-
-        for ver in self.registry.reg.findall('feature'):
-            self.vulkan_versions.append(VulkanVersion(ver))
-
-    def endFile(self):
+    def generate(self):
         self.findFormatRanges()
 
         # gather the types that are needed to generate
         types_to_gen = set()
-        for s in ENUMS_TO_GEN:
-            types_to_gen.add(s)
+        types_to_gen.update(ENUMS_TO_GEN)
+        types_to_gen.update(FLAGS_TO_GEN)
+        types_to_gen.update(STRUCTURES_TO_GEN)
 
-        for f in FLAGS_TO_GEN:
-            types_to_gen.add(f)
+        extension_types = {}
+        for key, ext_info in EXTENSION_CATEGORIES.items():
+            extension_types[key] = []
 
-        types_to_gen.update(
-            GatherTypesToGen(self.all_structures, STRUCTURES_TO_GEN))
-        for key, info in EXTENSION_CATEGORIES.items():
-            types_to_gen.update(
-                GatherTypesToGen(self.all_structures, self.extension_sets[key], info.get('exclude')))
+            for extended_struct in self.vk.structs[ext_info.get('extends')].extendedBy:
+                if ext_info.get('exclude') is not None and extended_struct in ext_info.get('exclude'):
+                    continue
+                elif ext_info.get('ignore_vendor_exclusion'):
+                    extension_types[key].append(extended_struct)
+                    continue
+                vendor_tags = []
+                for extension in self.vk.structs[extended_struct].extensions:
+                    vendor_tags.append(extension.split('_')[1])
+                if len(vendor_tags) == 0 or 'KHR' in vendor_tags or 'EXT' in vendor_tags:
+                    extension_types[key].append(extended_struct)
+            extension_types[key] = sorted(extension_types[key])
+            types_to_gen.update(extension_types[key])
+
+        # find all the types that need
+        types_to_gen.update(self.findAllTypesToGen(types_to_gen))
+
         types_to_gen = sorted(types_to_gen)
 
-        names_of_structures_to_gen = set()
-        for s in self.all_structures:
-            if s.name in types_to_gen:
-                names_of_structures_to_gen.add(s.name)
-        names_of_structures_to_gen = sorted(names_of_structures_to_gen)
+        comparison_types_to_gen = set()
+        comparison_types_to_gen.update(STRUCT_COMPARISONS_TO_GEN)
+        comparison_types_to_gen.update(self.findAllTypesToGen(comparison_types_to_gen))
+        comparison_types_to_gen = sorted(comparison_types_to_gen)
 
-        structs_to_comp = set()
-        for s in STRUCT_COMPARISONS_TO_GEN:
-            structs_to_comp.add(s)
-        structs_to_comp.update(
-            GatherTypesToGen(self.all_structures, STRUCT_COMPARISONS_TO_GEN))
-
-        for key, value in self.extension_sets.items():
-            self.extension_sets[key] = sorted(value)
-
-        self.enums = sorted(self.enums, key=operator.attrgetter('name'))
-        self.flags = sorted(self.flags, key=operator.attrgetter('name'))
-        self.bitmasks = sorted(self.bitmasks, key=operator.attrgetter('name'))
-        self.all_structures = sorted(self.all_structures, key=operator.attrgetter('name'))
 
         # print the types gathered
-        out = ''
-        out += LICENSE_HEADER + '\n'
-        out += '#include "vulkaninfo.h"\n'
-        out += '#include "outputprinter.h"\n'
-        out += CUSTOM_FORMATTERS
+        out = []
+        out.append(LICENSE_HEADER + '\n')
+        out.append('#include "vulkaninfo.h"\n')
+        out.append('#include "outputprinter.h"\n')
+        out.append(CUSTOM_FORMATTERS)
 
-        out += self.genVideoEnums()
+        out.extend(self.genVideoEnums())
 
-        for enum in (e for e in self.enums if e.name in types_to_gen):
-            out += PrintEnumToString(enum, self)
-            out += PrintEnum(enum, self)
+        for enum in (e for e in types_to_gen if e in self.vk.enums):
+            out.extend(self.PrintEnumToString(self.vk.enums[enum]))
+            out.extend(self.PrintEnum(self.vk.enums[enum]))
 
-        for flag in self.flags:
-            if flag.name in types_to_gen or flag.enum in types_to_gen:
-                for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
-                    out += PrintBitMask(bitmask, flag.name, self)
+        # Need to go through all flags to find if they or their associated bitmask needs printing
+        # This is because both bitmask and flag types are generated in PrintBitMask
+        for name in (x for x in sorted(self.vk.flags.keys()) if x in types_to_gen or self.vk.flags[x].bitmaskName in types_to_gen):
+            bitmask = self.vk.bitmasks[self.vk.flags[name].bitmaskName]
 
-            if flag.name in FLAG_STRINGS_TO_GEN:
-                for bitmask in (b for b in self.bitmasks if b.name == flag.enum):
-                    out += PrintBitMaskToString(bitmask, flag.name, self)
+            out.extend(self.PrintBitMask(bitmask, bitmask.flagName))
 
-        for s in (x for x in self.all_structures if x.name in types_to_gen and x.name not in STRUCT_BLACKLIST):
-            out += PrintStructure(s)
+            if bitmask.flagName in FLAG_STRINGS_TO_GEN:
+                out.extend(self.PrintBitMaskToString(bitmask, bitmask.flagName))
+
+        for s in (x for x in types_to_gen if x in self.vk.structs and x not in STRUCT_BLACKLIST):
+            out.extend(self.PrintStructure(self.vk.structs[s]))
 
         for key, value in EXTENSION_CATEGORIES.items():
-            out += PrintChainStruct(key, self.extension_sets[key], self.all_structures, value, self.extTypes, self.aliases, self.vulkan_versions)
+            out.extend(self.PrintChainStruct(key, extension_types[key], value))
 
-        for s in (x for x in self.all_structures if x.name in structs_to_comp):
-            out += PrintStructComparisonForwardDecl(s)
-        for s in (x for x in self.all_structures if x.name in structs_to_comp):
-            out += PrintStructComparison(s)
-        for s in (x for x in self.all_structures if x.name in STRUCT_SHORT_VERSIONS_TO_GEN):
-            out += PrintStructShort(s)
+        for s in (x for x in comparison_types_to_gen if x in self.vk.structs):
+            out.extend(self.PrintStructComparisonForwardDecl(self.vk.structs[s]))
+        for s in (x for x in comparison_types_to_gen if x in self.vk.structs):
+            out.extend(self.PrintStructComparison(self.vk.structs[s]))
+        for s in (x for x in types_to_gen if x in self.vk.structs and x in STRUCT_SHORT_VERSIONS_TO_GEN):
+            out.extend(self.PrintStructShort(self.vk.structs[s]))
 
-        out += 'auto format_ranges = std::array{\n'
+        out.append('auto format_ranges = std::array{\n')
         for f in self.format_ranges:
-            out += f'    FormatRange{{{f.minimum_instance_version}, {f.extension_name if f.extension_name is not None else "nullptr"}, '
-            out += f'static_cast<VkFormat>({f.first_format}), static_cast<VkFormat>({f.last_format})}},\n'
-        out += '};\n'
+            out.append(f'    FormatRange{{{f.minimum_instance_version}, {self.vk.extensions[f.extensions[0]].nameString if len(f.extensions) > 0 else "nullptr"}, ')
+            out.append(f'static_cast<VkFormat>({f.first_format}), static_cast<VkFormat>({f.last_format})}},\n')
+        out.append('};\n')
 
-        out += self.genVideoProfileUtils()
+        out.extend(self.genVideoProfileUtils())
 
-        gen.write(out, file=self.outFile)
+        self.write(''.join(out))
 
-        gen.OutputGenerator.endFile(self)
 
     def genVideoEnums(self):
-        # We need to add dumping utilities for enums declared in the video std headers and directly
-        # present in the Vulkan API structures. In order to do that we really have no choice but
-        # to parse the video.xml and generate the utilities based on the enum types defined there
-        videoRegistryFile = self.genOpts.registryFile.replace('vk.xml', 'video.xml')
-        if os.path.isfile(videoRegistryFile):
-            videoxml = etree.parse(videoRegistryFile)
-        else:
-            assert False, "Could not find video.xml to generate utilities for video enum types"
-        out = ''
-        for enum in videoxml.findall("./enums[@name]"):
-            enumname = enum.get('name')
-            out += f'std::string {enumname}String({enumname} value) {{\n'
-            out += '    switch (value) {\n'
-            for option in enum.findall("./enum[@name]"):
-                name = option.get('name')
+        out = []
+        for enum in self.vk.videoStd.enums.values():
+            out.append(f'std::string {enum.name}String({enum.name} value) {{\n')
+            out.append('    switch (value) {\n')
+            for field in enum.fields:
                 # Ignore aliases
-                if option.get('value') is not None:
-                    out += f'        case {name}: return "{name}";\n'
-            out += f'        default: return std::string("UNKNOWN_{enumname}_value") + std::to_string(value);\n'
-            out += '    }\n}\n'
-            out += f'void Dump{enumname}(Printer &p, std::string name, {enumname} value) {{\n'
-            out += f'    p.PrintKeyString(name, {enumname}String(value));\n}}\n'
+                if field.value is not None:
+                    out.append(f'        case {field.name}: return "{field.name}";\n')
+            out.append(f'        default: return std::string("UNKNOWN_{enum.name}_value") + std::to_string(value);\n')
+            out.append('    }\n}\n')
+            out.append(f'void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{\n')
+            out.append(f'    p.PrintKeyString(name, {enum.name}String(value));\n}}\n')
         return out
 
-    def genVideoProfileUtils(self):
-        out = ''
 
-        # Parse video codec information from the XML
-        videoCodecs = OrderedDict()
-        xmlVideoCodecs = self.registry.reg.find("./videocodecs")
-        for xmlVideoCodec in xmlVideoCodecs.findall("./videocodec"):
-            name = xmlVideoCodec.get('name')
-            extend = xmlVideoCodec.get('extend')
-            value = xmlVideoCodec.get('value')
-            if value is None:
-                # Video codec category
-                videoCodecs[name] = VulkanVideoCodec(name)
-            else:
-                # Specific video codec
-                videoCodecs[name] = VulkanVideoCodec(name, videoCodecs[extend], value)
-            videoCodec = videoCodecs[name]
+    # Utility to get the extension / version precondition of a list of type names
+    def GetTypesPrecondition(self, typelist, indent):
+        indent = ' ' * indent
+        out = []
+        extEnables = []
+        for typename in typelist:
+            extEnables.extend(self.vk.structs[typename].extensions)
 
-            for xmlVideoProfiles in xmlVideoCodec.findall("./videoprofiles"):
-                videoProfileStructName = xmlVideoProfiles.get('struct')
-                videoCodec.profileStructs[videoProfileStructName] = VulkanVideoProfileStruct(videoProfileStructName)
-                videoProfileStruct = videoCodec.profileStructs[videoProfileStructName]
+        version = None
+        for typename in typelist:
+            for v in self.vk.versions.values():
+                if typename in v.name:
+                    if version is not None and (v.major > version.major or (v.major == version.major and v.minor > version.minor)):
+                        version = v
 
-                for xmlVideoProfileMember in xmlVideoProfiles.findall("./videoprofilemember"):
-                    memberName = xmlVideoProfileMember.get('name')
-                    videoProfileStruct.members[memberName] = VulkanVideoProfileStructMember(memberName)
-                    videoProfileStructMember = videoProfileStruct.members[memberName]
 
-                    for xmlVideoProfile in xmlVideoProfileMember.findall("./videoprofile"):
-                        videoProfileStructMember.values[xmlVideoProfile.get('value')] = xmlVideoProfile.get('name')
-
-            for xmlVideoCapabilities in xmlVideoCodec.findall("./videocapabilities"):
-                capabilityStructName = xmlVideoCapabilities.get('struct')
-                videoCodec.capabilities[capabilityStructName] = capabilityStructName
-
-            for xmlVideoFormat in xmlVideoCodec.findall("./videoformat"):
-                videoFormatName = xmlVideoFormat.get('name')
-                videoFormatExtend = xmlVideoFormat.get('extend')
-                if videoFormatName is not None:
-                    # This is a new video format category
-                    videoFormatUsage = xmlVideoFormat.get('usage')
-                    videoCodec.formats[videoFormatName] = VulkanVideoFormat(videoFormatName, videoFormatUsage)
-                    videoFormat = videoCodec.formats[videoFormatName]
-                elif videoFormatExtend is not None:
-                    # This is an extension to an already defined video format category
-                    if videoFormatExtend in videoCodec.formats:
-                        videoFormat = videoCodec.formats[videoFormatExtend]
-                    else:
-                        assert False, f"Video format category '{videoFormatExtend}' not found but it is attempted to be extended"
-                else:
-                    assert False, "'name' or 'extend' is attribute is required for 'videoformat' element"
-
-                for xmlVideoFormatProperties in xmlVideoFormat.findall("./videoformatproperties"):
-                    propertiesStructName = xmlVideoFormatProperties.get('struct')
-                    videoFormat.properties[propertiesStructName] = propertiesStructName
-
-                for xmlVideoFormatRequiredCap in xmlVideoFormat.findall("./videorequirecapabilities"):
-                    requiredCapStruct = xmlVideoFormatRequiredCap.get('struct')
-                    requiredCapMember = xmlVideoFormatRequiredCap.get('member')
-                    requiredCapValue = xmlVideoFormatRequiredCap.get('value')
-                    videoFormat.requiredCaps.append(VulkanVideoRequiredCapabilities(requiredCapStruct, requiredCapMember, requiredCapValue))
-
-        # Collect flag types in a set because we will need to look this up
-        flagTypes = set()
-        for flagType in self.flags:
-            flagTypes.add(flagType.name)
-
-        # Utility to get structure definition from structure name
-        def GetStructDef(name):
-            for s in self.all_structures:
-                if s.name == name:
-                    return s
-            assert False, f"Definition for structure '{name}' is missing"
-
-        # Utility to get the extension / version precondition of a list of type names
-        def GetTypesPrecondition(typelist, indent):
-            indent = ' ' * indent
-            out = ''
-            extEnables = {}
-            for typename in typelist:
-                for k, elem in self.extTypes.items():
-                    if k == typename or (typename in self.aliases.keys() and k in self.aliases[typename]):
-                        for e in elem:
-                            extEnables[e.extNameStr] = e.type
-
-            version = None
-            for typename in typelist:
-                for v in self.vulkan_versions:
-                    if typename in v.names:
-                        if version is not None and (v.major > version.major or (v.major == version.major and v.minor > version.minor)):
-                            version = v
-
-            has_version = version is not None
-            has_extNameStr = len(extEnables) > 0 or typename in self.aliases.keys()
-            if has_version or has_extNameStr:
-                out += f'{indent}if ('
-                has_printed_condition = False
-                if has_extNameStr:
-                    for key, value in extEnables.items():
-                        if has_printed_condition:
-                            out += f'\n{indent} || '
-                        else:
-                            has_printed_condition = True
-                            if has_version:
-                                out += '('
-                        if value == EXTENSION_TYPE_DEVICE:
-                            out += f'gpu.CheckPhysicalDeviceExtensionIncluded({key})'
-                        else:
-                            assert False, 'Should never get here'
-                if has_version:
+        has_version = version is not None
+        has_extNameStr = len(extEnables) > 0
+        if has_version or has_extNameStr:
+            out.append(f'{indent}if (')
+            has_printed_condition = False
+            if has_extNameStr:
+                for ext in extEnables:
                     if has_printed_condition:
-                        out += f'\n{indent} || (gpu.api_version >= {version.constant})'
+                        out.append(f'\n{indent} || ')
                     else:
-                        out += f'gpu.api_version >= {version.constant}'
-                out += ') {\n'
-            else:
-                out = f'{indent}{{\n'
-            return out
+                        has_printed_condition = True
+                        if has_version:
+                            out.append('(')
+                    if self.vk.extensions[ext].device:
+                        out.append(f'gpu.CheckPhysicalDeviceExtensionIncluded({self.vk.extensions[ext].nameString})')
+                    else:
+                        assert False, 'Should never get here'
+            if has_version:
+                if has_printed_condition:
+                    out.append(f'\n{indent} || (gpu.api_version >= {version.nameApi})')
+                else:
+                    out.append(f'gpu.api_version >= {version.nameApi}')
+            out.append(') {\n')
+        else:
+            out = f'{indent}{{\n'
+        return out
 
-        # Utility to construct a capability prerequisite condition evaluation expression
-        def GetRequiredCapsCondition(structName, memberName, memberRef, value):
-            condition = ''
-            requiredCapStructDef = GetStructDef(structName)
-            for member in requiredCapStructDef.members:
-                if member.name == memberName:
-                    if member.typeID in flagTypes:
-                        # Check that the flags contain all the required values
-                        def genExpressionFromValue(value):
-                            return value if value == "" else f"({memberRef} & {value}) != 0"
+    # Utility to construct a capability prerequisite condition evaluation expression
+    def GetRequiredCapsCondition(self, structName, memberName, memberRef, value):
+        condition = ''
+        requiredCapStructDef = self.vk.structs[structName]
+        for member in requiredCapStructDef.members:
+            if member.name == memberName:
+                if member.type in self.vk.flags:
+                    # Check that the flags contain all the required values
+                    def genExpressionFromValue(value):
+                        return value if value == "" else f"({memberRef} & {value}) != 0"
 
-                        for char in condition:
-                            if char in ['(', ')', '+', ',']:
-                                condition += genExpressionFromValue(value)
-                                value = ""
-                                if char == '+':
-                                    # '+' means AND
-                                    condition += ' && '
-                                elif char == ',':
-                                    # ',' means OR
-                                    condition += ' || '
-                                else:
-                                    condition += char
+                    for char in condition:
+                        if char in ['(', ')', '+', ',']:
+                            condition += genExpressionFromValue(value)
+                            value = ""
+                            if char == '+':
+                                # '+' means AND
+                                condition += ' && '
+                            elif char == ',':
+                                # ',' means OR
+                                condition += ' || '
                             else:
-                                value += char
-                        condition += genExpressionFromValue(value)
-                    else:
-                        condition = f'{memberRef} == {value}'
-            if condition == '':
-                return 'true'
-            else:
-                return f'({condition})'
+                                condition += char
+                        else:
+                            value += char
+                    condition += genExpressionFromValue(value)
+                else:
+                    condition = f'{memberRef} == {value}'
+        if condition == '':
+            return 'true'
+        else:
+            return f'({condition})'
+
+    def genVideoProfileUtils(self):
+        out = []
 
         # Generate video format properties comparator
-        out += '''
+        out.append('''
 bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVideoFormatPropertiesKHR &format_b) {
     auto a = reinterpret_cast<const VkBaseInStructure*>(&format_a);
     auto b = reinterpret_cast<const VkBaseInStructure*>(&format_b);
@@ -570,19 +359,19 @@ bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVi
             // Structure type mismatch (extension structures are expected to be chained in the same order)
             same = false;
         } else {
-            switch (a->sType) {'''
+            switch (a->sType) {''')
 
         if 'VkVideoFormatPropertiesKHR' in self.registry.validextensionstructs:
             for extstruct in ['VkVideoFormatPropertiesKHR'] + self.registry.validextensionstructs['VkVideoFormatPropertiesKHR']:
-                extstructDef = GetStructDef(extstruct)
-                out += f'''
-                case {extstructDef.sTypeName}:
+                extstructDef = self.vk.structs[extstruct]
+                out.append(f'''
+                case {extstructDef.sType}:
                     same = same && memcmp(reinterpret_cast<const char*>(a) + sizeof(VkBaseInStructure),
                                           reinterpret_cast<const char*>(b) + sizeof(VkBaseInStructure),
                                           sizeof({extstruct}) - sizeof(VkBaseInStructure)) == 0;
-                    break;'''
+                    break;''')
 
-        out += '''
+        out.append('''
                 default:
                     // Unexpected structure type
                     same = false;
@@ -594,10 +383,10 @@ bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVi
     }
     return same;
 }
-'''
+''')
 
         # Generate video profile info capture utilities
-        out += '''
+        out.append('''
 std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles(AppGpu &gpu) {
     std::vector<std::unique_ptr<AppVideoProfile>> result{};
 
@@ -665,19 +454,19 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                 result.push_back(std::move(profile));
             }
         };
-'''
+''')
 
         # Generate individual video profiles from the video codec metadata
-        for videoCodec in videoCodecs.values():
+        for videoCodec in self.vk.videoCodecs.values():
             # Ignore video codec categories
             if videoCodec.value is None:
                 continue
 
-            out += '\n'
-            out += GetTypesPrecondition(videoCodec.profileStructs, 4)
-            out += f'{" " * 8}const std::string codec_name = "{videoCodec.name}";\n'
+            out.append('\n')
+            out.extend(self.GetTypesPrecondition(videoCodec.profiles.keys(), 4))
+            out.append(f'{" " * 8}const std::string codec_name = "{videoCodec.name}";\n')
 
-            out += '''
+            out.append('''
         for (auto chroma_subsampling : chroma_subsampling_list) {
             for (auto luma_bit_depth : bit_depth_list) {
                 for (auto chroma_bit_depth : bit_depth_list) {
@@ -687,107 +476,107 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                     }
 
                     std::string profile_base_name = codec_name + base_format(chroma_subsampling, luma_bit_depth, chroma_bit_depth);
-'''
+''')
 
             # Setup video profile info
-            out += f'{" " * 20}VkVideoProfileInfoKHR profile_info{{\n'
-            out += f'{" " * 20}    VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,\n'
-            out += f'{" " * 20}    nullptr,\n'
-            out += f'{" " * 20}    {videoCodec.value},\n'
-            out += f'{" " * 20}    chroma_subsampling.value,\n'
-            out += f'{" " * 20}    luma_bit_depth.value,\n'
-            out += f'{" " * 20}    chroma_bit_depth.value\n'
-            out += f'{" " * 20}}};\n\n'
+            out.append(f'{" " * 20}VkVideoProfileInfoKHR profile_info{{\n')
+            out.append(f'{" " * 20}    VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR,\n')
+            out.append(f'{" " * 20}    nullptr,\n')
+            out.append(f'{" " * 20}    {videoCodec.value},\n')
+            out.append(f'{" " * 20}    chroma_subsampling.value,\n')
+            out.append(f'{" " * 20}    luma_bit_depth.value,\n')
+            out.append(f'{" " * 20}    chroma_bit_depth.value\n')
+            out.append(f'{" " * 20}}};\n\n')
 
             # Setup video profile info chain creation callback
-            out += f'{" " * 20}auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {{\n'
-            out += f'{" " * 20}    auto profile_info_chain = std::make_unique<video_profile_info_chain>();\n'
-            for profileStruct in videoCodec.profileStructs:
-                structDef = GetStructDef(profileStruct)
-                out += AddGuardHeader(structDef)
-                out += f'{" " * 24}if (profile_info_chain != nullptr) {{\n'
-                out += f'{" " * 28}profile_info_chain->{profileStruct[2:]}.sType = {structDef.sTypeName};\n'
-                out += f'{" " * 28}profile_info_chain->{profileStruct[2:]}.pNext = nullptr;\n'
-                out += f'{" " * 28}*ppnext = &profile_info_chain->{profileStruct[2:]};\n'
-                out += f'{" " * 28}ppnext = &profile_info_chain->{profileStruct[2:]}.pNext;\n'
-                out += f'{" " * 24}}}\n'
-                if structDef.guard:
-                    out += f'#else\n{" " * 20}profile_info_chain = nullptr;\n'
-                out += AddGuardFooter(structDef)
-            out += f'{" " * 20}    return profile_info_chain;\n'
-            out += f'{" " * 20}}};\n\n'
+            out.append(f'{" " * 20}auto create_profile_info_chain = [&](const void **ppnext) -> std::unique_ptr<video_profile_info_chain> {{\n')
+            out.append(f'{" " * 20}    auto profile_info_chain = std::make_unique<video_profile_info_chain>();\n')
+            for profileStruct in videoCodec.profiles:
+                structDef = self.vk.structs[profileStruct]
+                out.append(self.AddGuardHeader(structDef))
+                out.append(f'{" " * 24}if (profile_info_chain != nullptr) {{\n')
+                out.append(f'{" " * 28}profile_info_chain->{profileStruct[2:]}.sType = {structDef.sType};\n')
+                out.append(f'{" " * 28}profile_info_chain->{profileStruct[2:]}.pNext = nullptr;\n')
+                out.append(f'{" " * 28}*ppnext = &profile_info_chain->{profileStruct[2:]};\n')
+                out.append(f'{" " * 28}ppnext = &profile_info_chain->{profileStruct[2:]}.pNext;\n')
+                out.append(f'{" " * 24}}}\n')
+                if structDef.protect:
+                    out.append(f'#else\n{" " * 20}profile_info_chain = nullptr;\n')
+                out.append(self.AddGuardFooter(structDef))
+            out.append(f'{" " * 20}    return profile_info_chain;\n')
+            out.append(f'{" " * 20}}};\n\n')
 
             # Setup video capabilities chain creation callback
-            out += f'{" " * 20}auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {{\n'
-            out += f'{" " * 20}    auto capabilities_chain = std::make_unique<video_capabilities_chain>();\n'
+            out.append(f'{" " * 20}auto create_capabilities_chain = [&](void **ppnext) -> std::unique_ptr<video_capabilities_chain> {{\n')
+            out.append(f'{" " * 20}    auto capabilities_chain = std::make_unique<video_capabilities_chain>();\n')
             for capabilities in videoCodec.capabilities:
-                structDef = GetStructDef(capabilities)
-                out += AddGuardHeader(structDef)
-                out += f'{" " * 24}if (capabilities_chain != nullptr) {{\n'
-                out += GetTypesPrecondition([capabilities], 28)
-                out += f'{" " * 32}capabilities_chain->{capabilities[2:]}.sType = {structDef.sTypeName};\n'
-                out += f'{" " * 32}capabilities_chain->{capabilities[2:]}.pNext = nullptr;\n'
-                out += f'{" " * 32}*ppnext = &capabilities_chain->{capabilities[2:]};\n'
-                out += f'{" " * 32}ppnext = &capabilities_chain->{capabilities[2:]}.pNext;\n'
-                out += f'{" " * 28}}}\n'
-                out += f'{" " * 24}}}\n'
-                out += AddGuardFooter(structDef)
-            out += f'{" " * 20}    return capabilities_chain;\n'
-            out += f'{" " * 20}}};\n\n'
+                structDef = self.vk.structs[capabilities]
+                out.append(self.AddGuardHeader(structDef))
+                out.append(f'{" " * 24}if (capabilities_chain != nullptr) {{\n')
+                out.extend(self.GetTypesPrecondition([capabilities], 28))
+                out.append(f'{" " * 32}capabilities_chain->{capabilities[2:]}.sType = {structDef.sType};\n')
+                out.append(f'{" " * 32}capabilities_chain->{capabilities[2:]}.pNext = nullptr;\n')
+                out.append(f'{" " * 32}*ppnext = &capabilities_chain->{capabilities[2:]};\n')
+                out.append(f'{" " * 32}ppnext = &capabilities_chain->{capabilities[2:]}.pNext;\n')
+                out.append(f'{" " * 28}}}\n')
+                out.append(f'{" " * 24}}}\n')
+                out.append(self.AddGuardFooter(structDef))
+            out.append(f'{" " * 20}    return capabilities_chain;\n')
+            out.append(f'{" " * 20}}};\n\n')
 
             # Setup video format properties chain creation callbacks
-            out += f'{" " * 20}const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {{\n'
+            out.append(f'{" " * 20}const AppVideoProfile::CreateFormatPropertiesChainCbList create_format_properties_chain_list = {{\n')
             for format in videoCodec.formats.values():
-                out += f'{" " * 24}AppVideoProfile::CreateFormatPropertiesChainCb {{\n'
-                out += f'{" " * 28}"{format.name}",\n'
-                out += f'{" " * 28}{format.usage.replace("+", " | ")},\n'
+                out.append(f'{" " * 24}AppVideoProfile::CreateFormatPropertiesChainCb {{\n')
+                out.append(f'{" " * 28}"{format.name}",\n')
+                out.append(f'{" " * 28}{format.usage.replace("+", " | ")},\n')
 
                 # Callback to check required capabilities
-                out += f'{" " * 28}[&](const VkVideoCapabilitiesKHR &capabilities) -> bool {{\n'
-                out += f'{" " * 28}    bool supported = true;\n'
+                out.append(f'{" " * 28}[&](const VkVideoCapabilitiesKHR &capabilities) -> bool {{\n')
+                out.append(f'{" " * 28}    bool supported = true;\n')
                 for requiredCap in format.requiredCaps:
-                    structDef = GetStructDef(requiredCap.struct)
-                    out += AddGuardHeader(structDef)
-                    out += GetTypesPrecondition([requiredCap.struct], 32)
-                    out += f'{" " * 32}    auto caps = reinterpret_cast<const {requiredCap.struct}*>(find_caps_struct(capabilities, {structDef.sTypeName}));\n'
-                    out += f'{" " * 32}    if (caps != nullptr) {{\n'
-                    out += f'{" " * 32}        supported = supported && {GetRequiredCapsCondition(requiredCap.struct, requiredCap.member, f"caps->{requiredCap.member}", requiredCap.value)};\n'
-                    out += f'{" " * 32}    }} else {{\n'
-                    out += f'{" " * 32}        supported = false;\n'
-                    out += f'{" " * 32}    }}\n'
-                    out += f'{" " * 32}}} else {{\n'
-                    out += f'{" " * 32}    supported = false;\n'
-                    out += f'{" " * 32}}}\n'
-                    if structDef.guard:
-                        out += f'#else\n{" " * 32}supported = false;\n'
-                    out += AddGuardFooter(structDef)
-                out += f'{" " * 28}    return supported;\n'
-                out += f'{" " * 28}}},\n'
+                    structDef = self.vk.structs[requiredCap.struct]
+                    out.append(self.AddGuardHeader(structDef))
+                    out.extend(self.GetTypesPrecondition([requiredCap.struct], 32))
+                    out.append(f'{" " * 32}    auto caps = reinterpret_cast<const {requiredCap.struct}*>(find_caps_struct(capabilities, {structDef.sType}));\n')
+                    out.append(f'{" " * 32}    if (caps != nullptr) {{\n')
+                    out.append(f'{" " * 32}        supported = supported && {self.GetRequiredCapsCondition(requiredCap.struct, requiredCap.member, f"caps->{requiredCap.member}", requiredCap.value)};\n')
+                    out.append(f'{" " * 32}    }} else {{\n')
+                    out.append(f'{" " * 32}        supported = false;\n')
+                    out.append(f'{" " * 32}    }}\n')
+                    out.append(f'{" " * 32}}} else {{\n')
+                    out.append(f'{" " * 32}    supported = false;\n')
+                    out.append(f'{" " * 32}}}\n')
+                    if structDef.protect:
+                        out.append(f'#else\n{" " * 32}supported = false;\n')
+                    out.append(self.AddGuardFooter(structDef))
+                out.append(f'{" " * 28}    return supported;\n')
+                out.append(f'{" " * 28}}},\n')
 
                 # Callback to create video format properties chain
-                out += f'{" " * 28}[&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {{\n'
-                out += f'{" " * 28}    auto format_properties_chain = std::make_unique<video_format_properties_chain>();\n'
+                out.append(f'{" " * 28}[&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {{\n')
+                out.append(f'{" " * 28}    auto format_properties_chain = std::make_unique<video_format_properties_chain>();\n')
                 for formatProps in format.properties:
-                    structDef = GetStructDef(formatProps)
-                    out += AddGuardHeader(structDef)
-                    out += f'{" " * 32}if (format_properties_chain != nullptr) {{\n'
-                    out += GetTypesPrecondition([formatProps], 36)
-                    out += f'{" " * 40}format_properties_chain->{formatProps[2:]}.sType = {structDef.sTypeName};\n'
-                    out += f'{" " * 40}format_properties_chain->{formatProps[2:]}.pNext = nullptr;\n'
-                    out += f'{" " * 40}*ppnext = &format_properties_chain->{formatProps[2:]};\n'
-                    out += f'{" " * 40}ppnext = &format_properties_chain->{formatProps[2:]}.pNext;\n'
-                    out += f'{" " * 36}}}\n'
-                    out += f'{" " * 32}}}\n'
-                    out += AddGuardFooter(structDef)
-                out += f'{" " * 28}    return format_properties_chain;\n'
-                out += f'{" " * 28}}},\n'
+                    structDef = self.vk.structs[formatProps]
+                    out.append(self.AddGuardHeader(structDef))
+                    out.append(f'{" " * 32}if (format_properties_chain != nullptr) {{\n')
+                    out.extend(self.GetTypesPrecondition([formatProps], 36))
+                    out.append(f'{" " * 40}format_properties_chain->{formatProps[2:]}.sType = {structDef.sType};\n')
+                    out.append(f'{" " * 40}format_properties_chain->{formatProps[2:]}.pNext = nullptr;\n')
+                    out.append(f'{" " * 40}*ppnext = &format_properties_chain->{formatProps[2:]};\n')
+                    out.append(f'{" " * 40}ppnext = &format_properties_chain->{formatProps[2:]}.pNext;\n')
+                    out.append(f'{" " * 36}}}\n')
+                    out.append(f'{" " * 32}}}\n')
+                    out.append(self.AddGuardFooter(structDef))
+                out.append(f'{" " * 28}    return format_properties_chain;\n')
+                out.append(f'{" " * 28}}},\n')
 
-                out += f'{" " * 24}}},\n'
-            out += f'{" " * 20}}};\n\n'
+                out.append(f'{" " * 24}}},\n')
+            out.append(f'{" " * 20}}};\n\n')
 
             # Permute profiles for each profile struct member value
             profiles = {'': []}
-            for profileStruct in videoCodec.profileStructs.values():
+            for profileStruct in videoCodec.profiles.values():
                 for profileStructMember in profileStruct.members.values():
                     newProfiles = {}
                     for profileStructMemberValue, profileStructMemberName in profileStructMember.values.items():
@@ -795,246 +584,144 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             # Only add video profile name suffix to the full descriptive name if not empty to avoid excess whitespace
                             newProfileName = profileName if profileStructMemberName == '' else f'{profileName} {profileStructMemberName}'
                             newProfiles[newProfileName] = profile + [{
-                                "struct": profileStruct.struct,
+                                "struct": profileStruct.name,
                                 "member": profileStructMember.name,
                                 "value": profileStructMemberValue
                             }]
                     profiles = newProfiles
 
             for profileName, profile in profiles.items():
-                out += f'{" " * 20}add_profile(profile_base_name + "{profileName}", profile_info,\n'
-                out += f'{" " * 20}            create_profile_info_chain, create_capabilities_chain,\n'
-                out += f'{" " * 20}            create_format_properties_chain_list,\n'
-                out += f'{" " * 20}            [](AppVideoProfile& profile) {{\n'
-                for profileStruct in videoCodec.profileStructs:
-                    structDef = GetStructDef(profileStruct)
-                    out += AddGuardHeader(structDef)
+                out.append(f'{" " * 20}add_profile(profile_base_name + "{profileName}", profile_info,\n')
+                out.append(f'{" " * 20}            create_profile_info_chain, create_capabilities_chain,\n')
+                out.append(f'{" " * 20}            create_format_properties_chain_list,\n')
+                out.append(f'{" " * 20}            [](AppVideoProfile& profile) {{\n')
+                for profileStruct in videoCodec.profiles:
+                    structDef = self.vk.structs[profileStruct]
+                    out.append(self.AddGuardHeader(structDef))
                     for elem in profile:
                         if elem['struct'] == profileStruct:
-                            out += f'{" " * 24}profile.profile_info_chain->{elem["struct"][2:]}.{elem["member"]} = {elem["value"]};\n'
-                    out += AddGuardFooter(structDef)
-                out += f'{" " * 20}}});\n'
+                            out.append(f'{" " * 24}profile.profile_info_chain->{elem["struct"][2:]}.{elem["member"]} = {elem["value"]};\n')
+                    out.append(self.AddGuardFooter(structDef))
+                out.append(f'{" " * 20}}});\n')
 
-            out += f'{" " * 16}}}\n'
-            out += f'{" " * 12}}}\n'
-            out += f'{" " * 8}}}\n'
-            out += f'{" " * 4}}}\n'
+            out.append(f'{" " * 16}}}\n')
+            out.append(f'{" " * 12}}}\n')
+            out.append(f'{" " * 8}}}\n')
+            out.append(f'{" " * 4}}}\n')
 
-        out += '    return result;\n'
-        out += '}\n\n'
+        out.append('    return result;\n')
+        out.append('}\n\n')
 
         return out
 
-    def genCmd(self, cmd, name, alias):
-        gen.OutputGenerator.genCmd(self, cmd, name, alias)
-
-    # These are actually constants
-    def genEnum(self, enuminfo, name, alias):
-        gen.OutputGenerator.genEnum(self, enuminfo, name, alias)
-
-    # These are actually enums
-    def genGroup(self, groupinfo, groupName, alias):
-        gen.OutputGenerator.genGroup(self, groupinfo, groupName, alias)
-
-        if alias is not None:
-            if alias in self.aliases.keys():
-                self.aliases[alias].append(groupName)
-            else:
-                self.aliases[alias] = [groupName, ]
-            return
-
-        if groupinfo.elem.get('type') == 'bitmask':
-            self.bitmasks.append(VulkanBitmask(groupinfo.elem))
-        elif groupinfo.elem.get('type') == 'enum':
-            self.enums.append(VulkanEnum(groupinfo.elem))
-
-    def genType(self, typeinfo, name, alias):
-        gen.OutputGenerator.genType(self, typeinfo, name, alias)
-
-        if alias is not None:
-            if alias in self.aliases.keys():
-                self.aliases[alias].append(name)
-            else:
-                self.aliases[alias] = [name, ]
-            return
-
-        if typeinfo.elem.get('category') == 'bitmask':
-            self.flags.append(VulkanFlags(typeinfo.elem))
-
-        if typeinfo.elem.get('category') == 'struct':
-            self.all_structures.append(VulkanStructure(
-                name, typeinfo.elem, self.constants, self.extTypes))
-
-        is_vendor_type = False
-        for vendor in self.vendor_abbreviations:
-            for node in typeinfo.elem.findall('member'):
-                if node.get('values') is not None:
-                    if node.get('values').find(vendor) != -1:
-                        is_vendor_type = True
-                        break
-            if is_vendor_type:
-                break
-
-        for key, value in EXTENSION_CATEGORIES.items():
-            if str(typeinfo.elem.get('structextends')).find(value.get('extends')) != -1:
-                if value.get('exclude') is None or name not in value.get('exclude'):
-                    if not is_vendor_type or value.get('ignore_vendor_exclusion'):
-                        self.extension_sets[key].add(name)
 
     # finds all the ranges of formats from core (1.0), core versions (1.1+), and extensions
     def findFormatRanges(self):
-        for enums in self.registry.reg.findall('enums'):
-            if enums.get('name') == 'VkFormat':
-                min_val = 2**32
-                max_val = 0
-                for enum in enums.findall('enum'):
-                    if enum.get('value') is None:
-                        continue
-                    value = int(enum.get('value'))
-                    min_val = min(min_val, value)
-                    max_val = max(max_val, value)
-                if min_val < 2**32 and max_val > 0:
-                    self.format_ranges.append(VulkanFormatRange(0, None, min_val, max_val))
-
-        for feature in self.registry.reg.findall('feature'):
-            for require in feature.findall('require'):
-                comment = require.get('comment')
-                original_ext = None
-                if comment is not None and comment.find('Promoted from') >= 0:
-                    # may need tweaking in the future - some ext names aren't just the upper case version
-                    original_ext = comment.split(' ')[2].upper() + '_EXTENSION_NAME'
-                    # insert an underscore before numbers in the name define
-                    original_ext = re.sub(r'([A-Z])(\d+)', r'\1_\2', original_ext)
-                min_val = 2**32
-                max_val = 0
-                for enum in require.findall('enum'):
-                    if enum.get('extends') == 'VkFormat':
-                        value = CalcEnumValue(int(enum.get('extnumber')), int(enum.get('offset')))
-                        min_val = min(min_val, value)
-                        max_val = max(max_val, value)
-                if min_val < 2**32 and max_val > 0:
-                    self.format_ranges.append(VulkanFormatRange(feature.get('name').replace('_VERSION_', '_API_VERSION_'), None, min_val, max_val))
-                    # If the formats came from an extension, add a format range for that extension so it'll be printed if the ext is supported but not the core version
-                    if original_ext is not None:
-                        self.format_ranges.append(VulkanFormatRange(0, original_ext, min_val, max_val))
-
-        for extension in self.registry.reg.find('extensions').findall('extension'):
-            if not self.genOpts.apiname in extension.get('supported').split(','):
+        min_val = 2**32
+        prev_field = None
+        max_val = 0
+        for f in self.vk.enums['VkFormat'].fields:
+            if f.value is None:
                 continue
+            if prev_field is not None and f.value != prev_field.value + 1:
+                for ext in prev_field.extensions:
+                    if self.vk.extensions[ext].promotedTo is not None:
+                        self.format_ranges.append(VulkanFormatRange(self.vk.extensions[ext].promotedTo.replace("VK_", "VK_API_"), [], min_val, max_val))
+                        break
+                # only bother with the first extension
+                self.format_ranges.append(VulkanFormatRange(0, prev_field.extensions, min_val, max_val))
+                min_val = 2**32
+                max_val = 0
+            min_val = min(min_val, f.value)
+            max_val = max(max_val, f.value)
 
-            min_val = 2**32
-            max_val = 0
-            enum_name_string = ''
-            for require in extension.findall('require'):
-                for enum in require.findall('enum'):
-                    if enum.get('value') is not None and enum.get('value').find(extension.get('name')):
-                        enum_name_string = enum.get('name')
-                    if enum.get('extends') == 'VkFormat':
-                        if enum.get('offset') is None:
-                            continue
-                        value = CalcEnumValue(int(extension.get('number')), int(enum.get('offset')))
-                        min_val = min(min_val, value)
-                        max_val = max(max_val, value)
-            if min_val < 2**32 and max_val > 0:
-                self.format_ranges.append(VulkanFormatRange(0, enum_name_string, min_val, max_val))
+            prev_field = f
 
+        for ext in prev_field.extensions:
+            if self.vk.extensions[ext].promotedTo is not None:
+                self.format_ranges.append(VulkanFormatRange(self.vk.extensions[ext].promotedTo.replace("VK_", "VK_API_"), [], min_val, max_val))
+                break
 
+        self.format_ranges.append(VulkanFormatRange(0, prev_field.extensions, min_val, max_val))
 
-def GatherTypesToGen(structure_list, structures, exclude = None):
-    if exclude is None:
-        exclude = []
-    types = set()
-    for s in structures:
-        types.add(s)
-    added_stuff = True  # repeat until no new types are added
-    while added_stuff is True:
-        added_stuff = False
-        for s in structure_list:
-            if s.name in types:
-                for m in s.members:
-                    if m.typeID not in PREDEFINED_TYPES and m.name not in NAMES_TO_IGNORE:
-                        if m.typeID not in types:
-                            if s.name not in exclude:
-                                types.add(m.typeID)
-                                added_stuff = True
-    return types
+    def findAllTypesToGen(self, initial_type_set):
+        out_set = set()
+        current_set = initial_type_set
+        while len(current_set) > 0:
+            out_set.update(current_set)
+            next_set = set()
 
+            for current_item in current_set:
+                if current_item in self.vk.structs:
+                    for member in self.vk.structs[current_item].members:
+                        if member.type not in out_set and member.name not in NAMES_TO_IGNORE:
+                            next_set.add(member.type)
 
-def GetExtension(name, generator):
-    if name in generator.extFuncs:
-        return generator.extFuncs[name]
-    elif name in generator.extTypes:
-        return generator.extTypes[name][0]
-    else:
-        return None
+            current_set = next_set
+        return out_set
+
+    def AddGuardHeader(self,obj):
+        if obj is not None and obj.protect is not None:
+            return f'#ifdef {obj.protect}\n'
+        else:
+            return ''
 
 
-def AddGuardHeader(obj):
-    if obj is not None and obj.guard is not None:
-        return f'#ifdef {obj.guard}\n'
-    else:
-        return ''
+    def AddGuardFooter(self,obj):
+        if obj is not None and obj.protect is not None:
+            return f'#endif  // {obj.protect}\n'
+        else:
+            return ''
+
+    def PrintEnumToString(self,enum):
+        out = []
+        out.append(self.AddGuardHeader(enum))
+        out.append(f'std::string {enum.name}String({enum.name} value) {{\n')
+        out.append('    switch (value) {\n')
+        for v in enum.fields:
+            out.append(f'        case ({v.name}): return "{v.name[3:]}";\n')
+        out.append(f'        default: return std::string("UNKNOWN_{enum.name}_value") + std::to_string(value);\n')
+        out.append('    }\n}\n')
+        out.append(self.AddGuardFooter(enum))
+        return out
 
 
-def AddGuardFooter(obj):
-    if obj is not None and obj.guard is not None:
-        return f'#endif  // {obj.guard}\n'
-    else:
-        return ''
-
-def CalcEnumValue(num, offset):
-    base = 1000000000
-    block_size = 1000
-    return base + (num - 1) * block_size + offset
-
-def PrintEnumToString(enum, generator):
-    out = ''
-    out += AddGuardHeader(GetExtension(enum.name, generator))
-    out += f'std::string {enum.name}String({enum.name} value) {{\n'
-    out += '    switch (value) {\n'
-    for v in enum.options:
-        out += f'        case ({v.name}): return "{v.name[3:]}";\n'
-    out += f'        default: return std::string("UNKNOWN_{enum.name}_value") + std::to_string(value);\n'
-    out += '    }\n}\n'
-    out += AddGuardFooter(GetExtension(enum.name, generator))
-    return out
-
-
-def PrintEnum(enum, generator):
-    out = ''
-    out += AddGuardHeader(GetExtension(enum.name, generator))
-    out += f'''void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{
+    def PrintEnum(self,enum):
+        out = []
+        out.append(self.AddGuardHeader(enum))
+        out.append(f'''void Dump{enum.name}(Printer &p, std::string name, {enum.name} value) {{
     if (p.Type() == OutputType::json)
         p.PrintKeyString(name, std::string("VK_") + {enum.name}String(value));
     else
         p.PrintKeyString(name, {enum.name}String(value));
 }}
-'''
-    out += AddGuardFooter(GetExtension(enum.name, generator))
-    return out
+''')
+        out.append(self.AddGuardFooter(enum))
+        return out
 
 
-def PrintGetFlagStrings(name, bitmask):
-    out = ''
-    out += f'std::vector<const char *> {name}GetStrings({name} value) {{\n'
-    out += '    std::vector<const char *> strings;\n'
-    # If a bitmask contains a field whose value is zero, we want to support printing the correct bitflag
-    # Otherwise, use "None" for when there are not bits set in the bitmask
-    if bitmask.options[0].value != 0:
-        out += '    if (value == 0) { strings.push_back("None"); return strings; }\n'
-    else:
-        out += f'    if (value == 0) {{ strings.push_back("{bitmask.options[0].name[3:]}"); return strings; }}\n'
-    for v in bitmask.options:
-        # only check single-bit flags
-        if v.value != 0 and (v.value & (v.value - 1)) == 0:
-            out += f'    if ({v.name} & value) strings.push_back("{v.name[3:]}");\n'
-    out += '    return strings;\n}\n'
-    return out
+    def PrintGetFlagStrings(self,name, bitmask):
+        out = []
+        out.append(f'std::vector<const char *> {name}GetStrings({name} value) {{\n')
+        out.append('    std::vector<const char *> strings;\n')
+        # If a bitmask contains a field whose value is zero, we want to support printing the correct bitflag
+        # Otherwise, use "None" for when there are not bits set in the bitmask
+        if bitmask.flags[0].value != 0:
+            out.append('    if (value == 0) { strings.push_back("None"); return strings; }\n')
+        else:
+            out.append(f'    if (value == 0) {{ strings.push_back("{bitmask.flags[0].name[3:]}"); return strings; }}\n')
+        for v in bitmask.flags:
+            # only check single-bit flags
+            if v.value != 0 and (v.value & (v.value - 1)) == 0:
+                out.append(f'    if ({v.name} & value) strings.push_back("{v.name[3:]}");\n')
+        out.append('    return strings;\n}\n')
+        return out
 
 
-def PrintFlags(bitmask, name):
-    out = f'void Dump{name}(Printer &p, std::string name, {name} value) {{\n'
-    out += f'''    if (static_cast<{bitmask.name}>(value) == 0) {{
+    def PrintFlags(self, bitmask, name):
+        out = []
+        out.append(f'void Dump{name}(Printer &p, std::string name, {name} value) {{\n')
+        out.append(f'''    if (static_cast<{bitmask.name}>(value) == 0) {{
         ArrayWrapper arr(p, name, 0);
         if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
             p.SetAsType().PrintString("None");
@@ -1049,12 +736,12 @@ def PrintFlags(bitmask, name):
             p.SetAsType().PrintString(str);
     }}
 }}
-'''
-    return out
+''')
+        return out
 
 
-def PrintFlagBits(bitmask):
-    return f'''void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{
+    def PrintFlagBits(self, bitmask):
+        return [f'''void Dump{bitmask.name}(Printer &p, std::string name, {bitmask.name} value) {{
     auto strings = {bitmask.name}GetStrings(value);
     if (strings.size() > 0) {{
         if (p.Type() == OutputType::json)
@@ -1063,263 +750,249 @@ def PrintFlagBits(bitmask):
             p.PrintKeyString(name, strings.at(0));
     }}
 }}
-'''
+''']
 
 
-
-def PrintBitMask(bitmask, name, generator):
-    out = PrintGetFlagStrings(bitmask.name, bitmask)
-    out += AddGuardHeader(GetExtension(bitmask.name, generator))
-    out += PrintFlags(bitmask, name)
-    out += PrintFlagBits(bitmask)
-    out += AddGuardFooter(GetExtension(bitmask.name, generator))
-    out += '\n'
-    return out
-
-
-def PrintBitMaskToString(bitmask, name, generator):
-    out = AddGuardHeader(GetExtension(bitmask.name, generator))
-    out += f'std::string {name}String({name} value) {{\n'
-    out += '    std::string out;\n'
-    out += '    bool is_first = true;\n'
-    for v in bitmask.options:
-        out += f'    if ({v.name} & value) {{\n'
-        out += '        if (is_first) { is_first = false; } else { out += " | "; }\n'
-        out += f'        out += "{str(v.name)[3:]}";\n'
-        out += '    }\n'
-    out += '    return out;\n'
-    out += '}\n'
-    out += AddGuardFooter(GetExtension(bitmask.name, generator))
-    return out
+    def PrintBitMask(self,bitmask, name):
+        out = []
+        out.extend(self.PrintGetFlagStrings(bitmask.name, bitmask))
+        out.append(self.AddGuardHeader(bitmask))
+        out.extend(self.PrintFlags(bitmask, name))
+        out.extend(self.PrintFlagBits(bitmask))
+        out.append(self.AddGuardFooter(bitmask))
+        out.append('\n')
+        return out
 
 
-def PrintStructure(struct):
-    if len(struct.members) == 0:
-        return ''
-    out = ''
-    out += AddGuardHeader(struct)
-    max_key_len = 0
-    for v in struct.members:
-        if v.arrayLength is not None:
-            if len(v.name) + len(v.arrayLength) + 2 > max_key_len:
-                max_key_len = len(v.name) + len(v.arrayLength) + 2
-        elif v.typeID in PREDEFINED_TYPES or v.typeID in STRUCT_BLACKLIST:
-            if len(v.name) > max_key_len:
-                max_key_len = len(v.name)
-
-    out += f'void Dump{struct.name}(Printer &p, std::string name, const {struct.name} &obj) {{\n'
-    if struct.name == 'VkPhysicalDeviceLimits':
-        out += '    if (p.Type() == OutputType::json)\n'
-        out += '        p.ObjectStart("limits");\n'
-        out += '    else\n'
-        out += '        p.SetSubHeader().ObjectStart(name);\n'
-    elif struct.name == 'VkPhysicalDeviceSparseProperties':
-        out += '    if (p.Type() == OutputType::json)\n'
-        out += '        p.ObjectStart("sparseProperties");\n'
-        out += '    else\n'
-        out += '        p.SetSubHeader().ObjectStart(name);\n'
-    else:
-        out += '    ObjectWrapper object{p, name};\n'
-    if max_key_len > 0:
-        out += f'    p.SetMinKeyWidth({max_key_len});\n'
-    for v in struct.members:
-        # arrays
-        if v.arrayLength is not None:
-            # strings
-            if v.typeID == 'char':
-                out += f'    p.PrintKeyString("{v.name}", obj.{v.name});\n'
-            # uuid's
-            elif v.typeID == 'uint8_t' and (v.arrayLength == '8' or v.arrayLength == '16'):  # VK_UUID_SIZE
-                if v.arrayLength == '8':
-                    out += '    if (obj.deviceLUIDValid) { // special case\n'
-                out += f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n'
-                if v.arrayLength == '8':
-                    out += '    }\n'
-            elif struct.name == 'VkQueueFamilyGlobalPriorityProperties' and v.name == 'priorities':
-                out += f'    ArrayWrapper arr(p,"{v.name}", obj.priorityCount);\n'
-                out += '    for (uint32_t i = 0; i < obj.priorityCount; i++) {\n'
-                out += '       if (p.Type() == OutputType::json)\n'
-                out += '           p.PrintString(std::string("VK_") + VkQueueGlobalPriorityString(obj.priorities[i]));\n'
-                out += '       else\n'
-                out += '           p.PrintString(VkQueueGlobalPriorityString(obj.priorities[i]));\n'
-                out += '    }\n'
-            elif v.arrayLength.isdigit():
-                out += f'    {{\n        ArrayWrapper arr(p,"{v.name}", ' + v.arrayLength + ');\n'
-                out += f'        for (uint32_t i = 0; i < {v.arrayLength}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n'
-                out += '    }\n'
-            else:  # dynamic array length based on other member
-                out += f'    if (obj.{v.arrayLength} == 0 || obj.{v.name} == nullptr) {{\n'
-                out += f'        p.PrintKeyString("{v.name}", "NULL");\n'
-                out += '    } else {\n'
-                out += f'        ArrayWrapper arr(p,"{v.name}", obj.{v.arrayLength});\n'
-                out += f'        for (uint32_t i = 0; i < obj.{v.arrayLength}; i++) {{\n'
-                out += f'            Dump{v.typeID}(p, std::to_string(i), obj.{v.name}[i]);\n'
-                out += '        }\n'
-                out += '    }\n'
-        elif v.typeID == 'VkBool32':
-            out += f'    p.PrintKeyBool("{v.name}", static_cast<bool>(obj.{v.name}));\n'
-        elif v.typeID == 'uint8_t':
-            out += f'    p.PrintKeyValue("{v.name}", static_cast<uint32_t>(obj.{v.name}));\n'
-        elif v.typeID == 'VkDeviceSize' or (v.typeID == 'uint32_t' and v.name in ['vendorID', 'deviceID']):
-            out += f'    p.PrintKeyValue("{v.name}", to_hex_str(p, obj.{v.name}));\n'
-        elif v.typeID in PREDEFINED_TYPES:
-            out += f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n'
-        elif v.name not in NAMES_TO_IGNORE:
-            # if it is an enum/flag/bitmask
-            if v.typeID in ['VkFormatFeatureFlags', 'VkFormatFeatureFlags2']:
-                out += '    p.SetOpenDetails();\n' # special case so that feature flags are open in html output
-            out += f'    Dump{v.typeID}(p, "{v.name}", obj.{v.name});\n'
-
-    if struct.name in ['VkPhysicalDeviceLimits', 'VkPhysicalDeviceSparseProperties']:
-        out += '    p.ObjectEnd();\n'
-    out += '}\n'
-
-    out += AddGuardFooter(struct)
-    return out
+    def PrintBitMaskToString(self, bitmask, name):
+        out = []
+        out.append(self.AddGuardHeader(bitmask))
+        out.append(f'std::string {name}String({name} value) {{\n')
+        out.append('    std::string out;\n')
+        out.append('    bool is_first = true;\n')
+        for v in bitmask.flags:
+            out.append(f'    if ({v.name} & value) {{\n')
+            out.append('        if (is_first) { is_first = false; } else { out += " | "; }\n')
+            out.append(f'        out += "{str(v.name)[3:]}";\n')
+            out.append('    }\n')
+        out.append('    return out;\n')
+        out.append('}\n')
+        out.append(self.AddGuardFooter(bitmask))
+        return out
 
 
-def PrintStructShort(struct):
-    out = ''
-    out += AddGuardHeader(struct)
-    out += f'std::ostream &operator<<(std::ostream &o, {struct.name} &obj) {{\n'
-    out += '    return o << "(" << '
+    def PrintStructure(self,struct):
+        if len(struct.members) == 0:
+            return []
+        out = []
+        out.append(self.AddGuardHeader(struct))
+        max_key_len = 0
+        for v in struct.members:
+            if (v.type in PREDEFINED_TYPES or v.type in STRUCT_BLACKLIST) and (v.length is None or v.type in ['char'] or v.fixedSizeArray[0] in ['VK_UUID_SIZE', 'VK_LUID_SIZE']):
+                max_key_len = max(max_key_len, len(v.name))
 
-    first = True
-    for v in struct.members:
-        if first:
-            first = False
-            out += f'obj.{v.name} << '
+        out.append(f'void Dump{struct.name}(Printer &p, std::string name, const {struct.name} &obj) {{\n')
+        if struct.name == 'VkPhysicalDeviceLimits':
+            out.append('    if (p.Type() == OutputType::json)\n')
+            out.append('        p.ObjectStart("limits");\n')
+            out.append('    else\n')
+            out.append('        p.SetSubHeader().ObjectStart(name);\n')
+        elif struct.name == 'VkPhysicalDeviceSparseProperties':
+            out.append('    if (p.Type() == OutputType::json)\n')
+            out.append('        p.ObjectStart("sparseProperties");\n')
+            out.append('    else\n')
+            out.append('        p.SetSubHeader().ObjectStart(name);\n')
         else:
-            out += f'\',\' << obj.{v.name} << '
-    out += '")";\n'
-    out += '}\n'
-    out += AddGuardFooter(struct)
-    return out
+            out.append('    ObjectWrapper object{p, name};\n')
+        if max_key_len > 0:
+            out.append(f'    p.SetMinKeyWidth({max_key_len});\n')
+        for v in struct.members:
+            # arrays
+            if v.length is not None:
+                # strings
+                if v.type == 'char':
+                    out.append(f'    p.PrintKeyString("{v.name}", obj.{v.name});\n')
+                # uuid's
+                elif v.type == 'uint8_t' and (v.fixedSizeArray[0] == 'VK_LUID_SIZE' or v.fixedSizeArray[0] == 'VK_UUID_SIZE'):  # VK_UUID_SIZE
+                    if v.fixedSizeArray[0] == 'VK_LUID_SIZE':
+                        out.append('    if (obj.deviceLUIDValid) { // special case\n')
+                    out.append(f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n')
+                    if v.fixedSizeArray[0] == 'VK_LUID_SIZE':
+                        out.append('    }\n')
+                elif struct.name == 'VkQueueFamilyGlobalPriorityProperties' and v.name == 'priorities':
+                    out.append(f'    ArrayWrapper arr(p,"{v.name}", obj.priorityCount);\n')
+                    out.append('    for (uint32_t i = 0; i < obj.priorityCount; i++) {\n')
+                    out.append('       if (p.Type() == OutputType::json)\n')
+                    out.append('           p.PrintString(std::string("VK_") + VkQueueGlobalPriorityString(obj.priorities[i]));\n')
+                    out.append('       else\n')
+                    out.append('           p.PrintString(VkQueueGlobalPriorityString(obj.priorities[i]));\n')
+                    out.append('    }\n')
+                elif len(v.fixedSizeArray) == 2:
+                    out.append(f'    {{\n        ArrayWrapper arr(p,"{v.name}", ' + v.fixedSizeArray[0] + ');\n')
+                    out.append(f'        for (uint32_t i = 0; i < {v.fixedSizeArray[0]}; i++) {{\n')
+                    out.append(f'           for (uint32_t j = 0; j < {v.fixedSizeArray[1]}; j++) {{\n')
+                    out.append(f'                p.PrintElement(obj.{v.name}[i][j]); }} }}\n')
+                    out.append('    }\n')
+                elif len(v.fixedSizeArray) == 1:
+                    out.append(f'    {{\n        ArrayWrapper arr(p,"{v.name}", ' + v.fixedSizeArray[0] + ');\n')
+                    out.append(f'        for (uint32_t i = 0; i < {v.fixedSizeArray[0]}; i++) {{ p.PrintElement(obj.{v.name}[i]); }}\n')
+                    out.append('    }\n')
+                else:  # dynamic array length based on other member
+                    out.append(f'    if (obj.{v.length} == 0 || obj.{v.name} == nullptr) {{\n')
+                    out.append(f'        p.PrintKeyString("{v.name}", "NULL");\n')
+                    out.append('    } else {\n')
+                    out.append(f'        ArrayWrapper arr(p,"{v.name}", obj.{v.length});\n')
+                    out.append(f'        for (uint32_t i = 0; i < obj.{v.length}; i++) {{\n')
+                    out.append(f'            Dump{v.type}(p, std::to_string(i), obj.{v.name}[i]);\n')
+                    out.append('        }\n')
+                    out.append('    }\n')
+            elif v.type == 'VkBool32':
+                out.append(f'    p.PrintKeyBool("{v.name}", static_cast<bool>(obj.{v.name}));\n')
+            elif v.type == 'uint8_t':
+                out.append(f'    p.PrintKeyValue("{v.name}", static_cast<uint32_t>(obj.{v.name}));\n')
+            elif v.type == 'VkDeviceSize' or (v.type == 'uint32_t' and v.name in ['vendorID', 'deviceID']):
+                out.append(f'    p.PrintKeyValue("{v.name}", to_hex_str(p, obj.{v.name}));\n')
+            elif v.type in PREDEFINED_TYPES:
+                out.append(f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n')
+            elif v.name not in NAMES_TO_IGNORE:
+                # if it is an enum/flag/bitmask
+                if v.type in ['VkFormatFeatureFlags', 'VkFormatFeatureFlags2']:
+                    out.append('    p.SetOpenDetails();\n') # special case so that feature flags are open in html output
+                out.append(f'    Dump{v.type}(p, "{v.name}", obj.{v.name});\n')
 
-def PrintChainStruct(listName, structures, all_structures, chain_details, extTypes, aliases, vulkan_versions):
-    sorted_structures = sorted(
-        all_structures, key=operator.attrgetter('name'))
+        if struct.name in ['VkPhysicalDeviceLimits', 'VkPhysicalDeviceSparseProperties']:
+            out.append('    p.ObjectEnd();\n')
+        out.append('}\n')
 
-    version_desc = ''
-    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-        version_desc = 'gpu.api_version'
-    else:
-        version_desc = 'inst.instance_version'
+        out.append(self.AddGuardFooter(struct))
+        return out
 
-    out = ''
-    structs_to_print = []
-    for s in sorted_structures:
-        if s.name in structures:
-            structs_to_print.append(s)
-    # use default constructor and delete copy & move operators
-    out += f'''struct {listName}_chain {{
+
+    def PrintStructShort(self,struct):
+        out = []
+        out.append(self.AddGuardHeader(struct))
+        out.append(f'std::ostream &operator<<(std::ostream &o, {struct.name} &obj) {{\n')
+        out.append('    return o << "(" << ')
+
+        first = True
+        for v in struct.members:
+            if first:
+                first = False
+                out.append(f'obj.{v.name} << ')
+            else:
+                out.append(f'\',\' << obj.{v.name} << ')
+        out.append('")";\n')
+        out.append('}\n')
+        out.append(self.AddGuardFooter(struct))
+        return out
+
+    def PrintChainStruct(self, listName, structs_to_print, chain_details):
+        version_desc = ''
+        if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+            version_desc = 'gpu.api_version'
+        else:
+            version_desc = 'inst.instance_version'
+
+        out = []
+
+        # use default constructor and delete copy & move operators
+        out.append(f'''struct {listName}_chain {{
     {listName}_chain() = default;
     {listName}_chain(const {listName}_chain &) = delete;
     {listName}_chain& operator=(const {listName}_chain &) = delete;
     {listName}_chain({listName}_chain &&) = delete;
     {listName}_chain& operator=({listName}_chain &&) = delete;
-'''
+''')
 
-    out += '    void* start_of_chain = nullptr;\n'
-    for s in structs_to_print:
-        if s.name in STRUCT_BLACKLIST:
-            continue
-        out += AddGuardHeader(s)
-        if s.sTypeName is not None:
-            out += f'    {s.name} {s.name[2:]}{{}};\n'
-            # Specific versions of drivers have an incorrect definition of the size of these structs.
-            # We need to artificially pad the structure it just so the driver doesn't write out of bounds and
-            # into other structures that are adjacent. This bug comes from the in-development version of
-            # the extension having a larger size than the final version, so older drivers try to write to
-            # members which don't exist.
-            if s.name in ['VkPhysicalDeviceShaderIntegerDotProductFeatures', 'VkPhysicalDeviceHostImageCopyFeaturesEXT']:
-                out += f'    char {s.name}_padding[64];\n'
-            if s.hasLengthmember:
-                for member in s.members:
-                    if member.lengthMember:
-                        out += f'    std::vector<{member.typeID}> {s.name}_{member.name};\n'
-        out += AddGuardFooter(s)
-    out += '    void initialize_chain('
-    if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-        out += 'AppInstance &inst, '
-    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-        out += 'AppGpu &gpu '
-    if chain_details.get('can_show_promoted_structs'):
-        out += ', bool show_promoted_structs'
-    out += ') noexcept {\n'
-    for s in structs_to_print:
-        if s.name in STRUCT_BLACKLIST:
-            continue
-        out += AddGuardHeader(s)
-        out += f'        {s.name[2:]}.sType = {s.sTypeName};\n'
-        out += AddGuardFooter(s)
+        out.append('    void* start_of_chain = nullptr;\n')
+        for s in structs_to_print:
+            if s in STRUCT_BLACKLIST:
+                continue
+            struct = self.vk.structs[s]
+            out.append(self.AddGuardHeader(struct))
+            if struct.sType is not None:
+                out.append(f'    {struct.name} {struct.name[2:]}{{}};\n')
+                # Specific versions of drivers have an incorrect definition of the size of these structs.
+                # We need to artificially pad the structure it just so the driver doesn't write out of bounds and
+                # into other structures that are adjacent. This bug comes from the in-development version of
+                # the extension having a larger size than the final version, so older drivers try to write to
+                # members which don't exist.
+                if struct.name in ['VkPhysicalDeviceShaderIntegerDotProductFeatures', 'VkPhysicalDeviceHostImageCopyFeaturesEXT']:
+                    out.append(f'    char {struct.name}_padding[64];\n')
+                for member in struct.members:
+                    if member.length is not None and len(member.fixedSizeArray) == 0:
+                        out.append(f'    std::vector<{member.type}> {struct.name}_{member.name};\n')
+            out.append(self.AddGuardFooter(struct))
+        out.append('    void initialize_chain(')
+        if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+            out.append('AppInstance &inst, ')
+        if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+            out.append('AppGpu &gpu ')
+        if chain_details.get('can_show_promoted_structs'):
+            out.append(', bool show_promoted_structs')
+        out.append(') noexcept {\n')
+        for s in structs_to_print:
+            if s in STRUCT_BLACKLIST:
+                continue
+            struct = self.vk.structs[s]
+
+            out.append(self.AddGuardHeader(struct))
+            out.append(f'        {struct.name[2:]}.sType = {struct.sType};\n')
+            out.append(self.AddGuardFooter(struct))
 
 
-    out += '        std::vector<VkBaseOutStructure*> chain_members{};\n'
-    for s in structs_to_print:
-        if s.name in STRUCT_BLACKLIST:
-            continue
-        out += AddGuardHeader(s)
-        extEnables = {}
-        for k, elem in extTypes.items():
-            if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
-                for e in elem:
-                    extEnables[e.extNameStr] = e.type
+        out.append('        std::vector<VkBaseOutStructure*> chain_members{};\n')
+        for s in structs_to_print:
+            if s in STRUCT_BLACKLIST:
+                continue
+            struct = self.vk.structs[s]
+            out.append(self.AddGuardHeader(struct))
 
-        version = None
-        oldVersionName = None
-        for v in vulkan_versions:
-            if s.name in v.names:
-                version = v
-        if s.name in aliases.keys():
-            for alias in aliases[s.name]:
-                oldVersionName = alias
-
-        has_version = version is not None
-        has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
-        if has_version or has_extNameStr:
-            out += '        if ('
-            has_printed_condition = False
-            if has_extNameStr:
-                for key, value in extEnables.items():
-                    if has_printed_condition:
-                        out += '\n         || '
+            has_version = struct.version is not None
+            has_extNameStr = len(struct.extensions) > 0 or len(struct.aliases) > 0
+            if has_version or has_extNameStr:
+                out.append('        if (')
+                has_printed_condition = False
+                if has_extNameStr:
+                    for ext in struct.extensions:
+                        if has_printed_condition:
+                            out.append('\n         || ')
+                        else:
+                            has_printed_condition = True
+                            if has_version:
+                                out.append('(')
+                        if self.vk.extensions[ext].device:
+                            out.append(f'gpu.CheckPhysicalDeviceExtensionIncluded({self.vk.extensions[ext].nameString})')
+                        elif self.vk.extensions[ext].instance:
+                            out.append(f'inst.CheckExtensionEnabled({self.vk.extensions[ext].nameString})')
+                        else:
+                            assert False, 'Should never get here'
+                if has_version:
+                    str_show_promoted_structs = '|| show_promoted_structs' if chain_details.get('can_show_promoted_structs') else ''
+                    if struct.name in STRUCT_1_1_LIST:
+                        out.append(f'{version_desc} == {struct.version.nameApi} {str_show_promoted_structs}')
+                    elif has_printed_condition:
+                        out.append(f')\n            && ({version_desc} < {struct.version.nameApi} {str_show_promoted_structs})')
                     else:
-                        has_printed_condition = True
-                        if has_version:
-                            out += '('
-                    if value == EXTENSION_TYPE_DEVICE:
-                        out += f'gpu.CheckPhysicalDeviceExtensionIncluded({key})'
-                    elif value == EXTENSION_TYPE_INSTANCE:
-                        out += f'inst.CheckExtensionEnabled({key})'
-                    else:
-                        assert False, 'Should never get here'
-            if has_version:
-                str_show_promoted_structs = '|| show_promoted_structs' if chain_details.get('can_show_promoted_structs') else ''
-                if s.name in STRUCT_1_1_LIST:
-                    out += f'{version_desc} == {version.constant} {str_show_promoted_structs}'
-                elif has_printed_condition:
-                    out += f')\n            && ({version_desc} < {version.constant} {str_show_promoted_structs})'
-                else:
-                    out += f'({version_desc} >= {version.constant})'
-            out += ')\n            '
-        else:
-            out += '        '
-        out += f'chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{s.name[2:]}));\n'
-        out += AddGuardFooter(s)
-    chain_param_list = []
-    chain_arg_list = []
-    if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-        chain_param_list.append('AppInstance &inst')
-        chain_arg_list.append('inst')
-    if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-        chain_param_list.append('AppGpu &gpu')
-        chain_arg_list.append('gpu')
-    if chain_details.get('can_show_promoted_structs'):
-        chain_param_list.append('bool show_promoted_structs')
-        chain_arg_list.append('show_promoted_structs')
+                        out.append(f'({version_desc} >= {struct.version.nameApi})')
+                out.append(')\n            ')
+            else:
+                out.append('        ')
+            out.append(f'chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&{struct.name[2:]}));\n')
+            out.append(self.AddGuardFooter(struct))
+        chain_param_list = []
+        chain_arg_list = []
+        if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+            chain_param_list.append('AppInstance &inst')
+            chain_arg_list.append('inst')
+        if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+            chain_param_list.append('AppGpu &gpu')
+            chain_arg_list.append('gpu')
+        if chain_details.get('can_show_promoted_structs'):
+            chain_param_list.append('bool show_promoted_structs')
+            chain_arg_list.append('show_promoted_structs')
 
-    out += f'''
+        out.append(f'''
         if (!chain_members.empty()) {{
             for(size_t i = 0; i < chain_members.size() - 1; i++){{
                 chain_members[i]->pNext = chain_members[i + 1];
@@ -1328,402 +1001,104 @@ def PrintChainStruct(listName, structures, all_structures, chain_details, extTyp
         }}
     }}
 }};
-void setup_{listName}_chain({chain_details['holder_type']}& start, std::unique_ptr<{listName}_chain>& chain, {','.join(chain_param_list)}){{
+void setup_{listName}_chain({chain_details['extends']}& start, std::unique_ptr<{listName}_chain>& chain, {','.join(chain_param_list)}){{
     chain = std::unique_ptr<{listName}_chain>(new {listName}_chain());
     chain->initialize_chain({','.join(chain_arg_list)});
     start.pNext = chain->start_of_chain;
 }};
-'''
-    if chain_details.get('print_iterator'):
-        out += '\n'
-        out += f'void chain_iterator_{listName}(Printer &p, '
-        if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-            out += 'AppInstance &inst, '
-        if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-            out += 'AppGpu &gpu, '
-        if chain_details.get('can_show_promoted_structs'):
-            out += 'bool show_promoted_structs, '
-        out += 'const void * place) {\n'
-        out += '    while (place) {\n'
-        out += '        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;\n'
-        out += '        p.SetSubHeader();\n'
+''')
+        if chain_details.get('print_iterator'):
+            out.append('\n')
+            out.append(f'void chain_iterator_{listName}(Printer &p, ')
+            if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
+                out.append('AppInstance &inst, ')
+            if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
+                out.append('AppGpu &gpu, ')
+            if chain_details.get('can_show_promoted_structs'):
+                out.append('bool show_promoted_structs, ')
+            out.append('const void * place) {\n')
+            out.append('    while (place) {\n')
+            out.append('        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;\n')
+            out.append('        p.SetSubHeader();\n')
 
-        for s in sorted_structures:
-            if s.sTypeName is None or s.name in STRUCT_BLACKLIST:
-                continue
+            for s in structs_to_print:
+                if s in STRUCT_BLACKLIST:
+                    continue
+                struct = self.vk.structs[s]
 
-            extEnables = {}
-            for k, elem in extTypes.items():
-                if k == s.name or (s.name in aliases.keys() and k in aliases[s.name]):
-                    for e in elem:
-                        extEnables[e.extNameStr] = e.type
-
-            version = None
-            oldVersionName = None
-            for v in vulkan_versions:
-                if s.name in v.names:
-                    version = v
-            if s.name in aliases.keys():
-                for alias in aliases[s.name]:
-                    oldVersionName = alias
-
-            if s.name in structures:
-                out += AddGuardHeader(s)
-                out += f'        if (structure->sType == {s.sTypeName}'
-                if s.name in PORTABILITY_STRUCTS:
-                    out += ' && p.Type() != OutputType::json'
-                has_version = version is not None
-                has_extNameStr = len(extEnables) > 0 or s.name in aliases.keys()
-                out += ') {\n'
-                out += f'            const {s.name}* props = (const {s.name}*)structure;\n'
-                out += f'            Dump{s.name}(p, '
-                if s.name in aliases.keys() and version is not None:
-                    out += f'{version_desc} >= {version.constant} ?"{s.name}":"{oldVersionName}"'
+                out.append(self.AddGuardHeader(struct))
+                out.append(f'        if (structure->sType == {struct.sType}')
+                if struct.name in PORTABILITY_STRUCTS:
+                    out.append(' && p.Type() != OutputType::json')
+                has_version = struct.version is not None
+                has_extNameStr = len(struct.extensions) > 0 or len(struct.aliases) > 0
+                out.append(') {\n')
+                out.append(f'            const {struct.name}* props = (const {struct.name}*)structure;\n')
+                out.append(f'            Dump{struct.name}(p, ')
+                if len(struct.aliases) > 0 and struct.version is not None:
+                    out.append(f'{version_desc} >= {struct.version.nameApi} ?"{struct.name}":"{struct.aliases[0]}"')
                 else:
-                    out += f'"{s.name}"'
-                out += ', *props);\n'
-                out += '            p.AddNewline();\n'
-                out += '        }\n'
-                out += AddGuardFooter(s)
-        out += '        place = structure->pNext;\n'
-        out += '    }\n'
-        out += '}\n'
+                    out.append(f'"{struct.name}"')
+                out.append(', *props);\n')
+                out.append('            p.AddNewline();\n')
+                out.append('        }\n')
+                out.append(self.AddGuardFooter(struct))
+            out.append('        place = structure->pNext;\n')
+            out.append('    }\n')
+            out.append('}\n')
 
-    out += '\n'
-    out += f'bool prepare_{listName}_twocall_chain_vectors(std::unique_ptr<{listName}_chain>& chain) {{\n'
-    out += '    (void)chain;\n'
-    is_twocall = False
-    for s in structs_to_print:
-        if not s.hasLengthmember:
-            continue
-        if s.name in STRUCT_BLACKLIST:
-            continue
-        out += AddGuardHeader(s)
-        for member in s.members:
-            if member.lengthMember:
-                out += f'    chain->{s.name}_{member.name}.resize(chain->{s.name[2:]}.{member.arrayLength});\n'
-                out += f'    chain->{s.name[2:]}.{member.name} = chain->{s.name}_{member.name}.data();\n'
-        out += AddGuardFooter(s)
-        is_twocall = True
-    out += f'    return {"true" if is_twocall else "false"};\n'
-    out += '}\n'
+        out.append('\n')
+        out.append(f'bool prepare_{listName}_twocall_chain_vectors(std::unique_ptr<{listName}_chain>& chain) {{\n')
+        out.append('    (void)chain;\n')
+        is_twocall = False
+        for s in structs_to_print:
+            if s in STRUCT_BLACKLIST:
+                continue
+            struct = self.vk.structs[s]
+            has_length = False
+            for member in struct.members:
+                if member.length is not None and len(member.fixedSizeArray) == 0:
+                    has_length = True
+            if not has_length:
+                continue
+            out.append(self.AddGuardHeader(struct))
+            for member in struct.members:
+                if member.length is not None and len(member.fixedSizeArray) == 0:
+                    out.append(f'    chain->{struct.name}_{member.name}.resize(chain->{struct.name[2:]}.{member.length});\n')
+                    out.append(f'    chain->{struct.name[2:]}.{member.name} = chain->{struct.name}_{member.name}.data();\n')
+            out.append(self.AddGuardFooter(struct))
+            is_twocall = True
+        out.append(f'    return {"true" if is_twocall else "false"};\n')
+        out.append('}\n')
 
-    return out
-
-
-def PrintStructComparisonForwardDecl(structure):
-    out = ''
-    out += f'bool operator==(const {structure.name} & a, const {structure.name} b);\n'
-    return out
-
-
-def PrintStructComparison(structure):
-    out = ''
-    out += f'bool operator==(const {structure.name} & a, const {structure.name} b) {{\n'
-    out += '    return '
-    is_first = True
-    for m in structure.members:
-        if m.name not in NAMES_TO_IGNORE:
-            if not is_first:
-                out += '\n        && '
-            else:
-                is_first = False
-            out += f'a.{m.name} == b.{m.name}'
-    out += ';\n'
-    out += '}\n'
-    return out
+        return out
 
 
-class VulkanEnum:
-    class Option:
+    def PrintStructComparisonForwardDecl(self,structure):
+        out = []
+        out.append(f'bool operator==(const {structure.name} & a, const {structure.name} b);\n')
+        return out
 
-        def __init__(self, name, value, bitpos, comment):
-            self.name = name
-            self.comment = comment
 
-            if bitpos is not None:
-                value = 1 << int(bitpos)
-            elif isinstance(value, str):
-                if value.lower().startswith('0x'):
-                    value = int(value, 16)
+    def PrintStructComparison(self,structure):
+        out = []
+        out.append(f'bool operator==(const {structure.name} & a, const {structure.name} b) {{\n')
+        out.append('    return ')
+        is_first = True
+        for m in structure.members:
+            if m.name not in NAMES_TO_IGNORE:
+                if not is_first:
+                    out.append('\n        && ')
                 else:
-                    value = int(value)
-
-            self.value = value
-
-        def values(self):
-            return {
-                'optName': self.name,
-                'optValue': self.value,
-                'optComment': self.comment,
-            }
-
-    def __init__(self, rootNode):
-        self.name = rootNode.get('name')
-        self.type = rootNode.get('type')
-        self.options = []
-
-        for child in rootNode:
-            childName = child.get('name')
-            childValue = child.get('value')
-            childBitpos = child.get('bitpos')
-            childComment = child.get('comment')
-            childExtends = child.get('extends')
-            childOffset = child.get('offset')
-            childExtNum = child.get('extnumber')
-            support = child.get('supported')
-            if support == 'disabled':
-                continue
-
-            if childName is None:
-                continue
-            if childValue is None and childBitpos is None and childOffset is None:
-                continue
-
-            if childExtends is not None and childExtNum is not None and childOffset is not None:
-                childValue = CalcEnumValue(int(childExtNum), int(childOffset))
-                if 'dir' in child.keys():
-                    childValue = -childValue
-            duplicate = False
-            for o in self.options:
-                if o.values()['optName'] == childName:
-                    duplicate = True
-            if duplicate:
-                continue
-
-            self.options.append(VulkanEnum.Option(
-                childName, childValue, childBitpos, childComment))
-
-
-class VulkanBitmask:
-
-    def __init__(self, rootNode):
-        self.name = rootNode.get('name')
-        self.type = rootNode.get('type')
-
-        # Read each value that the enum contains
-        self.options = []
-        for child in rootNode:
-            childName = child.get('name')
-            childValue = child.get('value')
-            childBitpos = child.get('bitpos')
-            childComment = child.get('comment')
-            support = child.get('supported')
-            if childName is None or (childValue is None and childBitpos is None):
-                continue
-            if support == 'disabled':
-                continue
-
-            duplicate = False
-            for option in self.options:
-                if option.name == childName:
-                    duplicate = True
-            if duplicate:
-                continue
-
-            self.options.append(VulkanEnum.Option(
-                childName, childValue, childBitpos, childComment))
-
-
-class VulkanFlags:
-
-    def __init__(self, rootNode):
-        self.name = rootNode.get('name')
-        self.type = rootNode.get('type')
-        self.enum = rootNode.get('requires')
-        # 64 bit flags use bitvalues, not requires
-        if self.enum is None:
-            self.enum = rootNode.get('bitvalues')
-
-
-class VulkanVariable:
-    def __init__(self, rootNode, constants):
-        self.name = rootNode.find('name').text
-        # Typename, dereferenced and converted to a useable C++ token
-        self.typeID = rootNode.find('type').text
-        self.baseType = self.typeID
-        self.childType = None
-        self.arrayLength = None
-        self.text = ''
-        for node in rootNode.itertext():
-            comment = rootNode.find('comment')
-            if comment is not None and comment.text == node:
-                continue
-            self.text += node
-
-        typeMatch = re.search('.+?(?=' + self.name + ')', self.text)
-        self.type = typeMatch.string[typeMatch.start():typeMatch.end()]
-        self.type = ' '.join(self.type.split())
-        bracketMatch = re.search('(?<=\\[)[a-zA-Z0-9_]+(?=\\])', self.text)
-        if bracketMatch is not None:
-            matchText = bracketMatch.string[bracketMatch.start(
-            ):bracketMatch.end()]
-            self.childType = self.type
-            self.type += '[' + matchText + ']'
-            if matchText in constants:
-                self.arrayLength = constants[matchText]
-            else:
-                self.arrayLength = matchText
-
-        self.lengthMember = False
-        lengthString = rootNode.get('len')
-        lengths = []
-        if lengthString is not None:
-            lengths = re.split(',', lengthString)
-            lengths = list(filter(('null-terminated').__ne__, lengths))
-        if self.arrayLength is None and len(lengths) > 0:
-            self.childType = '*'.join(self.type.split('*')[0:-1])
-            self.arrayLength = lengths[0]
-            self.lengthMember = True
-        if self.arrayLength is not None and self.arrayLength.startswith('latexmath'):
-            code = self.arrayLength[10:len(self.arrayLength)]
-            code = re.sub('\\[', '', code)
-            code = re.sub('\\]', '', code)
-            code = re.sub('\\\\(lceil|rceil)', '', code)
-            code = re.sub('{|}', '', code)
-            code = re.sub('\\\\mathit', '', code)
-            code = re.sub('\\\\over', '/', code)
-            code = re.sub('\\\\textrm', '', code)
-            self.arrayLength = code
-
-        # Dereference if necessary and handle members of variables
-        if self.arrayLength is not None:
-            self.arrayLength = re.sub('::', '->', self.arrayLength)
-            sections = self.arrayLength.split('->')
-            if sections[-1][0] == 'p' and sections[0][1].isupper():
-                self.arrayLength = '*' + self.arrayLength
-
-
-class VulkanStructure:
-    def __init__(self, name, rootNode, constants, extTypes):
-        self.name = name
-        self.members = []
-        self.guard = None
-        self.sTypeName = None
-        self.extendsStruct = rootNode.get('structextends')
-        self.hasLengthmember = False
-
-        for node in rootNode.findall('member'):
-            if node.get('values') is not None:
-                self.sTypeName = node.get('values')
-            self.members.append(VulkanVariable(node, constants))
-
-        for member in self.members:
-            if member.lengthMember:
-                self.hasLengthmember = True
-                break
-
-        for k, elem in extTypes.items():
-            if k == self.name:
-                for e in elem:
-                    if e.guard is not None:
-                        self.guard = e.guard
-
-
-class VulkanExtension:
-    def __init__(self, rootNode):
-        self.name = rootNode.get('name')
-        self.number = int(rootNode.get('number'))
-        self.type = rootNode.get('type')
-        self.dependency = rootNode.get('requires')
-        self.guard = GetFeatureProtect(rootNode)
-        self.supported = rootNode.get('supported')
-        self.extNameStr = None
-        self.vktypes = []
-        self.vkfuncs = []
-        self.constants = OrderedDict()
-        self.enumValues = OrderedDict()
-        self.node = rootNode
-
-        for req in rootNode.findall('require'):
-            for ty in req.findall('type'):
-                self.vktypes.append(ty.get('name'))
-
-            for func in req.findall('command'):
-                self.vkfuncs.append(func.get('name'))
-
-            for enum in req.findall('enum'):
-                base = enum.get('extends')
-                name = enum.get('name')
-                value = enum.get('value')
-                bitpos = enum.get('bitpos')
-                offset = enum.get('offset')
-                # gets the VK_XXX_EXTENSION_NAME string
-                if value == f'"{self.name}"':
-                    self.extNameStr = name
-
-                if value is None and bitpos is not None:
-                    value = 1 << int(bitpos)
-
-                if offset is not None:
-                    offset = int(offset)
-                if base is not None and offset is not None:
-                    enumValue = 1000000000 + 1000*(self.number - 1) + offset
-                    if enum.get('dir') == '-':
-                        enumValue = -enumValue
-                    self.enumValues[base] = (name, enumValue)
-                else:
-                    self.constants[name] = value
-
-
-class VulkanVersion:
-    def __init__(self, rootNode):
-        self.name = rootNode.get('name')
-        self.constant = self.name.replace('_VERSION_', '_API_VERSION_')
-        self.names = set()
-
-        match = re.search(r"^[A-Z]+_VERSION_([1-9][0-9]*)_([0-9]+)$", self.name)
-        self.major = int(match.group(1))
-        self.minor = int(match.group(2))
-
-        for req in rootNode.findall('require'):
-            for ty in req.findall('type'):
-                self.names.add(ty.get('name'))
-            for func in req.findall('command'):
-                self.names.add(func.get('name'))
-            for enum in req.findall('enum'):
-                self.names.add(enum.get('name'))
-        self.names = sorted(self.names)
+                    is_first = False
+                out.append(f'a.{m.name} == b.{m.name}')
+        out.append(';\n')
+        out.append('}\n')
+        return out
 
 class VulkanFormatRange:
-    def __init__(self, min_inst_version, ext_name, first, last):
+    def __init__(self, min_inst_version, extensions, first, last):
         self.minimum_instance_version = min_inst_version
-        self.extension_name = ext_name
+        self.extensions = extensions
         self.first_format = first
         self.last_format = last
-
-class VulkanVideoRequiredCapabilities():
-    def __init__(self, struct, member, value):
-        self.struct = struct
-        self.member = member
-        self.value = value
-
-class VulkanVideoFormat():
-    def __init__(self, name, usage):
-        self.name = name
-        self.usage = usage
-        self.properties = OrderedDict()
-        self.requiredCaps = list()
-        super().__init__()
-
-class VulkanVideoProfileStructMember():
-    def __init__(self, name):
-        self.name = name
-        self.values = OrderedDict()
-
-class VulkanVideoProfileStruct():
-    def __init__(self, struct):
-        self.struct = struct
-        self.members = OrderedDict()
-
-class VulkanVideoCodec():
-    def __init__(self, name, extend = None, value = None):
-        self.name = name
-        self.value = value
-        self.profileStructs = OrderedDict()
-        self.capabilities = OrderedDict()
-        self.formats = OrderedDict()
-        if extend is not None:
-            self.profileStructs = copy.deepcopy(extend.profileStructs)
-            self.capabilities = copy.deepcopy(extend.capabilities)
-            self.formats = copy.deepcopy(extend.formats)

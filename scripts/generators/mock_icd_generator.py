@@ -25,9 +25,7 @@
 #  in its initial state. Rather it's intended to be a starting point that
 #  can be copied and customized to assist in creation of a new layer.
 
-import os,re,sys
-from generator import *
-from common_codegen import *
+from base_generator import BaseGenerator
 
 CUSTOM_C_INTERCEPTS = {
 'vkCreateInstance': '''
@@ -1200,323 +1198,80 @@ CUSTOM_C_INTERCEPTS = {
 '''
 }
 
-# MockICDGeneratorOptions - subclass of GeneratorOptions.
-#
-# Adds options used by MockICDOutputGenerator objects during Mock
-# ICD generation.
-#
-# Additional members
-#   prefixText - list of strings to prefix generated header with
-#     (usually a copyright statement + calling convention macros).
-#   protectFile - True if multiple inclusion protection should be
-#     generated (based on the filename) around the entire header.
-#   protectFeature - True if #ifndef..#endif protection should be
-#     generated around a feature interface in the header file.
-#   genFuncPointers - True if function pointer typedefs should be
-#     generated
-#   protectProto - If conditional protection should be generated
-#     around prototype declarations, set to either '#ifdef'
-#     to require opt-in (#ifdef protectProtoStr) or '#ifndef'
-#     to require opt-out (#ifndef protectProtoStr). Otherwise
-#     set to None.
-#   protectProtoStr - #ifdef/#ifndef symbol to use around prototype
-#     declarations, if protectProto is set
-#   apicall - string to use for the function declaration prefix,
-#     such as APICALL on Windows.
-#   apientry - string to use for the calling convention macro,
-#     in typedefs, such as APIENTRY.
-#   apientryp - string to use for the calling convention macro
-#     in function pointer typedefs, such as APIENTRYP.
-#   indentFuncProto - True if prototype declarations should put each
-#     parameter on a separate line
-#   indentFuncPointer - True if typedefed function pointers should put each
-#     parameter on a separate line
-#   alignFuncParam - if nonzero and parameters are being put on a
-#     separate line, align parameter names at the specified column
-class MockICDGeneratorOptions(GeneratorOptions):
-    def __init__(self,
-                 conventions = None,
-                 filename = None,
-                 directory = '.',
-                 genpath = None,
-                 apiname = None,
-                 profile = None,
-                 versions = '.*',
-                 emitversions = '.*',
-                 defaultExtensions = None,
-                 addExtensions = None,
-                 removeExtensions = None,
-                 emitExtensions = None,
-                 sortProcedure = regSortFeatures,
-                 prefixText = "",
-                 genFuncPointers = True,
-                 protectFile = True,
-                 protectFeature = True,
-                 protectProto = None,
-                 protectProtoStr = None,
-                 apicall = '',
-                 apientry = '',
-                 apientryp = '',
-                 indentFuncProto = True,
-                 indentFuncPointer = False,
-                 alignFuncParam = 0,
-                 expandEnumerants = True,
-                 helper_file_type = ''):
-        GeneratorOptions.__init__(self,
-                 conventions = conventions,
-                 filename = filename,
-                 directory = directory,
-                 genpath = genpath,
-                 apiname = apiname,
-                 profile = profile,
-                 versions = versions,
-                 emitversions = emitversions,
-                 defaultExtensions = defaultExtensions,
-                 addExtensions = addExtensions,
-                 removeExtensions = removeExtensions,
-                 emitExtensions = emitExtensions,
-                 sortProcedure = sortProcedure)
-        self.prefixText      = prefixText
-        self.genFuncPointers = genFuncPointers
-        self.protectFile     = protectFile
-        self.protectFeature  = protectFeature
-        self.protectProto    = protectProto
-        self.protectProtoStr = protectProtoStr
-        self.apicall         = apicall
-        self.apientry        = apientry
-        self.apientryp       = apientryp
-        self.indentFuncProto = indentFuncProto
-        self.indentFuncPointer = indentFuncPointer
-        self.alignFuncParam  = alignFuncParam
-
-# MockICDOutputGenerator - subclass of OutputGenerator.
+# MockICDOutputGenerator
 # Generates a mock vulkan ICD.
 #  This is intended to be a minimal replacement for a vulkan device in order
-#  to enable Vulkan Validation testing.
+#  to enable testing of Vulkan applications and layers
 #
-# ---- methods ----
-# MockOutputGenerator(errFile, warnFile, diagFile) - args as for
-#   OutputGenerator. Defines additional internal state.
-# ---- methods overriding base class ----
-# beginFile(genOpts)
-# endFile()
-# beginFeature(interface, emit)
-# endFeature()
-# genType(typeinfo,name)
-# genStruct(typeinfo,name)
-# genGroup(groupinfo,name)
-# genEnum(enuminfo, name)
-# genCmd(cmdinfo)
-class MockICDOutputGenerator(OutputGenerator):
-    """Generate specified API interfaces in a specific style, such as a C header"""
-    # This is an ordered list of sections in the header file.
-    TYPE_SECTIONS = ['include', 'define', 'basetype', 'handle', 'enum',
-                     'group', 'bitmask', 'funcpointer', 'struct']
-    ALL_SECTIONS = TYPE_SECTIONS + ['command']
-    def __init__(self,
-                 errFile = sys.stderr,
-                 warnFile = sys.stderr,
-                 diagFile = sys.stdout):
-        OutputGenerator.__init__(self, errFile, warnFile, diagFile)
-        # Internal state - accumulators for different inner block text
-        self.sections = dict([(section, []) for section in self.ALL_SECTIONS])
-        self.intercepts = []
-        self.function_declarations = False
+class MockICDOutputGenerator(BaseGenerator):
+    def __init__(self):
+        BaseGenerator.__init__(self)
 
-    # Check if the parameter passed in is a pointer to an array
-    def paramIsArray(self, param):
-        return param.attrib.get('len') is not None
+        # Ignore extensions that ICDs should not implement or are not safe to report
+        self.ignore_exts = ['VK_EXT_validation_cache', 'VK_KHR_portability_subset']
 
-    # Check if the parameter passed in is a pointer
-    def paramIsPointer(self, param):
-        ispointer = False
-        for elem in param:
-            if ((elem.tag != 'type') and (elem.tail is not None)) and '*' in elem.tail:
-                ispointer = True
-        return ispointer
+        # Dispatchable handles
+        self.dispatchable_handles = ['VkInstance','VkPhysicalDevice', 'VkDevice', 'VkCommandBuffer', 'VkQueue']
 
-    # Check if an object is a non-dispatchable handle
-    def isHandleTypeNonDispatchable(self, handletype):
-        handle = self.registry.tree.find("types/type/[name='" + handletype + "'][@category='handle']")
-        if handle is not None and handle.find('type').text == 'VK_DEFINE_NON_DISPATCHABLE_HANDLE':
-            return True
-        else:
-            return False
+    def generate_function_declarations(self, out):
 
-    # Check if an object is a dispatchable handle
-    def isHandleTypeDispatchable(self, handletype):
-        handle = self.registry.tree.find("types/type/[name='" + handletype + "'][@category='handle']")
-        if handle is not None and handle.find('type').text == 'VK_DEFINE_HANDLE':
-            return True
-        else:
-            return False
+        out.append('#include <stdint.h>\n')
+        out.append('#include <cstring>\n')
+        out.append('#include <string>\n')
+        out.append('#include <unordered_map>\n')
+        out.append('#include <vulkan/vulkan.h>\n')
+        out.append('\n')
+        out.append('namespace vkmock {\n')
+        out.append('// Map of instance extension name to version\n')
+        out.append('static const std::unordered_map<std::string, uint32_t> instance_extension_map = {\n')
+        for ext in [x for x in self.vk.extensions.values() if x.instance and x.name not in self.ignore_exts]:
+            if ext.protect:
+                out.append(f'#ifdef {ext.protect}\n')
+            out.append(f'    {{"{ext.name}", {ext.specVersion}}},\n')
+            if ext.protect:
+                out.append('#endif\n')
+        out.append('};\n')
+        out.append('// Map of device extension name to version\n')
+        out.append('static const std::unordered_map<std::string, uint32_t> device_extension_map = {\n')
+        for ext in [x for x in self.vk.extensions.values() if x.device and x.name not in self.ignore_exts]:
+            if ext.protect:
+                out.append(f'#ifdef {ext.protect}\n')
+            out.append(f'    {{"{ext.name}", {ext.specVersion}}},\n')
+            if ext.protect:
+                out.append('#endif\n')
+        out.append('};\n')
 
-    # Check that the target API is in the supported list for the extension
-    def checkExtensionAPISupport(self, supported):
-        return self.genOpts.apiname in supported.split(',')
+        current_protect = None
+        for name, cmd in self.vk.commands.items():
+            prepend_newline = '\n'
+            if cmd.protect != current_protect:
+                if current_protect is not None:
+                    out.append(f'#endif /* {current_protect} */\n')
+                    prepend_newline = ''
+                if current_protect is not None and cmd.protect is not None:
+                    out.append('\n')
+                if cmd.protect is not None:
+                    out.append(f'#ifdef {cmd.protect}\n')
+                current_protect = cmd.protect
+            out.append(f'{prepend_newline}static {cmd.cPrototype.replace(name, name[2:])}\n')
+        if current_protect is not None:
+            out.append('#endif\n')
 
-    def beginFile(self, genOpts):
-        OutputGenerator.beginFile(self, genOpts)
-        # C-specific
-        #
-        # Multiple inclusion protection & C++ namespace.
-        if (genOpts.protectFile and self.genOpts.filename == "function_declarations.h"):
-            self.function_declarations = True
-
-        # User-supplied prefix text, if any (list of strings)
-        if (genOpts.prefixText):
-            for s in genOpts.prefixText:
-                write(s, file=self.outFile)
-
-        if self.function_declarations:
-            self.newline()
-            # Include all of the extensions in ICD except specific ignored ones
-            device_exts = []
-            instance_exts = []
-            # Ignore extensions that ICDs should not implement or are not safe to report
-            ignore_exts = ['VK_EXT_validation_cache', 'VK_KHR_portability_subset']
-            for ext in self.registry.tree.findall("extensions/extension"):
-                if self.checkExtensionAPISupport(ext.attrib['supported']): # Only include API-relevant extensions
-                    if (ext.attrib['name'] not in ignore_exts):
-                        # Search for extension version enum
-                        for enum in ext.findall('require/enum'):
-                            if enum.get('name', '').endswith('_SPEC_VERSION'):
-                                ext_version = enum.get('value')
-                                if (ext.attrib.get('type') == 'instance'):
-                                    instance_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext_version))
-                                else:
-                                    device_exts.append('    {"%s", %s},' % (ext.attrib['name'], ext_version))
-                                break
-            write('#pragma once\n',file=self.outFile)
-            write('#include <stdint.h>',file=self.outFile)
-            write('#include <cstring>',file=self.outFile)
-            write('#include <string>',file=self.outFile)
-            write('#include <unordered_map>',file=self.outFile)
-            write('#include <vulkan/vulkan.h>',file=self.outFile)
-            self.newline()
-            write('namespace vkmock {\n', file=self.outFile)
-            write('// Map of instance extension name to version', file=self.outFile)
-            write('static const std::unordered_map<std::string, uint32_t> instance_extension_map = {', file=self.outFile)
-            write('\n'.join(instance_exts), file=self.outFile)
-            write('};', file=self.outFile)
-            write('// Map of device extension name to version', file=self.outFile)
-            write('static const std::unordered_map<std::string, uint32_t> device_extension_map = {', file=self.outFile)
-            write('\n'.join(device_exts), file=self.outFile)
-            write('};', file=self.outFile)
-        else:
-            write('#pragma once\n',file=self.outFile)
-            write('#include "mock_icd.h"',file=self.outFile)
-            write('#include "function_declarations.h"\n',file=self.outFile)
-            write('namespace vkmock {', file=self.outFile)
-
-
-    def endFile(self):
-        # C-specific
-        # Finish C++ namespace
-        self.newline()
-        if self.function_declarations:
             # record intercepted procedures
-            write('// Map of all APIs to be intercepted by this layer', file=self.outFile)
-            write('static const std::unordered_map<std::string, void*> name_to_funcptr_map = {', file=self.outFile)
-            write('\n'.join(self.intercepts), file=self.outFile)
-            write('};\n', file=self.outFile)
-        write('} // namespace vkmock', file=self.outFile)
-        self.newline()
+        out.append('// Map of all APIs to be intercepted by this layer\n')
+        out.append('static const std::unordered_map<std::string, void*> name_to_funcptr_map = {\n')
+        for name, cmd in self.vk.commands.items():
+            if cmd.protect:
+                out.append(f'#ifdef {cmd.protect}\n')
+            out.append(f'    {{"{name}", (void*){name[2:]}}},\n')
+            if cmd.protect:
+                out.append('#endif\n')
+        out.append('};\n')
 
-        # Finish processing in superclass
-        OutputGenerator.endFile(self)
-    def beginFeature(self, interface, emit):
-        #write('// starting beginFeature', file=self.outFile)
-        # Start processing in superclass
-        OutputGenerator.beginFeature(self, interface, emit)
-        self.featureExtraProtect = GetFeatureProtect(interface)
-        # C-specific
-        # Accumulate includes, defines, types, enums, function pointer typedefs,
-        # end function prototypes separately for this feature. They're only
-        # printed in endFeature().
-        self.sections = dict([(section, []) for section in self.ALL_SECTIONS])
-        #write('// ending beginFeature', file=self.outFile)
-    def endFeature(self):
-        # C-specific
-        # Actually write the interface to the output file.
-        #write('// starting endFeature', file=self.outFile)
-        if (self.emit):
-            self.newline()
-            if (self.genOpts.protectFeature):
-                write('#ifndef', self.featureName, file=self.outFile)
-            # If type declarations are needed by other features based on
-            # this one, it may be necessary to suppress the ExtraProtect,
-            # or move it below the 'for section...' loop.
-            #write('// endFeature looking at self.featureExtraProtect', file=self.outFile)
-            if (self.featureExtraProtect != None):
-                write('#ifdef', self.featureExtraProtect, file=self.outFile)
-            #write('#define', self.featureName, '1', file=self.outFile)
-            for section in self.TYPE_SECTIONS:
-                #write('// endFeature writing section'+section, file=self.outFile)
-                contents = self.sections[section]
-                if contents:
-                    write('\n'.join(contents), file=self.outFile)
-                    self.newline()
-            #write('// endFeature looking at self.sections[command]', file=self.outFile)
-            if (self.sections['command']):
-                write('\n'.join(self.sections['command']), end=u'', file=self.outFile)
-                self.newline()
-            if (self.featureExtraProtect != None):
-                write('#endif /*', self.featureExtraProtect, '*/', file=self.outFile)
-            if (self.genOpts.protectFeature):
-                write('#endif /*', self.featureName, '*/', file=self.outFile)
-        # Finish processing in superclass
-        OutputGenerator.endFeature(self)
-        #write('// ending endFeature', file=self.outFile)
-    #
-    # Append a definition to the specified section
-    def appendSection(self, section, text):
-        # self.sections[section].append('SECTION: ' + section + '\n')
-        self.sections[section].append(text)
-    #
-    # Type generation
-    def genType(self, typeinfo, name, alias):
-        pass
-    #
-    # Struct (e.g. C "struct" type) generation.
-    # This is a special case of the <type> tag where the contents are
-    # interpreted as a set of <member> tags instead of freeform C
-    # C type declarations. The <member> tags are just like <param>
-    # tags - they are a declaration of a struct or union member.
-    # Only simple member declarations are supported (no nested
-    # structs etc.)
-    def genStruct(self, typeinfo, typeName, alias):
-        OutputGenerator.genStruct(self, typeinfo, typeName, alias)
-        body = 'typedef ' + typeinfo.elem.get('category') + ' ' + typeName + ' {\n'
-        # paramdecl = self.makeCParamDecl(typeinfo.elem, self.genOpts.alignFuncParam)
-        for member in typeinfo.elem.findall('.//member'):
-            body += self.makeCParamDecl(member, self.genOpts.alignFuncParam)
-            body += ';\n'
-        body += '} ' + typeName + ';\n'
-        self.appendSection('struct', body)
-    #
-    # Group (e.g. C "enum" type) generation.
-    # These are concatenated together with other types.
-    def genGroup(self, groupinfo, groupName, alias):
-        pass
-    # Enumerant generation
-    # <enum> tags may specify their values in several ways, but are usually
-    # just integers.
-    def genEnum(self, enuminfo, name, alias):
-        pass
-    #
-    # Command generation
-    def genCmd(self, cmdinfo, name, alias):
-        decls = self.makeCDecls(cmdinfo.elem)
-        if self.function_declarations: # In the header declare all intercepts
-            self.appendSection('command', '')
-            self.appendSection('command', 'static %s' % (decls[0]))
-            if (self.featureExtraProtect != None):
-                self.intercepts += [ '#ifdef %s' % self.featureExtraProtect ]
-            self.intercepts += [ '    {"%s", (void*)%s},' % (name,name[2:]) ]
-            if (self.featureExtraProtect != None):
-                self.intercepts += [ '#endif' ]
-            return
+    def generate_function_definitions(self, out):
+        out.append('#include "mock_icd.h"\n')
+        out.append('#include "function_declarations.h"\n')
+        out.append('namespace vkmock {\n')
 
         manual_functions = [
             # Include functions here to be intercepted w/ manually implemented function bodies
@@ -1537,99 +1292,127 @@ class MockICDOutputGenerator(OutputGenerator):
             'vkEnumerateDeviceLayerProperties',
             'vkEnumerateDeviceExtensionProperties',
         ]
-        if name in manual_functions:
-            self.appendSection('command', '')
-            if name not in CUSTOM_C_INTERCEPTS:
-                self.appendSection('command', '// declare only')
-                self.appendSection('command', 'static %s' % (decls[0]))
-                self.appendSection('command', '// TODO: Implement custom intercept body')
+        current_protect = None
+        for name, cmd in self.vk.commands.items():
+            if cmd.protect != current_protect:
+                if current_protect is not None:
+                    out.append(f'#endif /* {current_protect} */\n')
+                if current_protect is not None and cmd.protect is not None:
+                    out.append('\n')
+                if cmd.protect is not None:
+                    out.append(f'#ifdef {cmd.protect}\n')
+                current_protect = cmd.protect
+
+            if name in manual_functions:
+                if name not in CUSTOM_C_INTERCEPTS:
+                    out.append(f'static {cmd.cPrototype.replace(name, name[2:])}\n')
+                    out.append('// TODO: Implement custom intercept body\n')
+                else:
+                    out.append(f'static {cmd.cPrototype[:-1].replace(name, name[2:])}\n')
+                    out.append(f'{{{CUSTOM_C_INTERCEPTS[name]}}}\n')
+                continue
+
+            out.append(f'static {cmd.cPrototype[:-1].replace(name, name[2:])}\n')
+            if name in CUSTOM_C_INTERCEPTS:
+                out.append(f'{{{CUSTOM_C_INTERCEPTS[name]}}}\n')
+                continue
+
+            # if the name w/ KHR postfix is in the CUSTOM_C_INTERCEPTS
+            # Call the KHR custom version instead of generating separate code
+            khr_name = name + "KHR"
+            if khr_name in CUSTOM_C_INTERCEPTS:
+                return_string = ''
+                if cmd.returnType != 'void':
+                    return_string = 'return '
+
+                param_names = []
+                for param in cmd.params:
+                    param_names.append(param.name)
+                out.append(f'{{\n    {return_string}{khr_name[2:]}({", ".join(param_names)});\n}}\n')
+                continue
+            out.append('{\n')
+
+            # GET THE TYPE OF FUNCTION
+            if any(name.startswith(ftxt) for ftxt in ('vkCreate', 'vkAllocate')):
+                # Get last param
+                last_param = cmd.params[-1]
+                lp_txt = last_param.name
+                lp_len = None
+                if last_param.length is not None:
+                    lp_len = last_param.length
+                    lp_len = lp_len.replace('::', '->')
+                lp_type = last_param.type
+                handle_type = 'dispatchable'
+                allocator_txt = 'CreateDispObjHandle()'
+                if lp_type not in self.dispatchable_handles:
+                    handle_type = 'non-' + handle_type
+                    allocator_txt = 'global_unique_handle++'
+                # Need to lock in both cases
+                out.append('    unique_lock_t lock(global_lock);\n')
+                if lp_len is not None:
+                    #print("%s last params (%s) has len %s" % (handle_type, lp_txt, lp_len))
+                    out.append(f'    for (uint32_t i = 0; i < {lp_len}; ++i) {{\n')
+                    out.append(f'        {lp_txt}[i] = ({lp_type}){allocator_txt};\n')
+                    out.append('    }\n')
+                else:
+                    #print("Single %s last param is '%s' w/ type '%s'" % (handle_type, lp_txt, lp_type))
+                    if 'AllocateMemory' in name:
+                        # Store allocation size in case it's mapped
+                        out.append('    allocated_memory_size_map[(VkDeviceMemory)global_unique_handle] = pAllocateInfo->allocationSize;\n')
+                    out.append(f'    *{lp_txt} = ({lp_type}){allocator_txt};\n')
+            elif True in [ftxt in name for ftxt in ['Destroy', 'Free']]:
+                out.append('//Destroy object\n')
+                if 'FreeMemory' in name:
+                    # If the memory is mapped, unmap it
+                    out.append('    UnmapMemory(device, memory);\n')
+                    # Remove from allocation map
+                    out.append('    unique_lock_t lock(global_lock);\n')
+                    out.append('    allocated_memory_size_map.erase(memory);\n')
             else:
-                self.appendSection('command', 'static %s' % (decls[0][:-1]))
-                self.appendSection('command', '{\n%s}' % (CUSTOM_C_INTERCEPTS[name]))
-            self.intercepts += [ '    {"%s", (void*)%s},' % (name,name[2:]) ]
-            return
-        # record that the function will be intercepted
-        if (self.featureExtraProtect != None):
-            self.intercepts += [ '#ifdef %s' % self.featureExtraProtect ]
-        self.intercepts += [ '    {"%s", (void*)%s},' % (name,name[2:]) ]
-        if (self.featureExtraProtect != None):
-            self.intercepts += [ '#endif' ]
+                out.append('//Not a CREATE or DESTROY function\n')
 
-        OutputGenerator.genCmd(self, cmdinfo, name, alias)
-        #
-        self.appendSection('command', '')
-        self.appendSection('command', 'static %s' % (decls[0][:-1]))
-        if name in CUSTOM_C_INTERCEPTS:
-            self.appendSection('command', '{%s}' % (CUSTOM_C_INTERCEPTS[name]))
-            return
+            # Return result variable, if any.
+            if cmd.returnType != 'void':
+                if name == 'vkGetEventStatus':
+                    out.append('    return VK_EVENT_SET;\n')
+                else:
+                    out.append('    return VK_SUCCESS;\n')
+            out.append('}\n')
+        if current_protect is not None:
+            out.append('#endif\n')
 
-        # Declare result variable, if any.
-        resulttype = cmdinfo.elem.find('proto/type')
-        if (resulttype != None and resulttype.text == 'void'):
-            resulttype = None
-        # if the name w/ KHR postfix is in the CUSTOM_C_INTERCEPTS
-        # Call the KHR custom version instead of generating separate code
-        khr_name = name + "KHR"
-        if khr_name in CUSTOM_C_INTERCEPTS:
-            return_string = ''
-            if resulttype != None:
-                return_string = 'return '
-            params = cmdinfo.elem.findall('param/name')
-            param_names = []
-            for param in params:
-                param_names.append(param.text)
-            self.appendSection('command', '{\n    %s%s(%s);\n}' % (return_string, khr_name[2:], ", ".join(param_names)))
-            return
-        self.appendSection('command', '{')
+    def generate(self):
+        out = []
+        out.append('''/*
+** Copyright (c) 2015-2025 The Khronos Group Inc.
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
 
-        api_function_name = cmdinfo.elem.attrib.get('name')
-        # GET THE TYPE OF FUNCTION
-        if any(api_function_name.startswith(ftxt) for ftxt in ('vkCreate', 'vkAllocate')):
-            # Get last param
-            last_param = cmdinfo.elem.findall('param')[-1]
-            lp_txt = last_param.find('name').text
-            lp_len = None
-            if ('len' in last_param.attrib):
-                lp_len = last_param.attrib['len']
-                lp_len = lp_len.replace('::', '->')
-            lp_type = last_param.find('type').text
-            handle_type = 'dispatchable'
-            allocator_txt = 'CreateDispObjHandle()';
-            if (self.isHandleTypeNonDispatchable(lp_type)):
-                handle_type = 'non-' + handle_type
-                allocator_txt = 'global_unique_handle++';
-            # Need to lock in both cases
-            self.appendSection('command', '    unique_lock_t lock(global_lock);')
-            if (lp_len != None):
-                #print("%s last params (%s) has len %s" % (handle_type, lp_txt, lp_len))
-                self.appendSection('command', '    for (uint32_t i = 0; i < %s; ++i) {' % (lp_len))
-                self.appendSection('command', '        %s[i] = (%s)%s;' % (lp_txt, lp_type, allocator_txt))
-                self.appendSection('command', '    }')
-            else:
-                #print("Single %s last param is '%s' w/ type '%s'" % (handle_type, lp_txt, lp_type))
-                if 'AllocateMemory' in api_function_name:
-                    # Store allocation size in case it's mapped
-                    self.appendSection('command', '    allocated_memory_size_map[(VkDeviceMemory)global_unique_handle] = pAllocateInfo->allocationSize;')
-                self.appendSection('command', '    *%s = (%s)%s;' % (lp_txt, lp_type, allocator_txt))
-        elif True in [ftxt in api_function_name for ftxt in ['Destroy', 'Free']]:
-            self.appendSection('command', '//Destroy object')
-            if 'FreeMemory' in api_function_name:
-                # If the memory is mapped, unmap it
-                self.appendSection('command', '    UnmapMemory(device, memory);')
-                # Remove from allocation map
-                self.appendSection('command', '    unique_lock_t lock(global_lock);')
-                self.appendSection('command', '    allocated_memory_size_map.erase(memory);')
+/*
+** This header is generated from the Khronos Vulkan XML API Registry.
+**
+*/
+
+#pragma once
+''')
+
+        if self.filename == "function_declarations.h":
+            self.generate_function_declarations(out)
         else:
-            self.appendSection('command', '//Not a CREATE or DESTROY function')
+            self.generate_function_definitions(out)
 
-        # Return result variable, if any.
-        if (resulttype != None):
-            if api_function_name == 'vkGetEventStatus':
-                self.appendSection('command', '    return VK_EVENT_SET;')
-            else:
-                self.appendSection('command', '    return VK_SUCCESS;')
-        self.appendSection('command', '}')
-    #
-    # override makeProtoName to drop the "vk" prefix
-    def makeProtoName(self, name, tail):
-        return self.genOpts.apientry + name[2:] + tail
+        out.append('\n')
+        out.append('} // namespace vkmock\n')
+        out.append('\n')
+        self.write(''.join(out))
