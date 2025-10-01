@@ -4328,8 +4328,16 @@ static void demo_select_physical_device(struct demo *demo) {
     {
         VkPhysicalDeviceProperties physicalDeviceProperties;
         vkGetPhysicalDeviceProperties(demo->gpu, &physicalDeviceProperties);
-        fprintf(stderr, "Selected GPU %d: %s, type: %s\n", demo->gpu_number, physicalDeviceProperties.deviceName,
-                to_string(physicalDeviceProperties.deviceType));
+        uint32_t api_major = VK_API_VERSION_MAJOR(physicalDeviceProperties.apiVersion);
+        uint32_t api_minor = VK_API_VERSION_MINOR(physicalDeviceProperties.apiVersion);
+        uint32_t api_patch = VK_API_VERSION_PATCH(physicalDeviceProperties.apiVersion);
+        uint32_t major = VK_API_VERSION_MAJOR(physicalDeviceProperties.driverVersion);
+        uint32_t minor = VK_API_VERSION_MINOR(physicalDeviceProperties.driverVersion);
+        uint32_t patch = VK_API_VERSION_PATCH(physicalDeviceProperties.driverVersion);
+        fprintf(stderr, "Selected GPU %d: %s, type: %s, apiVersion: %d (%d.%d.%d), driverVersion: %d (%d.%d.%d) \n",
+                demo->gpu_number, physicalDeviceProperties.deviceName, to_string(physicalDeviceProperties.deviceType),
+                physicalDeviceProperties.apiVersion, api_major, api_minor, api_patch, physicalDeviceProperties.driverVersion, major,
+                minor, patch);
     }
     free(physical_devices);
 
