@@ -442,7 +442,7 @@ struct Demo {
     wl_seat *seat = nullptr;
     wl_pointer *pointer = nullptr;
     wl_keyboard *keyboard = nullptr;
-    int pending_width, pending_height;
+    int pending_width = 0, pending_height = 0;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     IDirectFB *dfb = nullptr;
