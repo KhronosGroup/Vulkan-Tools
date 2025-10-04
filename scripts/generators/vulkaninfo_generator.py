@@ -924,13 +924,14 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                         out.append(f'    std::vector<{member.type}> {struct.name}_{member.name};\n')
             out.append(self.AddGuardFooter(struct))
         out.append('    void initialize_chain(')
+        args = []
         if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-            out.append('AppInstance &inst, ')
+            args.append('AppInstance &inst')
         if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-            out.append('AppGpu &gpu ')
+            args.append('AppGpu &gpu')
         if chain_details.get('can_show_promoted_structs'):
-            out.append(', bool show_promoted_structs')
-        out.append(') noexcept {\n')
+            args.append('bool show_promoted_structs')
+        out.append(f'{", ".join(args)}) noexcept {{\n')
         for s in structs_to_print:
             if s in STRUCT_BLACKLIST:
                 continue
@@ -939,7 +940,6 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
             out.append(self.AddGuardHeader(struct))
             out.append(f'        {struct.name[2:]}.sType = {struct.sType};\n')
             out.append(self.AddGuardFooter(struct))
-
 
         out.append('        std::vector<VkBaseOutStructure*> chain_members{};\n')
         for s in structs_to_print:
@@ -1009,14 +1009,16 @@ void setup_{listName}_chain({chain_details['extends']}& start, std::unique_ptr<{
 ''')
         if chain_details.get('print_iterator'):
             out.append('\n')
-            out.append(f'void chain_iterator_{listName}(Printer &p, ')
+            out.append(f'void chain_iterator_{listName}(')
+            args = ['Printer &p']
             if chain_details.get('type') in [EXTENSION_TYPE_INSTANCE, EXTENSION_TYPE_BOTH]:
-                out.append('AppInstance &inst, ')
+                args.append('AppInstance &inst')
             if chain_details.get('type') in [EXTENSION_TYPE_DEVICE, EXTENSION_TYPE_BOTH]:
-                out.append('AppGpu &gpu, ')
+                args.append('AppGpu &gpu')
             if chain_details.get('can_show_promoted_structs'):
-                out.append('bool show_promoted_structs, ')
-            out.append('const void * place) {\n')
+                args.append('bool show_promoted_structs')
+            args.append('const void * place')
+            out.append(f'{", ".join(args)}) {{\n')
             out.append('    while (place) {\n')
             out.append('        const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;\n')
             out.append('        p.SetSubHeader();\n')
@@ -1030,16 +1032,9 @@ void setup_{listName}_chain({chain_details['extends']}& start, std::unique_ptr<{
                 out.append(f'        if (structure->sType == {struct.sType}')
                 if struct.name in PORTABILITY_STRUCTS:
                     out.append(' && p.Type() != OutputType::json')
-                has_version = struct.version is not None
-                has_extNameStr = len(struct.extensions) > 0 or len(struct.aliases) > 0
                 out.append(') {\n')
                 out.append(f'            const {struct.name}* props = (const {struct.name}*)structure;\n')
-                out.append(f'            Dump{struct.name}(p, ')
-                if len(struct.aliases) > 0 and struct.version is not None:
-                    out.append(f'{version_desc} >= {struct.version.nameApi} ?"{struct.name}":"{struct.aliases[0]}"')
-                else:
-                    out.append(f'"{struct.name}"')
-                out.append(', *props);\n')
+                out.extend(self.PrintStructNameDecisionLogic(struct, version_desc, chain_details.get('can_show_promoted_structs')))
                 out.append('            p.AddNewline();\n')
                 out.append('        }\n')
                 out.append(self.AddGuardFooter(struct))
@@ -1073,6 +1068,56 @@ void setup_{listName}_chain({chain_details['extends']}& start, std::unique_ptr<{
 
         return out
 
+    def GetStructCheckStringForMatchingExtension(self, struct, structName):
+        for ext_name in struct.extensions:
+            ext = self.vk.extensions[ext_name]
+            vendor = ext.name.split('_')[1]
+            if structName.endswith(vendor):
+                if ext.device:
+                    return f'gpu.CheckPhysicalDeviceExtensionIncluded({ext.nameString})'
+                elif ext.instance:
+                    return f'inst.CheckExtensionEnabled({ext.nameString})'
+        return None
+
+    # Function is complex because it has to do the following:
+    # Always print the struct with the most appropriate name given the gpu api version & enabled instance/device extensions
+    # Print struct aliases when --show-promoted-structs is set
+    # Not let alias printing duplicate the most appropriate name
+    def PrintStructNameDecisionLogic(self, struct, version_desc, can_show_promoted_structs):
+        out = []
+        out.append(f'{" " * 12}const char* name = ')
+        # Get a list of all the conditions to check and the type name to use
+        check_list = []
+        if struct.version is not None:
+            check_list.append([f'{version_desc} >= {struct.version.nameApi}', struct.name])
+        else:
+            check_list.append([f'{self.GetStructCheckStringForMatchingExtension(struct, struct.name)}', struct.name])
+
+        for alias in struct.aliases:
+            ext_str = self.GetStructCheckStringForMatchingExtension(struct, alias)
+            if ext_str is not None:
+                check_list.append([f'{self.GetStructCheckStringForMatchingExtension(struct, alias)}', alias])
+        end_parens = ''
+        # Turn the conditions into a nested ternary condition -
+        for check in check_list:
+            if check == check_list[-1]:
+                out.append( f'"{check[1]}"')
+            else:
+                out.append( f'{check[0]} ? "{check[1]}" : (')
+                end_parens += ')'
+        out.append(f'{end_parens};\n')
+        out.append(f'{" " * 12}Dump{struct.name}(p, name, *props);\n')
+        if not can_show_promoted_structs:
+            return out
+        for alias in struct.aliases:
+            ext_str = self.GetStructCheckStringForMatchingExtension(struct, alias)
+            if ext_str is not None:
+                out.append(f'{" " * 12}if (show_promoted_structs && strcmp(name, "{alias}") != 0 && {ext_str}) {{\n')
+                out.append(f'{" " * 16}p.AddNewline();\n')
+                out.append(f'{" " * 16}p.SetSubHeader();\n')
+                out.append(f'{" " * 16}Dump{struct.name}(p, "{alias}", *props);\n')
+                out.append(f'{" " * 12}}}\n')
+        return out
 
     def PrintStructComparisonForwardDecl(self,structure):
         out = []
