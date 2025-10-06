@@ -56,7 +56,7 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-find_package(VulkanHeaders ${CMAKE_PROJECT_VERSION} QUIET REQUIRED CONFIG)
+find_package(VulkanHeaders ${PROJECT_VERSION} QUIET REQUIRED CONFIG)
 if ((APPLE OR BUILD_TESTS) AND NOT ANDROID)
     find_package(VulkanLoader QUIET REQUIRED CONFIG)
 endif()
