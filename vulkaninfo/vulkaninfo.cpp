@@ -740,14 +740,14 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats,
 }
 
 // Print capabilities section of profiles schema
-void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
+void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu, bool show_promoted_structs) {
     ObjectWrapper capabilities(p, "capabilities");
     {
         ObjectWrapper temp_name_obj(p, "device");
         DumpExtensions(p, "extensions", gpu.device_extensions);
         {
             ObjectWrapper obj(p, "features");
-            GpuDumpFeatures(p, gpu, false);
+            GpuDumpFeatures(p, gpu, show_promoted_structs);
         }
         {
             ObjectWrapper obj(p, "properties");
@@ -770,7 +770,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu) {
             }
             if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
                 void *place = gpu.props2.pNext;
-                chain_iterator_phys_device_props2(p, gpu.inst, gpu, false, place);
+                chain_iterator_phys_device_props2(p, gpu.inst, gpu, show_promoted_structs, place);
             }
         }
         {
@@ -899,7 +899,9 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
     p.PrintKeyString("api-version", APIVersion(apiVersion).str());
     p.PrintKeyString("label", device_label);
     p.PrintKeyString("description", std::string("Exported from ") + APP_SHORT_NAME);
-    { ObjectWrapper contributors(p, "contributors"); }
+    {
+        ObjectWrapper contributors(p, "contributors");
+    }
     {
         ArrayWrapper contributors(p, "history");
         ObjectWrapper element(p, "");
@@ -1084,21 +1086,20 @@ void print_usage(const std::string &executable_name) {
 }
 
 struct ParsedResults {
-    OutputCategory output_category;
-    uint32_t selected_gpu;
-    bool has_selected_gpu;  // differentiate between selecting the 0th gpu and using the default 0th value
-    bool show_tool_props;
-    bool show_formats;
-    bool show_promoted_structs;
-    bool show_video_props;
-    bool print_to_file;
-    std::string filename;  // set if explicitely given, or if vkconfig_output has a <path> argument
+    OutputCategory output_category = OutputCategory::text;
+    uint32_t selected_gpu = 0;
+    bool has_selected_gpu = false;  // differentiate between selecting the 0th gpu and using the default 0th value
+    bool show_tool_props = false;
+    bool show_formats = false;
+    bool show_promoted_structs = false;
+    bool show_video_props = false;
+    bool print_to_file = false;
+    std::string filename;  // set if explicitly given, or if vkconfig_output has a <path> argument
     std::string default_filename;
 };
 
 util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, std::string executable_name) {
-    ParsedResults results{};                         // default it to zero init everything
-    results.output_category = OutputCategory::text;  // default output category
+    ParsedResults results{};
     results.default_filename = APP_SHORT_NAME ".txt";
     for (int i = 1; i < argc; ++i) {
         // A internal-use-only format for communication with the Vulkan Configurator tool
@@ -1212,7 +1213,7 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
             DumpSummaryGPU(p, *(gpu.get()));
         }
     } else if (parse_data.output_category == OutputCategory::profile_json) {
-        DumpGpuProfileCapabilities(p, *(gpus.at(parse_data.selected_gpu).get()));
+        DumpGpuProfileCapabilities(p, *(gpus.at(parse_data.selected_gpu).get()), parse_data.show_promoted_structs);
         DumpGpuProfileInfo(p, *(gpus.at(parse_data.selected_gpu).get()));
     } else {
         // text, html, vkconfig_output
