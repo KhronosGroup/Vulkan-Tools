@@ -240,7 +240,7 @@ TEST_F(MockICD, CommandBufferOperations) {
 }
 
 VkResult create_surface(VkInstance instance, VkSurfaceKHR& surface) {
-    VkDisplaySurfaceCreateInfoKHR surf_create_info{};
+    VkDisplaySurfaceCreateInfoKHR surf_create_info{VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR};
     return vkCreateDisplayPlaneSurfaceKHR(instance, &surf_create_info, nullptr, &surface);
 }
 

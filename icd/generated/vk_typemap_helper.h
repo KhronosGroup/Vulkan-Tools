@@ -4586,6 +4586,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_F
     typedef VkPhysicalDeviceMaintenance8FeaturesKHR Type;
 };
 
+// Map type VkPhysicalDeviceShaderFmaFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FMA_FEATURES_KHR
+template <> struct LvlTypeMap<VkPhysicalDeviceShaderFmaFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FMA_FEATURES_KHR;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FMA_FEATURES_KHR> {
+    typedef VkPhysicalDeviceShaderFmaFeaturesKHR Type;
+};
+
 // Map type VkPhysicalDeviceMaintenance9FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR
 template <> struct LvlTypeMap<VkPhysicalDeviceMaintenance9FeaturesKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR;
