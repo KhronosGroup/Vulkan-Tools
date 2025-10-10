@@ -224,6 +224,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_shader_relaxed_extended_instruction", VK_KHR_SHADER_RELAXED_EXTENDED_INSTRUCTION_SPEC_VERSION},
     {"VK_KHR_maintenance7", VK_KHR_MAINTENANCE_7_SPEC_VERSION},
     {"VK_KHR_maintenance8", VK_KHR_MAINTENANCE_8_SPEC_VERSION},
+    {"VK_KHR_shader_fma", VK_KHR_SHADER_FMA_SPEC_VERSION},
     {"VK_KHR_maintenance9", VK_KHR_MAINTENANCE_9_SPEC_VERSION},
     {"VK_KHR_video_maintenance2", VK_KHR_VIDEO_MAINTENANCE_2_SPEC_VERSION},
     {"VK_KHR_depth_clamp_zero_one", VK_KHR_DEPTH_CLAMP_ZERO_ONE_SPEC_VERSION},
