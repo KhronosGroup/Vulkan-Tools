@@ -734,6 +734,7 @@ std::string VkDriverIdString(VkDriverId value) {
         case (VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA): return "DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA";
         case (VK_DRIVER_ID_MESA_HONEYKRISP): return "DRIVER_ID_MESA_HONEYKRISP";
         case (VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN): return "DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN";
+        case (VK_DRIVER_ID_MESA_KOSMICKRISP): return "DRIVER_ID_MESA_KOSMICKRISP";
         default: return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
 }
@@ -1222,8 +1223,8 @@ std::string VkResultString(VkResult value) {
         case (VK_ERROR_VALIDATION_FAILED): return "ERROR_VALIDATION_FAILED";
         case (VK_ERROR_OUT_OF_POOL_MEMORY): return "ERROR_OUT_OF_POOL_MEMORY";
         case (VK_ERROR_INVALID_EXTERNAL_HANDLE): return "ERROR_INVALID_EXTERNAL_HANDLE";
-        case (VK_ERROR_FRAGMENTATION): return "ERROR_FRAGMENTATION";
         case (VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS): return "ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS";
+        case (VK_ERROR_FRAGMENTATION): return "ERROR_FRAGMENTATION";
         case (VK_PIPELINE_COMPILE_REQUIRED): return "PIPELINE_COMPILE_REQUIRED";
         case (VK_ERROR_NOT_PERMITTED): return "ERROR_NOT_PERMITTED";
         case (VK_ERROR_SURFACE_LOST_KHR): return "ERROR_SURFACE_LOST_KHR";
@@ -1473,6 +1474,10 @@ std::vector<const char *> VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlag
     if (VK_FORMAT_FEATURE_2_COPY_IMAGE_INDIRECT_DST_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_COPY_IMAGE_INDIRECT_DST_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR");
+    if (VK_FORMAT_FEATURE_2_DEPTH_COPY_ON_COMPUTE_QUEUE_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_DEPTH_COPY_ON_COMPUTE_QUEUE_BIT_KHR");
+    if (VK_FORMAT_FEATURE_2_DEPTH_COPY_ON_TRANSFER_QUEUE_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_DEPTH_COPY_ON_TRANSFER_QUEUE_BIT_KHR");
+    if (VK_FORMAT_FEATURE_2_STENCIL_COPY_ON_COMPUTE_QUEUE_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_STENCIL_COPY_ON_COMPUTE_QUEUE_BIT_KHR");
+    if (VK_FORMAT_FEATURE_2_STENCIL_COPY_ON_TRANSFER_QUEUE_BIT_KHR & value) strings.push_back("FORMAT_FEATURE_2_STENCIL_COPY_ON_TRANSFER_QUEUE_BIT_KHR");
     return strings;
 }
 void DumpVkFormatFeatureFlags2(Printer &p, std::string name, VkFormatFeatureFlags2 value) {
@@ -1633,6 +1638,38 @@ void DumpVkIndirectCommandsInputModeFlagsEXT(Printer &p, std::string name, VkInd
 }
 void DumpVkIndirectCommandsInputModeFlagBitsEXT(Printer &p, std::string name, VkIndirectCommandsInputModeFlagBitsEXT value) {
     auto strings = VkIndirectCommandsInputModeFlagBitsEXTGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkMemoryDecompressionMethodFlagBitsEXTGetStrings(VkMemoryDecompressionMethodFlagBitsEXT value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_EXT & value) strings.push_back("MEMORY_DECOMPRESSION_METHOD_GDEFLATE_1_0_BIT_EXT");
+    return strings;
+}
+void DumpVkMemoryDecompressionMethodFlagsEXT(Printer &p, std::string name, VkMemoryDecompressionMethodFlagsEXT value) {
+    if (static_cast<VkMemoryDecompressionMethodFlagBitsEXT>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkMemoryDecompressionMethodFlagBitsEXTGetStrings(static_cast<VkMemoryDecompressionMethodFlagBitsEXT>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkMemoryDecompressionMethodFlagBitsEXT(Printer &p, std::string name, VkMemoryDecompressionMethodFlagBitsEXT value) {
+    auto strings = VkMemoryDecompressionMethodFlagBitsEXTGetStrings(value);
     if (strings.size() > 0) {
         if (p.Type() == OutputType::json)
             p.PrintKeyString(name, std::string("VK_") + strings.at(0));
@@ -4016,6 +4053,18 @@ void DumpVkPhysicalDeviceLineRasterizationProperties(Printer &p, std::string nam
     p.SetMinKeyWidth(25);
     p.PrintKeyValue("lineSubPixelPrecisionBits", obj.lineSubPixelPrecisionBits);
 }
+void DumpVkPhysicalDeviceMaintenance10FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceMaintenance10FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("maintenance10", static_cast<bool>(obj.maintenance10));
+}
+void DumpVkPhysicalDeviceMaintenance10PropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceMaintenance10PropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(48);
+    p.PrintKeyBool("rgba4OpaqueBlackSwizzled", static_cast<bool>(obj.rgba4OpaqueBlackSwizzled));
+    p.PrintKeyBool("resolveSrgbFormatAppliesTransferFunction", static_cast<bool>(obj.resolveSrgbFormatAppliesTransferFunction));
+    p.PrintKeyBool("resolveSrgbFormatSupportsTransferFunctionControl", static_cast<bool>(obj.resolveSrgbFormatSupportsTransferFunctionControl));
+}
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(23);
@@ -4114,6 +4163,17 @@ void DumpVkPhysicalDeviceMemoryBudgetPropertiesEXT(Printer &p, std::string name,
         ArrayWrapper arr(p,"heapUsage", VK_MAX_MEMORY_HEAPS);
         for (uint32_t i = 0; i < VK_MAX_MEMORY_HEAPS; i++) { p.PrintElement(obj.heapUsage[i]); }
     }
+}
+void DumpVkPhysicalDeviceMemoryDecompressionFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceMemoryDecompressionFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(19);
+    p.PrintKeyBool("memoryDecompression", static_cast<bool>(obj.memoryDecompression));
+}
+void DumpVkPhysicalDeviceMemoryDecompressionPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceMemoryDecompressionPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(29);
+    DumpVkMemoryDecompressionMethodFlagsEXT(p, "decompressionMethods", obj.decompressionMethods);
+    p.PrintKeyValue("maxDecompressionIndirectCount", obj.maxDecompressionIndirectCount);
 }
 void DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceMemoryPriorityFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
@@ -4508,6 +4568,11 @@ void DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeatures(Printer &p, std::st
     p.SetMinKeyWidth(27);
     p.PrintKeyBool("separateDepthStencilLayouts", static_cast<bool>(obj.separateDepthStencilLayouts));
 }
+void DumpVkPhysicalDeviceShader64BitIndexingFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShader64BitIndexingFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(19);
+    p.PrintKeyBool("shader64BitIndexing", static_cast<bool>(obj.shader64BitIndexing));
+}
 void DumpVkPhysicalDeviceShaderAtomicFloat2FeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(31);
@@ -4718,6 +4783,11 @@ void DumpVkPhysicalDeviceShaderTileImagePropertiesEXT(Printer &p, std::string na
     p.PrintKeyBool("shaderTileImageCoherentReadAccelerated", static_cast<bool>(obj.shaderTileImageCoherentReadAccelerated));
     p.PrintKeyBool("shaderTileImageReadSampleFromPixelRateInvocation", static_cast<bool>(obj.shaderTileImageReadSampleFromPixelRateInvocation));
     p.PrintKeyBool("shaderTileImageReadFromHelperInvocation", static_cast<bool>(obj.shaderTileImageReadFromHelperInvocation));
+}
+void DumpVkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(31);
+    p.PrintKeyBool("shaderUniformBufferUnsizedArray", static_cast<bool>(obj.shaderUniformBufferUnsizedArray));
 }
 void DumpVkPhysicalDeviceShaderUntypedPointersFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceShaderUntypedPointersFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -5579,6 +5649,7 @@ struct phys_device_props2_chain {
     std::vector<VkPhysicalDeviceLayeredApiPropertiesKHR> VkPhysicalDeviceLayeredApiPropertiesListKHR_pLayeredApis;
     VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT PhysicalDeviceLegacyVertexAttributesPropertiesEXT{};
     VkPhysicalDeviceLineRasterizationProperties PhysicalDeviceLineRasterizationProperties{};
+    VkPhysicalDeviceMaintenance10PropertiesKHR PhysicalDeviceMaintenance10PropertiesKHR{};
     VkPhysicalDeviceMaintenance3Properties PhysicalDeviceMaintenance3Properties{};
     VkPhysicalDeviceMaintenance4Properties PhysicalDeviceMaintenance4Properties{};
     VkPhysicalDeviceMaintenance5Properties PhysicalDeviceMaintenance5Properties{};
@@ -5586,6 +5657,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceMaintenance7PropertiesKHR PhysicalDeviceMaintenance7PropertiesKHR{};
     VkPhysicalDeviceMaintenance9PropertiesKHR PhysicalDeviceMaintenance9PropertiesKHR{};
     VkPhysicalDeviceMapMemoryPlacedPropertiesEXT PhysicalDeviceMapMemoryPlacedPropertiesEXT{};
+    VkPhysicalDeviceMemoryDecompressionPropertiesEXT PhysicalDeviceMemoryDecompressionPropertiesEXT{};
     VkPhysicalDeviceMeshShaderPropertiesEXT PhysicalDeviceMeshShaderPropertiesEXT{};
     VkPhysicalDeviceMultiDrawPropertiesEXT PhysicalDeviceMultiDrawPropertiesEXT{};
     VkPhysicalDeviceMultiviewProperties PhysicalDeviceMultiviewProperties{};
@@ -5654,6 +5726,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceLayeredApiPropertiesListKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR;
         PhysicalDeviceLegacyVertexAttributesPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_PROPERTIES_EXT;
         PhysicalDeviceLineRasterizationProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES;
+        PhysicalDeviceMaintenance10PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_PROPERTIES_KHR;
         PhysicalDeviceMaintenance3Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
         PhysicalDeviceMaintenance4Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES;
         PhysicalDeviceMaintenance5Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES;
@@ -5661,6 +5734,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceMaintenance7PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR;
         PhysicalDeviceMaintenance9PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR;
         PhysicalDeviceMapMemoryPlacedPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT;
+        PhysicalDeviceMemoryDecompressionPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_PROPERTIES_EXT;
         PhysicalDeviceMeshShaderPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
         PhysicalDeviceMultiDrawPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT;
         PhysicalDeviceMultiviewProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
@@ -5770,6 +5844,8 @@ struct phys_device_props2_chain {
          || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_4 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLineRasterizationProperties));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_10_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance10PropertiesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_1 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance3Properties));
@@ -5788,6 +5864,9 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance9PropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MAP_MEMORY_PLACED_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMapMemoryPlacedPropertiesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_MEMORY_DECOMPRESSION_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_DECOMPRESSION_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMemoryDecompressionPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MESH_SHADER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMeshShaderPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTI_DRAW_EXTENSION_NAME))
@@ -6121,6 +6200,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_PROPERTIES_KHR) {
+            const VkPhysicalDeviceMaintenance10PropertiesKHR* props = (const VkPhysicalDeviceMaintenance10PropertiesKHR*)structure;
+            const char* name = "VkPhysicalDeviceMaintenance10PropertiesKHR";
+            DumpVkPhysicalDeviceMaintenance10PropertiesKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES) {
             const VkPhysicalDeviceMaintenance3Properties* props = (const VkPhysicalDeviceMaintenance3Properties*)structure;
             const char* name = gpu.api_version >= VK_API_VERSION_1_1 ? "VkPhysicalDeviceMaintenance3Properties" : ("VkPhysicalDeviceMaintenance3PropertiesKHR");
@@ -6181,6 +6266,17 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT* props = (const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT*)structure;
             const char* name = "VkPhysicalDeviceMapMemoryPlacedPropertiesEXT";
             DumpVkPhysicalDeviceMapMemoryPlacedPropertiesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_PROPERTIES_EXT) {
+            const VkPhysicalDeviceMemoryDecompressionPropertiesEXT* props = (const VkPhysicalDeviceMemoryDecompressionPropertiesEXT*)structure;
+            const char* name = gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_DECOMPRESSION_EXTENSION_NAME) ? "VkPhysicalDeviceMemoryDecompressionPropertiesEXT" : ("VkPhysicalDeviceMemoryDecompressionPropertiesNV");
+            DumpVkPhysicalDeviceMemoryDecompressionPropertiesEXT(p, name, *props);
+            if (show_promoted_structs && strcmp(name, "VkPhysicalDeviceMemoryDecompressionPropertiesNV") != 0 && gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_MEMORY_DECOMPRESSION_EXTENSION_NAME)) {
+                p.AddNewline();
+                p.SetSubHeader();
+                DumpVkPhysicalDeviceMemoryDecompressionPropertiesEXT(p, "VkPhysicalDeviceMemoryDecompressionPropertiesNV", *props);
+            }
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT) {
@@ -6552,6 +6648,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceLegacyDitheringFeaturesEXT PhysicalDeviceLegacyDitheringFeaturesEXT{};
     VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT PhysicalDeviceLegacyVertexAttributesFeaturesEXT{};
     VkPhysicalDeviceLineRasterizationFeatures PhysicalDeviceLineRasterizationFeatures{};
+    VkPhysicalDeviceMaintenance10FeaturesKHR PhysicalDeviceMaintenance10FeaturesKHR{};
     VkPhysicalDeviceMaintenance4Features PhysicalDeviceMaintenance4Features{};
     VkPhysicalDeviceMaintenance5Features PhysicalDeviceMaintenance5Features{};
     VkPhysicalDeviceMaintenance6Features PhysicalDeviceMaintenance6Features{};
@@ -6559,6 +6656,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceMaintenance8FeaturesKHR PhysicalDeviceMaintenance8FeaturesKHR{};
     VkPhysicalDeviceMaintenance9FeaturesKHR PhysicalDeviceMaintenance9FeaturesKHR{};
     VkPhysicalDeviceMapMemoryPlacedFeaturesEXT PhysicalDeviceMapMemoryPlacedFeaturesEXT{};
+    VkPhysicalDeviceMemoryDecompressionFeaturesEXT PhysicalDeviceMemoryDecompressionFeaturesEXT{};
     VkPhysicalDeviceMemoryPriorityFeaturesEXT PhysicalDeviceMemoryPriorityFeaturesEXT{};
     VkPhysicalDeviceMeshShaderFeaturesEXT PhysicalDeviceMeshShaderFeaturesEXT{};
     VkPhysicalDeviceMultiDrawFeaturesEXT PhysicalDeviceMultiDrawFeaturesEXT{};
@@ -6600,6 +6698,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceSamplerYcbcrConversionFeatures PhysicalDeviceSamplerYcbcrConversionFeatures{};
     VkPhysicalDeviceScalarBlockLayoutFeatures PhysicalDeviceScalarBlockLayoutFeatures{};
     VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures PhysicalDeviceSeparateDepthStencilLayoutsFeatures{};
+    VkPhysicalDeviceShader64BitIndexingFeaturesEXT PhysicalDeviceShader64BitIndexingFeaturesEXT{};
     VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT PhysicalDeviceShaderAtomicFloat2FeaturesEXT{};
     VkPhysicalDeviceShaderAtomicFloatFeaturesEXT PhysicalDeviceShaderAtomicFloatFeaturesEXT{};
     VkPhysicalDeviceShaderAtomicInt64Features PhysicalDeviceShaderAtomicInt64Features{};
@@ -6626,6 +6725,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR{};
     VkPhysicalDeviceShaderTerminateInvocationFeatures PhysicalDeviceShaderTerminateInvocationFeatures{};
     VkPhysicalDeviceShaderTileImageFeaturesEXT PhysicalDeviceShaderTileImageFeaturesEXT{};
+    VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT PhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT{};
     VkPhysicalDeviceShaderUntypedPointersFeaturesKHR PhysicalDeviceShaderUntypedPointersFeaturesKHR{};
     VkPhysicalDeviceSubgroupSizeControlFeatures PhysicalDeviceSubgroupSizeControlFeatures{};
     VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT PhysicalDeviceSubpassMergeFeedbackFeaturesEXT{};
@@ -6715,6 +6815,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceLegacyDitheringFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT;
         PhysicalDeviceLegacyVertexAttributesFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT;
         PhysicalDeviceLineRasterizationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES;
+        PhysicalDeviceMaintenance10FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR;
         PhysicalDeviceMaintenance4Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES;
         PhysicalDeviceMaintenance5Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES;
         PhysicalDeviceMaintenance6Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES;
@@ -6722,6 +6823,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceMaintenance8FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR;
         PhysicalDeviceMaintenance9FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR;
         PhysicalDeviceMapMemoryPlacedFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT;
+        PhysicalDeviceMemoryDecompressionFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_FEATURES_EXT;
         PhysicalDeviceMemoryPriorityFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT;
         PhysicalDeviceMeshShaderFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
         PhysicalDeviceMultiDrawFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT;
@@ -6763,6 +6865,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceSamplerYcbcrConversionFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
         PhysicalDeviceScalarBlockLayoutFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
         PhysicalDeviceSeparateDepthStencilLayoutsFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
+        PhysicalDeviceShader64BitIndexingFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_64_BIT_INDEXING_FEATURES_EXT;
         PhysicalDeviceShaderAtomicFloat2FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT;
         PhysicalDeviceShaderAtomicFloatFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT;
         PhysicalDeviceShaderAtomicInt64Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
@@ -6788,6 +6891,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR;
         PhysicalDeviceShaderTerminateInvocationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES;
         PhysicalDeviceShaderTileImageFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_FEATURES_EXT;
+        PhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_FEATURES_EXT;
         PhysicalDeviceShaderUntypedPointersFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNTYPED_POINTERS_FEATURES_KHR;
         PhysicalDeviceSubgroupSizeControlFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES;
         PhysicalDeviceSubpassMergeFeedbackFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT;
@@ -6955,6 +7059,8 @@ struct phys_device_features2_chain {
          || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LINE_RASTERIZATION_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_4 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceLineRasterizationFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_10_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance10FeaturesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance4Features));
@@ -6972,6 +7078,9 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMaintenance9FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MAP_MEMORY_PLACED_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMapMemoryPlacedFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_MEMORY_DECOMPRESSION_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_DECOMPRESSION_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMemoryDecompressionFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_PRIORITY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceMemoryPriorityFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MESH_SHADER_EXTENSION_NAME))
@@ -7064,6 +7173,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceSeparateDepthStencilLayoutsFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_64BIT_INDEXING_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShader64BitIndexingFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_ATOMIC_FLOAT_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderAtomicFloat2FeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_ATOMIC_FLOAT_EXTENSION_NAME))
@@ -7123,6 +7234,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTerminateInvocationFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_TILE_IMAGE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderTileImageFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_UNTYPED_POINTERS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceShaderUntypedPointersFeaturesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME))
@@ -7667,6 +7780,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR) {
+            const VkPhysicalDeviceMaintenance10FeaturesKHR* props = (const VkPhysicalDeviceMaintenance10FeaturesKHR*)structure;
+            const char* name = "VkPhysicalDeviceMaintenance10FeaturesKHR";
+            DumpVkPhysicalDeviceMaintenance10FeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES) {
             const VkPhysicalDeviceMaintenance4Features* props = (const VkPhysicalDeviceMaintenance4Features*)structure;
             const char* name = gpu.api_version >= VK_API_VERSION_1_3 ? "VkPhysicalDeviceMaintenance4Features" : ("VkPhysicalDeviceMaintenance4FeaturesKHR");
@@ -7722,6 +7841,17 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT* props = (const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT*)structure;
             const char* name = "VkPhysicalDeviceMapMemoryPlacedFeaturesEXT";
             DumpVkPhysicalDeviceMapMemoryPlacedFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_FEATURES_EXT) {
+            const VkPhysicalDeviceMemoryDecompressionFeaturesEXT* props = (const VkPhysicalDeviceMemoryDecompressionFeaturesEXT*)structure;
+            const char* name = gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_DECOMPRESSION_EXTENSION_NAME) ? "VkPhysicalDeviceMemoryDecompressionFeaturesEXT" : ("VkPhysicalDeviceMemoryDecompressionFeaturesNV");
+            DumpVkPhysicalDeviceMemoryDecompressionFeaturesEXT(p, name, *props);
+            if (show_promoted_structs && strcmp(name, "VkPhysicalDeviceMemoryDecompressionFeaturesNV") != 0 && gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_MEMORY_DECOMPRESSION_EXTENSION_NAME)) {
+                p.AddNewline();
+                p.SetSubHeader();
+                DumpVkPhysicalDeviceMemoryDecompressionFeaturesEXT(p, "VkPhysicalDeviceMemoryDecompressionFeaturesNV", *props);
+            }
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT) {
@@ -8020,6 +8150,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_64_BIT_INDEXING_FEATURES_EXT) {
+            const VkPhysicalDeviceShader64BitIndexingFeaturesEXT* props = (const VkPhysicalDeviceShader64BitIndexingFeaturesEXT*)structure;
+            const char* name = "VkPhysicalDeviceShader64BitIndexingFeaturesEXT";
+            DumpVkPhysicalDeviceShader64BitIndexingFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT) {
             const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT* props = (const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT*)structure;
             const char* name = "VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT";
@@ -8218,6 +8354,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceShaderTileImageFeaturesEXT* props = (const VkPhysicalDeviceShaderTileImageFeaturesEXT*)structure;
             const char* name = "VkPhysicalDeviceShaderTileImageFeaturesEXT";
             DumpVkPhysicalDeviceShaderTileImageFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_FEATURES_EXT) {
+            const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT* props = (const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT*)structure;
+            const char* name = "VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT";
+            DumpVkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNTYPED_POINTERS_FEATURES_KHR) {
