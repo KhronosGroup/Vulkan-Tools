@@ -8193,6 +8193,72 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_
     typedef VkPhysicalDeviceNestedCommandBufferPropertiesEXT Type;
 };
 
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkNativeBufferUsageOHOS to id VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS
+template <> struct LvlTypeMap<VkNativeBufferUsageOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS> {
+    typedef VkNativeBufferUsageOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkNativeBufferPropertiesOHOS to id VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS
+template <> struct LvlTypeMap<VkNativeBufferPropertiesOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS> {
+    typedef VkNativeBufferPropertiesOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkNativeBufferFormatPropertiesOHOS to id VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS
+template <> struct LvlTypeMap<VkNativeBufferFormatPropertiesOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS> {
+    typedef VkNativeBufferFormatPropertiesOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkImportNativeBufferInfoOHOS to id VK_STRUCTURE_TYPE_IMPORT_NATIVE_BUFFER_INFO_OHOS
+template <> struct LvlTypeMap<VkImportNativeBufferInfoOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMPORT_NATIVE_BUFFER_INFO_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMPORT_NATIVE_BUFFER_INFO_OHOS> {
+    typedef VkImportNativeBufferInfoOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkMemoryGetNativeBufferInfoOHOS to id VK_STRUCTURE_TYPE_MEMORY_GET_NATIVE_BUFFER_INFO_OHOS
+template <> struct LvlTypeMap<VkMemoryGetNativeBufferInfoOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_GET_NATIVE_BUFFER_INFO_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_GET_NATIVE_BUFFER_INFO_OHOS> {
+    typedef VkMemoryGetNativeBufferInfoOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
+#ifdef VK_USE_PLATFORM_OHOS
+// Map type VkExternalFormatOHOS to id VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS
+template <> struct LvlTypeMap<VkExternalFormatOHOS> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_OHOS> {
+    typedef VkExternalFormatOHOS Type;
+};
+
+#endif // VK_USE_PLATFORM_OHOS
 // Map type VkExternalMemoryAcquireUnmodifiedEXT to id VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_ACQUIRE_UNMODIFIED_EXT
 template <> struct LvlTypeMap<VkExternalMemoryAcquireUnmodifiedEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_ACQUIRE_UNMODIFIED_EXT;
@@ -9937,6 +10003,51 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EX
 };
 
 #endif // VK_USE_PLATFORM_METAL_EXT
+// Map type VkPhysicalDevicePerformanceCountersByRegionFeaturesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_FEATURES_ARM
+template <> struct LvlTypeMap<VkPhysicalDevicePerformanceCountersByRegionFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_FEATURES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_FEATURES_ARM> {
+    typedef VkPhysicalDevicePerformanceCountersByRegionFeaturesARM Type;
+};
+
+// Map type VkPhysicalDevicePerformanceCountersByRegionPropertiesARM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_PROPERTIES_ARM
+template <> struct LvlTypeMap<VkPhysicalDevicePerformanceCountersByRegionPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_PROPERTIES_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_PROPERTIES_ARM> {
+    typedef VkPhysicalDevicePerformanceCountersByRegionPropertiesARM Type;
+};
+
+// Map type VkPerformanceCounterARM to id VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_ARM
+template <> struct LvlTypeMap<VkPerformanceCounterARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_ARM> {
+    typedef VkPerformanceCounterARM Type;
+};
+
+// Map type VkPerformanceCounterDescriptionARM to id VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_ARM
+template <> struct LvlTypeMap<VkPerformanceCounterDescriptionARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_ARM> {
+    typedef VkPerformanceCounterDescriptionARM Type;
+};
+
+// Map type VkRenderPassPerformanceCountersByRegionBeginInfoARM to id VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_BEGIN_INFO_ARM
+template <> struct LvlTypeMap<VkRenderPassPerformanceCountersByRegionBeginInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_BEGIN_INFO_ARM;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_BEGIN_INFO_ARM> {
+    typedef VkRenderPassPerformanceCountersByRegionBeginInfoARM Type;
+};
+
 // Map type VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT;

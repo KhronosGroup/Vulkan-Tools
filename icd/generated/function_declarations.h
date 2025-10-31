@@ -457,6 +457,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_compression_control_swapchain", VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_SPEC_VERSION},
     {"VK_QCOM_image_processing", VK_QCOM_IMAGE_PROCESSING_SPEC_VERSION},
     {"VK_EXT_nested_command_buffer", VK_EXT_NESTED_COMMAND_BUFFER_SPEC_VERSION},
+#ifdef VK_USE_PLATFORM_OHOS
+    {"VK_OHOS_external_memory", VK_OHOS_EXTERNAL_MEMORY_SPEC_VERSION},
+#endif
     {"VK_EXT_external_memory_acquire_unmodified", VK_EXT_EXTERNAL_MEMORY_ACQUIRE_UNMODIFIED_SPEC_VERSION},
     {"VK_EXT_extended_dynamic_state3", VK_EXT_EXTENDED_DYNAMIC_STATE_3_SPEC_VERSION},
     {"VK_EXT_subpass_merge_feedback", VK_EXT_SUBPASS_MERGE_FEEDBACK_SPEC_VERSION},
@@ -522,6 +525,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"VK_EXT_external_memory_metal", VK_EXT_EXTERNAL_MEMORY_METAL_SPEC_VERSION},
 #endif
+    {"VK_ARM_performance_counters_by_region", VK_ARM_PERFORMANCE_COUNTERS_BY_REGION_SPEC_VERSION},
     {"VK_EXT_vertex_attribute_robustness", VK_EXT_VERTEX_ATTRIBUTE_ROBUSTNESS_SPEC_VERSION},
     {"VK_ARM_format_pack", VK_ARM_FORMAT_PACK_SPEC_VERSION},
     {"VK_VALVE_fragment_density_map_layered", VK_VALVE_FRAGMENT_DENSITY_MAP_LAYERED_SPEC_VERSION},
@@ -4004,7 +4008,18 @@ static VKAPI_ATTR void VKAPI_CALL CmdUpdatePipelineIndirectBufferNV(
 static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
     VkDevice                                    device,
     const VkPipelineIndirectDeviceAddressInfoNV* pInfo);
+#ifdef VK_USE_PLATFORM_OHOS
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetNativeBufferPropertiesOHOS(
+    VkDevice                                    device,
+    const struct OH_NativeBuffer*               buffer,
+    VkNativeBufferPropertiesOHOS*               pProperties);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryNativeBufferOHOS(
+    VkDevice                                    device,
+    const VkMemoryGetNativeBufferInfoOHOS*      pInfo,
+    struct OH_NativeBuffer**                    pBuffer);
+#endif /* VK_USE_PLATFORM_OHOS */
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable);
@@ -4535,6 +4550,13 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     const void*                                 pHandle,
     VkMemoryMetalHandlePropertiesEXT*           pMemoryMetalHandleProperties);
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t*                                   pCounterCount,
+    VkPerformanceCounterARM*                    pCounters,
+    VkPerformanceCounterDescriptionARM*         pCounterDescriptions);
+
 static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingEndInfoKHR*                pRenderingEndInfo);
@@ -5454,6 +5476,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkGetPipelineIndirectMemoryRequirementsNV", (void*)GetPipelineIndirectMemoryRequirementsNV},
     {"vkCmdUpdatePipelineIndirectBufferNV", (void*)CmdUpdatePipelineIndirectBufferNV},
     {"vkGetPipelineIndirectDeviceAddressNV", (void*)GetPipelineIndirectDeviceAddressNV},
+#ifdef VK_USE_PLATFORM_OHOS
+    {"vkGetNativeBufferPropertiesOHOS", (void*)GetNativeBufferPropertiesOHOS},
+#endif
+#ifdef VK_USE_PLATFORM_OHOS
+    {"vkGetMemoryNativeBufferOHOS", (void*)GetMemoryNativeBufferOHOS},
+#endif
     {"vkCmdSetDepthClampEnableEXT", (void*)CmdSetDepthClampEnableEXT},
     {"vkCmdSetPolygonModeEXT", (void*)CmdSetPolygonModeEXT},
     {"vkCmdSetRasterizationSamplesEXT", (void*)CmdSetRasterizationSamplesEXT},
@@ -5572,6 +5600,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"vkGetMemoryMetalHandlePropertiesEXT", (void*)GetMemoryMetalHandlePropertiesEXT},
 #endif
+    {"vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM", (void*)EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM},
     {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},

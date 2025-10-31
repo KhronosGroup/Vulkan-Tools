@@ -5950,6 +5950,24 @@ static VKAPI_ATTR VkDeviceAddress VKAPI_CALL GetPipelineIndirectDeviceAddressNV(
 //Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+#ifdef VK_USE_PLATFORM_OHOS
+static VKAPI_ATTR VkResult VKAPI_CALL GetNativeBufferPropertiesOHOS(
+    VkDevice                                    device,
+    const struct OH_NativeBuffer*               buffer,
+    VkNativeBufferPropertiesOHOS*               pProperties)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryNativeBufferOHOS(
+    VkDevice                                    device,
+    const VkMemoryGetNativeBufferInfoOHOS*      pInfo,
+    struct OH_NativeBuffer**                    pBuffer)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+#endif /* VK_USE_PLATFORM_OHOS */
 static VKAPI_ATTR void VKAPI_CALL CmdSetDepthClampEnableEXT(
     VkCommandBuffer                             commandBuffer,
     VkBool32                                    depthClampEnable)
@@ -6743,6 +6761,16 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryMetalHandlePropertiesEXT(
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_METAL_EXT */
+static VKAPI_ATTR VkResult VKAPI_CALL EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(
+    VkPhysicalDevice                            physicalDevice,
+    uint32_t                                    queueFamilyIndex,
+    uint32_t*                                   pCounterCount,
+    VkPerformanceCounterARM*                    pCounters,
+    VkPerformanceCounterDescriptionARM*         pCounterDescriptions)
+{
+//Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingEndInfoKHR*                pRenderingEndInfo)
