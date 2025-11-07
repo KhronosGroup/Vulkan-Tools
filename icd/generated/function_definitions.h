@@ -6224,7 +6224,7 @@ static VKAPI_ATTR void VKAPI_CALL GetDeviceTensorMemoryRequirementsARM(
 }
 static VKAPI_ATTR void VKAPI_CALL CmdCopyTensorARM(
     VkCommandBuffer                             commandBuffer,
-     const VkCopyTensorInfoARM*                 pCopyTensorInfo)
+    const VkCopyTensorInfoARM*                  pCopyTensorInfo)
 {
 //Not a CREATE or DESTROY function
 }

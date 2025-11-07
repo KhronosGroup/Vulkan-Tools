@@ -7,7 +7,7 @@
             "sub_dir": "Vulkan-Headers",
             "build_dir": "Vulkan-Headers/build",
             "install_dir": "Vulkan-Headers/build/install",
-            "commit": "v1.4.331"
+            "commit": "v1.4.332"
         },
         {
             "name": "MoltenVK",
@@ -56,7 +56,7 @@
             "cmake_options": [
                 "-DLOADER_USE_UNSAFE_FILE_SEARCH=ON"
             ],
-            "commit": "v1.4.331",
+            "commit": "v1.4.332",
             "build_platforms": [
                 "windows",
                 "linux",
