@@ -41,6 +41,7 @@ typedef int (*PFN_XCloseDisplay)(Display* /* display */
 typedef Status (*PFN_XInitThreads)(void);
 typedef int (*PFN_XFlush)(Display* /* display */
 );
+typedef Status (*PFN_XSetWMProtocols)(Display*, Window, Atom*, int);
 
 static PFN_XDestroyWindow cube_XDestroyWindow = NULL;
 static PFN_XOpenDisplay cube_XOpenDisplay = NULL;
@@ -55,6 +56,7 @@ static PFN_XGetVisualInfo cube_XGetVisualInfo = NULL;
 static PFN_XCloseDisplay cube_XCloseDisplay = NULL;
 static PFN_XInitThreads cube_XInitThreads = NULL;
 static PFN_XFlush cube_XFlush = NULL;
+static PFN_XSetWMProtocols cube_XSetWMProtocols = NULL;
 
 #define XDestroyWindow cube_XDestroyWindow
 #define XOpenDisplay cube_XOpenDisplay
@@ -69,12 +71,10 @@ static PFN_XFlush cube_XFlush = NULL;
 #define XCloseDisplay cube_XCloseDisplay
 #define XInitThreads cube_XInitThreads
 #define XFlush cube_XFlush
+#define XSetWMProtocols cube_XSetWMProtocols
 
 void* initialize_xlib() {
     void* xlib_library = NULL;
-#if defined(XLIB_LIBRARY)
-    xlib_library = dlopen(XLIB_LIBRARY, RTLD_NOW | RTLD_LOCAL);
-#endif
     if (NULL == xlib_library) {
         xlib_library = dlopen("libX11.so.6", RTLD_NOW | RTLD_LOCAL);
     }
@@ -104,6 +104,7 @@ void* initialize_xlib() {
     cube_XCloseDisplay = TYPE_CONVERSION(PFN_XCloseDisplay)(dlsym(xlib_library, "XCloseDisplay"));
     cube_XInitThreads = TYPE_CONVERSION(PFN_XInitThreads)(dlsym(xlib_library, "XInitThreads"));
     cube_XFlush = TYPE_CONVERSION(PFN_XFlush)(dlsym(xlib_library, "XFlush"));
+    cube_XSetWMProtocols = TYPE_CONVERSION(PFN_XSetWMProtocols)(dlsym(xlib_library, "XSetWMProtocols"));
 
     return xlib_library;
 }

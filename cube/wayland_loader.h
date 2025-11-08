@@ -80,9 +80,6 @@ static PFN_wl_display_disconnect cube_wl_display_disconnect = NULL;
 
 static inline void *initialize_wayland() {
     void *wayland_library = NULL;
-#if defined(WAYLAND_LIBRARY)
-    wayland_library = dlopen(WAYLAND_LIBRARY, RTLD_NOW | RTLD_LOCAL);
-#endif
     if (NULL == wayland_library) {
         wayland_library = dlopen("libwayland-client.so.0", RTLD_NOW | RTLD_LOCAL);
     }

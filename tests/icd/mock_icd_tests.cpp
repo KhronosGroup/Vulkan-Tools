@@ -240,7 +240,7 @@ TEST_F(MockICD, CommandBufferOperations) {
 }
 
 VkResult create_surface(VkInstance instance, VkSurfaceKHR& surface) {
-    VkDisplaySurfaceCreateInfoKHR surf_create_info{};
+    VkDisplaySurfaceCreateInfoKHR surf_create_info{VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR};
     return vkCreateDisplayPlaneSurfaceKHR(instance, &surf_create_info, nullptr, &surface);
 }
 
@@ -1141,40 +1141,7 @@ TEST_F(MockICD, vkGetPhysicalDeviceVideoFormatPropertiesKHR) {
     video_format_info.pNext = &video_profile_list;
     uint32_t count = 0;
     VkResult res = vkGetPhysicalDeviceVideoFormatPropertiesKHR(physical_device, &video_format_info, &count, nullptr);
-    ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(count, 3);
-    std::array<VkVideoFormatPropertiesKHR, 3> video_format_properties{};
-    res = vkGetPhysicalDeviceVideoFormatPropertiesKHR(physical_device, &video_format_info, &count, video_format_properties.data());
-    ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(count, 3);
-    ASSERT_EQ(video_format_properties[0].format, VK_FORMAT_G8_B8R8_2PLANE_420_UNORM);
-    ASSERT_EQ(video_format_properties[0].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
-                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
-                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
-    ASSERT_EQ(video_format_properties[0].imageType, VK_IMAGE_TYPE_2D);
-    ASSERT_EQ(video_format_properties[0].imageTiling, VK_IMAGE_TILING_OPTIMAL);
-    ASSERT_EQ(video_format_properties[0].imageUsageFlags,
-              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
-    ASSERT_EQ(video_format_properties[1].format, VK_FORMAT_G8_B8R8_2PLANE_420_UNORM);
-    ASSERT_EQ(video_format_properties[1].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
-                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
-                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
-    ASSERT_EQ(video_format_properties[1].imageType, VK_IMAGE_TYPE_2D);
-    ASSERT_EQ(video_format_properties[1].imageTiling, VK_IMAGE_TILING_OPTIMAL);
-    ASSERT_EQ(video_format_properties[1].imageUsageFlags,
-              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
-                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
-                  VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR);
-    ASSERT_EQ(video_format_properties[2].format, VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM);
-    ASSERT_EQ(video_format_properties[2].imageCreateFlags, VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT | VK_IMAGE_CREATE_ALIAS_BIT |
-                                                               VK_IMAGE_CREATE_EXTENDED_USAGE_BIT | VK_IMAGE_CREATE_PROTECTED_BIT |
-                                                               VK_IMAGE_CREATE_DISJOINT_BIT);
-    ASSERT_EQ(video_format_properties[2].imageType, VK_IMAGE_TYPE_2D);
-    ASSERT_EQ(video_format_properties[2].imageTiling, VK_IMAGE_TILING_OPTIMAL);
-    ASSERT_EQ(video_format_properties[2].imageUsageFlags,
-              VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
-                  VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR | VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR |
-                  VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR);
+    ASSERT_EQ(res, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR);
 }
 
 TEST_F(MockICD, vkGetPhysicalDeviceVideoCapabilitiesKHR) {
@@ -1202,22 +1169,7 @@ TEST_F(MockICD, vkGetPhysicalDeviceVideoCapabilitiesKHR) {
     video_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
     video_capabilities.pNext = &decode_capabilities;
     VkResult res = vkGetPhysicalDeviceVideoCapabilitiesKHR(physical_device, &video_profile_info, &video_capabilities);
-    ASSERT_EQ(res, VK_SUCCESS);
-    ASSERT_EQ(video_capabilities.flags, VK_VIDEO_CAPABILITY_PROTECTED_CONTENT_BIT_KHR);
-    ASSERT_EQ(video_capabilities.minBitstreamBufferOffsetAlignment, 256);
-    ASSERT_EQ(video_capabilities.minBitstreamBufferSizeAlignment, 256);
-    ASSERT_EQ(video_capabilities.pictureAccessGranularity.width, 16);
-    ASSERT_EQ(video_capabilities.pictureAccessGranularity.height, 16);
-    ASSERT_EQ(video_capabilities.minCodedExtent.width, 16);
-    ASSERT_EQ(video_capabilities.minCodedExtent.height, 16);
-    ASSERT_EQ(video_capabilities.maxCodedExtent.width, 1920);
-    ASSERT_EQ(video_capabilities.maxCodedExtent.height, 1080);
-    ASSERT_EQ(video_capabilities.maxDpbSlots, 33);
-    ASSERT_EQ(video_capabilities.maxActiveReferencePictures, 32);
-    ASSERT_EQ(decode_capabilities.flags, VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR);
-    ASSERT_EQ(decode_h264_capabilities.maxLevelIdc, STD_VIDEO_H264_LEVEL_IDC_6_2);
-    ASSERT_EQ(decode_h264_capabilities.fieldOffsetGranularity.x, 0);
-    ASSERT_EQ(decode_h264_capabilities.fieldOffsetGranularity.y, 0);
+    ASSERT_EQ(res, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR);
 }
 
 TEST_F(MockICD, vkGetDescriptorSetLayoutSupport) {

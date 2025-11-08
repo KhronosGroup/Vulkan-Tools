@@ -84,10 +84,9 @@
 #include <wayland-client.h>
 #endif
 
-#include <vulkan/vulkan.h>
+#include "vulkaninfo_functions.h"
 
-#define VOLK_IMPLEMENTATION
-#include "volk.h"
+#include <vulkan/vulkan.h>
 
 static std::string VkResultString(VkResult err);
 
@@ -366,7 +365,7 @@ struct AppVideoProfile {
                     const VkVideoProfileInfoKHR &in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
                     CreateCapabilitiesChainCb create_capabilities_chain,
                     const CreateFormatPropertiesChainCbList &create_format_properties_chain_list, InitProfileCb init_profile)
-        : supported(true), name(in_name), profile_info(in_profile_info) {
+        : supported(true), name(in_name), profile_info(in_profile_info), capabilities({}) {
         profile_info_chain = create_profile_info_chain(&profile_info.pNext);
         if (profile_info_chain == nullptr) {
             supported = false;
@@ -521,7 +520,7 @@ struct AppInstance {
     struct _screen_window *window;
 #endif
     AppInstance() {
-        VkResult dllErr = volkInitialize();
+        VkResult dllErr = load_vulkan_library();
 
         if (dllErr != VK_SUCCESS) {
             THROW_ERR("Failed to initialize: " API_NAME " loader is not installed, not found, or failed to load.");
@@ -576,7 +575,7 @@ struct AppInstance {
             THROW_VK_ERR("vkCreateInstance", err);
         }
 
-        volkLoadInstance(instance);
+        load_vulkan_instance_functions(instance);
 
         err = vkCreateDebugReportCallbackEXT(instance, &dbg_info, nullptr, &debug_callback);
         if (err != VK_SUCCESS) {
@@ -587,7 +586,7 @@ struct AppInstance {
     ~AppInstance() {
         if (debug_callback) vkDestroyDebugReportCallbackEXT(instance, debug_callback, nullptr);
         if (vkDestroyInstance) vkDestroyInstance(instance, nullptr);
-        volkFinalize();
+        unload_vulkan_library();
     }
 
     AppInstance(const AppInstance &) = delete;
