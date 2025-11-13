@@ -1332,9 +1332,7 @@ static void demo_draw(struct demo *demo) {
             .pTimes = &ptime,
         };
 
-        if (demo->VK_GOOGLE_display_timing_enabled) {
-            present.pNext = &present_time;
-        }
+        present.pNext = &present_time;
     }
 
     err = vkQueuePresentKHR(demo->present_queue, &present);
