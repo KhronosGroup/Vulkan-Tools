@@ -1301,8 +1301,9 @@ static void demo_draw(struct demo *demo) {
         present.pNext = &regions;
     }
 
+    VkPresentTimesInfoGOOGLE present_time;
+    VkPresentTimeGOOGLE ptime;
     if (demo->VK_GOOGLE_display_timing_enabled) {
-        VkPresentTimeGOOGLE ptime;
         if (demo->prev_desired_present_time == 0) {
             // This must be the first present for this swapchain.
             //
@@ -1325,12 +1326,13 @@ static void demo_draw(struct demo *demo) {
         ptime.presentID = demo->next_present_id++;
         demo->prev_desired_present_time = ptime.desiredPresentTime;
 
-        VkPresentTimesInfoGOOGLE present_time = {
+        present_time = (VkPresentTimesInfoGOOGLE){
             .sType = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE,
             .pNext = present.pNext,
             .swapchainCount = present.swapchainCount,
             .pTimes = &ptime,
         };
+
         if (demo->VK_GOOGLE_display_timing_enabled) {
             present.pNext = &present_time;
         }
