@@ -8827,13 +8827,13 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INV
     typedef VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV Type;
 };
 
-// Map type VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV
-template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV;
+// Map type VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV> {
-    typedef VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT> {
+    typedef VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT Type;
 };
 
 // Map type VkPhysicalDeviceCooperativeVectorPropertiesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV
@@ -9854,6 +9854,15 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_
     typedef VkImageAlignmentControlCreateInfoMESA Type;
 };
 
+// Map type VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT Type;
+};
+
 // Map type VkPhysicalDeviceDepthClampControlFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT
 template <> struct LvlTypeMap<VkPhysicalDeviceDepthClampControlFeaturesEXT> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT;
@@ -10131,6 +10140,33 @@ template <> struct LvlTypeMap<VkPhysicalDeviceShader64BitIndexingFeaturesEXT> {
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_64_BIT_INDEXING_FEATURES_EXT> {
     typedef VkPhysicalDeviceShader64BitIndexingFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceCustomResolveFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceCustomResolveFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT> {
+    typedef VkPhysicalDeviceCustomResolveFeaturesEXT Type;
+};
+
+// Map type VkBeginCustomResolveInfoEXT to id VK_STRUCTURE_TYPE_BEGIN_CUSTOM_RESOLVE_INFO_EXT
+template <> struct LvlTypeMap<VkBeginCustomResolveInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BEGIN_CUSTOM_RESOLVE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_BEGIN_CUSTOM_RESOLVE_INFO_EXT> {
+    typedef VkBeginCustomResolveInfoEXT Type;
+};
+
+// Map type VkCustomResolveCreateInfoEXT to id VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT
+template <> struct LvlTypeMap<VkCustomResolveCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT> {
+    typedef VkCustomResolveCreateInfoEXT Type;
 };
 
 // Map type VkDataGraphPipelineBuiltinModelCreateInfoQCOM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_BUILTIN_MODEL_CREATE_INFO_QCOM

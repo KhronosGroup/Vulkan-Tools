@@ -515,6 +515,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_partitioned_acceleration_structure", VK_NV_PARTITIONED_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_EXT_device_generated_commands", VK_EXT_DEVICE_GENERATED_COMMANDS_SPEC_VERSION},
     {"VK_MESA_image_alignment_control", VK_MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION},
+    {"VK_EXT_ray_tracing_invocation_reorder", VK_EXT_RAY_TRACING_INVOCATION_REORDER_SPEC_VERSION},
     {"VK_EXT_depth_clamp_control", VK_EXT_DEPTH_CLAMP_CONTROL_SPEC_VERSION},
 #ifdef VK_USE_PLATFORM_OHOS
     {"VK_OHOS_native_buffer", VK_OHOS_NATIVE_BUFFER_SPEC_VERSION},
@@ -535,6 +536,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_fragment_density_map_offset", VK_EXT_FRAGMENT_DENSITY_MAP_OFFSET_SPEC_VERSION},
     {"VK_EXT_zero_initialize_device_memory", VK_EXT_ZERO_INITIALIZE_DEVICE_MEMORY_SPEC_VERSION},
     {"VK_EXT_shader_64bit_indexing", VK_EXT_SHADER_64BIT_INDEXING_SPEC_VERSION},
+    {"VK_EXT_custom_resolve", VK_EXT_CUSTOM_RESOLVE_SPEC_VERSION},
     {"VK_QCOM_data_graph_model", VK_QCOM_DATA_GRAPH_MODEL_SPEC_VERSION},
     {"VK_SEC_pipeline_cache_incremental_mode", VK_SEC_PIPELINE_CACHE_INCREMENTAL_MODE_SPEC_VERSION},
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
@@ -4562,6 +4564,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
     VkCommandBuffer                             commandBuffer,
     const VkRenderingEndInfoKHR*                pRenderingEndInfo);
 
+static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBeginCustomResolveInfoEXT*          pBeginCustomResolveInfo);
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -5603,6 +5609,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
 #endif
     {"vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM", (void*)EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM},
     {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
+    {"vkCmdBeginCustomResolveEXT", (void*)CmdBeginCustomResolveEXT},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},
