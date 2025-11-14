@@ -1144,7 +1144,7 @@ void DemoUpdateTargetIPD(struct demo *demo) {
         }
 
         if (calibrate_next) {
-            int64_t multiple = demo->next_present_id - past[count - 1].presentID;
+            int64_t multiple = demo->next_present_id - past[count - 1].presentID - 1;
             demo->prev_desired_present_time = (past[count - 1].actualPresentTime + (multiple * demo->target_IPD));
         }
         free(past);
