@@ -1199,6 +1199,19 @@ void DumpVkQueueGlobalPriority(Printer &p, std::string name, VkQueueGlobalPriori
     else
         p.PrintKeyString(name, VkQueueGlobalPriorityString(value));
 }
+std::string VkRayTracingInvocationReorderModeEXTString(VkRayTracingInvocationReorderModeEXT value) {
+    switch (value) {
+        case (VK_RAY_TRACING_INVOCATION_REORDER_MODE_NONE_EXT): return "RAY_TRACING_INVOCATION_REORDER_MODE_NONE_EXT";
+        case (VK_RAY_TRACING_INVOCATION_REORDER_MODE_REORDER_EXT): return "RAY_TRACING_INVOCATION_REORDER_MODE_REORDER_EXT";
+        default: return std::string("UNKNOWN_VkRayTracingInvocationReorderModeEXT_value") + std::to_string(value);
+    }
+}
+void DumpVkRayTracingInvocationReorderModeEXT(Printer &p, std::string name, VkRayTracingInvocationReorderModeEXT value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkRayTracingInvocationReorderModeEXTString(value));
+    else
+        p.PrintKeyString(name, VkRayTracingInvocationReorderModeEXTString(value));
+}
 std::string VkResultString(VkResult value) {
     switch (value) {
         case (VK_SUCCESS): return "SUCCESS";
@@ -1909,6 +1922,7 @@ std::vector<const char *> VkResolveModeFlagBitsGetStrings(VkResolveModeFlagBits 
     if (VK_RESOLVE_MODE_MIN_BIT & value) strings.push_back("RESOLVE_MODE_MIN_BIT");
     if (VK_RESOLVE_MODE_MAX_BIT & value) strings.push_back("RESOLVE_MODE_MAX_BIT");
     if (VK_RESOLVE_MODE_EXTERNAL_FORMAT_DOWNSAMPLE_BIT_ANDROID & value) strings.push_back("RESOLVE_MODE_EXTERNAL_FORMAT_DOWNSAMPLE_BIT_ANDROID");
+    if (VK_RESOLVE_MODE_CUSTOM_BIT_EXT & value) strings.push_back("RESOLVE_MODE_CUSTOM_BIT_EXT");
     return strings;
 }
 void DumpVkResolveModeFlags(Printer &p, std::string name, VkResolveModeFlags value) {
@@ -3322,6 +3336,11 @@ void DumpVkPhysicalDeviceCustomBorderColorPropertiesEXT(Printer &p, std::string 
     p.SetMinKeyWidth(28);
     p.PrintKeyValue("maxCustomBorderColorSamplers", obj.maxCustomBorderColorSamplers);
 }
+void DumpVkPhysicalDeviceCustomResolveFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceCustomResolveFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("customResolve", static_cast<bool>(obj.customResolve));
+}
 void DumpVkPhysicalDeviceDepthBiasControlFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceDepthBiasControlFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(47);
@@ -4489,6 +4508,17 @@ void DumpVkPhysicalDeviceRayQueryFeaturesKHR(Printer &p, std::string name, const
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(8);
     p.PrintKeyBool("rayQuery", static_cast<bool>(obj.rayQuery));
+}
+void DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("rayTracingInvocationReorder", static_cast<bool>(obj.rayTracingInvocationReorder));
+}
+void DumpVkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(32);
+    DumpVkRayTracingInvocationReorderModeEXT(p, "rayTracingInvocationReorderReorderingHint", obj.rayTracingInvocationReorderReorderingHint);
+    p.PrintKeyValue("maxShaderBindingTableRecordIndex", obj.maxShaderBindingTableRecordIndex);
 }
 void DumpVkPhysicalDeviceRayTracingMaintenance1FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -5674,6 +5704,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceProtectedMemoryProperties PhysicalDeviceProtectedMemoryProperties{};
     VkPhysicalDeviceProvokingVertexPropertiesEXT PhysicalDeviceProvokingVertexPropertiesEXT{};
     VkPhysicalDevicePushDescriptorProperties PhysicalDevicePushDescriptorProperties{};
+    VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT PhysicalDeviceRayTracingInvocationReorderPropertiesEXT{};
     VkPhysicalDeviceRayTracingPipelinePropertiesKHR PhysicalDeviceRayTracingPipelinePropertiesKHR{};
     VkPhysicalDeviceRobustness2PropertiesKHR PhysicalDeviceRobustness2PropertiesKHR{};
     VkPhysicalDeviceSampleLocationsPropertiesEXT PhysicalDeviceSampleLocationsPropertiesEXT{};
@@ -5751,6 +5782,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceProtectedMemoryProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
         PhysicalDeviceProvokingVertexPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_PROPERTIES_EXT;
         PhysicalDevicePushDescriptorProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES;
+        PhysicalDeviceRayTracingInvocationReorderPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT;
         PhysicalDeviceRayTracingPipelinePropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
         PhysicalDeviceRobustness2PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_KHR;
         PhysicalDeviceSampleLocationsPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT;
@@ -5901,6 +5933,8 @@ struct phys_device_props2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME))
             && (gpu.api_version < VK_API_VERSION_1_4 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePushDescriptorProperties));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingInvocationReorderPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingPipelinePropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_ROBUSTNESS_2_EXTENSION_NAME)
@@ -6385,6 +6419,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT) {
+            const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT* props = (const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT*)structure;
+            const char* name = "VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT";
+            DumpVkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR) {
             const VkPhysicalDeviceRayTracingPipelinePropertiesKHR* props = (const VkPhysicalDeviceRayTracingPipelinePropertiesKHR*)structure;
             const char* name = "VkPhysicalDeviceRayTracingPipelinePropertiesKHR";
@@ -6609,6 +6649,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceCooperativeMatrixFeaturesKHR PhysicalDeviceCooperativeMatrixFeaturesKHR{};
     VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR PhysicalDeviceCopyMemoryIndirectFeaturesKHR{};
     VkPhysicalDeviceCustomBorderColorFeaturesEXT PhysicalDeviceCustomBorderColorFeaturesEXT{};
+    VkPhysicalDeviceCustomResolveFeaturesEXT PhysicalDeviceCustomResolveFeaturesEXT{};
     VkPhysicalDeviceDepthBiasControlFeaturesEXT PhysicalDeviceDepthBiasControlFeaturesEXT{};
     VkPhysicalDeviceDepthClampControlFeaturesEXT PhysicalDeviceDepthClampControlFeaturesEXT{};
     VkPhysicalDeviceDepthClampZeroOneFeaturesKHR PhysicalDeviceDepthClampZeroOneFeaturesKHR{};
@@ -6691,6 +6732,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT PhysicalDeviceRGBA10X6FormatsFeaturesEXT{};
     VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT{};
     VkPhysicalDeviceRayQueryFeaturesKHR PhysicalDeviceRayQueryFeaturesKHR{};
+    VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT PhysicalDeviceRayTracingInvocationReorderFeaturesEXT{};
     VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR PhysicalDeviceRayTracingMaintenance1FeaturesKHR{};
     VkPhysicalDeviceRayTracingPipelineFeaturesKHR PhysicalDeviceRayTracingPipelineFeaturesKHR{};
     VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR PhysicalDeviceRayTracingPositionFetchFeaturesKHR{};
@@ -6776,6 +6818,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceCooperativeMatrixFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR;
         PhysicalDeviceCopyMemoryIndirectFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR;
         PhysicalDeviceCustomBorderColorFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT;
+        PhysicalDeviceCustomResolveFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT;
         PhysicalDeviceDepthBiasControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_BIAS_CONTROL_FEATURES_EXT;
         PhysicalDeviceDepthClampControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT;
         PhysicalDeviceDepthClampZeroOneFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR;
@@ -6858,6 +6901,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceRGBA10X6FormatsFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT;
         PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_FEATURES_EXT;
         PhysicalDeviceRayQueryFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
+        PhysicalDeviceRayTracingInvocationReorderFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT;
         PhysicalDeviceRayTracingMaintenance1FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR;
         PhysicalDeviceRayTracingPipelineFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
         PhysicalDeviceRayTracingPositionFetchFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR;
@@ -6964,6 +7008,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCopyMemoryIndirectFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomBorderColorFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_RESOLVE_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceCustomResolveFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEPTH_BIAS_CONTROL_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceDepthBiasControlFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEPTH_CLAMP_CONTROL_EXTENSION_NAME))
@@ -7155,6 +7201,9 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_QUERY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayQueryFeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME)
+         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingInvocationReorderFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_MAINTENANCE_1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingMaintenance1FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME))
@@ -7459,6 +7508,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceCustomBorderColorFeaturesEXT* props = (const VkPhysicalDeviceCustomBorderColorFeaturesEXT*)structure;
             const char* name = "VkPhysicalDeviceCustomBorderColorFeaturesEXT";
             DumpVkPhysicalDeviceCustomBorderColorFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT) {
+            const VkPhysicalDeviceCustomResolveFeaturesEXT* props = (const VkPhysicalDeviceCustomResolveFeaturesEXT*)structure;
+            const char* name = "VkPhysicalDeviceCustomResolveFeaturesEXT";
+            DumpVkPhysicalDeviceCustomResolveFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_BIAS_CONTROL_FEATURES_EXT) {
@@ -8086,6 +8141,17 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceRayQueryFeaturesKHR* props = (const VkPhysicalDeviceRayQueryFeaturesKHR*)structure;
             const char* name = "VkPhysicalDeviceRayQueryFeaturesKHR";
             DumpVkPhysicalDeviceRayQueryFeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT) {
+            const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT* props = (const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT*)structure;
+            const char* name = gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME) ? "VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT" : ("VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV");
+            DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(p, name, *props);
+            if (show_promoted_structs && strcmp(name, "VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV") != 0 && gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME)) {
+                p.AddNewline();
+                p.SetSubHeader();
+                DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(p, "VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV", *props);
+            }
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR) {

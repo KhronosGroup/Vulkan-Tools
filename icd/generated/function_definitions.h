@@ -6777,6 +6777,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(
 {
 //Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(
+    VkCommandBuffer                             commandBuffer,
+    const VkBeginCustomResolveInfoEXT*          pBeginCustomResolveInfo)
+{
+//Not a CREATE or DESTROY function
+}
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
