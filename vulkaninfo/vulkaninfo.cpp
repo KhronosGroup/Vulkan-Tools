@@ -1059,6 +1059,7 @@ const char *help_message_body =
     "                     interest. This number can be determined by running\n"
     "                     " APP_SHORT_NAME
     " without any options specified.\n"
+    "[--show-all]         Show everything (includes all the below options)\n"
     "[--show-tool-props]  Show the active VkPhysicalDeviceToolPropertiesEXT that " APP_SHORT_NAME
     " finds.\n"
     "[--show-formats]     Display the format properties of each physical device.\n"
@@ -1079,9 +1080,11 @@ void print_usage(const std::string &executable_name) {
     std::cout << "    " << executable_name << " -j | -j=<gpu-number> | --json | --json=<gpu-number>\n";
     std::cout << "    " << executable_name << " --text\n";
     std::cout << "    " << executable_name << " --html\n";
+    std::cout << "    " << executable_name << " --show-all\n";
     std::cout << "    " << executable_name << " --show-formats\n";
     std::cout << "    " << executable_name << " --show-tool-props\n";
     std::cout << "    " << executable_name << " --show-promoted-structs\n";
+    std::cout << "    " << executable_name << " --show-video-props\n";
     std::cout << "\n" << help_message_body << std::endl;
 }
 
@@ -1138,6 +1141,11 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
             results.output_category = OutputCategory::html;
             results.print_to_file = true;
             results.default_filename = APP_SHORT_NAME ".html";
+        } else if (strcmp(argv[i], "--show-all") == 0) {
+            results.show_tool_props = true;
+            results.show_formats = true;
+            results.show_promoted_structs = true;
+            results.show_video_props = true;
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
             results.show_tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {

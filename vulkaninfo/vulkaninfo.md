@@ -56,8 +56,8 @@ USAGE:
     vulkaninfo -j | -j=<gpu-number> | --json | --json=<gpu-number>
     vulkaninfo --text
     vulkaninfo --html
+    vulkaninfo --show-all
     vulkaninfo --show-formats
-    vulkaninfo --show-tool-props
 
 OPTIONS:
 [-h, --help]        Print this help.
@@ -79,9 +79,18 @@ OPTIONS:
                     specifying the gpu-number associated with the gpu of
                     interest. This number can be determined by running
                     vulkaninfo without any options specified.
-[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that vulkaninfo finds.
+[--show-all]        Show everything (includes all the below options)
 [--show-formats]    Display the format properties of each physical device.
                     Note: This only affects text output.
+[--show-tool-props] Show the active VkPhysicalDeviceToolPropertiesEXT that vulkaninfo finds.
+[--show-promoted-structs]
+                    Include structs promoted to core in pNext Chains.
+[--show-video-props]
+                    Display the video profile info, video capabilities and
+                    video format properties of each video profile supported
+                    by each physical device.
+                    Note: This only affects text output which by default
+                    only contains the list of supported video profile names.
 ```
 
 ### Windows
