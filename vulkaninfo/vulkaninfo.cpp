@@ -591,6 +591,18 @@ void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
     }
 }
 
+void GpuDumpCooperativeMatrix(Printer &p, AppGpu &gpu) {
+    auto props = GetCooperativeMatrixInfo(gpu);
+    if (props.size() > 0) {
+        p.SetSubHeader();
+        ObjectWrapper obj(p, "Cooperative Matrix");
+        for (const auto prop : props) {
+            DumpVkCooperativeMatrixPropertiesKHR(p, "VkCooperativeMatrixPropertiesKHR", prop);
+            p.AddNewline();
+        }
+    }
+}
+
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj_format_props(p, "Format Properties");
@@ -727,6 +739,8 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats,
     if (show_tooling_info) {
         GpuDumpToolingInfo(p, gpu);
     }
+
+    GpuDumpCooperativeMatrix(p, gpu);
 
     if (p.Type() != OutputType::text || show_formats) {
         GpuDevDump(p, gpu);
