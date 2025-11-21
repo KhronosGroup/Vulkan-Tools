@@ -8827,13 +8827,13 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INV
     typedef VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV Type;
 };
 
-// Map type VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT
-template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT;
+// Map type VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV
+template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV;
 };
 
-template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT> {
-    typedef VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT Type;
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV> {
+    typedef VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV Type;
 };
 
 // Map type VkPhysicalDeviceCooperativeVectorPropertiesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV
@@ -9861,6 +9861,15 @@ template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderPropert
 
 template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT> {
     typedef VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT Type;
+};
+
+// Map type VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT> {
+    typedef VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT Type;
 };
 
 // Map type VkPhysicalDeviceDepthClampControlFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT
