@@ -7201,8 +7201,7 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_QUERY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayQueryFeaturesKHR));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME)
-         || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME))
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingInvocationReorderFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_RAY_TRACING_MAINTENANCE_1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDeviceRayTracingMaintenance1FeaturesKHR));
@@ -8145,13 +8144,8 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT) {
             const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT* props = (const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT*)structure;
-            const char* name = gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME) ? "VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT" : ("VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV");
+            const char* name = "VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT";
             DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(p, name, *props);
-            if (show_promoted_structs && strcmp(name, "VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV") != 0 && gpu.CheckPhysicalDeviceExtensionIncluded(VK_NV_RAY_TRACING_INVOCATION_REORDER_EXTENSION_NAME)) {
-                p.AddNewline();
-                p.SetSubHeader();
-                DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(p, "VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV", *props);
-            }
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR) {
