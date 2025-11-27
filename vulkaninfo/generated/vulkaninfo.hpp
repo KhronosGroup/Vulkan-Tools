@@ -692,6 +692,33 @@ void DumpVkComponentSwizzle(Printer &p, std::string name, VkComponentSwizzle val
     else
         p.PrintKeyString(name, VkComponentSwizzleString(value));
 }
+std::string VkComponentTypeKHRString(VkComponentTypeKHR value) {
+    switch (value) {
+        case (VK_COMPONENT_TYPE_FLOAT16_KHR): return "COMPONENT_TYPE_FLOAT16_KHR";
+        case (VK_COMPONENT_TYPE_FLOAT32_KHR): return "COMPONENT_TYPE_FLOAT32_KHR";
+        case (VK_COMPONENT_TYPE_FLOAT64_KHR): return "COMPONENT_TYPE_FLOAT64_KHR";
+        case (VK_COMPONENT_TYPE_SINT8_KHR): return "COMPONENT_TYPE_SINT8_KHR";
+        case (VK_COMPONENT_TYPE_SINT16_KHR): return "COMPONENT_TYPE_SINT16_KHR";
+        case (VK_COMPONENT_TYPE_SINT32_KHR): return "COMPONENT_TYPE_SINT32_KHR";
+        case (VK_COMPONENT_TYPE_SINT64_KHR): return "COMPONENT_TYPE_SINT64_KHR";
+        case (VK_COMPONENT_TYPE_UINT8_KHR): return "COMPONENT_TYPE_UINT8_KHR";
+        case (VK_COMPONENT_TYPE_UINT16_KHR): return "COMPONENT_TYPE_UINT16_KHR";
+        case (VK_COMPONENT_TYPE_UINT32_KHR): return "COMPONENT_TYPE_UINT32_KHR";
+        case (VK_COMPONENT_TYPE_UINT64_KHR): return "COMPONENT_TYPE_UINT64_KHR";
+        case (VK_COMPONENT_TYPE_BFLOAT16_KHR): return "COMPONENT_TYPE_BFLOAT16_KHR";
+        case (VK_COMPONENT_TYPE_SINT8_PACKED_NV): return "COMPONENT_TYPE_SINT8_PACKED_NV";
+        case (VK_COMPONENT_TYPE_UINT8_PACKED_NV): return "COMPONENT_TYPE_UINT8_PACKED_NV";
+        case (VK_COMPONENT_TYPE_FLOAT8_E4M3_EXT): return "COMPONENT_TYPE_FLOAT8_E4M3_EXT";
+        case (VK_COMPONENT_TYPE_FLOAT8_E5M2_EXT): return "COMPONENT_TYPE_FLOAT8_E5M2_EXT";
+        default: return std::string("UNKNOWN_VkComponentTypeKHR_value") + std::to_string(value);
+    }
+}
+void DumpVkComponentTypeKHR(Printer &p, std::string name, VkComponentTypeKHR value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkComponentTypeKHRString(value));
+    else
+        p.PrintKeyString(name, VkComponentTypeKHRString(value));
+}
 std::string VkDefaultVertexAttributeValueKHRString(VkDefaultVertexAttributeValueKHR value) {
     switch (value) {
         case (VK_DEFAULT_VERTEX_ATTRIBUTE_VALUE_ZERO_ZERO_ZERO_ZERO_KHR): return "DEFAULT_VERTEX_ATTRIBUTE_VALUE_ZERO_ZERO_ZERO_ZERO_KHR";
@@ -1271,6 +1298,21 @@ void DumpVkResult(Printer &p, std::string name, VkResult value) {
         p.PrintKeyString(name, std::string("VK_") + VkResultString(value));
     else
         p.PrintKeyString(name, VkResultString(value));
+}
+std::string VkScopeKHRString(VkScopeKHR value) {
+    switch (value) {
+        case (VK_SCOPE_DEVICE_KHR): return "SCOPE_DEVICE_KHR";
+        case (VK_SCOPE_WORKGROUP_KHR): return "SCOPE_WORKGROUP_KHR";
+        case (VK_SCOPE_SUBGROUP_KHR): return "SCOPE_SUBGROUP_KHR";
+        case (VK_SCOPE_QUEUE_FAMILY_KHR): return "SCOPE_QUEUE_FAMILY_KHR";
+        default: return std::string("UNKNOWN_VkScopeKHR_value") + std::to_string(value);
+    }
+}
+void DumpVkScopeKHR(Printer &p, std::string name, VkScopeKHR value) {
+    if (p.Type() == OutputType::json)
+        p.PrintKeyString(name, std::string("VK_") + VkScopeKHRString(value));
+    else
+        p.PrintKeyString(name, VkScopeKHRString(value));
 }
 std::string VkShaderFloatControlsIndependenceString(VkShaderFloatControlsIndependence value) {
     switch (value) {
@@ -3113,6 +3155,19 @@ void DumpVkConformanceVersion(Printer &p, std::string name, const VkConformanceV
     p.PrintKeyValue("minor", static_cast<uint32_t>(obj.minor));
     p.PrintKeyValue("subminor", static_cast<uint32_t>(obj.subminor));
     p.PrintKeyValue("patch", static_cast<uint32_t>(obj.patch));
+}
+void DumpVkCooperativeMatrixPropertiesKHR(Printer &p, std::string name, const VkCooperativeMatrixPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(22);
+    p.PrintKeyValue("MSize", obj.MSize);
+    p.PrintKeyValue("NSize", obj.NSize);
+    p.PrintKeyValue("KSize", obj.KSize);
+    DumpVkComponentTypeKHR(p, "AType", obj.AType);
+    DumpVkComponentTypeKHR(p, "BType", obj.BType);
+    DumpVkComponentTypeKHR(p, "CType", obj.CType);
+    DumpVkComponentTypeKHR(p, "ResultType", obj.ResultType);
+    p.PrintKeyBool("saturatingAccumulation", static_cast<bool>(obj.saturatingAccumulation));
+    DumpVkScopeKHR(p, "scope", obj.scope);
 }
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, const VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
