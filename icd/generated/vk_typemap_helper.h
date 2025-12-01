@@ -5913,6 +5913,96 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV> {
     typedef VkCheckpointData2NV Type;
 };
 
+// Map type VkPhysicalDevicePresentTimingFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT
+template <> struct LvlTypeMap<VkPhysicalDevicePresentTimingFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT> {
+    typedef VkPhysicalDevicePresentTimingFeaturesEXT Type;
+};
+
+// Map type VkPresentTimingSurfaceCapabilitiesEXT to id VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT
+template <> struct LvlTypeMap<VkPresentTimingSurfaceCapabilitiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT> {
+    typedef VkPresentTimingSurfaceCapabilitiesEXT Type;
+};
+
+// Map type VkSwapchainCalibratedTimestampInfoEXT to id VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT
+template <> struct LvlTypeMap<VkSwapchainCalibratedTimestampInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT> {
+    typedef VkSwapchainCalibratedTimestampInfoEXT Type;
+};
+
+// Map type VkSwapchainTimingPropertiesEXT to id VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkSwapchainTimingPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT> {
+    typedef VkSwapchainTimingPropertiesEXT Type;
+};
+
+// Map type VkSwapchainTimeDomainPropertiesEXT to id VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkSwapchainTimeDomainPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT> {
+    typedef VkSwapchainTimeDomainPropertiesEXT Type;
+};
+
+// Map type VkPastPresentationTimingInfoEXT to id VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_INFO_EXT
+template <> struct LvlTypeMap<VkPastPresentationTimingInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_INFO_EXT> {
+    typedef VkPastPresentationTimingInfoEXT Type;
+};
+
+// Map type VkPastPresentationTimingEXT to id VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_EXT
+template <> struct LvlTypeMap<VkPastPresentationTimingEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_EXT> {
+    typedef VkPastPresentationTimingEXT Type;
+};
+
+// Map type VkPastPresentationTimingPropertiesEXT to id VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT
+template <> struct LvlTypeMap<VkPastPresentationTimingPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT> {
+    typedef VkPastPresentationTimingPropertiesEXT Type;
+};
+
+// Map type VkPresentTimingInfoEXT to id VK_STRUCTURE_TYPE_PRESENT_TIMING_INFO_EXT
+template <> struct LvlTypeMap<VkPresentTimingInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PRESENT_TIMING_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PRESENT_TIMING_INFO_EXT> {
+    typedef VkPresentTimingInfoEXT Type;
+};
+
+// Map type VkPresentTimingsInfoEXT to id VK_STRUCTURE_TYPE_PRESENT_TIMINGS_INFO_EXT
+template <> struct LvlTypeMap<VkPresentTimingsInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PRESENT_TIMINGS_INFO_EXT;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PRESENT_TIMINGS_INFO_EXT> {
+    typedef VkPresentTimingsInfoEXT Type;
+};
+
 // Map type VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL
 template <> struct LvlTypeMap<VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;

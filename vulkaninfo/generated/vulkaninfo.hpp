@@ -1253,6 +1253,7 @@ std::string VkResultString(VkResult value) {
         case (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR";
         case (VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR): return "ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR";
         case (VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT): return "ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
+        case (VK_ERROR_PRESENT_TIMING_QUEUE_FULL_EXT): return "ERROR_PRESENT_TIMING_QUEUE_FULL_EXT";
         case (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT): return "ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
         case (VK_THREAD_IDLE_KHR): return "THREAD_IDLE_KHR";
         case (VK_THREAD_DONE_KHR): return "THREAD_DONE_KHR";
@@ -1825,6 +1826,41 @@ void DumpVkPresentScalingFlagsKHR(Printer &p, std::string name, VkPresentScaling
 }
 void DumpVkPresentScalingFlagBitsKHR(Printer &p, std::string name, VkPresentScalingFlagBitsKHR value) {
     auto strings = VkPresentScalingFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkPresentStageFlagBitsEXTGetStrings(VkPresentStageFlagBitsEXT value) {
+    std::vector<const char *> strings;
+    if (value == 0) { strings.push_back("None"); return strings; }
+    if (VK_PRESENT_STAGE_QUEUE_OPERATIONS_END_BIT_EXT & value) strings.push_back("PRESENT_STAGE_QUEUE_OPERATIONS_END_BIT_EXT");
+    if (VK_PRESENT_STAGE_REQUEST_DEQUEUED_BIT_EXT & value) strings.push_back("PRESENT_STAGE_REQUEST_DEQUEUED_BIT_EXT");
+    if (VK_PRESENT_STAGE_IMAGE_FIRST_PIXEL_OUT_BIT_EXT & value) strings.push_back("PRESENT_STAGE_IMAGE_FIRST_PIXEL_OUT_BIT_EXT");
+    if (VK_PRESENT_STAGE_IMAGE_FIRST_PIXEL_VISIBLE_BIT_EXT & value) strings.push_back("PRESENT_STAGE_IMAGE_FIRST_PIXEL_VISIBLE_BIT_EXT");
+    return strings;
+}
+void DumpVkPresentStageFlagsEXT(Printer &p, std::string name, VkPresentStageFlagsEXT value) {
+    if (static_cast<VkPresentStageFlagBitsEXT>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output)
+            p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkPresentStageFlagBitsEXTGetStrings(static_cast<VkPresentStageFlagBitsEXT>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for(auto& str : strings){
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkPresentStageFlagBitsEXT(Printer &p, std::string name, VkPresentStageFlagBitsEXT value) {
+    auto strings = VkPresentStageFlagBitsEXTGetStrings(value);
     if (strings.size() > 0) {
         if (p.Type() == OutputType::json)
             p.PrintKeyString(name, std::string("VK_") + strings.at(0));
@@ -4437,6 +4473,13 @@ void DumpVkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR(Printer &p, std::
     p.SetMinKeyWidth(26);
     p.PrintKeyBool("presentModeFifoLatestReady", static_cast<bool>(obj.presentModeFifoLatestReady));
 }
+void DumpVkPhysicalDevicePresentTimingFeaturesEXT(Printer &p, std::string name, const VkPhysicalDevicePresentTimingFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(21);
+    p.PrintKeyBool("presentTiming", static_cast<bool>(obj.presentTiming));
+    p.PrintKeyBool("presentAtAbsoluteTime", static_cast<bool>(obj.presentAtAbsoluteTime));
+    p.PrintKeyBool("presentAtRelativeTime", static_cast<bool>(obj.presentAtRelativeTime));
+}
 void DumpVkPhysicalDevicePresentWait2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentWait2FeaturesKHR &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(12);
@@ -5319,6 +5362,14 @@ void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(35);
     p.PrintKeyBool("shaderZeroInitializeWorkgroupMemory", static_cast<bool>(obj.shaderZeroInitializeWorkgroupMemory));
+}
+void DumpVkPresentTimingSurfaceCapabilitiesEXT(Printer &p, std::string name, const VkPresentTimingSurfaceCapabilitiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(30);
+    p.PrintKeyBool("presentTimingSupported", static_cast<bool>(obj.presentTimingSupported));
+    p.PrintKeyBool("presentAtAbsoluteTimeSupported", static_cast<bool>(obj.presentAtAbsoluteTimeSupported));
+    p.PrintKeyBool("presentAtRelativeTimeSupported", static_cast<bool>(obj.presentAtRelativeTimeSupported));
+    DumpVkPresentStageFlagsEXT(p, "presentStageQueries", obj.presentStageQueries);
 }
 void DumpVkQueueFamilyGlobalPriorityProperties(Printer &p, std::string name, const VkQueueFamilyGlobalPriorityProperties &obj) {
     ObjectWrapper object{p, name};
@@ -6722,6 +6773,7 @@ struct phys_device_features2_chain {
     VkPhysicalDevicePresentId2FeaturesKHR PhysicalDevicePresentId2FeaturesKHR{};
     VkPhysicalDevicePresentIdFeaturesKHR PhysicalDevicePresentIdFeaturesKHR{};
     VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR PhysicalDevicePresentModeFifoLatestReadyFeaturesKHR{};
+    VkPhysicalDevicePresentTimingFeaturesEXT PhysicalDevicePresentTimingFeaturesEXT{};
     VkPhysicalDevicePresentWait2FeaturesKHR PhysicalDevicePresentWait2FeaturesKHR{};
     VkPhysicalDevicePresentWaitFeaturesKHR PhysicalDevicePresentWaitFeaturesKHR{};
     VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT{};
@@ -6891,6 +6943,7 @@ struct phys_device_features2_chain {
         PhysicalDevicePresentId2FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_2_FEATURES_KHR;
         PhysicalDevicePresentIdFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR;
         PhysicalDevicePresentModeFifoLatestReadyFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_KHR;
+        PhysicalDevicePresentTimingFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT;
         PhysicalDevicePresentWait2FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_2_FEATURES_KHR;
         PhysicalDevicePresentWaitFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR;
         PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT;
@@ -7179,6 +7232,8 @@ struct phys_device_features2_chain {
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PRESENT_MODE_FIFO_LATEST_READY_EXTENSION_NAME)
          || gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRESENT_MODE_FIFO_LATEST_READY_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePresentModeFifoLatestReadyFeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRESENT_TIMING_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePresentTimingFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PRESENT_WAIT_2_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PhysicalDevicePresentWait2FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PRESENT_WAIT_EXTENSION_NAME))
@@ -8072,6 +8127,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT) {
+            const VkPhysicalDevicePresentTimingFeaturesEXT* props = (const VkPhysicalDevicePresentTimingFeaturesEXT*)structure;
+            const char* name = "VkPhysicalDevicePresentTimingFeaturesEXT";
+            DumpVkPhysicalDevicePresentTimingFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_2_FEATURES_KHR) {
             const VkPhysicalDevicePresentWait2FeaturesKHR* props = (const VkPhysicalDevicePresentWait2FeaturesKHR*)structure;
             const char* name = "VkPhysicalDevicePresentWait2FeaturesKHR";
@@ -8683,6 +8744,7 @@ struct surface_capabilities2_chain {
     surface_capabilities2_chain(surface_capabilities2_chain &&) = delete;
     surface_capabilities2_chain& operator=(surface_capabilities2_chain &&) = delete;
     void* start_of_chain = nullptr;
+    VkPresentTimingSurfaceCapabilitiesEXT PresentTimingSurfaceCapabilitiesEXT{};
     VkSharedPresentSurfaceCapabilitiesKHR SharedPresentSurfaceCapabilitiesKHR{};
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     VkSurfaceCapabilitiesFullScreenExclusiveEXT SurfaceCapabilitiesFullScreenExclusiveEXT{};
@@ -8691,6 +8753,7 @@ struct surface_capabilities2_chain {
     VkSurfaceCapabilitiesPresentWait2KHR SurfaceCapabilitiesPresentWait2KHR{};
     VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR{};
     void initialize_chain(AppInstance &inst, AppGpu &gpu) noexcept {
+        PresentTimingSurfaceCapabilitiesEXT.sType = VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT;
         SharedPresentSurfaceCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         SurfaceCapabilitiesFullScreenExclusiveEXT.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
@@ -8699,6 +8762,8 @@ struct surface_capabilities2_chain {
         SurfaceCapabilitiesPresentWait2KHR.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_WAIT_2_KHR;
         SurfaceProtectedCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
         std::vector<VkBaseOutStructure*> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRESENT_TIMING_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&PresentTimingSurfaceCapabilitiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure*>(&SharedPresentSurfaceCapabilitiesKHR));
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -8730,6 +8795,12 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
     while (place) {
         const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT) {
+            const VkPresentTimingSurfaceCapabilitiesEXT* props = (const VkPresentTimingSurfaceCapabilitiesEXT*)structure;
+            const char* name = "VkPresentTimingSurfaceCapabilitiesEXT";
+            DumpVkPresentTimingSurfaceCapabilitiesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR) {
             const VkSharedPresentSurfaceCapabilitiesKHR* props = (const VkSharedPresentSurfaceCapabilitiesKHR*)structure;
             const char* name = "VkSharedPresentSurfaceCapabilitiesKHR";
