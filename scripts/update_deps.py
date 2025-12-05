@@ -498,7 +498,7 @@ class GoodRepo(object):
 
         # Use the CMake -A option to select the platform architecture
         # without needing a Visual Studio generator.
-        if platform.system() == 'Windows' and self._args.generator != "Ninja":
+        if platform.system() == 'Windows' and not self._args.generator in ["Ninja", "MinGW Makefiles"]:
             cmake_cmd.append('-A')
             if self._args.arch.lower() == '64' or self._args.arch == 'x64' or self._args.arch == 'win64':
                 cmake_cmd.append('x64')
