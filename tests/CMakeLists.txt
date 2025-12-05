@@ -29,6 +29,11 @@ if (ANDROID)
     return()
 endif()
 
+# Testing isn't supported with mingw
+if (MINGW)
+    return()
+endif()
+
 find_package(VulkanLoader CONFIG)
 
 find_package(GTest REQUIRED CONFIG QUIET)
