@@ -1883,6 +1883,12 @@ std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
                                                         vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
 }
 
+std::vector<VkCooperativeMatrixPropertiesKHR> GetCooperativeMatrixInfo(AppGpu &gpu) {
+    if (vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR == nullptr) return {};
+    return GetVector<VkCooperativeMatrixPropertiesKHR>("vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR",
+                                                       vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR, gpu.phys_device);
+}
+
 // --------- Format Properties ----------//
 // can't use autogen because that is put in a header that we can't include because that header depends on stuff defined here
 bool operator==(const VkFormatProperties &a, const VkFormatProperties b) {
