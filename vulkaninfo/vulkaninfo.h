@@ -1814,6 +1814,9 @@ struct AppGpu {
 
         // Video //
         video_profiles = enumerate_supported_video_profiles(*this);
+
+        vkDestroyDevice(dev, nullptr);
+        dev = VK_NULL_HANDLE;
     }
     ~AppGpu() { vkDestroyDevice(dev, nullptr); }
 
