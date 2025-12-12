@@ -10304,6 +10304,24 @@ template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNIFORM_
     typedef VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT Type;
 };
 
+// Map type VkComputeOccupancyPriorityParametersNV to id VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV
+template <> struct LvlTypeMap<VkComputeOccupancyPriorityParametersNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV> {
+    typedef VkComputeOccupancyPriorityParametersNV Type;
+};
+
+// Map type VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV
+template <> struct LvlTypeMap<VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV;
+};
+
+template <> struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV> {
+    typedef VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <> struct LvlTypeMap<VkAccelerationStructureGeometryTrianglesDataKHR> {
     static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;

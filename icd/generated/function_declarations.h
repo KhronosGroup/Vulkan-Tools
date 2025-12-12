@@ -541,6 +541,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_QCOM_data_graph_model", VK_QCOM_DATA_GRAPH_MODEL_SPEC_VERSION},
     {"VK_SEC_pipeline_cache_incremental_mode", VK_SEC_PIPELINE_CACHE_INCREMENTAL_MODE_SPEC_VERSION},
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
+    {"VK_NV_compute_occupancy_priority", VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION},
     {"VK_KHR_acceleration_structure", VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_KHR_ray_tracing_pipeline", VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
     {"VK_KHR_ray_query", VK_KHR_RAY_QUERY_SPEC_VERSION},
@@ -4591,6 +4592,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(
     VkCommandBuffer                             commandBuffer,
     const VkBeginCustomResolveInfoEXT*          pBeginCustomResolveInfo);
 
+static VKAPI_ATTR void VKAPI_CALL CmdSetComputeOccupancyPriorityNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkComputeOccupancyPriorityParametersNV* pParameters);
+
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
@@ -5637,6 +5642,7 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM", (void*)EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM},
     {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
     {"vkCmdBeginCustomResolveEXT", (void*)CmdBeginCustomResolveEXT},
+    {"vkCmdSetComputeOccupancyPriorityNV", (void*)CmdSetComputeOccupancyPriorityNV},
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},
