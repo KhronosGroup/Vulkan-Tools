@@ -6817,6 +6817,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(
 {
 //Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR void VKAPI_CALL CmdSetComputeOccupancyPriorityNV(
+    VkCommandBuffer                             commandBuffer,
+    const VkComputeOccupancyPriorityParametersNV* pParameters)
+{
+//Not a CREATE or DESTROY function
+}
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(
     VkDevice                                    device,
     const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
