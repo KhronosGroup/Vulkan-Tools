@@ -705,14 +705,21 @@ void GpuDumpVideoProfiles(Printer &p, AppGpu &gpu, bool show_video_props) {
     p.AddNewline();
 }
 
+struct ShowSettings {
+    bool all = false;
+    bool tool_props = false;
+    bool formats = false;
+    bool promoted_structs = false;
+    bool video_props = false;
+};
+
 // Print gpu info for text, html, & vkconfig_output
 // Uses a separate function than schema-json for clarity
-void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats, bool show_promoted_structs,
-             bool show_video_props) {
+void DumpGpu(Printer &p, AppGpu &gpu, const ShowSettings &show) {
     ObjectWrapper obj_gpu(p, "GPU" + std::to_string(gpu.id));
     IndentWrapper indent(p);
 
-    GpuDumpProps(p, gpu, show_promoted_structs);
+    GpuDumpProps(p, gpu, show.promoted_structs);
     DumpExtensions(p, "Device Extensions", gpu.device_extensions);
     p.AddNewline();
     {
@@ -723,17 +730,17 @@ void DumpGpu(Printer &p, AppGpu &gpu, bool show_tooling_info, bool show_formats,
         }
     }
     GpuDumpMemoryProps(p, gpu);
-    GpuDumpFeatures(p, gpu, show_promoted_structs);
-    if (show_tooling_info) {
+    GpuDumpFeatures(p, gpu, show.promoted_structs);
+    if (show.tool_props) {
         GpuDumpToolingInfo(p, gpu);
     }
 
-    if (p.Type() != OutputType::text || show_formats) {
+    if (p.Type() != OutputType::text || show.formats) {
         GpuDevDump(p, gpu);
     }
 
     if (!gpu.video_profiles.empty()) {
-        GpuDumpVideoProfiles(p, gpu, show_video_props);
+        GpuDumpVideoProfiles(p, gpu, show.video_props);
     }
 
     p.AddNewline();
@@ -1092,10 +1099,7 @@ struct ParsedResults {
     OutputCategory output_category = OutputCategory::text;
     uint32_t selected_gpu = 0;
     bool has_selected_gpu = false;  // differentiate between selecting the 0th gpu and using the default 0th value
-    bool show_tool_props = false;
-    bool show_formats = false;
-    bool show_promoted_structs = false;
-    bool show_video_props = false;
+    ShowSettings show;
     bool print_to_file = false;
     std::string filename;  // set if explicitly given, or if vkconfig_output has a <path> argument
     std::string default_filename;
@@ -1142,18 +1146,19 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
             results.print_to_file = true;
             results.default_filename = APP_SHORT_NAME ".html";
         } else if (strcmp(argv[i], "--show-all") == 0) {
-            results.show_tool_props = true;
-            results.show_formats = true;
-            results.show_promoted_structs = true;
-            results.show_video_props = true;
+            results.show.all = true;
+            results.show.tool_props = true;
+            results.show.formats = true;
+            results.show.promoted_structs = true;
+            results.show.video_props = true;
         } else if (strcmp(argv[i], "--show-tool-props") == 0) {
-            results.show_tool_props = true;
+            results.show.tool_props = true;
         } else if (strcmp(argv[i], "--show-formats") == 0) {
-            results.show_formats = true;
+            results.show.formats = true;
         } else if (strcmp(argv[i], "--show-promoted-structs") == 0) {
-            results.show_promoted_structs = true;
+            results.show.promoted_structs = true;
         } else if (strcmp(argv[i], "--show-video-props") == 0) {
-            results.show_video_props = true;
+            results.show.video_props = true;
         } else if ((strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) && argc > (i + 1)) {
             if (argv[i + 1][0] == '-') {
                 std::cout << "-o or --output must be followed by a filename\n";
@@ -1221,7 +1226,7 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
             DumpSummaryGPU(p, *(gpu.get()));
         }
     } else if (parse_data.output_category == OutputCategory::profile_json) {
-        DumpGpuProfileCapabilities(p, *(gpus.at(parse_data.selected_gpu).get()), parse_data.show_promoted_structs);
+        DumpGpuProfileCapabilities(p, *(gpus.at(parse_data.selected_gpu).get()), parse_data.show.promoted_structs);
         DumpGpuProfileInfo(p, *(gpus.at(parse_data.selected_gpu).get()));
     } else {
         // text, html, vkconfig_output
@@ -1241,8 +1246,7 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
         IndentWrapper indent(p);
 
         for (auto &gpu : gpus) {
-            DumpGpu(p, *(gpu.get()), parse_data.show_tool_props, parse_data.show_formats, parse_data.show_promoted_structs,
-                    parse_data.show_video_props);
+            DumpGpu(p, *(gpu.get()), parse_data.show);
         }
     }
 }
@@ -1315,7 +1319,7 @@ int main(int argc, char **argv) {
         uint32_t gpu_counter = 0;
         for (auto &phys_device : phys_devices) {
             gpus.push_back(
-                std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, parse_data.show_promoted_structs)));
+                std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, parse_data.show.promoted_structs)));
         }
 
         std::vector<std::unique_ptr<AppSurface>> surfaces;
