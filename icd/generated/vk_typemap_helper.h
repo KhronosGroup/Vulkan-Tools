@@ -13031,21 +13031,21 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT>
 // Header "base class" for pNext chain traversal
 struct LvlGenericHeader {
     VkStructureType sType;
-    const LvlGenericHeader *pNext;
+    const LvlGenericHeader* pNext;
 };
 struct LvlGenericModHeader {
     VkStructureType sType;
-    LvlGenericModHeader *pNext;
+    LvlGenericModHeader* pNext;
 };
 
 // Find an entry of the given type in the pNext chain
 template <typename T>
-const T *lvl_find_in_chain(const void *next) {
-    const LvlGenericHeader *current = reinterpret_cast<const LvlGenericHeader *>(next);
-    const T *found = nullptr;
+const T* lvl_find_in_chain(const void* next) {
+    const LvlGenericHeader* current = reinterpret_cast<const LvlGenericHeader*>(next);
+    const T* found = nullptr;
     while (current) {
         if (LvlTypeMap<T>::kSType == current->sType) {
-            found = reinterpret_cast<const T *>(current);
+            found = reinterpret_cast<const T*>(current);
             current = nullptr;
         } else {
             current = current->pNext;
@@ -13055,12 +13055,12 @@ const T *lvl_find_in_chain(const void *next) {
 }
 // Find an entry of the given type in the pNext chain
 template <typename T>
-T *lvl_find_mod_in_chain(void *next) {
-    LvlGenericModHeader *current = reinterpret_cast<LvlGenericModHeader *>(next);
-    T *found = nullptr;
+T* lvl_find_mod_in_chain(void* next) {
+    LvlGenericModHeader* current = reinterpret_cast<LvlGenericModHeader*>(next);
+    T* found = nullptr;
     while (current) {
         if (LvlTypeMap<T>::kSType == current->sType) {
-            found = reinterpret_cast<T *>(current);
+            found = reinterpret_cast<T*>(current);
             current = nullptr;
         } else {
             current = current->pNext;
@@ -13071,7 +13071,7 @@ T *lvl_find_mod_in_chain(void *next) {
 
 // Init the header of an sType struct with pNext
 template <typename T>
-T lvl_init_struct(void *p_next) {
+T lvl_init_struct(void* p_next) {
     T out = {};
     out.sType = LvlTypeMap<T>::kSType;
     out.pNext = p_next;
