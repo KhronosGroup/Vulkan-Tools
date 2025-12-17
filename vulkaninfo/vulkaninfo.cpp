@@ -591,6 +591,33 @@ void GpuDumpToolingInfo(Printer &p, AppGpu &gpu) {
     }
 }
 
+void GpuDumpCooperativeMatrix(Printer &p, AppGpu &gpu) {
+    auto props = GetCooperativeMatrixInfo(gpu);
+    if (props.size() > 0) {
+        p.SetSubHeader();
+        ObjectWrapper obj(p, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
+        for (const auto prop : props) {
+            DumpVkCooperativeMatrixPropertiesKHR(p, "VkCooperativeMatrixPropertiesKHR", prop);
+            p.AddNewline();
+        }
+    }
+}
+
+void GpuDumpCalibrateableTimeDomain(Printer &p, AppGpu &gpu) {
+    auto props = GetTimeDomainInfo(gpu);
+    if (props.size() > 0) {
+        p.SetSubHeader();
+        ObjectWrapper obj_mem_props(p, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
+        {
+            for (uint32_t i = 0; i < props.size(); ++i) {
+                p.SetElementIndex(static_cast<int>(i));
+                DumpVkTimeDomainKHR(p, "pTimeDomains", props[i]);
+                p.AddNewline();
+            }
+        }
+    }
+}
+
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj_format_props(p, "Format Properties");
@@ -733,6 +760,11 @@ void DumpGpu(Printer &p, AppGpu &gpu, const ShowSettings &show) {
     GpuDumpFeatures(p, gpu, show.promoted_structs);
     if (show.tool_props) {
         GpuDumpToolingInfo(p, gpu);
+    }
+
+    if (show.all) {
+        GpuDumpCooperativeMatrix(p, gpu);
+        GpuDumpCalibrateableTimeDomain(p, gpu);
     }
 
     if (p.Type() != OutputType::text || show.formats) {
