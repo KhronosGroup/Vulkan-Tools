@@ -4368,22 +4368,6 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateSurfaceOHOS(VkInstance instance, con
     *pSurface = (VkSurfaceKHR)global_unique_handle++;
     return VK_SUCCESS;
 }
-static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage,
-                                                                   uint64_t* grallocUsage) {
-    // Not a CREATE or DESTROY function
-    return VK_SUCCESS;
-}
-static VKAPI_ATTR VkResult VKAPI_CALL AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd, VkSemaphore semaphore,
-                                                       VkFence fence) {
-    // Not a CREATE or DESTROY function
-    return VK_SUCCESS;
-}
-static VKAPI_ATTR VkResult VKAPI_CALL QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
-                                                                  const VkSemaphore* pWaitSemaphores, VkImage image,
-                                                                  int32_t* pNativeFenceFd) {
-    // Not a CREATE or DESTROY function
-    return VK_SUCCESS;
-}
 #endif /* VK_USE_PLATFORM_OHOS */
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
     VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties) {
