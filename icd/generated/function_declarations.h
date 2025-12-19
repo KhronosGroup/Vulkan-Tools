@@ -371,6 +371,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_device_memory_report", VK_EXT_DEVICE_MEMORY_REPORT_SPEC_VERSION},
     {"VK_EXT_robustness2", VK_EXT_ROBUSTNESS_2_SPEC_VERSION},
     {"VK_EXT_custom_border_color", VK_EXT_CUSTOM_BORDER_COLOR_SPEC_VERSION},
+    {"VK_EXT_texture_compression_astc_3d", VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_SPEC_VERSION},
     {"VK_GOOGLE_user_type", VK_GOOGLE_USER_TYPE_SPEC_VERSION},
     {"VK_NV_present_barrier", VK_NV_PRESENT_BARRIER_SPEC_VERSION},
     {"VK_EXT_private_data", VK_EXT_PRIVATE_DATA_SPEC_VERSION},
@@ -518,9 +519,6 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_MESA_image_alignment_control", VK_MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION},
     {"VK_EXT_ray_tracing_invocation_reorder", VK_EXT_RAY_TRACING_INVOCATION_REORDER_SPEC_VERSION},
     {"VK_EXT_depth_clamp_control", VK_EXT_DEPTH_CLAMP_CONTROL_SPEC_VERSION},
-#ifdef VK_USE_PLATFORM_OHOS
-    {"VK_OHOS_native_buffer", VK_OHOS_NATIVE_BUFFER_SPEC_VERSION},
-#endif
     {"VK_HUAWEI_hdr_vivid", VK_HUAWEI_HDR_VIVID_SPEC_VERSION},
     {"VK_NV_cooperative_matrix2", VK_NV_COOPERATIVE_MATRIX_2_SPEC_VERSION},
     {"VK_ARM_pipeline_opacity_micromap", VK_ARM_PIPELINE_OPACITY_MICROMAP_SPEC_VERSION},
@@ -539,6 +537,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_64bit_indexing", VK_EXT_SHADER_64BIT_INDEXING_SPEC_VERSION},
     {"VK_EXT_custom_resolve", VK_EXT_CUSTOM_RESOLVE_SPEC_VERSION},
     {"VK_QCOM_data_graph_model", VK_QCOM_DATA_GRAPH_MODEL_SPEC_VERSION},
+    {"VK_EXT_shader_long_vector", VK_EXT_SHADER_LONG_VECTOR_SPEC_VERSION},
     {"VK_SEC_pipeline_cache_incremental_mode", VK_SEC_PIPELINE_CACHE_INCREMENTAL_MODE_SPEC_VERSION},
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
     {"VK_NV_compute_occupancy_priority", VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION},
@@ -2899,16 +2898,6 @@ static VKAPI_ATTR void VKAPI_CALL UpdateIndirectExecutionSetShaderEXT(
 
 static VKAPI_ATTR VkResult VKAPI_CALL CreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS* pCreateInfo,
                                                         const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-
-static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainGrallocUsageOHOS(VkDevice device, VkFormat format, VkImageUsageFlags imageUsage,
-                                                                   uint64_t* grallocUsage);
-
-static VKAPI_ATTR VkResult VKAPI_CALL AcquireImageOHOS(VkDevice device, VkImage image, int32_t nativeFenceFd, VkSemaphore semaphore,
-                                                       VkFence fence);
-
-static VKAPI_ATTR VkResult VKAPI_CALL QueueSignalReleaseImageOHOS(VkQueue queue, uint32_t waitSemaphoreCount,
-                                                                  const VkSemaphore* pWaitSemaphores, VkImage image,
-                                                                  int32_t* pNativeFenceFd);
 #endif /* VK_USE_PLATFORM_OHOS */
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(
     VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties);
@@ -3904,15 +3893,6 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkUpdateIndirectExecutionSetShaderEXT", (void*)UpdateIndirectExecutionSetShaderEXT},
 #ifdef VK_USE_PLATFORM_OHOS
     {"vkCreateSurfaceOHOS", (void*)CreateSurfaceOHOS},
-#endif
-#ifdef VK_USE_PLATFORM_OHOS
-    {"vkGetSwapchainGrallocUsageOHOS", (void*)GetSwapchainGrallocUsageOHOS},
-#endif
-#ifdef VK_USE_PLATFORM_OHOS
-    {"vkAcquireImageOHOS", (void*)AcquireImageOHOS},
-#endif
-#ifdef VK_USE_PLATFORM_OHOS
-    {"vkQueueSignalReleaseImageOHOS", (void*)QueueSignalReleaseImageOHOS},
 #endif
     {"vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV",
      (void*)GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV},

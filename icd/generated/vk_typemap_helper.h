@@ -8176,6 +8176,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURE
     typedef VkPhysicalDeviceCustomBorderColorFeaturesEXT Type;
 };
 
+// Map type VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT> {
+    typedef VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT Type;
+};
+
 // Map type VkPhysicalDevicePresentBarrierFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_BARRIER_FEATURES_NV
 template <>
 struct LvlTypeMap<VkPhysicalDevicePresentBarrierFeaturesNV> {
@@ -12365,45 +12377,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_SURFACE_CREATE_INFO_OHOS> {
 };
 
 #endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-// Map type VkNativeBufferOHOS to id VK_STRUCTURE_TYPE_NATIVE_BUFFER_OHOS
-template <>
-struct LvlTypeMap<VkNativeBufferOHOS> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_OHOS;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_NATIVE_BUFFER_OHOS> {
-    typedef VkNativeBufferOHOS Type;
-};
-
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-// Map type VkSwapchainImageCreateInfoOHOS to id VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_OHOS
-template <>
-struct LvlTypeMap<VkSwapchainImageCreateInfoOHOS> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_OHOS;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_OHOS> {
-    typedef VkSwapchainImageCreateInfoOHOS Type;
-};
-
-#endif  // VK_USE_PLATFORM_OHOS
-#ifdef VK_USE_PLATFORM_OHOS
-// Map type VkPhysicalDevicePresentationPropertiesOHOS to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_OHOS
-template <>
-struct LvlTypeMap<VkPhysicalDevicePresentationPropertiesOHOS> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_OHOS;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_OHOS> {
-    typedef VkPhysicalDevicePresentationPropertiesOHOS Type;
-};
-
-#endif  // VK_USE_PLATFORM_OHOS
 // Map type VkPhysicalDeviceHdrVividFeaturesHUAWEI to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI
 template <>
 struct LvlTypeMap<VkPhysicalDeviceHdrVividFeaturesHUAWEI> {
@@ -12732,6 +12705,28 @@ struct LvlTypeMap<VkPhysicalDeviceDataGraphModelFeaturesQCOM> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_MODEL_FEATURES_QCOM> {
     typedef VkPhysicalDeviceDataGraphModelFeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceShaderLongVectorFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderLongVectorFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT> {
+    typedef VkPhysicalDeviceShaderLongVectorFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceShaderLongVectorPropertiesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderLongVectorPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceShaderLongVectorPropertiesEXT Type;
 };
 
 // Map type VkPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC to id

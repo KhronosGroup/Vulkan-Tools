@@ -1688,6 +1688,66 @@ std::string VkFormatString(VkFormat value) {
             return "FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG";
         case (VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG):
             return "FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG";
+        case (VK_FORMAT_ASTC_3x3x3_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_3x3x3_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x3x3_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_4x3x3_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x3_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x3_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x4_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x4_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x4x4_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_5x4x4_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x4_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x4_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x5_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x5_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x5x5_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_6x5x5_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x5_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x5_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x6_UNORM_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x6_UNORM_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT";
+        case (VK_FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT):
+            return "FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT";
         case (VK_FORMAT_R8_BOOL_ARM):
             return "FORMAT_R8_BOOL_ARM";
         case (VK_FORMAT_R16G16_SFIXED5_NV):
@@ -6233,6 +6293,18 @@ void DumpVkPhysicalDeviceShaderIntegerDotProductProperties(Printer &p, std::stri
     p.PrintKeyBool("integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated",
                    static_cast<bool>(obj.integerDotProductAccumulatingSaturating64BitMixedSignednessAccelerated));
 }
+void DumpVkPhysicalDeviceShaderLongVectorFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceShaderLongVectorFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(10);
+    p.PrintKeyBool("longVector", static_cast<bool>(obj.longVector));
+}
+void DumpVkPhysicalDeviceShaderLongVectorPropertiesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceShaderLongVectorPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(19);
+    p.PrintKeyValue("maxVectorComponents", obj.maxVectorComponents);
+}
 void DumpVkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR(Printer &p, std::string name,
                                                                const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -6406,6 +6478,12 @@ void DumpVkPhysicalDeviceTexelBufferAlignmentProperties(Printer &p, std::string 
     p.PrintKeyValue("uniformTexelBufferOffsetAlignmentBytes", to_hex_str(p, obj.uniformTexelBufferOffsetAlignmentBytes));
     p.PrintKeyBool("uniformTexelBufferOffsetSingleTexelAlignment",
                    static_cast<bool>(obj.uniformTexelBufferOffsetSingleTexelAlignment));
+}
+void DumpVkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(25);
+    p.PrintKeyBool("textureCompressionASTC_3D", static_cast<bool>(obj.textureCompressionASTC_3D));
 }
 void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(Printer &p, std::string name,
                                                            const VkPhysicalDeviceTextureCompressionASTCHDRFeatures &obj) {
@@ -7329,6 +7407,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceSampleLocationsPropertiesEXT PhysicalDeviceSampleLocationsPropertiesEXT{};
     VkPhysicalDeviceSamplerFilterMinmaxProperties PhysicalDeviceSamplerFilterMinmaxProperties{};
     VkPhysicalDeviceShaderIntegerDotProductProperties PhysicalDeviceShaderIntegerDotProductProperties{};
+    VkPhysicalDeviceShaderLongVectorPropertiesEXT PhysicalDeviceShaderLongVectorPropertiesEXT{};
     VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT PhysicalDeviceShaderModuleIdentifierPropertiesEXT{};
     VkPhysicalDeviceShaderObjectPropertiesEXT PhysicalDeviceShaderObjectPropertiesEXT{};
     VkPhysicalDeviceShaderTileImagePropertiesEXT PhysicalDeviceShaderTileImagePropertiesEXT{};
@@ -7424,6 +7503,7 @@ struct phys_device_props2_chain {
         PhysicalDeviceSamplerFilterMinmaxProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
         PhysicalDeviceShaderIntegerDotProductProperties.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES;
+        PhysicalDeviceShaderLongVectorPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT;
         PhysicalDeviceShaderModuleIdentifierPropertiesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT;
         PhysicalDeviceShaderObjectPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_PROPERTIES_EXT;
@@ -7588,6 +7668,8 @@ struct phys_device_props2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderIntegerDotProductProperties));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_LONG_VECTOR_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderLongVectorPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderModuleIdentifierPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OBJECT_EXTENSION_NAME))
@@ -8205,6 +8287,13 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT) {
+            const VkPhysicalDeviceShaderLongVectorPropertiesEXT *props =
+                (const VkPhysicalDeviceShaderLongVectorPropertiesEXT *)structure;
+            const char *name = "VkPhysicalDeviceShaderLongVectorPropertiesEXT";
+            DumpVkPhysicalDeviceShaderLongVectorPropertiesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT) {
             const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT *props =
                 (const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT *)structure;
@@ -8516,6 +8605,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT PhysicalDeviceShaderImageAtomicInt64FeaturesEXT{};
     VkPhysicalDeviceShaderIntegerDotProductFeatures PhysicalDeviceShaderIntegerDotProductFeatures{};
     char VkPhysicalDeviceShaderIntegerDotProductFeatures_padding[64];
+    VkPhysicalDeviceShaderLongVectorFeaturesEXT PhysicalDeviceShaderLongVectorFeaturesEXT{};
     VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR PhysicalDeviceShaderMaximalReconvergenceFeaturesKHR{};
     VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT PhysicalDeviceShaderModuleIdentifierFeaturesEXT{};
     VkPhysicalDeviceShaderObjectFeaturesEXT PhysicalDeviceShaderObjectFeaturesEXT{};
@@ -8534,6 +8624,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceSwapchainMaintenance1FeaturesKHR PhysicalDeviceSwapchainMaintenance1FeaturesKHR{};
     VkPhysicalDeviceSynchronization2Features PhysicalDeviceSynchronization2Features{};
     VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT PhysicalDeviceTexelBufferAlignmentFeaturesEXT{};
+    VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT PhysicalDeviceTextureCompressionASTC3DFeaturesEXT{};
     VkPhysicalDeviceTextureCompressionASTCHDRFeatures PhysicalDeviceTextureCompressionASTCHDRFeatures{};
     VkPhysicalDeviceTimelineSemaphoreFeatures PhysicalDeviceTimelineSemaphoreFeatures{};
     VkPhysicalDeviceTransformFeedbackFeaturesEXT PhysicalDeviceTransformFeedbackFeaturesEXT{};
@@ -8718,6 +8809,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceShaderImageAtomicInt64FeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT;
         PhysicalDeviceShaderIntegerDotProductFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
+        PhysicalDeviceShaderLongVectorFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT;
         PhysicalDeviceShaderMaximalReconvergenceFeaturesKHR.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR;
         PhysicalDeviceShaderModuleIdentifierFeaturesEXT.sType =
@@ -8746,6 +8838,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_KHR;
         PhysicalDeviceSynchronization2Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
         PhysicalDeviceTexelBufferAlignmentFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT;
+        PhysicalDeviceTextureCompressionASTC3DFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT;
         PhysicalDeviceTextureCompressionASTCHDRFeatures.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES;
         PhysicalDeviceTimelineSemaphoreFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
@@ -9078,6 +9172,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_INTEGER_DOT_PRODUCT_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderIntegerDotProductFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_LONG_VECTOR_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderLongVectorFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_MAXIMAL_RECONVERGENCE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderMaximalReconvergenceFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))
@@ -9123,6 +9219,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceSynchronization2Features));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceTexelBufferAlignmentFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceTextureCompressionASTC3DFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceTextureCompressionASTCHDRFeatures));
@@ -10358,6 +10456,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             }
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT) {
+            const VkPhysicalDeviceShaderLongVectorFeaturesEXT *props =
+                (const VkPhysicalDeviceShaderLongVectorFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceShaderLongVectorFeaturesEXT";
+            DumpVkPhysicalDeviceShaderLongVectorFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR) {
             const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR *props =
                 (const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR *)structure;
@@ -10524,6 +10629,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT *)structure;
             const char *name = "VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT";
             DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT) {
+            const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT *props =
+                (const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT";
+            DumpVkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES) {
@@ -11460,6 +11572,8 @@ auto format_ranges = std::array{
     FormatRange{VK_API_VERSION_1_4, nullptr, static_cast<VkFormat>(1000470000), static_cast<VkFormat>(1000470001)},
     FormatRange{0, VK_KHR_MAINTENANCE_5_EXTENSION_NAME, static_cast<VkFormat>(1000470000), static_cast<VkFormat>(1000470001)},
     FormatRange{0, VK_IMG_FORMAT_PVRTC_EXTENSION_NAME, static_cast<VkFormat>(1000054000), static_cast<VkFormat>(1000054007)},
+    FormatRange{0, VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_EXTENSION_NAME, static_cast<VkFormat>(1000288000),
+                static_cast<VkFormat>(1000288029)},
     FormatRange{0, VK_ARM_TENSORS_EXTENSION_NAME, static_cast<VkFormat>(1000460000), static_cast<VkFormat>(1000460000)},
     FormatRange{0, VK_NV_OPTICAL_FLOW_EXTENSION_NAME, static_cast<VkFormat>(1000464000), static_cast<VkFormat>(1000464000)},
     FormatRange{0, VK_ARM_FORMAT_PACK_EXTENSION_NAME, static_cast<VkFormat>(1000609000), static_cast<VkFormat>(1000609013)},
