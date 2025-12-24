@@ -5141,6 +5141,11 @@ void DumpVkPhysicalDeviceFragmentShadingRateFeaturesKHR(Printer &p, std::string 
     p.PrintKeyBool("primitiveFragmentShadingRate", static_cast<bool>(obj.primitiveFragmentShadingRate));
     p.PrintKeyBool("attachmentFragmentShadingRate", static_cast<bool>(obj.attachmentFragmentShadingRate));
 }
+void DumpVkPhysicalDeviceFragmentShadingRateKHR(Printer &p, std::string name, const VkPhysicalDeviceFragmentShadingRateKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkSampleCountFlags(p, "sampleCounts", obj.sampleCounts);
+    DumpVkExtent2D(p, "fragmentSize", obj.fragmentSize);
+}
 void DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(Printer &p, std::string name,
                                                           const VkPhysicalDeviceFragmentShadingRatePropertiesKHR &obj) {
     ObjectWrapper object{p, name};

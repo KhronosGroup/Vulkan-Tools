@@ -1896,6 +1896,11 @@ std::vector<VkTimeDomainKHR> GetTimeDomainInfo(AppGpu &gpu) {
     return GetVector<VkTimeDomainKHR>("vkGetPhysicalDeviceCalibrateableTimeDomainsKHR",
                                       vkGetPhysicalDeviceCalibrateableTimeDomainsKHR, gpu.phys_device);
 }
+std::vector<VkPhysicalDeviceFragmentShadingRateKHR> GetFragmentShadingRateInfo(AppGpu &gpu) {
+    if (vkGetPhysicalDeviceFragmentShadingRatesKHR == nullptr) return {};
+    return GetVector<VkPhysicalDeviceFragmentShadingRateKHR>("vkGetPhysicalDeviceFragmentShadingRatesKHR",
+                                                             vkGetPhysicalDeviceFragmentShadingRatesKHR, gpu.phys_device);
+}
 
 // --------- Format Properties ----------//
 // can't use autogen because that is put in a header that we can't include because that header depends on stuff defined here

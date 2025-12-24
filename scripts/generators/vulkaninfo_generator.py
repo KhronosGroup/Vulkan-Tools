@@ -76,7 +76,8 @@ std::string to_hex_str(Printer &p, const T i) {
 STRUCTURES_TO_GEN = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPhysicalDeviceFeatures', 'VkPhysicalDeviceSparseProperties',
                      'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties',
                      'VkSurfacePresentScalingCapabilitiesKHR', 'VkSurfacePresentModeCompatibilityKHR', 'VkPhysicalDeviceHostImageCopyProperties',
-                     'VkVideoProfileInfoKHR', 'VkVideoCapabilitiesKHR', 'VkVideoFormatPropertiesKHR', 'VkCooperativeMatrixPropertiesKHR']
+                     'VkVideoProfileInfoKHR', 'VkVideoCapabilitiesKHR', 'VkVideoFormatPropertiesKHR', 'VkCooperativeMatrixPropertiesKHR',
+                     'VkPhysicalDeviceFragmentShadingRateKHR']
 ENUMS_TO_GEN = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling', 'VkTimeDomainKHR']
 FLAGS_TO_GEN = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT', 'VkQueueFlags',
