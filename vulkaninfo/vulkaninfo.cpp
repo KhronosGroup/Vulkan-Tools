@@ -618,6 +618,18 @@ void GpuDumpCalibrateableTimeDomain(Printer &p, AppGpu &gpu) {
     }
 }
 
+void GpuDumpFragmentShadingRate(Printer &p, AppGpu &gpu) {
+    auto props = GetFragmentShadingRateInfo(gpu);
+    if (props.size() > 0) {
+        p.SetSubHeader();
+        ObjectWrapper obj(p, "vkGetPhysicalDeviceFragmentShadingRatesKHR");
+        for (const auto prop : props) {
+            DumpVkPhysicalDeviceFragmentShadingRateKHR(p, "VkPhysicalDeviceFragmentShadingRateKHR", prop);
+            p.AddNewline();
+        }
+    }
+}
+
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj_format_props(p, "Format Properties");
@@ -765,6 +777,7 @@ void DumpGpu(Printer &p, AppGpu &gpu, const ShowSettings &show) {
     if (show.all) {
         GpuDumpCooperativeMatrix(p, gpu);
         GpuDumpCalibrateableTimeDomain(p, gpu);
+        GpuDumpFragmentShadingRate(p, gpu);
     }
 
     if (p.Type() != OutputType::text || show.formats) {
