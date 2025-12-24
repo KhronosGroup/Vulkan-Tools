@@ -30,6 +30,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <exception>
 #include <iostream>
 #include <fstream>
@@ -1900,6 +1901,19 @@ std::vector<VkPhysicalDeviceFragmentShadingRateKHR> GetFragmentShadingRateInfo(A
     if (vkGetPhysicalDeviceFragmentShadingRatesKHR == nullptr) return {};
     return GetVector<VkPhysicalDeviceFragmentShadingRateKHR>("vkGetPhysicalDeviceFragmentShadingRatesKHR",
                                                              vkGetPhysicalDeviceFragmentShadingRatesKHR, gpu.phys_device);
+}
+// Returns vector where each index maps to VkSampleCountFlagBits
+std::vector<VkMultisamplePropertiesEXT> GetSampleLocationInfo(AppGpu &gpu) {
+    if (vkGetPhysicalDeviceMultisamplePropertiesEXT == nullptr) return {};
+    std::vector<VkMultisamplePropertiesEXT> result;
+    // 7 covers VK_SAMPLE_COUNT_1_BIT to 64_BIT
+    for (uint32_t i = 0; i < 7; i++) {
+        const VkSampleCountFlagBits sample_count = (VkSampleCountFlagBits)(1 << i);
+        VkMultisamplePropertiesEXT props = {VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT, nullptr};
+        vkGetPhysicalDeviceMultisamplePropertiesEXT(gpu.phys_device, sample_count, &props);
+        result.emplace_back(props);
+    }
+    return result;
 }
 
 // --------- Format Properties ----------//

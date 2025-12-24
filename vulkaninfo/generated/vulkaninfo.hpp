@@ -4468,6 +4468,10 @@ void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties
     p.PrintKeyValue("implementationVersion", obj.implementationVersion);
     p.PrintKeyString("description", obj.description);
 }
+void DumpVkMultisamplePropertiesEXT(Printer &p, std::string name, const VkMultisamplePropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkExtent2D(p, "maxSampleLocationGridSize", obj.maxSampleLocationGridSize);
+}
 void DumpVkOffset2D(Printer &p, std::string name, const VkOffset2D &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(1);

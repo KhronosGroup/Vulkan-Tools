@@ -77,7 +77,7 @@ STRUCTURES_TO_GEN = ['VkExtent3D', 'VkExtent2D', 'VkPhysicalDeviceLimits', 'VkPh
                      'VkSurfaceCapabilitiesKHR', 'VkSurfaceFormatKHR', 'VkLayerProperties', 'VkPhysicalDeviceToolProperties', 'VkFormatProperties',
                      'VkSurfacePresentScalingCapabilitiesKHR', 'VkSurfacePresentModeCompatibilityKHR', 'VkPhysicalDeviceHostImageCopyProperties',
                      'VkVideoProfileInfoKHR', 'VkVideoCapabilitiesKHR', 'VkVideoFormatPropertiesKHR', 'VkCooperativeMatrixPropertiesKHR',
-                     'VkPhysicalDeviceFragmentShadingRateKHR']
+                     'VkPhysicalDeviceFragmentShadingRateKHR', 'VkMultisamplePropertiesEXT']
 ENUMS_TO_GEN = ['VkResult', 'VkFormat', 'VkPresentModeKHR',
                 'VkPhysicalDeviceType', 'VkImageTiling', 'VkTimeDomainKHR']
 FLAGS_TO_GEN = ['VkSurfaceTransformFlagsKHR', 'VkCompositeAlphaFlagsKHR', 'VkSurfaceCounterFlagsEXT', 'VkQueueFlags',
