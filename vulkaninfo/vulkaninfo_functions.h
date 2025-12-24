@@ -116,6 +116,7 @@ PFN_vkGetPhysicalDeviceFormatProperties2KHR vkGetPhysicalDeviceFormatProperties2
 PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR;
 PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR vkGetPhysicalDeviceCalibrateableTimeDomainsKHR;
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR;
+PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT vkGetPhysicalDeviceMultisamplePropertiesEXT;
 
 // Device functions
 PFN_vkCreateImage vkCreateImage;
@@ -249,6 +250,7 @@ static void load_vulkan_instance_functions(VkInstance instance) {
     LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR);
     LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceCalibrateableTimeDomainsKHR);
     LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceFragmentShadingRatesKHR);
+    LOAD_INSTANCE_FUNCTION(instance, vkGetPhysicalDeviceMultisamplePropertiesEXT);
 
     // Load device functions using vkGetInstanceProcAddr, vulkaninfo doesn't care about the extra indirection it causes
     LOAD_INSTANCE_FUNCTION(instance, vkCreateImage);

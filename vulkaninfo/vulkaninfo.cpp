@@ -28,6 +28,7 @@
  *
  */
 
+#include <string>
 #ifdef _WIN32
 #include <crtdbg.h>
 #endif
@@ -630,6 +631,21 @@ void GpuDumpFragmentShadingRate(Printer &p, AppGpu &gpu) {
     }
 }
 
+// VK_EXT_sample_locations ('Multisample Properties' is too ambiguous of a name)
+void GpuDumpSampleLocations(Printer &p, AppGpu &gpu) {
+    auto props = GetSampleLocationInfo(gpu);
+    if (props.size() > 0) {
+        p.SetSubHeader();
+        ObjectWrapper obj(p, "vkGetPhysicalDeviceMultisamplePropertiesEXT");
+        for (uint32_t i = 0; i < props.size(); i++) {
+            const VkSampleCountFlagBits sample_count = (VkSampleCountFlagBits)(1 << i);
+            DumpVkSampleCountFlagBits(p, "samples", sample_count);
+            DumpVkMultisamplePropertiesEXT(p, "VkMultisamplePropertiesEXT", props[i]);
+            p.AddNewline();
+        }
+    }
+}
+
 void GpuDevDump(Printer &p, AppGpu &gpu) {
     p.SetHeader();
     ObjectWrapper obj_format_props(p, "Format Properties");
@@ -778,6 +794,7 @@ void DumpGpu(Printer &p, AppGpu &gpu, const ShowSettings &show) {
         GpuDumpCooperativeMatrix(p, gpu);
         GpuDumpCalibrateableTimeDomain(p, gpu);
         GpuDumpFragmentShadingRate(p, gpu);
+        GpuDumpSampleLocations(p, gpu);
     }
 
     if (p.Type() != OutputType::text || show.formats) {
