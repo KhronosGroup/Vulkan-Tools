@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015-2021 The Khronos Group Inc.
- * Copyright (c) 2015-2021 Valve Corporation
- * Copyright (c) 2015-2021 LunarG, Inc.
+ * Copyright (c) 2015-2026 The Khronos Group Inc.
+ * Copyright (c) 2015-2026 Valve Corporation
+ * Copyright (c) 2015-2026 LunarG, Inc.
  * Copyright (c) 2023-2024 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -760,6 +760,142 @@ void GpuDumpVideoProfiles(Printer &p, AppGpu &gpu, bool show_video_props) {
     p.AddNewline();
 }
 
+AppDisplayPlane::AppDisplayPlane(AppGpu &gpu, uint32_t index, const VkDisplayPlanePropertiesKHR &in_prop)
+    : global_index(index), properties(in_prop) {
+    std::ostringstream display_name;
+
+    supported_displays = GetVector<VkDisplayKHR>("vkGetDisplayPlaneSupportedDisplaysKHR", vkGetDisplayPlaneSupportedDisplaysKHR,
+                                                 gpu.phys_device, global_index);
+}
+
+std::vector<AppDisplayPlane> enumerate_display_planes(AppGpu &gpu) {
+    std::vector<AppDisplayPlane> result;
+    if (vkGetPhysicalDeviceDisplayPlanePropertiesKHR) {
+        auto planes = GetVector<VkDisplayPlanePropertiesKHR>("vkGetPhysicalDeviceDisplayPlanePropertiesKHR",
+                vkGetPhysicalDeviceDisplayPlanePropertiesKHR, gpu.phys_device);
+        for (uint32_t i = 0; i < planes.size(); i++) {
+            result.emplace_back(gpu, i, planes[i]);
+        }
+    }
+    return result;
+}
+
+AppDisplayMode::AppDisplayMode(AppGpu &gpu, const VkDisplayModePropertiesKHR &in_properties,
+                               const std::set<uint32_t> &supported_planes)
+    : properties(in_properties) {
+    for (auto plane : supported_planes) {
+        VkDisplayPlaneCapabilitiesKHR cap;
+
+        vkGetDisplayPlaneCapabilitiesKHR(gpu.phys_device, properties.displayMode, plane, &cap);
+        capabilities[plane] = cap;
+    }
+}
+
+static std::string MakeName(uint32_t index, const VkDisplayPropertiesKHR &prop) {
+    std::stringstream name;
+    name << "Display id : " << index << " (" << prop.displayName << ")";
+    return name.str();
+}
+
+AppDisplay::AppDisplay(AppGpu &gpu, uint32_t index, const VkDisplayPropertiesKHR &in_properties,
+                       const std::vector<AppDisplayPlane> &all_planes)
+    : global_index(index), name(MakeName(index, in_properties)), properties(in_properties) {
+    auto mode_props = GetVector<VkDisplayModePropertiesKHR>("vkGetDisplayModePropertiesKHR", vkGetDisplayModePropertiesKHR,
+                                                            gpu.phys_device, properties.display);
+
+    std::set<uint32_t> supported_planes;
+    for (const auto &plane : all_planes) {
+        for (const auto &display : plane.supported_displays) {
+            if (display == properties.display) {
+                supported_planes.insert(plane.global_index);
+            }
+        }
+    }
+
+    for (const auto &prop : mode_props) {
+        modes.emplace_back(gpu, prop, supported_planes);
+    }
+}
+
+std::vector<AppDisplay> enumerate_displays(AppGpu &gpu, const std::vector<AppDisplayPlane> &all_planes) {
+    std::vector<AppDisplay> result;
+
+    if (vkGetPhysicalDeviceDisplayPropertiesKHR) {
+        auto properties = GetVector<VkDisplayPropertiesKHR>("vkGetPhysicalDeviceDisplayPropertiesKHR",
+                vkGetPhysicalDeviceDisplayPropertiesKHR, gpu.phys_device);
+
+        for (uint32_t i = 0; i < properties.size(); i++) {
+            result.emplace_back(gpu, i, properties[i], all_planes);
+        }
+    }
+    return result;
+}
+
+void GpuDumpDisplays(Printer &p, AppGpu &gpu) {
+    if (gpu.displays.size() == 0) {
+        return;
+    }
+
+    p.SetHeader();
+    ObjectWrapper display_props_obj(p, "Display Properties", gpu.displays.size());
+
+    for (const auto &display : gpu.displays) {
+        p.SetSubHeader();
+        ObjectWrapper display_obj(p, display.name);
+
+        DumpVkDisplayPropertiesKHR(p, "VkDisplayPropertiesKHR", display.properties);
+        ArrayWrapper arr(p, "Display Modes", display.modes.size());
+
+        for (uint32_t m = 0; m < display.modes.size(); m++) {
+            const auto &mode = display.modes[m];
+            std::ostringstream mode_name;
+            mode_name << "Display Mode : " << p.DecorateAsValue(std::to_string(m)) << " ("
+                      << mode.properties.parameters.visibleRegion.width << " x " << mode.properties.parameters.visibleRegion.height
+                      << ")";
+
+            ObjectWrapper mode_obj(p, mode_name.str());
+
+            DumpVkDisplayModeParametersKHR(p, "VkDisplayModeParametersKHR", mode.properties.parameters);
+
+            ArrayWrapper cap_arr(p, "Display Plane Capabilities", mode.capabilities.size());
+            for (const auto &cap : mode.capabilities) {
+                std::ostringstream cap_name;
+                cap_name << "Capabilities (Plane " << p.DecorateAsValue(std::to_string(cap.first)) << ")";
+
+                ObjectWrapper cap_obj(p, cap_name.str());
+
+                DumpVkDisplayPlaneCapabilitiesKHR(p, "VkDisplayPlaneCapabilitiesKHR", cap.second);
+            }
+        }
+    }
+}
+
+void GpuDumpDisplayPlanes(Printer &p, AppGpu &gpu) {
+    if (gpu.display_planes.size() == 0) {
+        return;
+    }
+
+    p.SetHeader();
+    ObjectWrapper display_props_obj(p, "Display Plane Properties", gpu.display_planes.size());
+
+    for (const auto &plane : gpu.display_planes) {
+        p.SetSubHeader();
+        ObjectWrapper display_obj(p, std::string("Display Plane id : ") + p.DecorateAsValue(std::to_string(plane.global_index)));
+
+        auto *current = gpu.FindDisplay(plane.properties.currentDisplay);
+
+        p.PrintKeyValue("currentDisplay", current ? current->name.c_str() : "none");
+
+        DumpVkDisplayPlanePropertiesKHR(p, "VkDisplayPlanePropertiesKHR", plane.properties);
+
+        ArrayWrapper arr(p, "Supported Displays", plane.supported_displays.size());
+        for (auto handle : plane.supported_displays) {
+            auto *display = gpu.FindDisplay(handle);
+            p.SetAsType().PrintString(display ? display->name.c_str() : "UNKNOWN");
+        }
+    }
+}
+
 struct ShowSettings {
     bool all = false;
     bool tool_props = false;
@@ -803,6 +939,14 @@ void DumpGpu(Printer &p, AppGpu &gpu, const ShowSettings &show) {
 
     if (!gpu.video_profiles.empty()) {
         GpuDumpVideoProfiles(p, gpu, show.video_props);
+    }
+
+    if (!gpu.displays.empty()) {
+        GpuDumpDisplays(p, gpu);
+    }
+
+    if (!gpu.display_planes.empty()) {
+        GpuDumpDisplayPlanes(p, gpu);
     }
 
     p.AddNewline();
