@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2025 The Khronos Group Inc.
- * Copyright (c) 2025 Valve Corporation
- * Copyright (c) 2025 LunarG, Inc.
+ * Copyright (c) 2025-2026 The Khronos Group Inc.
+ * Copyright (c) 2025-2026 Valve Corporation
+ * Copyright (c) 2025-2026 LunarG, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,9 @@ PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
 #endif
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 PFN_vkCreateScreenSurfaceQNX vkCreateScreenSurfaceQNX;
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY)
+PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
 PFN_vkCreateDirectFBSurfaceEXT vkCreateDirectFBSurfaceEXT;
@@ -204,6 +207,9 @@ static void load_vulkan_instance_functions(VkInstance instance) {
 #endif
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
     LOAD_INSTANCE_FUNCTION(instance, vkCreateScreenSurfaceQNX);
+#endif
+#if defined(VK_USE_PLATFORM_DISPLAY)
+    LOAD_INSTANCE_FUNCTION(instance, vkCreateDisplayPlaneSurfaceKHR);
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
     LOAD_INSTANCE_FUNCTION(instance, vkCreateDirectFBSurfaceEXT);

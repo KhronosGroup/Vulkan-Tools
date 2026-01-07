@@ -1,8 +1,8 @@
 
 /*
- * Copyright (c) 2019-2022 The Khronos Group Inc.
- * Copyright (c) 2019-2022 Valve Corporation
- * Copyright (c) 2019-2022 LunarG, Inc.
+ * Copyright (c) 2019-2026 The Khronos Group Inc.
+ * Copyright (c) 2019-2026 Valve Corporation
+ * Copyright (c) 2019-2026 LunarG, Inc.
  * Copyright (c) 2023-2024 RasterGrid Kft.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -2335,6 +2335,44 @@ void DumpVkDeviceGroupPresentModeFlagBitsKHR(Printer &p, std::string name, VkDev
     }
 }
 
+std::vector<const char *> VkDisplayPlaneAlphaFlagBitsKHRGetStrings(VkDisplayPlaneAlphaFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR & value) strings.push_back("DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR");
+    if (VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR & value) strings.push_back("DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR");
+    if (VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR & value) strings.push_back("DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR");
+    if (VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR & value)
+        strings.push_back("DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR");
+    return strings;
+}
+void DumpVkDisplayPlaneAlphaFlagsKHR(Printer &p, std::string name, VkDisplayPlaneAlphaFlagsKHR value) {
+    if (static_cast<VkDisplayPlaneAlphaFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkDisplayPlaneAlphaFlagBitsKHRGetStrings(static_cast<VkDisplayPlaneAlphaFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkDisplayPlaneAlphaFlagBitsKHR(Printer &p, std::string name, VkDisplayPlaneAlphaFlagBitsKHR value) {
+    auto strings = VkDisplayPlaneAlphaFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBits value) {
     std::vector<const char *> strings;
     if (value == 0) {
@@ -4387,6 +4425,527 @@ void DumpVkVideoEncodeUsageFlagBitsKHR(Printer &p, std::string name, VkVideoEnco
     }
 }
 
+void DumpVkComponentMapping(Printer &p, std::string name, const VkComponentMapping &obj);
+void DumpVkConformanceVersion(Printer &p, std::string name, const VkConformanceVersion &obj);
+void DumpVkCooperativeMatrixPropertiesKHR(Printer &p, std::string name, const VkCooperativeMatrixPropertiesKHR &obj);
+void DumpVkDisplayModeParametersKHR(Printer &p, std::string name, const VkDisplayModeParametersKHR &obj);
+void DumpVkDisplayModePropertiesKHR(Printer &p, std::string name, const VkDisplayModePropertiesKHR &obj);
+void DumpVkDisplayPlaneCapabilitiesKHR(Printer &p, std::string name, const VkDisplayPlaneCapabilitiesKHR &obj);
+void DumpVkDisplayPlanePropertiesKHR(Printer &p, std::string name, const VkDisplayPlanePropertiesKHR &obj);
+void DumpVkDisplayPropertiesKHR(Printer &p, std::string name, const VkDisplayPropertiesKHR &obj);
+void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, const VkDrmFormatModifierProperties2EXT &obj);
+void DumpVkExtensionProperties(Printer &p, std::string name, const VkExtensionProperties &obj);
+void DumpVkExtent2D(Printer &p, std::string name, const VkExtent2D &obj);
+void DumpVkExtent3D(Printer &p, std::string name, const VkExtent3D &obj);
+void DumpVkFormatProperties(Printer &p, std::string name, const VkFormatProperties &obj);
+void DumpVkFormatProperties3(Printer &p, std::string name, const VkFormatProperties3 &obj);
+void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties &obj);
+void DumpVkMultisamplePropertiesEXT(Printer &p, std::string name, const VkMultisamplePropertiesEXT &obj);
+void DumpVkOffset2D(Printer &p, std::string name, const VkOffset2D &obj);
+void DumpVkPhysicalDevice16BitStorageFeatures(Printer &p, std::string name, const VkPhysicalDevice16BitStorageFeatures &obj);
+void DumpVkPhysicalDevice4444FormatsFeaturesEXT(Printer &p, std::string name, const VkPhysicalDevice4444FormatsFeaturesEXT &obj);
+void DumpVkPhysicalDevice8BitStorageFeatures(Printer &p, std::string name, const VkPhysicalDevice8BitStorageFeatures &obj);
+void DumpVkPhysicalDeviceASTCDecodeFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceASTCDecodeFeaturesEXT &obj);
+void DumpVkPhysicalDeviceAccelerationStructureFeaturesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceAccelerationStructureFeaturesKHR &obj);
+void DumpVkPhysicalDeviceAccelerationStructurePropertiesKHR(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceAccelerationStructurePropertiesKHR &obj);
+void DumpVkPhysicalDeviceAddressBindingReportFeaturesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceAddressBindingReportFeaturesEXT &obj);
+void DumpVkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT &obj);
+void DumpVkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT &obj);
+void DumpVkPhysicalDeviceBlendOperationAdvancedFeaturesEXT(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT &obj);
+void DumpVkPhysicalDeviceBlendOperationAdvancedPropertiesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT &obj);
+void DumpVkPhysicalDeviceBorderColorSwizzleFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceBorderColorSwizzleFeaturesEXT &obj);
+void DumpVkPhysicalDeviceBufferDeviceAddressFeatures(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceBufferDeviceAddressFeatures &obj);
+void DumpVkPhysicalDeviceBufferDeviceAddressFeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceBufferDeviceAddressFeaturesEXT &obj);
+void DumpVkPhysicalDeviceColorWriteEnableFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceColorWriteEnableFeaturesEXT &obj);
+void DumpVkPhysicalDeviceComputeShaderDerivativesFeaturesKHR(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR &obj);
+void DumpVkPhysicalDeviceComputeShaderDerivativesPropertiesKHR(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceComputeShaderDerivativesPropertiesKHR &obj);
+void DumpVkPhysicalDeviceConditionalRenderingFeaturesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceConditionalRenderingFeaturesEXT &obj);
+void DumpVkPhysicalDeviceConservativeRasterizationPropertiesEXT(Printer &p, std::string name,
+                                                                const VkPhysicalDeviceConservativeRasterizationPropertiesEXT &obj);
+void DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &obj);
+void DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &obj);
+void DumpVkPhysicalDeviceCopyMemoryIndirectFeaturesKHR(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR &obj);
+void DumpVkPhysicalDeviceCopyMemoryIndirectPropertiesKHR(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceCopyMemoryIndirectPropertiesKHR &obj);
+void DumpVkPhysicalDeviceCustomBorderColorFeaturesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceCustomBorderColorFeaturesEXT &obj);
+void DumpVkPhysicalDeviceCustomBorderColorPropertiesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceCustomBorderColorPropertiesEXT &obj);
+void DumpVkPhysicalDeviceCustomResolveFeaturesEXT(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceCustomResolveFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDepthBiasControlFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceDepthBiasControlFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDepthClampControlFeaturesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceDepthClampControlFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDepthClampZeroOneFeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceDepthClampZeroOneFeaturesKHR &obj);
+void DumpVkPhysicalDeviceDepthClipControlFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceDepthClipControlFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDepthClipEnableFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceDepthClipEnableFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDepthStencilResolveProperties(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceDepthStencilResolveProperties &obj);
+void DumpVkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceDescriptorBufferFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceDescriptorBufferPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceDescriptorIndexingFeatures &obj);
+void DumpVkPhysicalDeviceDescriptorIndexingProperties(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceDescriptorIndexingProperties &obj);
+void DumpVkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDeviceMemoryReportFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceDeviceMemoryReportFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDiscardRectanglePropertiesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceDiscardRectanglePropertiesEXT &obj);
+void DumpVkPhysicalDeviceDriverProperties(Printer &p, std::string name, const VkPhysicalDeviceDriverProperties &obj);
+void DumpVkPhysicalDeviceDrmPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceDrmPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDynamicRenderingFeatures(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceDynamicRenderingFeatures &obj);
+void DumpVkPhysicalDeviceDynamicRenderingLocalReadFeatures(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceDynamicRenderingLocalReadFeatures &obj);
+void DumpVkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT &obj);
+void DumpVkPhysicalDeviceExtendedDynamicState2FeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceExtendedDynamicState2FeaturesEXT &obj);
+void DumpVkPhysicalDeviceExtendedDynamicState3FeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceExtendedDynamicState3FeaturesEXT &obj);
+void DumpVkPhysicalDeviceExtendedDynamicState3PropertiesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceExtendedDynamicState3PropertiesEXT &obj);
+void DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT &obj);
+void DumpVkPhysicalDeviceExternalMemoryHostPropertiesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceExternalMemoryHostPropertiesEXT &obj);
+void DumpVkPhysicalDeviceFaultFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceFaultFeaturesEXT &obj);
+void DumpVkPhysicalDeviceFeatures(Printer &p, std::string name, const VkPhysicalDeviceFeatures &obj);
+void DumpVkPhysicalDeviceFloatControlsProperties(Printer &p, std::string name, const VkPhysicalDeviceFloatControlsProperties &obj);
+void DumpVkPhysicalDeviceFragmentDensityMap2FeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceFragmentDensityMap2FeaturesEXT &obj);
+void DumpVkPhysicalDeviceFragmentDensityMap2PropertiesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceFragmentDensityMap2PropertiesEXT &obj);
+void DumpVkPhysicalDeviceFragmentDensityMapFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceFragmentDensityMapFeaturesEXT &obj);
+void DumpVkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceFragmentDensityMapOffsetFeaturesEXT &obj);
+void DumpVkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceFragmentDensityMapOffsetPropertiesEXT &obj);
+void DumpVkPhysicalDeviceFragmentDensityMapPropertiesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceFragmentDensityMapPropertiesEXT &obj);
+void DumpVkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR &obj);
+void DumpVkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR(Printer &p, std::string name,
+                                                                const VkPhysicalDeviceFragmentShaderBarycentricPropertiesKHR &obj);
+void DumpVkPhysicalDeviceFragmentShaderInterlockFeaturesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT &obj);
+void DumpVkPhysicalDeviceFragmentShadingRateFeaturesKHR(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceFragmentShadingRateFeaturesKHR &obj);
+void DumpVkPhysicalDeviceFragmentShadingRateKHR(Printer &p, std::string name, const VkPhysicalDeviceFragmentShadingRateKHR &obj);
+void DumpVkPhysicalDeviceFragmentShadingRatePropertiesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceFragmentShadingRatePropertiesKHR &obj);
+void DumpVkPhysicalDeviceFrameBoundaryFeaturesEXT(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceFrameBoundaryFeaturesEXT &obj);
+void DumpVkPhysicalDeviceGlobalPriorityQueryFeatures(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceGlobalPriorityQueryFeatures &obj);
+void DumpVkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceGraphicsPipelineLibraryFeaturesEXT &obj);
+void DumpVkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceGraphicsPipelineLibraryPropertiesEXT &obj);
+void DumpVkPhysicalDeviceHostImageCopyFeatures(Printer &p, std::string name, const VkPhysicalDeviceHostImageCopyFeatures &obj);
+void DumpVkPhysicalDeviceHostImageCopyProperties(Printer &p, std::string name, const VkPhysicalDeviceHostImageCopyProperties &obj);
+void DumpVkPhysicalDeviceHostQueryResetFeatures(Printer &p, std::string name, const VkPhysicalDeviceHostQueryResetFeatures &obj);
+void DumpVkPhysicalDeviceIDProperties(Printer &p, std::string name, const VkPhysicalDeviceIDProperties &obj);
+void DumpVkPhysicalDeviceImage2DViewOf3DFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceImage2DViewOf3DFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImageCompressionControlFeaturesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceImageCompressionControlFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImageRobustnessFeatures(Printer &p, std::string name, const VkPhysicalDeviceImageRobustnessFeatures &obj);
+void DumpVkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImageViewMinLodFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceImageViewMinLodFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImagelessFramebufferFeatures(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceImagelessFramebufferFeatures &obj);
+void DumpVkPhysicalDeviceIndexTypeUint8Features(Printer &p, std::string name, const VkPhysicalDeviceIndexTypeUint8Features &obj);
+void DumpVkPhysicalDeviceInlineUniformBlockFeatures(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceInlineUniformBlockFeatures &obj);
+void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceInlineUniformBlockProperties &obj);
+void DumpVkPhysicalDeviceLayeredApiPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceLayeredApiPropertiesKHR &obj);
+void DumpVkPhysicalDeviceLayeredApiPropertiesListKHR(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceLayeredApiPropertiesListKHR &obj);
+void DumpVkPhysicalDeviceLegacyDitheringFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceLegacyDitheringFeaturesEXT &obj);
+void DumpVkPhysicalDeviceLegacyVertexAttributesFeaturesEXT(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT &obj);
+void DumpVkPhysicalDeviceLegacyVertexAttributesPropertiesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT &obj);
+void DumpVkPhysicalDeviceLimits(Printer &p, std::string name, const VkPhysicalDeviceLimits &obj);
+void DumpVkPhysicalDeviceLineRasterizationFeatures(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceLineRasterizationFeatures &obj);
+void DumpVkPhysicalDeviceLineRasterizationProperties(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceLineRasterizationProperties &obj);
+void DumpVkPhysicalDeviceMaintenance10FeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceMaintenance10FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance10PropertiesKHR(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceMaintenance10PropertiesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj);
+void DumpVkPhysicalDeviceMaintenance4Features(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Features &obj);
+void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Properties &obj);
+void DumpVkPhysicalDeviceMaintenance5Features(Printer &p, std::string name, const VkPhysicalDeviceMaintenance5Features &obj);
+void DumpVkPhysicalDeviceMaintenance5Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance5Properties &obj);
+void DumpVkPhysicalDeviceMaintenance6Features(Printer &p, std::string name, const VkPhysicalDeviceMaintenance6Features &obj);
+void DumpVkPhysicalDeviceMaintenance6Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance6Properties &obj);
+void DumpVkPhysicalDeviceMaintenance7FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceMaintenance7FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance7PropertiesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceMaintenance7PropertiesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance8FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceMaintenance8FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance9FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceMaintenance9FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance9PropertiesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceMaintenance9PropertiesKHR &obj);
+void DumpVkPhysicalDeviceMapMemoryPlacedFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceMapMemoryPlacedFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMapMemoryPlacedPropertiesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceMapMemoryPlacedPropertiesEXT &obj);
+void DumpVkPhysicalDeviceMemoryBudgetPropertiesEXT(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceMemoryBudgetPropertiesEXT &obj);
+void DumpVkPhysicalDeviceMemoryDecompressionFeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceMemoryDecompressionFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMemoryDecompressionPropertiesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceMemoryDecompressionPropertiesEXT &obj);
+void DumpVkPhysicalDeviceMemoryPriorityFeaturesEXT(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceMemoryPriorityFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMeshShaderFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceMeshShaderFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMeshShaderPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceMeshShaderPropertiesEXT &obj);
+void DumpVkPhysicalDeviceMultiDrawFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceMultiDrawFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMultiDrawPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceMultiDrawPropertiesEXT &obj);
+void DumpVkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMultiviewFeatures(Printer &p, std::string name, const VkPhysicalDeviceMultiviewFeatures &obj);
+void DumpVkPhysicalDeviceMultiviewProperties(Printer &p, std::string name, const VkPhysicalDeviceMultiviewProperties &obj);
+void DumpVkPhysicalDeviceMutableDescriptorTypeFeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT &obj);
+void DumpVkPhysicalDeviceNestedCommandBufferFeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceNestedCommandBufferFeaturesEXT &obj);
+void DumpVkPhysicalDeviceNestedCommandBufferPropertiesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceNestedCommandBufferPropertiesEXT &obj);
+void DumpVkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT &obj);
+void DumpVkPhysicalDeviceOpacityMicromapFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceOpacityMicromapFeaturesEXT &obj);
+void DumpVkPhysicalDeviceOpacityMicromapPropertiesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceOpacityMicromapPropertiesEXT &obj);
+void DumpVkPhysicalDevicePCIBusInfoPropertiesEXT(Printer &p, std::string name, const VkPhysicalDevicePCIBusInfoPropertiesEXT &obj);
+void DumpVkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT &obj);
+void DumpVkPhysicalDevicePerformanceQueryFeaturesKHR(Printer &p, std::string name,
+                                                     const VkPhysicalDevicePerformanceQueryFeaturesKHR &obj);
+void DumpVkPhysicalDevicePerformanceQueryPropertiesKHR(Printer &p, std::string name,
+                                                       const VkPhysicalDevicePerformanceQueryPropertiesKHR &obj);
+void DumpVkPhysicalDevicePipelineBinaryFeaturesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDevicePipelineBinaryFeaturesKHR &obj);
+void DumpVkPhysicalDevicePipelineBinaryPropertiesKHR(Printer &p, std::string name,
+                                                     const VkPhysicalDevicePipelineBinaryPropertiesKHR &obj);
+void DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(Printer &p, std::string name,
+                                                              const VkPhysicalDevicePipelineCreationCacheControlFeatures &obj);
+void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &obj);
+void DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT(Printer &p, std::string name,
+                                                                const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT &obj);
+void DumpVkPhysicalDevicePipelinePropertiesFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDevicePipelinePropertiesFeaturesEXT &obj);
+void DumpVkPhysicalDevicePipelineProtectedAccessFeatures(Printer &p, std::string name,
+                                                         const VkPhysicalDevicePipelineProtectedAccessFeatures &obj);
+void DumpVkPhysicalDevicePipelineRobustnessFeatures(Printer &p, std::string name,
+                                                    const VkPhysicalDevicePipelineRobustnessFeatures &obj);
+void DumpVkPhysicalDevicePipelineRobustnessProperties(Printer &p, std::string name,
+                                                      const VkPhysicalDevicePipelineRobustnessProperties &obj);
+void DumpVkPhysicalDevicePointClippingProperties(Printer &p, std::string name, const VkPhysicalDevicePointClippingProperties &obj);
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDevicePortabilitySubsetFeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDevicePortabilitySubsetFeaturesKHR &obj);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDevicePortabilitySubsetPropertiesKHR(Printer &p, std::string name,
+                                                        const VkPhysicalDevicePortabilitySubsetPropertiesKHR &obj);
+#endif  // VK_ENABLE_BETA_EXTENSIONS
+void DumpVkPhysicalDevicePresentId2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentId2FeaturesKHR &obj);
+void DumpVkPhysicalDevicePresentIdFeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentIdFeaturesKHR &obj);
+void DumpVkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR(Printer &p, std::string name,
+                                                               const VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR &obj);
+void DumpVkPhysicalDevicePresentTimingFeaturesEXT(Printer &p, std::string name,
+                                                  const VkPhysicalDevicePresentTimingFeaturesEXT &obj);
+void DumpVkPhysicalDevicePresentWait2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentWait2FeaturesKHR &obj);
+void DumpVkPhysicalDevicePresentWaitFeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentWaitFeaturesKHR &obj);
+void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT &obj);
+void DumpVkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT &obj);
+void DumpVkPhysicalDevicePrivateDataFeatures(Printer &p, std::string name, const VkPhysicalDevicePrivateDataFeatures &obj);
+void DumpVkPhysicalDeviceProtectedMemoryFeatures(Printer &p, std::string name, const VkPhysicalDeviceProtectedMemoryFeatures &obj);
+void DumpVkPhysicalDeviceProtectedMemoryProperties(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceProtectedMemoryProperties &obj);
+void DumpVkPhysicalDeviceProvokingVertexFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceProvokingVertexFeaturesEXT &obj);
+void DumpVkPhysicalDeviceProvokingVertexPropertiesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceProvokingVertexPropertiesEXT &obj);
+void DumpVkPhysicalDevicePushDescriptorProperties(Printer &p, std::string name,
+                                                  const VkPhysicalDevicePushDescriptorProperties &obj);
+void DumpVkPhysicalDeviceRGBA10X6FormatsFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceRGBA10X6FormatsFeaturesEXT &obj);
+void DumpVkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT &obj);
+void DumpVkPhysicalDeviceRayQueryFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceRayQueryFeaturesKHR &obj);
+void DumpVkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT(Printer &p, std::string name,
+                                                                const VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT &obj);
+void DumpVkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT &obj);
+void DumpVkPhysicalDeviceRayTracingMaintenance1FeaturesKHR(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR &obj);
+void DumpVkPhysicalDeviceRayTracingPipelineFeaturesKHR(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceRayTracingPipelineFeaturesKHR &obj);
+void DumpVkPhysicalDeviceRayTracingPipelinePropertiesKHR(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceRayTracingPipelinePropertiesKHR &obj);
+void DumpVkPhysicalDeviceRayTracingPositionFetchFeaturesKHR(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceRayTracingPositionFetchFeaturesKHR &obj);
+void DumpVkPhysicalDeviceRobustness2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceRobustness2FeaturesKHR &obj);
+void DumpVkPhysicalDeviceRobustness2PropertiesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceRobustness2PropertiesKHR &obj);
+void DumpVkPhysicalDeviceSampleLocationsPropertiesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceSampleLocationsPropertiesEXT &obj);
+void DumpVkPhysicalDeviceSamplerFilterMinmaxProperties(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceSamplerFilterMinmaxProperties &obj);
+void DumpVkPhysicalDeviceSamplerYcbcrConversionFeatures(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceSamplerYcbcrConversionFeatures &obj);
+void DumpVkPhysicalDeviceScalarBlockLayoutFeatures(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceScalarBlockLayoutFeatures &obj);
+void DumpVkPhysicalDeviceSeparateDepthStencilLayoutsFeatures(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures &obj);
+void DumpVkPhysicalDeviceShader64BitIndexingFeaturesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceShader64BitIndexingFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderAtomicFloat2FeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderAtomicFloatFeaturesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderAtomicFloatFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderAtomicInt64Features(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceShaderAtomicInt64Features &obj);
+void DumpVkPhysicalDeviceShaderBfloat16FeaturesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceShaderBfloat16FeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderClockFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceShaderClockFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderDemoteToHelperInvocationFeatures(Printer &p, std::string name,
+                                                                const VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures &obj);
+void DumpVkPhysicalDeviceShaderDrawParametersFeatures(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderDrawParametersFeatures &obj);
+void DumpVkPhysicalDeviceShaderExpectAssumeFeatures(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceShaderExpectAssumeFeatures &obj);
+void DumpVkPhysicalDeviceShaderFloat16Int8Features(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceShaderFloat16Int8Features &obj);
+void DumpVkPhysicalDeviceShaderFloat8FeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderFloat8FeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderFloatControls2Features(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderFloatControls2Features &obj);
+void DumpVkPhysicalDeviceShaderFmaFeaturesKHR(Printer &p, std::string name, const VkPhysicalDeviceShaderFmaFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderIntegerDotProductFeatures(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceShaderIntegerDotProductFeatures &obj);
+void DumpVkPhysicalDeviceShaderIntegerDotProductProperties(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceShaderIntegerDotProductProperties &obj);
+void DumpVkPhysicalDeviceShaderLongVectorFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceShaderLongVectorFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderLongVectorPropertiesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceShaderLongVectorPropertiesEXT &obj);
+void DumpVkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT &obj);
+void DumpVkPhysicalDeviceShaderObjectFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderObjectFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderObjectPropertiesEXT(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceShaderObjectPropertiesEXT &obj);
+void DumpVkPhysicalDeviceShaderQuadControlFeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderQuadControlFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures &obj);
+void DumpVkPhysicalDeviceShaderSubgroupRotateFeatures(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderSubgroupRotateFeatures &obj);
+void DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR &obj);
+void DumpVkPhysicalDeviceShaderTerminateInvocationFeatures(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceShaderTerminateInvocationFeatures &obj);
+void DumpVkPhysicalDeviceShaderTileImageFeaturesEXT(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceShaderTileImageFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderTileImagePropertiesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceShaderTileImagePropertiesEXT &obj);
+void DumpVkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceShaderUniformBufferUnsizedArrayFeaturesEXT &obj);
+void DumpVkPhysicalDeviceShaderUntypedPointersFeaturesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceShaderUntypedPointersFeaturesKHR &obj);
+void DumpVkPhysicalDeviceSparseProperties(Printer &p, std::string name, const VkPhysicalDeviceSparseProperties &obj);
+void DumpVkPhysicalDeviceSubgroupProperties(Printer &p, std::string name, const VkPhysicalDeviceSubgroupProperties &obj);
+void DumpVkPhysicalDeviceSubgroupSizeControlFeatures(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceSubgroupSizeControlFeatures &obj);
+void DumpVkPhysicalDeviceSubgroupSizeControlProperties(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceSubgroupSizeControlProperties &obj);
+void DumpVkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceSubpassMergeFeedbackFeaturesEXT &obj);
+void DumpVkPhysicalDeviceSwapchainMaintenance1FeaturesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceSwapchainMaintenance1FeaturesKHR &obj);
+void DumpVkPhysicalDeviceSynchronization2Features(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceSynchronization2Features &obj);
+void DumpVkPhysicalDeviceTexelBufferAlignmentFeaturesEXT(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT &obj);
+void DumpVkPhysicalDeviceTexelBufferAlignmentProperties(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceTexelBufferAlignmentProperties &obj);
+void DumpVkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceTextureCompressionASTC3DFeaturesEXT &obj);
+void DumpVkPhysicalDeviceTextureCompressionASTCHDRFeatures(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceTextureCompressionASTCHDRFeatures &obj);
+void DumpVkPhysicalDeviceTimelineSemaphoreFeatures(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceTimelineSemaphoreFeatures &obj);
+void DumpVkPhysicalDeviceTimelineSemaphoreProperties(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceTimelineSemaphoreProperties &obj);
+void DumpVkPhysicalDeviceToolProperties(Printer &p, std::string name, const VkPhysicalDeviceToolProperties &obj);
+void DumpVkPhysicalDeviceTransformFeedbackFeaturesEXT(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceTransformFeedbackFeaturesEXT &obj);
+void DumpVkPhysicalDeviceTransformFeedbackPropertiesEXT(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceTransformFeedbackPropertiesEXT &obj);
+void DumpVkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR &obj);
+void DumpVkPhysicalDeviceUniformBufferStandardLayoutFeatures(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceUniformBufferStandardLayoutFeatures &obj);
+void DumpVkPhysicalDeviceVariablePointersFeatures(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceVariablePointersFeatures &obj);
+void DumpVkPhysicalDeviceVertexAttributeDivisorFeatures(Printer &p, std::string name,
+                                                        const VkPhysicalDeviceVertexAttributeDivisorFeatures &obj);
+void DumpVkPhysicalDeviceVertexAttributeDivisorProperties(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceVertexAttributeDivisorProperties &obj);
+void DumpVkPhysicalDeviceVertexAttributeDivisorPropertiesEXT(Printer &p, std::string name,
+                                                             const VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT &obj);
+void DumpVkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT &obj);
+void DumpVkPhysicalDeviceVertexInputDynamicStateFeaturesEXT(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT &obj);
+void DumpVkPhysicalDeviceVideoDecodeVP9FeaturesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceVideoDecodeVP9FeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoEncodeAV1FeaturesKHR(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR(Printer &p, std::string name,
+                                                            const VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoMaintenance1FeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceVideoMaintenance1FeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoMaintenance2FeaturesKHR(Printer &p, std::string name,
+                                                      const VkPhysicalDeviceVideoMaintenance2FeaturesKHR &obj);
+void DumpVkPhysicalDeviceVulkan11Features(Printer &p, std::string name, const VkPhysicalDeviceVulkan11Features &obj);
+void DumpVkPhysicalDeviceVulkan11Properties(Printer &p, std::string name, const VkPhysicalDeviceVulkan11Properties &obj);
+void DumpVkPhysicalDeviceVulkan12Features(Printer &p, std::string name, const VkPhysicalDeviceVulkan12Features &obj);
+void DumpVkPhysicalDeviceVulkan12Properties(Printer &p, std::string name, const VkPhysicalDeviceVulkan12Properties &obj);
+void DumpVkPhysicalDeviceVulkan13Features(Printer &p, std::string name, const VkPhysicalDeviceVulkan13Features &obj);
+void DumpVkPhysicalDeviceVulkan13Properties(Printer &p, std::string name, const VkPhysicalDeviceVulkan13Properties &obj);
+void DumpVkPhysicalDeviceVulkan14Features(Printer &p, std::string name, const VkPhysicalDeviceVulkan14Features &obj);
+void DumpVkPhysicalDeviceVulkan14Properties(Printer &p, std::string name, const VkPhysicalDeviceVulkan14Properties &obj);
+void DumpVkPhysicalDeviceVulkanMemoryModelFeatures(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceVulkanMemoryModelFeatures &obj);
+void DumpVkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR &obj);
+void DumpVkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT &obj);
+void DumpVkPhysicalDeviceYcbcrImageArraysFeaturesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceYcbcrImageArraysFeaturesEXT &obj);
+void DumpVkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT &obj);
+void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures &obj);
+void DumpVkPresentTimingSurfaceCapabilitiesEXT(Printer &p, std::string name, const VkPresentTimingSurfaceCapabilitiesEXT &obj);
+void DumpVkQueueFamilyGlobalPriorityProperties(Printer &p, std::string name, const VkQueueFamilyGlobalPriorityProperties &obj);
+void DumpVkQueueFamilyOwnershipTransferPropertiesKHR(Printer &p, std::string name,
+                                                     const VkQueueFamilyOwnershipTransferPropertiesKHR &obj);
+void DumpVkQueueFamilyQueryResultStatusPropertiesKHR(Printer &p, std::string name,
+                                                     const VkQueueFamilyQueryResultStatusPropertiesKHR &obj);
+void DumpVkQueueFamilyVideoPropertiesKHR(Printer &p, std::string name, const VkQueueFamilyVideoPropertiesKHR &obj);
+void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilitiesKHR &obj);
+void DumpVkSubpassResolvePerformanceQueryEXT(Printer &p, std::string name, const VkSubpassResolvePerformanceQueryEXT &obj);
+#ifdef VK_USE_PLATFORM_WIN32_KHR
+void DumpVkSurfaceCapabilitiesFullScreenExclusiveEXT(Printer &p, std::string name,
+                                                     const VkSurfaceCapabilitiesFullScreenExclusiveEXT &obj);
+#endif  // VK_USE_PLATFORM_WIN32_KHR
+void DumpVkSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSurfaceCapabilitiesKHR &obj);
+void DumpVkSurfaceCapabilitiesPresentId2KHR(Printer &p, std::string name, const VkSurfaceCapabilitiesPresentId2KHR &obj);
+void DumpVkSurfaceCapabilitiesPresentWait2KHR(Printer &p, std::string name, const VkSurfaceCapabilitiesPresentWait2KHR &obj);
+void DumpVkSurfaceFormatKHR(Printer &p, std::string name, const VkSurfaceFormatKHR &obj);
+void DumpVkSurfacePresentModeCompatibilityKHR(Printer &p, std::string name, const VkSurfacePresentModeCompatibilityKHR &obj);
+void DumpVkSurfacePresentScalingCapabilitiesKHR(Printer &p, std::string name, const VkSurfacePresentScalingCapabilitiesKHR &obj);
+void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, const VkSurfaceProtectedCapabilitiesKHR &obj);
+void DumpVkVideoCapabilitiesKHR(Printer &p, std::string name, const VkVideoCapabilitiesKHR &obj);
+void DumpVkVideoDecodeAV1CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeAV1CapabilitiesKHR &obj);
+void DumpVkVideoDecodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeAV1ProfileInfoKHR &obj);
+void DumpVkVideoDecodeCapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeCapabilitiesKHR &obj);
+void DumpVkVideoDecodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeH264CapabilitiesKHR &obj);
+void DumpVkVideoDecodeH264ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeH264ProfileInfoKHR &obj);
+void DumpVkVideoDecodeH265CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeH265CapabilitiesKHR &obj);
+void DumpVkVideoDecodeH265ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeH265ProfileInfoKHR &obj);
+void DumpVkVideoDecodeUsageInfoKHR(Printer &p, std::string name, const VkVideoDecodeUsageInfoKHR &obj);
+void DumpVkVideoDecodeVP9CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeVP9CapabilitiesKHR &obj);
+void DumpVkVideoDecodeVP9ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeVP9ProfileInfoKHR &obj);
+void DumpVkVideoEncodeAV1CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeAV1CapabilitiesKHR &obj);
+void DumpVkVideoEncodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeAV1ProfileInfoKHR &obj);
+void DumpVkVideoEncodeAV1QuantizationMapCapabilitiesKHR(Printer &p, std::string name,
+                                                        const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR &obj);
+void DumpVkVideoEncodeCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeCapabilitiesKHR &obj);
+void DumpVkVideoEncodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH264CapabilitiesKHR &obj);
+void DumpVkVideoEncodeH264ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeH264ProfileInfoKHR &obj);
+void DumpVkVideoEncodeH264QuantizationMapCapabilitiesKHR(Printer &p, std::string name,
+                                                         const VkVideoEncodeH264QuantizationMapCapabilitiesKHR &obj);
+void DumpVkVideoEncodeH265CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH265CapabilitiesKHR &obj);
+void DumpVkVideoEncodeH265ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeH265ProfileInfoKHR &obj);
+void DumpVkVideoEncodeH265QuantizationMapCapabilitiesKHR(Printer &p, std::string name,
+                                                         const VkVideoEncodeH265QuantizationMapCapabilitiesKHR &obj);
+void DumpVkVideoEncodeIntraRefreshCapabilitiesKHR(Printer &p, std::string name,
+                                                  const VkVideoEncodeIntraRefreshCapabilitiesKHR &obj);
+void DumpVkVideoEncodeProfileRgbConversionInfoVALVE(Printer &p, std::string name,
+                                                    const VkVideoEncodeProfileRgbConversionInfoVALVE &obj);
+void DumpVkVideoEncodeQuantizationMapCapabilitiesKHR(Printer &p, std::string name,
+                                                     const VkVideoEncodeQuantizationMapCapabilitiesKHR &obj);
+void DumpVkVideoEncodeRgbConversionCapabilitiesVALVE(Printer &p, std::string name,
+                                                     const VkVideoEncodeRgbConversionCapabilitiesVALVE &obj);
+void DumpVkVideoEncodeUsageInfoKHR(Printer &p, std::string name, const VkVideoEncodeUsageInfoKHR &obj);
+void DumpVkVideoFormatAV1QuantizationMapPropertiesKHR(Printer &p, std::string name,
+                                                      const VkVideoFormatAV1QuantizationMapPropertiesKHR &obj);
+void DumpVkVideoFormatH265QuantizationMapPropertiesKHR(Printer &p, std::string name,
+                                                       const VkVideoFormatH265QuantizationMapPropertiesKHR &obj);
+void DumpVkVideoFormatPropertiesKHR(Printer &p, std::string name, const VkVideoFormatPropertiesKHR &obj);
+void DumpVkVideoFormatQuantizationMapPropertiesKHR(Printer &p, std::string name,
+                                                   const VkVideoFormatQuantizationMapPropertiesKHR &obj);
+void DumpVkVideoProfileInfoKHR(Printer &p, std::string name, const VkVideoProfileInfoKHR &obj);
 void DumpVkComponentMapping(Printer &p, std::string name, const VkComponentMapping &obj) {
     ObjectWrapper object{p, name};
     DumpVkComponentSwizzle(p, "r", obj.r);
@@ -4414,6 +4973,43 @@ void DumpVkCooperativeMatrixPropertiesKHR(Printer &p, std::string name, const Vk
     DumpVkComponentTypeKHR(p, "ResultType", obj.ResultType);
     p.PrintKeyBool("saturatingAccumulation", static_cast<bool>(obj.saturatingAccumulation));
     DumpVkScopeKHR(p, "scope", obj.scope);
+}
+void DumpVkDisplayModeParametersKHR(Printer &p, std::string name, const VkDisplayModeParametersKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(11);
+    DumpVkExtent2D(p, "visibleRegion", obj.visibleRegion);
+    p.PrintKeyValue("refreshRate", obj.refreshRate);
+}
+void DumpVkDisplayModePropertiesKHR(Printer &p, std::string name, const VkDisplayModePropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkDisplayModeParametersKHR(p, "parameters", obj.parameters);
+}
+void DumpVkDisplayPlaneCapabilitiesKHR(Printer &p, std::string name, const VkDisplayPlaneCapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkDisplayPlaneAlphaFlagsKHR(p, "supportedAlpha", obj.supportedAlpha);
+    DumpVkOffset2D(p, "minSrcPosition", obj.minSrcPosition);
+    DumpVkOffset2D(p, "maxSrcPosition", obj.maxSrcPosition);
+    DumpVkExtent2D(p, "minSrcExtent", obj.minSrcExtent);
+    DumpVkExtent2D(p, "maxSrcExtent", obj.maxSrcExtent);
+    DumpVkOffset2D(p, "minDstPosition", obj.minDstPosition);
+    DumpVkOffset2D(p, "maxDstPosition", obj.maxDstPosition);
+    DumpVkExtent2D(p, "minDstExtent", obj.minDstExtent);
+    DumpVkExtent2D(p, "maxDstExtent", obj.maxDstExtent);
+}
+void DumpVkDisplayPlanePropertiesKHR(Printer &p, std::string name, const VkDisplayPlanePropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(17);
+    p.PrintKeyValue("currentStackIndex", obj.currentStackIndex);
+}
+void DumpVkDisplayPropertiesKHR(Printer &p, std::string name, const VkDisplayPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(20);
+    p.PrintKeyValue("displayName", obj.displayName);
+    DumpVkExtent2D(p, "physicalDimensions", obj.physicalDimensions);
+    DumpVkExtent2D(p, "physicalResolution", obj.physicalResolution);
+    DumpVkSurfaceTransformFlagsKHR(p, "supportedTransforms", obj.supportedTransforms);
+    p.PrintKeyBool("planeReorderPossible", static_cast<bool>(obj.planeReorderPossible));
+    p.PrintKeyBool("persistentContent", static_cast<bool>(obj.persistentContent));
 }
 void DumpVkDrmFormatModifierProperties2EXT(Printer &p, std::string name, const VkDrmFormatModifierProperties2EXT &obj) {
     ObjectWrapper object{p, name};
@@ -11562,6 +12158,7 @@ bool operator==(const VkSurfaceFormat2KHR &a, const VkSurfaceFormat2KHR b) { ret
 bool operator==(const VkSurfaceFormatKHR &a, const VkSurfaceFormatKHR b) {
     return a.format == b.format && a.colorSpace == b.colorSpace;
 }
+std::ostream &operator<<(std::ostream &o, VkExtent2D &obj) { return o << "(" << obj.width << ',' << obj.height << ")"; }
 std::ostream &operator<<(std::ostream &o, VkExtent3D &obj) {
     return o << "(" << obj.width << ',' << obj.height << ',' << obj.depth << ")";
 }
