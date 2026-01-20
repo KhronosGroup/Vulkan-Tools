@@ -5004,7 +5004,11 @@ void DumpVkDisplayPlanePropertiesKHR(Printer &p, std::string name, const VkDispl
 void DumpVkDisplayPropertiesKHR(Printer &p, std::string name, const VkDisplayPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(20);
-    p.PrintKeyValue("displayName", obj.displayName);
+    if (obj.displayName == nullptr) {
+        p.PrintKeyString("displayName", "NULL");
+    } else {
+        p.PrintKeyString("displayName", obj.displayName);
+    }
     DumpVkExtent2D(p, "physicalDimensions", obj.physicalDimensions);
     DumpVkExtent2D(p, "physicalResolution", obj.physicalResolution);
     DumpVkSurfaceTransformFlagsKHR(p, "supportedTransforms", obj.supportedTransforms);
