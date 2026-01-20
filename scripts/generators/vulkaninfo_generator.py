@@ -817,13 +817,19 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
         if max_key_len > 0:
             out.append(f'    p.SetMinKeyWidth({max_key_len});\n')
         for v in struct.members:
+            # strings
+            if v.type == 'char':
+                if v.pointer == True:
+                    out.append(f'    if (obj.{v.name} == nullptr) {{')
+                    out.append(f'        p.PrintKeyString("{v.name}", "NULL");\n')
+                    out.append('    } else {')
+                out.append(f'    p.PrintKeyString("{v.name}", obj.{v.name});\n')
+                if v.pointer == True:
+                        out.append('    }')
             # arrays
-            if v.length is not None:
-                # strings
-                if v.type == 'char':
-                    out.append(f'    p.PrintKeyString("{v.name}", obj.{v.name});\n')
+            elif v.length is not None:
                 # uuid's
-                elif v.type == 'uint8_t' and (v.fixedSizeArray[0] == 'VK_LUID_SIZE' or v.fixedSizeArray[0] == 'VK_UUID_SIZE'):  # VK_UUID_SIZE
+                if v.type == 'uint8_t' and (v.fixedSizeArray[0] == 'VK_LUID_SIZE' or v.fixedSizeArray[0] == 'VK_UUID_SIZE'):  # VK_UUID_SIZE
                     if v.fixedSizeArray[0] == 'VK_LUID_SIZE':
                         out.append('    if (obj.deviceLUIDValid) { // special case\n')
                     out.append(f'    p.PrintKeyValue("{v.name}", obj.{v.name});\n')

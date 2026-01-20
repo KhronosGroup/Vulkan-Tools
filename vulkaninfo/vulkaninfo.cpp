@@ -884,7 +884,7 @@ void GpuDumpDisplayPlanes(Printer &p, AppGpu &gpu) {
 
         auto *current = gpu.FindDisplay(plane.properties.currentDisplay);
 
-        p.PrintKeyValue("currentDisplay", current ? current->name.c_str() : "none");
+        p.PrintKeyString("currentDisplay", current ? current->name.c_str() : "none");
 
         DumpVkDisplayPlanePropertiesKHR(p, "VkDisplayPlanePropertiesKHR", plane.properties);
 
