@@ -2579,11 +2579,11 @@ std::vector<const char *> VkImageCreateFlagBitsGetStrings(VkImageCreateFlagBits 
     if (VK_IMAGE_CREATE_PROTECTED_BIT & value) strings.push_back("IMAGE_CREATE_PROTECTED_BIT");
     if (VK_IMAGE_CREATE_DISJOINT_BIT & value) strings.push_back("IMAGE_CREATE_DISJOINT_BIT");
     if (VK_IMAGE_CREATE_CORNER_SAMPLED_BIT_NV & value) strings.push_back("IMAGE_CREATE_CORNER_SAMPLED_BIT_NV");
+    if (VK_IMAGE_CREATE_DESCRIPTOR_HEAP_CAPTURE_REPLAY_BIT_EXT & value)
+        strings.push_back("IMAGE_CREATE_DESCRIPTOR_HEAP_CAPTURE_REPLAY_BIT_EXT");
     if (VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT & value)
         strings.push_back("IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT");
     if (VK_IMAGE_CREATE_SUBSAMPLED_BIT_EXT & value) strings.push_back("IMAGE_CREATE_SUBSAMPLED_BIT_EXT");
-    if (VK_IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT & value)
-        strings.push_back("IMAGE_CREATE_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT");
     if (VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT & value)
         strings.push_back("IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT");
     if (VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT & value) strings.push_back("IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT");
@@ -3203,7 +3203,7 @@ std::vector<const char *> VkSubgroupFeatureFlagBitsGetStrings(VkSubgroupFeatureF
     if (VK_SUBGROUP_FEATURE_QUAD_BIT & value) strings.push_back("SUBGROUP_FEATURE_QUAD_BIT");
     if (VK_SUBGROUP_FEATURE_ROTATE_BIT & value) strings.push_back("SUBGROUP_FEATURE_ROTATE_BIT");
     if (VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT & value) strings.push_back("SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT");
-    if (VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV & value) strings.push_back("SUBGROUP_FEATURE_PARTITIONED_BIT_NV");
+    if (VK_SUBGROUP_FEATURE_PARTITIONED_BIT_EXT & value) strings.push_back("SUBGROUP_FEATURE_PARTITIONED_BIT_EXT");
     return strings;
 }
 void DumpVkSubgroupFeatureFlags(Printer &p, std::string name, VkSubgroupFeatureFlags value) {
@@ -4508,6 +4508,12 @@ void DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(Printer &p, std::string nam
                                                      const VkPhysicalDeviceDescriptorBufferFeaturesEXT &obj);
 void DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(Printer &p, std::string name,
                                                        const VkPhysicalDeviceDescriptorBufferPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorHeapFeaturesEXT(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceDescriptorHeapFeaturesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorHeapPropertiesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceDescriptorHeapPropertiesEXT &obj);
+void DumpVkPhysicalDeviceDescriptorHeapTensorPropertiesARM(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM &obj);
 void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name,
                                                     const VkPhysicalDeviceDescriptorIndexingFeatures &obj);
 void DumpVkPhysicalDeviceDescriptorIndexingProperties(Printer &p, std::string name,
@@ -4594,6 +4600,8 @@ void DumpVkPhysicalDeviceInlineUniformBlockFeatures(Printer &p, std::string name
                                                     const VkPhysicalDeviceInlineUniformBlockFeatures &obj);
 void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string name,
                                                       const VkPhysicalDeviceInlineUniformBlockProperties &obj);
+void DumpVkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR &obj);
 void DumpVkPhysicalDeviceLayeredApiPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceLayeredApiPropertiesKHR &obj);
 void DumpVkPhysicalDeviceLayeredApiPropertiesListKHR(Printer &p, std::string name,
                                                      const VkPhysicalDeviceLayeredApiPropertiesListKHR &obj);
@@ -4794,6 +4802,8 @@ void DumpVkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT(Printer &p, std::
                                                                const VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::string name,
                                                              const VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures &obj);
+void DumpVkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderSubgroupRotateFeatures(Printer &p, std::string name,
                                                       const VkPhysicalDeviceShaderSubgroupRotateFeatures &obj);
 void DumpVkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR(
@@ -5364,6 +5374,45 @@ void DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(Printer &p, std::string n
     p.PrintKeyValue("resourceDescriptorBufferAddressSpaceSize", to_hex_str(p, obj.resourceDescriptorBufferAddressSpaceSize));
     p.PrintKeyValue("descriptorBufferAddressSpaceSize", to_hex_str(p, obj.descriptorBufferAddressSpaceSize));
 }
+void DumpVkPhysicalDeviceDescriptorHeapFeaturesEXT(Printer &p, std::string name,
+                                                   const VkPhysicalDeviceDescriptorHeapFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(27);
+    p.PrintKeyBool("descriptorHeap", static_cast<bool>(obj.descriptorHeap));
+    p.PrintKeyBool("descriptorHeapCaptureReplay", static_cast<bool>(obj.descriptorHeapCaptureReplay));
+}
+void DumpVkPhysicalDeviceDescriptorHeapPropertiesEXT(Printer &p, std::string name,
+                                                     const VkPhysicalDeviceDescriptorHeapPropertiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(39);
+    p.PrintKeyValue("samplerHeapAlignment", to_hex_str(p, obj.samplerHeapAlignment));
+    p.PrintKeyValue("resourceHeapAlignment", to_hex_str(p, obj.resourceHeapAlignment));
+    p.PrintKeyValue("maxSamplerHeapSize", to_hex_str(p, obj.maxSamplerHeapSize));
+    p.PrintKeyValue("maxResourceHeapSize", to_hex_str(p, obj.maxResourceHeapSize));
+    p.PrintKeyValue("minSamplerHeapReservedRange", to_hex_str(p, obj.minSamplerHeapReservedRange));
+    p.PrintKeyValue("minSamplerHeapReservedRangeWithEmbedded", to_hex_str(p, obj.minSamplerHeapReservedRangeWithEmbedded));
+    p.PrintKeyValue("minResourceHeapReservedRange", to_hex_str(p, obj.minResourceHeapReservedRange));
+    p.PrintKeyValue("samplerDescriptorSize", to_hex_str(p, obj.samplerDescriptorSize));
+    p.PrintKeyValue("imageDescriptorSize", to_hex_str(p, obj.imageDescriptorSize));
+    p.PrintKeyValue("bufferDescriptorSize", to_hex_str(p, obj.bufferDescriptorSize));
+    p.PrintKeyValue("samplerDescriptorAlignment", to_hex_str(p, obj.samplerDescriptorAlignment));
+    p.PrintKeyValue("imageDescriptorAlignment", to_hex_str(p, obj.imageDescriptorAlignment));
+    p.PrintKeyValue("bufferDescriptorAlignment", to_hex_str(p, obj.bufferDescriptorAlignment));
+    p.PrintKeyValue("maxPushDataSize", to_hex_str(p, obj.maxPushDataSize));
+    p.PrintKeyValue("imageCaptureReplayOpaqueDataSize", obj.imageCaptureReplayOpaqueDataSize);
+    p.PrintKeyValue("maxDescriptorHeapEmbeddedSamplers", obj.maxDescriptorHeapEmbeddedSamplers);
+    p.PrintKeyValue("samplerYcbcrConversionCount", obj.samplerYcbcrConversionCount);
+    p.PrintKeyBool("sparseDescriptorHeaps", static_cast<bool>(obj.sparseDescriptorHeaps));
+    p.PrintKeyBool("protectedDescriptorHeaps", static_cast<bool>(obj.protectedDescriptorHeaps));
+}
+void DumpVkPhysicalDeviceDescriptorHeapTensorPropertiesARM(Printer &p, std::string name,
+                                                           const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(33);
+    p.PrintKeyValue("tensorDescriptorSize", to_hex_str(p, obj.tensorDescriptorSize));
+    p.PrintKeyValue("tensorDescriptorAlignment", to_hex_str(p, obj.tensorDescriptorAlignment));
+    p.PrintKeyValue("tensorCaptureReplayOpaqueDataSize", obj.tensorCaptureReplayOpaqueDataSize);
+}
 void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name,
                                                     const VkPhysicalDeviceDescriptorIndexingFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -5910,6 +5959,12 @@ void DumpVkPhysicalDeviceInlineUniformBlockProperties(Printer &p, std::string na
                     obj.maxPerStageDescriptorUpdateAfterBindInlineUniformBlocks);
     p.PrintKeyValue("maxDescriptorSetInlineUniformBlocks", obj.maxDescriptorSetInlineUniformBlocks);
     p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInlineUniformBlocks", obj.maxDescriptorSetUpdateAfterBindInlineUniformBlocks);
+}
+void DumpVkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR(
+    Printer &p, std::string name, const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(28);
+    p.PrintKeyBool("internallySynchronizedQueues", static_cast<bool>(obj.internallySynchronizedQueues));
 }
 void DumpVkPhysicalDeviceLayeredApiPropertiesKHR(Printer &p, std::string name, const VkPhysicalDeviceLayeredApiPropertiesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -6964,6 +7019,12 @@ void DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(Printer &p, std::st
     p.SetMinKeyWidth(27);
     p.PrintKeyBool("shaderSubgroupExtendedTypes", static_cast<bool>(obj.shaderSubgroupExtendedTypes));
 }
+void DumpVkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT(Printer &p, std::string name,
+                                                              const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(25);
+    p.PrintKeyBool("shaderSubgroupPartitioned", static_cast<bool>(obj.shaderSubgroupPartitioned));
+}
 void DumpVkPhysicalDeviceShaderSubgroupRotateFeatures(Printer &p, std::string name,
                                                       const VkPhysicalDeviceShaderSubgroupRotateFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -7958,6 +8019,8 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceDepthStencilResolveProperties PhysicalDeviceDepthStencilResolveProperties{};
     VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT{};
     VkPhysicalDeviceDescriptorBufferPropertiesEXT PhysicalDeviceDescriptorBufferPropertiesEXT{};
+    VkPhysicalDeviceDescriptorHeapPropertiesEXT PhysicalDeviceDescriptorHeapPropertiesEXT{};
+    VkPhysicalDeviceDescriptorHeapTensorPropertiesARM PhysicalDeviceDescriptorHeapTensorPropertiesARM{};
     VkPhysicalDeviceDescriptorIndexingProperties PhysicalDeviceDescriptorIndexingProperties{};
     VkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT PhysicalDeviceDeviceGeneratedCommandsPropertiesEXT{};
     VkPhysicalDeviceDiscardRectanglePropertiesEXT PhysicalDeviceDiscardRectanglePropertiesEXT{};
@@ -8045,6 +8108,9 @@ struct phys_device_props2_chain {
         PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT;
         PhysicalDeviceDescriptorBufferPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT;
+        PhysicalDeviceDescriptorHeapPropertiesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_PROPERTIES_EXT;
+        PhysicalDeviceDescriptorHeapTensorPropertiesARM.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_TENSOR_PROPERTIES_ARM;
         PhysicalDeviceDescriptorIndexingProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
         PhysicalDeviceDeviceGeneratedCommandsPropertiesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT;
@@ -8149,6 +8215,10 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorBufferDensityMapPropertiesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorBufferPropertiesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_HEAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorHeapPropertiesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_HEAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorHeapTensorPropertiesARM));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorIndexingProperties));
@@ -8410,6 +8480,20 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
                 (const VkPhysicalDeviceDescriptorBufferPropertiesEXT *)structure;
             const char *name = "VkPhysicalDeviceDescriptorBufferPropertiesEXT";
             DumpVkPhysicalDeviceDescriptorBufferPropertiesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_PROPERTIES_EXT) {
+            const VkPhysicalDeviceDescriptorHeapPropertiesEXT *props =
+                (const VkPhysicalDeviceDescriptorHeapPropertiesEXT *)structure;
+            const char *name = "VkPhysicalDeviceDescriptorHeapPropertiesEXT";
+            DumpVkPhysicalDeviceDescriptorHeapPropertiesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_TENSOR_PROPERTIES_ARM) {
+            const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM *props =
+                (const VkPhysicalDeviceDescriptorHeapTensorPropertiesARM *)structure;
+            const char *name = "VkPhysicalDeviceDescriptorHeapTensorPropertiesARM";
+            DumpVkPhysicalDeviceDescriptorHeapTensorPropertiesARM(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES) {
@@ -9109,6 +9193,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceDepthClipControlFeaturesEXT PhysicalDeviceDepthClipControlFeaturesEXT{};
     VkPhysicalDeviceDepthClipEnableFeaturesEXT PhysicalDeviceDepthClipEnableFeaturesEXT{};
     VkPhysicalDeviceDescriptorBufferFeaturesEXT PhysicalDeviceDescriptorBufferFeaturesEXT{};
+    VkPhysicalDeviceDescriptorHeapFeaturesEXT PhysicalDeviceDescriptorHeapFeaturesEXT{};
     VkPhysicalDeviceDescriptorIndexingFeatures PhysicalDeviceDescriptorIndexingFeatures{};
     VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT PhysicalDeviceDeviceGeneratedCommandsFeaturesEXT{};
     VkPhysicalDeviceDeviceMemoryReportFeaturesEXT PhysicalDeviceDeviceMemoryReportFeaturesEXT{};
@@ -9139,6 +9224,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceImagelessFramebufferFeatures PhysicalDeviceImagelessFramebufferFeatures{};
     VkPhysicalDeviceIndexTypeUint8Features PhysicalDeviceIndexTypeUint8Features{};
     VkPhysicalDeviceInlineUniformBlockFeatures PhysicalDeviceInlineUniformBlockFeatures{};
+    VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR PhysicalDeviceInternallySynchronizedQueuesFeaturesKHR{};
     VkPhysicalDeviceLegacyDitheringFeaturesEXT PhysicalDeviceLegacyDitheringFeaturesEXT{};
     VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT PhysicalDeviceLegacyVertexAttributesFeaturesEXT{};
     VkPhysicalDeviceLineRasterizationFeatures PhysicalDeviceLineRasterizationFeatures{};
@@ -9218,6 +9304,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR PhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR{};
     VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT PhysicalDeviceShaderReplicatedCompositesFeaturesEXT{};
     VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures PhysicalDeviceShaderSubgroupExtendedTypesFeatures{};
+    VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT PhysicalDeviceShaderSubgroupPartitionedFeaturesEXT{};
     VkPhysicalDeviceShaderSubgroupRotateFeatures PhysicalDeviceShaderSubgroupRotateFeatures{};
     VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR{};
     VkPhysicalDeviceShaderTerminateInvocationFeatures PhysicalDeviceShaderTerminateInvocationFeatures{};
@@ -9286,6 +9373,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceDepthClipControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT;
         PhysicalDeviceDepthClipEnableFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
         PhysicalDeviceDescriptorBufferFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT;
+        PhysicalDeviceDescriptorHeapFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT;
         PhysicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
         PhysicalDeviceDeviceGeneratedCommandsFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT;
@@ -9327,6 +9415,8 @@ struct phys_device_features2_chain {
         PhysicalDeviceImagelessFramebufferFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
         PhysicalDeviceIndexTypeUint8Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES;
         PhysicalDeviceInlineUniformBlockFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES;
+        PhysicalDeviceInternallySynchronizedQueuesFeaturesKHR.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INTERNALLY_SYNCHRONIZED_QUEUES_FEATURES_KHR;
         PhysicalDeviceLegacyDitheringFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT;
         PhysicalDeviceLegacyVertexAttributesFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT;
@@ -9427,6 +9517,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT;
         PhysicalDeviceShaderSubgroupExtendedTypesFeatures.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
+        PhysicalDeviceShaderSubgroupPartitionedFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT;
         PhysicalDeviceShaderSubgroupRotateFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES;
         PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR;
@@ -9537,6 +9629,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDepthClipEnableFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorBufferFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_HEAP_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorHeapFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorIndexingFeatures));
@@ -9613,6 +9707,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceInlineUniformBlockFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_INTERNALLY_SYNCHRONIZED_QUEUES_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceInternallySynchronizedQueuesFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LEGACY_DITHERING_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceLegacyDitheringFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_LEGACY_VERTEX_ATTRIBUTES_EXTENSION_NAME))
@@ -9795,6 +9891,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderSubgroupExtendedTypesFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderSubgroupPartitionedFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_4 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderSubgroupRotateFeatures));
@@ -10120,6 +10218,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             DumpVkPhysicalDeviceDescriptorBufferFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT) {
+            const VkPhysicalDeviceDescriptorHeapFeaturesEXT *props = (const VkPhysicalDeviceDescriptorHeapFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceDescriptorHeapFeaturesEXT";
+            DumpVkPhysicalDeviceDescriptorHeapFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES) {
             const VkPhysicalDeviceDescriptorIndexingFeatures *props = (const VkPhysicalDeviceDescriptorIndexingFeatures *)structure;
             const char *name = gpu.api_version >= VK_API_VERSION_1_2 ? "VkPhysicalDeviceDescriptorIndexingFeatures"
@@ -10424,6 +10528,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 p.SetSubHeader();
                 DumpVkPhysicalDeviceInlineUniformBlockFeatures(p, "VkPhysicalDeviceInlineUniformBlockFeaturesEXT", *props);
             }
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INTERNALLY_SYNCHRONIZED_QUEUES_FEATURES_KHR) {
+            const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR *props =
+                (const VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR";
+            DumpVkPhysicalDeviceInternallySynchronizedQueuesFeaturesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT) {
@@ -11122,6 +11233,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 DumpVkPhysicalDeviceShaderSubgroupExtendedTypesFeatures(p, "VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR",
                                                                         *props);
             }
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT) {
+            const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT *props =
+                (const VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT";
+            DumpVkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES) {
