@@ -2782,6 +2782,11 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetImageViewAddressNVX(VkDevice device, Vk
     // Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+static VKAPI_ATTR uint64_t VKAPI_CALL GetDeviceCombinedImageSamplerIndexNVX(VkDevice device, uint64_t imageViewIndex,
+                                                                            uint64_t samplerIndex) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset,
                                                           VkBuffer countBuffer, VkDeviceSize countBufferOffset,
                                                           uint32_t maxDrawCount, uint32_t stride) {
@@ -3040,6 +3045,51 @@ static VKAPI_ATTR void VKAPI_CALL CmdDispatchGraphIndirectCountAMDX(VkCommandBuf
     // Not a CREATE or DESTROY function
 }
 #endif /* VK_ENABLE_BETA_EXTENSIONS */
+static VKAPI_ATTR VkResult VKAPI_CALL WriteSamplerDescriptorsEXT(VkDevice device, uint32_t samplerCount,
+                                                                 const VkSamplerCreateInfo* pSamplers,
+                                                                 const VkHostAddressRangeEXT* pDescriptors) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL WriteResourceDescriptorsEXT(VkDevice device, uint32_t resourceCount,
+                                                                  const VkResourceDescriptorInfoEXT* pResources,
+                                                                  const VkHostAddressRangeEXT* pDescriptors) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetImageOpaqueCaptureDataEXT(VkDevice device, uint32_t imageCount, const VkImage* pImages,
+                                                                   VkHostAddressRangeEXT* pDatas) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkDeviceSize VKAPI_CALL GetPhysicalDeviceDescriptorSizeEXT(VkPhysicalDevice physicalDevice,
+                                                                             VkDescriptorType descriptorType) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL RegisterCustomBorderColorEXT(VkDevice device,
+                                                                   const VkSamplerCustomBorderColorCreateInfoEXT* pBorderColor,
+                                                                   VkBool32 requestIndex, uint32_t* pIndex) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR void VKAPI_CALL UnregisterCustomBorderColorEXT(VkDevice device, uint32_t index) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetTensorOpaqueCaptureDataARM(VkDevice device, uint32_t tensorCount,
+                                                                    const VkTensorARM* pTensors, VkHostAddressRangeEXT* pDatas) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer,
                                                            const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
     // Not a CREATE or DESTROY function
