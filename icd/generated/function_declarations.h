@@ -309,6 +309,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_representative_fragment_test", VK_NV_REPRESENTATIVE_FRAGMENT_TEST_SPEC_VERSION},
     {"VK_EXT_filter_cubic", VK_EXT_FILTER_CUBIC_SPEC_VERSION},
     {"VK_QCOM_render_pass_shader_resolve", VK_QCOM_RENDER_PASS_SHADER_RESOLVE_SPEC_VERSION},
+    {"VK_QCOM_cooperative_matrix_conversion", VK_QCOM_COOPERATIVE_MATRIX_CONVERSION_SPEC_VERSION},
     {"VK_EXT_global_priority", VK_EXT_GLOBAL_PRIORITY_SPEC_VERSION},
     {"VK_EXT_external_memory_host", VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION},
     {"VK_AMD_buffer_marker", VK_AMD_BUFFER_MARKER_SPEC_VERSION},

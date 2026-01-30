@@ -18,7 +18,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 
 # The VERSION field is generated with the "--generated-version" flag in the generate_source.py script
-project(Vulkan-Tools VERSION 1.4.341)
+project(Vulkan-Tools VERSION 1.4.342)
 
 # This variable enables downstream users to customize the target API
 # variant (e.g. Vulkan SC)

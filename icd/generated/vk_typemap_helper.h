@@ -7288,6 +7288,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPER
     typedef VkFilterCubicImageViewImageFormatPropertiesEXT Type;
 };
 
+// Map type VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM Type;
+};
+
 // Map type VkImportMemoryHostPointerInfoEXT to id VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT
 template <>
 struct LvlTypeMap<VkImportMemoryHostPointerInfoEXT> {
