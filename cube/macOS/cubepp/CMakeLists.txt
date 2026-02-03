@@ -17,8 +17,10 @@
 
 # VkCube Application Bundle
 
-set(cubepp_RESOURCES ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json
-    ${CMAKE_CURRENT_LIST_DIR}/Resources/VulkanIcon.icns)
+set(cubepp_RESOURCES ${CMAKE_CURRENT_LIST_DIR}/Resources/VulkanIcon.icns)
+if(NOT APPLE_USE_SYSTEM_ICD)
+    list(APPEND cubepp_RESOURCES ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json)
+endif()
 
 # Have Xcode handle the Storyboard
 if(XCODE)
@@ -52,7 +54,9 @@ if(NOT XCODE)
                        COMMENT "Compiling storyboard")
 endif()
 
-add_dependencies(vkcubepp MoltenVK_icd-staging-json)
+if(NOT APPLE_USE_SYSTEM_ICD)
+    add_dependencies(vkcubepp MoltenVK_icd-staging-json)
+endif()
 
 # Include demo source code dir because the MacOS vkcubepp's Objective-C source includes the "original" vkcubepp application C++ source
 # code.
@@ -68,18 +72,20 @@ set_target_properties(vkcubepp PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRE
 # directory basis. If all the files went into the top-level Resource directory, then we could simply set the RESOURCE property to a
 # list of all the resource files.
 set_source_files_properties(${cubepp_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-set_source_files_properties("${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json"
-                            PROPERTIES
-                            MACOSX_PACKAGE_LOCATION
-                            "Resources/vulkan/icd.d")
+if(NOT APPLE_USE_SYSTEM_ICD)
+    set_source_files_properties("${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json"
+                                PROPERTIES
+                                MACOSX_PACKAGE_LOCATION
+                                "Resources/vulkan/icd.d")
 
-# Copy the MoltenVK lib into the bundle.
-if(XCODE)
-    add_custom_command(TARGET vkcubepp POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
-else()
-    add_custom_command(TARGET vkcubepp POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
-                               ${CMAKE_CURRENT_BINARY_DIR}/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
+    # Copy the MoltenVK lib into the bundle.
+    if(XCODE)
+        add_custom_command(TARGET vkcubepp POST_BUILD
+                           COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
+                                   ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
+    else()
+        add_custom_command(TARGET vkcubepp POST_BUILD
+                           COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib"
+                                   ${CMAKE_CURRENT_BINARY_DIR}/vkcubepp.app/Contents/Frameworks/libMoltenVK.dylib)
+    endif()
 endif()
