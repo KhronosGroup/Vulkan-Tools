@@ -16,36 +16,42 @@
 # ~~~
 
 if(APPLE)
-    set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
-    if(NOT MOLTENVK_REPO_ROOT)
-        message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
+    option(APPLE_USE_SYSTEM_ICD "Use system Vulkan ICD discovery instead of bundling MoltenVK" OFF)
+
+    if(APPLE_USE_SYSTEM_ICD)
+        message(STATUS "Using system Vulkan loader for ICD discovery")
+    else()
+        set(MOLTENVK_REPO_ROOT "MOLTENVK-NOTFOUND" CACHE PATH "Absolute path to a MoltenVK repo directory")
+        if(NOT MOLTENVK_REPO_ROOT)
+            message(FATAL_ERROR "Must define location of MoltenVK repo -- see BUILD.md")
+        endif()
+        message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
+
+        # Source for the MoltenVK ICD library and JSON file
+        set(MOLTENVK_DIR ${MOLTENVK_REPO_ROOT})
+
+        # MoltenVK JSON File
+        execute_process(COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json)
+        execute_process(COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
+                                ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json
+                        OUTPUT_FILE ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json)
+
+        # ~~~
+        # Modify the ICD JSON file to adjust the library path.
+        # The ICD JSON file goes in the Resources/vulkan/icd.d directory, so adjust the
+        # library_path to the relative path to the Frameworks directory in the bundle.
+        # The regex does: substitute ':<whitespace>"<whitespace><all occurences of . and />' with:
+        # ': "../../../Frameworks/'
+        # ~~~
+        add_custom_target(MoltenVK_icd-staging-json ALL
+            COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json
+            COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
+                    ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json > ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json
+            VERBATIM
+            DEPENDS "${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json"
+        )
+        set_source_files_properties(${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json PROPERTIES GENERATED TRUE)
     endif()
-    message(STATUS "Using MoltenVK repo location at ${MOLTENVK_REPO_ROOT}")
-
-    # Source for the MoltenVK ICD library and JSON file
-    set(MOLTENVK_DIR ${MOLTENVK_REPO_ROOT})
-
-    # MoltenVK JSON File
-    execute_process(COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json)
-    execute_process(COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
-                            ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json
-                    OUTPUT_FILE ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json)
-
-    # ~~~
-    # Modify the ICD JSON file to adjust the library path.
-    # The ICD JSON file goes in the Resources/vulkan/icd.d directory, so adjust the
-    # library_path to the relative path to the Frameworks directory in the bundle.
-    # The regex does: substitute ':<whitespace>"<whitespace><all occurences of . and />' with:
-    # ': "../../../Frameworks/'
-    # ~~~
-    add_custom_target(MoltenVK_icd-staging-json ALL
-        COMMAND mkdir -p ${PROJECT_BINARY_DIR}/staging-json
-        COMMAND sed -e "/\"library_path\":/s$:[[:space:]]*\"[[:space:]]*[\\.\\/]*$: \"..\\/..\\/..\\/Frameworks\\/$"
-                ${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json > ${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json
-        VERBATIM
-        DEPENDS "${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json"
-    )
-    set_source_files_properties(${PROJECT_BINARY_DIR}/staging-json/MoltenVK_icd.json PROPERTIES GENERATED TRUE)
 
     find_library(COCOA NAMES Cocoa)
 
