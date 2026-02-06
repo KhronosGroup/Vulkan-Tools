@@ -101,6 +101,9 @@ static const std::unordered_map<std::string, uint32_t> instance_extension_map = 
 #ifdef VK_USE_PLATFORM_OHOS
     {"VK_OHOS_surface", VK_OHOS_SURFACE_SPEC_VERSION},
 #endif
+#ifdef VK_USE_PLATFORM_UBM_SEC
+    {"VK_SEC_ubm_surface", VK_SEC_UBM_SURFACE_SPEC_VERSION},
+#endif
 };
 // Map of device extension name to version
 static const std::unordered_map<std::string, uint32_t> device_extension_map = {
@@ -2960,7 +2963,15 @@ static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(VkCommandBuffer comma
 
 static VKAPI_ATTR void VKAPI_CALL CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                                                    const VkComputeOccupancyPriorityParametersNV* pParameters);
+#ifdef VK_USE_PLATFORM_UBM_SEC
 
+static VKAPI_ATTR VkResult VKAPI_CALL CreateUbmSurfaceSEC(VkInstance instance, const VkUbmSurfaceCreateInfoSEC* pCreateInfo,
+                                                          const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice,
+                                                                                 uint32_t queueFamilyIndex,
+                                                                                 struct ubm_device* ubm_device);
+#endif /* VK_USE_PLATFORM_UBM_SEC */
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(VkDevice device,
                                                                      const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
                                                                      const VkAllocationCallbacks* pAllocator,
@@ -3955,6 +3966,12 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
     {"vkCmdBeginCustomResolveEXT", (void*)CmdBeginCustomResolveEXT},
     {"vkCmdSetComputeOccupancyPriorityNV", (void*)CmdSetComputeOccupancyPriorityNV},
+#ifdef VK_USE_PLATFORM_UBM_SEC
+    {"vkCreateUbmSurfaceSEC", (void*)CreateUbmSurfaceSEC},
+#endif
+#ifdef VK_USE_PLATFORM_UBM_SEC
+    {"vkGetPhysicalDeviceUbmPresentationSupportSEC", (void*)GetPhysicalDeviceUbmPresentationSupportSEC},
+#endif
     {"vkCreateAccelerationStructureKHR", (void*)CreateAccelerationStructureKHR},
     {"vkDestroyAccelerationStructureKHR", (void*)DestroyAccelerationStructureKHR},
     {"vkCmdBuildAccelerationStructuresKHR", (void*)CmdBuildAccelerationStructuresKHR},

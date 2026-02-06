@@ -4456,6 +4456,20 @@ static VKAPI_ATTR void VKAPI_CALL CmdSetComputeOccupancyPriorityNV(VkCommandBuff
                                                                    const VkComputeOccupancyPriorityParametersNV* pParameters) {
     // Not a CREATE or DESTROY function
 }
+#ifdef VK_USE_PLATFORM_UBM_SEC
+static VKAPI_ATTR VkResult VKAPI_CALL CreateUbmSurfaceSEC(VkInstance instance, const VkUbmSurfaceCreateInfoSEC* pCreateInfo,
+                                                          const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
+    unique_lock_t lock(global_lock);
+    *pSurface = (VkSurfaceKHR)global_unique_handle++;
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice,
+                                                                                 uint32_t queueFamilyIndex,
+                                                                                 struct ubm_device* ubm_device) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+#endif /* VK_USE_PLATFORM_UBM_SEC */
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(VkDevice device,
                                                                      const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
                                                                      const VkAllocationCallbacks* pAllocator,
