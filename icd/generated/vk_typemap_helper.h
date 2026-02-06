@@ -13012,6 +13012,19 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED
     typedef VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT Type;
 };
 
+#ifdef VK_USE_PLATFORM_UBM_SEC
+// Map type VkUbmSurfaceCreateInfoSEC to id VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC
+template <>
+struct LvlTypeMap<VkUbmSurfaceCreateInfoSEC> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC> {
+    typedef VkUbmSurfaceCreateInfoSEC Type;
+};
+
+#endif  // VK_USE_PLATFORM_UBM_SEC
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id
 // VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <>

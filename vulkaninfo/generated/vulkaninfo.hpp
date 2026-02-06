@@ -1750,6 +1750,12 @@ std::string VkFormatString(VkFormat value) {
             return "FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT";
         case (VK_FORMAT_R8_BOOL_ARM):
             return "FORMAT_R8_BOOL_ARM";
+        case (VK_FORMAT_R16_SFLOAT_FPENCODING_BFLOAT16_ARM):
+            return "FORMAT_R16_SFLOAT_FPENCODING_BFLOAT16_ARM";
+        case (VK_FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E4M3_ARM):
+            return "FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E4M3_ARM";
+        case (VK_FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E5M2_ARM):
+            return "FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E5M2_ARM";
         case (VK_FORMAT_R16G16_SFIXED5_NV):
             return "FORMAT_R16G16_SFIXED5_NV";
         case (VK_FORMAT_R10X6_UINT_PACK16_ARM):
@@ -12302,7 +12308,7 @@ auto format_ranges = std::array{
     FormatRange{0, VK_IMG_FORMAT_PVRTC_EXTENSION_NAME, static_cast<VkFormat>(1000054000), static_cast<VkFormat>(1000054007)},
     FormatRange{0, VK_EXT_TEXTURE_COMPRESSION_ASTC_3D_EXTENSION_NAME, static_cast<VkFormat>(1000288000),
                 static_cast<VkFormat>(1000288029)},
-    FormatRange{0, VK_ARM_TENSORS_EXTENSION_NAME, static_cast<VkFormat>(1000460000), static_cast<VkFormat>(1000460000)},
+    FormatRange{0, VK_ARM_TENSORS_EXTENSION_NAME, static_cast<VkFormat>(1000460000), static_cast<VkFormat>(1000460003)},
     FormatRange{0, VK_NV_OPTICAL_FLOW_EXTENSION_NAME, static_cast<VkFormat>(1000464000), static_cast<VkFormat>(1000464000)},
     FormatRange{0, VK_ARM_FORMAT_PACK_EXTENSION_NAME, static_cast<VkFormat>(1000609000), static_cast<VkFormat>(1000609013)},
 };
