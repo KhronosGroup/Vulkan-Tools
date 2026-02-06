@@ -4465,7 +4465,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateUbmSurfaceSEC(VkInstance instance, c
 }
 static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice,
                                                                                  uint32_t queueFamilyIndex,
-                                                                                 struct ubm_device* ubm_device) {
+                                                                                 struct ubm_device* device) {
     // Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }

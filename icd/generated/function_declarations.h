@@ -549,6 +549,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
     {"VK_NV_compute_occupancy_priority", VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION},
     {"VK_EXT_shader_subgroup_partitioned", VK_EXT_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION},
+    {"VK_VALVE_shader_mixed_float_dot_product", VK_VALVE_SHADER_MIXED_FLOAT_DOT_PRODUCT_SPEC_VERSION},
     {"VK_KHR_acceleration_structure", VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_KHR_ray_tracing_pipeline", VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
     {"VK_KHR_ray_query", VK_KHR_RAY_QUERY_SPEC_VERSION},
@@ -2970,7 +2971,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL CreateUbmSurfaceSEC(VkInstance instance, c
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice,
                                                                                  uint32_t queueFamilyIndex,
-                                                                                 struct ubm_device* ubm_device);
+                                                                                 struct ubm_device* device);
 #endif /* VK_USE_PLATFORM_UBM_SEC */
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(VkDevice device,
                                                                      const VkAccelerationStructureCreateInfoKHR* pCreateInfo,

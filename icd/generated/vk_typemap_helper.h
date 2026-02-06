@@ -40,39 +40,6 @@ struct LvlSTypeMap {};
 template <typename T>
 struct LvlTypeMap {};
 
-// Map type VkBufferMemoryBarrier to id VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER
-template <>
-struct LvlTypeMap<VkBufferMemoryBarrier> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER> {
-    typedef VkBufferMemoryBarrier Type;
-};
-
-// Map type VkImageMemoryBarrier to id VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER
-template <>
-struct LvlTypeMap<VkImageMemoryBarrier> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER> {
-    typedef VkImageMemoryBarrier Type;
-};
-
-// Map type VkMemoryBarrier to id VK_STRUCTURE_TYPE_MEMORY_BARRIER
-template <>
-struct LvlTypeMap<VkMemoryBarrier> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_BARRIER> {
-    typedef VkMemoryBarrier Type;
-};
-
 // Map type VkApplicationInfo to id VK_STRUCTURE_TYPE_APPLICATION_INFO
 template <>
 struct LvlTypeMap<VkApplicationInfo> {
@@ -271,6 +238,39 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO> {
     typedef VkCommandBufferBeginInfo Type;
 };
 
+// Map type VkBufferMemoryBarrier to id VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER
+template <>
+struct LvlTypeMap<VkBufferMemoryBarrier> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER> {
+    typedef VkBufferMemoryBarrier Type;
+};
+
+// Map type VkImageMemoryBarrier to id VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER
+template <>
+struct LvlTypeMap<VkImageMemoryBarrier> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER> {
+    typedef VkImageMemoryBarrier Type;
+};
+
+// Map type VkMemoryBarrier to id VK_STRUCTURE_TYPE_MEMORY_BARRIER
+template <>
+struct LvlTypeMap<VkMemoryBarrier> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_BARRIER> {
+    typedef VkMemoryBarrier Type;
+};
+
 // Map type VkEventCreateInfo to id VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
 template <>
 struct LvlTypeMap<VkEventCreateInfo> {
@@ -414,70 +414,15 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET> {
     typedef VkWriteDescriptorSet Type;
 };
 
-// Map type VkPipelineVertexInputStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
+// Map type VkPipelineColorBlendStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO
 template <>
-struct LvlTypeMap<VkPipelineVertexInputStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+struct LvlTypeMap<VkPipelineColorBlendStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 };
 
 template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO> {
-    typedef VkPipelineVertexInputStateCreateInfo Type;
-};
-
-// Map type VkPipelineInputAssemblyStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineInputAssemblyStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO> {
-    typedef VkPipelineInputAssemblyStateCreateInfo Type;
-};
-
-// Map type VkPipelineTessellationStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineTessellationStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO> {
-    typedef VkPipelineTessellationStateCreateInfo Type;
-};
-
-// Map type VkPipelineViewportStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineViewportStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO> {
-    typedef VkPipelineViewportStateCreateInfo Type;
-};
-
-// Map type VkPipelineRasterizationStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineRasterizationStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO> {
-    typedef VkPipelineRasterizationStateCreateInfo Type;
-};
-
-// Map type VkPipelineMultisampleStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineMultisampleStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO> {
-    typedef VkPipelineMultisampleStateCreateInfo Type;
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO> {
+    typedef VkPipelineColorBlendStateCreateInfo Type;
 };
 
 // Map type VkPipelineDepthStencilStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO
@@ -491,17 +436,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO> {
     typedef VkPipelineDepthStencilStateCreateInfo Type;
 };
 
-// Map type VkPipelineColorBlendStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO
-template <>
-struct LvlTypeMap<VkPipelineColorBlendStateCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO> {
-    typedef VkPipelineColorBlendStateCreateInfo Type;
-};
-
 // Map type VkPipelineDynamicStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO
 template <>
 struct LvlTypeMap<VkPipelineDynamicStateCreateInfo> {
@@ -511,6 +445,72 @@ struct LvlTypeMap<VkPipelineDynamicStateCreateInfo> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO> {
     typedef VkPipelineDynamicStateCreateInfo Type;
+};
+
+// Map type VkPipelineInputAssemblyStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineInputAssemblyStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO> {
+    typedef VkPipelineInputAssemblyStateCreateInfo Type;
+};
+
+// Map type VkPipelineMultisampleStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineMultisampleStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO> {
+    typedef VkPipelineMultisampleStateCreateInfo Type;
+};
+
+// Map type VkPipelineRasterizationStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineRasterizationStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO> {
+    typedef VkPipelineRasterizationStateCreateInfo Type;
+};
+
+// Map type VkPipelineTessellationStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineTessellationStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO> {
+    typedef VkPipelineTessellationStateCreateInfo Type;
+};
+
+// Map type VkPipelineVertexInputStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineVertexInputStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO> {
+    typedef VkPipelineVertexInputStateCreateInfo Type;
+};
+
+// Map type VkPipelineViewportStateCreateInfo to id VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO
+template <>
+struct LvlTypeMap<VkPipelineViewportStateCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO> {
+    typedef VkPipelineViewportStateCreateInfo Type;
 };
 
 // Map type VkGraphicsPipelineCreateInfo to id VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO
@@ -1273,6 +1273,17 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEAT
     typedef VkPhysicalDeviceShaderDrawParametersFeatures Type;
 };
 
+// Map type VkPhysicalDeviceDriverProperties to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES
+template <>
+struct LvlTypeMap<VkPhysicalDeviceDriverProperties> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES> {
+    typedef VkPhysicalDeviceDriverProperties Type;
+};
+
 // Map type VkPhysicalDeviceVulkan11Features to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES
 template <>
 struct LvlTypeMap<VkPhysicalDeviceVulkan11Features> {
@@ -1326,17 +1337,6 @@ struct LvlTypeMap<VkImageFormatListCreateInfo> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO> {
     typedef VkImageFormatListCreateInfo Type;
-};
-
-// Map type VkPhysicalDeviceDriverProperties to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES
-template <>
-struct LvlTypeMap<VkPhysicalDeviceDriverProperties> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES> {
-    typedef VkPhysicalDeviceDriverProperties Type;
 };
 
 // Map type VkPhysicalDeviceVulkanMemoryModelFeatures to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES
@@ -1684,17 +1684,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2> {
     typedef VkSubpassDependency2 Type;
 };
 
-// Map type VkRenderPassCreateInfo2 to id VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2
-template <>
-struct LvlTypeMap<VkRenderPassCreateInfo2> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2> {
-    typedef VkRenderPassCreateInfo2 Type;
-};
-
 // Map type VkSubpassBeginInfo to id VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO
 template <>
 struct LvlTypeMap<VkSubpassBeginInfo> {
@@ -1715,6 +1704,17 @@ struct LvlTypeMap<VkSubpassEndInfo> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBPASS_END_INFO> {
     typedef VkSubpassEndInfo Type;
+};
+
+// Map type VkRenderPassCreateInfo2 to id VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2
+template <>
+struct LvlTypeMap<VkRenderPassCreateInfo2> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2> {
+    typedef VkRenderPassCreateInfo2 Type;
 };
 
 // Map type VkSubpassDescriptionDepthStencilResolve to id VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE
@@ -1772,17 +1772,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO> {
     typedef VkFramebufferAttachmentImageInfo Type;
 };
 
-// Map type VkFramebufferAttachmentsCreateInfo to id VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO
-template <>
-struct LvlTypeMap<VkFramebufferAttachmentsCreateInfo> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO> {
-    typedef VkFramebufferAttachmentsCreateInfo Type;
-};
-
 // Map type VkRenderPassAttachmentBeginInfo to id VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO
 template <>
 struct LvlTypeMap<VkRenderPassAttachmentBeginInfo> {
@@ -1792,6 +1781,17 @@ struct LvlTypeMap<VkRenderPassAttachmentBeginInfo> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO> {
     typedef VkRenderPassAttachmentBeginInfo Type;
+};
+
+// Map type VkFramebufferAttachmentsCreateInfo to id VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO
+template <>
+struct LvlTypeMap<VkFramebufferAttachmentsCreateInfo> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO> {
+    typedef VkFramebufferAttachmentsCreateInfo Type;
 };
 
 // Map type VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures to id
@@ -2518,6 +2518,17 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES> {
     typedef VkPhysicalDeviceMaintenance5Properties Type;
 };
 
+// Map type VkSubresourceLayout2 to id VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2
+template <>
+struct LvlTypeMap<VkSubresourceLayout2> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2> {
+    typedef VkSubresourceLayout2 Type;
+};
+
 // Map type VkImageSubresource2 to id VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2
 template <>
 struct LvlTypeMap<VkImageSubresource2> {
@@ -2538,17 +2549,6 @@ struct LvlTypeMap<VkDeviceImageSubresourceInfo> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO> {
     typedef VkDeviceImageSubresourceInfo Type;
-};
-
-// Map type VkSubresourceLayout2 to id VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2
-template <>
-struct LvlTypeMap<VkSubresourceLayout2> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2> {
-    typedef VkSubresourceLayout2 Type;
 };
 
 // Map type VkBufferUsageFlags2CreateInfo to id VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO
@@ -13025,6 +13025,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC> {
 };
 
 #endif  // VK_USE_PLATFORM_UBM_SEC
+// Map type VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE> {
+    typedef VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id
 // VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <>
