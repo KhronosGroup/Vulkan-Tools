@@ -1191,8 +1191,39 @@ CUSTOM_C_INTERCEPTS = {
 ''',
 'vkCreatePipelineBinariesKHR': '''
     unique_lock_t lock(global_lock);
-    for (uint32_t i = 0; i < pBinaries->pipelineBinaryCount; ++i) {
-        pBinaries->pPipelineBinaries[i] = (VkPipelineBinaryKHR)global_unique_handle++;
+    if (pBinaries->pPipelineBinaries != nullptr)
+    {
+        for (uint32_t i = 0; i < pBinaries->pipelineBinaryCount; ++i) {
+            pBinaries->pPipelineBinaries[i] = (VkPipelineBinaryKHR)global_unique_handle++;
+        }
+    }
+    else
+    {
+       // In this case, we need to return a return count, let's set it to 3
+       pBinaries->pipelineBinaryCount = 3;
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPipelineKeyKHR': '''
+    if (pPipelineKey != nullptr)
+    {
+        pPipelineKey->keySize = 16;
+        std::memset(pPipelineKey->key, 0x12, pPipelineKey->keySize);
+    }
+    return VK_SUCCESS;
+''',
+'vkGetPipelineBinaryDataKHR': '''
+    static uint32_t fake_size = 64;
+    if (pPipelineBinaryDataSize != nullptr)
+    {
+        if (pPipelineBinaryData == nullptr)
+        {
+            *pPipelineBinaryDataSize = fake_size;
+        }
+        else
+        {
+            std::memset(pPipelineBinaryData, 0xABCD, fake_size);
+        }
     }
     return VK_SUCCESS;
 '''
@@ -1291,7 +1322,10 @@ class MockICDOutputGenerator(BaseGenerator):
             'vkEnumerateInstanceExtensionProperties',
             'vkEnumerateDeviceLayerProperties',
             'vkEnumerateDeviceExtensionProperties',
+            'vkGetPipelineKeyKHR',
+            'vkGetPipelineBinaryDataKHR',
         ]
+
         current_protect = None
         for name, cmd in self.vk.commands.items():
             if cmd.protect != current_protect:
