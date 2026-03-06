@@ -12767,6 +12767,52 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_
     typedef VkRenderPassPerformanceCountersByRegionBeginInfoARM Type;
 };
 
+// Map type VkPhysicalDeviceShaderInstrumentationFeaturesARM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_FEATURES_ARM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderInstrumentationFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_FEATURES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_FEATURES_ARM> {
+    typedef VkPhysicalDeviceShaderInstrumentationFeaturesARM Type;
+};
+
+// Map type VkPhysicalDeviceShaderInstrumentationPropertiesARM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_PROPERTIES_ARM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderInstrumentationPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_PROPERTIES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_PROPERTIES_ARM> {
+    typedef VkPhysicalDeviceShaderInstrumentationPropertiesARM Type;
+};
+
+// Map type VkShaderInstrumentationCreateInfoARM to id VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkShaderInstrumentationCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_CREATE_INFO_ARM> {
+    typedef VkShaderInstrumentationCreateInfoARM Type;
+};
+
+// Map type VkShaderInstrumentationMetricDescriptionARM to id VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_METRIC_DESCRIPTION_ARM
+template <>
+struct LvlTypeMap<VkShaderInstrumentationMetricDescriptionARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_METRIC_DESCRIPTION_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_METRIC_DESCRIPTION_ARM> {
+    typedef VkShaderInstrumentationMetricDescriptionARM Type;
+};
+
 // Map type VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
 template <>
@@ -12826,7 +12872,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREAT
     typedef VkPipelineFragmentDensityMapLayeredCreateInfoVALVE Type;
 };
 
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkSetPresentConfigNV to id VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV
 template <>
 struct LvlTypeMap<VkSetPresentConfigNV> {
@@ -12838,8 +12883,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV> {
     typedef VkSetPresentConfigNV Type;
 };
 
-#endif  // VK_ENABLE_BETA_EXTENSIONS
-#ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDevicePresentMeteringFeaturesNV to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV
 template <>
 struct LvlTypeMap<VkPhysicalDevicePresentMeteringFeaturesNV> {
@@ -12851,7 +12894,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_N
     typedef VkPhysicalDevicePresentMeteringFeaturesNV Type;
 };
 
-#endif  // VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_DEVICE_MEMORY_FEATURES_EXT
 template <>
