@@ -754,6 +754,9 @@ struct AppInstance {
             if (strcmp(VK_EXT_SURFACE_MAINTENANCE_1_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
+            if (strcmp(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
         }
     }
 
