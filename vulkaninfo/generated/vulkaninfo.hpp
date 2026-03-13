@@ -4524,6 +4524,8 @@ void DumpVkPhysicalDeviceDescriptorIndexingFeatures(Printer &p, std::string name
                                                     const VkPhysicalDeviceDescriptorIndexingFeatures &obj);
 void DumpVkPhysicalDeviceDescriptorIndexingProperties(Printer &p, std::string name,
                                                       const VkPhysicalDeviceDescriptorIndexingProperties &obj);
+void DumpVkPhysicalDeviceDeviceAddressCommandsFeaturesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR &obj);
 void DumpVkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT(Printer &p, std::string name,
                                                             const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT &obj);
 void DumpVkPhysicalDeviceDeviceGeneratedCommandsPropertiesEXT(Printer &p, std::string name,
@@ -5494,6 +5496,12 @@ void DumpVkPhysicalDeviceDescriptorIndexingProperties(Printer &p, std::string na
     p.PrintKeyValue("maxDescriptorSetUpdateAfterBindSampledImages", obj.maxDescriptorSetUpdateAfterBindSampledImages);
     p.PrintKeyValue("maxDescriptorSetUpdateAfterBindStorageImages", obj.maxDescriptorSetUpdateAfterBindStorageImages);
     p.PrintKeyValue("maxDescriptorSetUpdateAfterBindInputAttachments", obj.maxDescriptorSetUpdateAfterBindInputAttachments);
+}
+void DumpVkPhysicalDeviceDeviceAddressCommandsFeaturesKHR(Printer &p, std::string name,
+                                                          const VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(21);
+    p.PrintKeyBool("deviceAddressCommands", static_cast<bool>(obj.deviceAddressCommands));
 }
 void DumpVkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT(Printer &p, std::string name,
                                                             const VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT &obj) {
@@ -9205,6 +9213,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceDescriptorBufferFeaturesEXT PhysicalDeviceDescriptorBufferFeaturesEXT{};
     VkPhysicalDeviceDescriptorHeapFeaturesEXT PhysicalDeviceDescriptorHeapFeaturesEXT{};
     VkPhysicalDeviceDescriptorIndexingFeatures PhysicalDeviceDescriptorIndexingFeatures{};
+    VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR PhysicalDeviceDeviceAddressCommandsFeaturesKHR{};
     VkPhysicalDeviceDeviceGeneratedCommandsFeaturesEXT PhysicalDeviceDeviceGeneratedCommandsFeaturesEXT{};
     VkPhysicalDeviceDeviceMemoryReportFeaturesEXT PhysicalDeviceDeviceMemoryReportFeaturesEXT{};
     VkPhysicalDeviceDynamicRenderingFeatures PhysicalDeviceDynamicRenderingFeatures{};
@@ -9385,6 +9394,8 @@ struct phys_device_features2_chain {
         PhysicalDeviceDescriptorBufferFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT;
         PhysicalDeviceDescriptorHeapFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT;
         PhysicalDeviceDescriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+        PhysicalDeviceDeviceAddressCommandsFeaturesKHR.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR;
         PhysicalDeviceDeviceGeneratedCommandsFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT;
         PhysicalDeviceDeviceMemoryReportFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
@@ -9644,6 +9655,8 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_2 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDescriptorIndexingFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEVICE_ADDRESS_COMMANDS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDeviceAddressCommandsFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceDeviceGeneratedCommandsFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME))
@@ -10245,6 +10258,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 p.SetSubHeader();
                 DumpVkPhysicalDeviceDescriptorIndexingFeatures(p, "VkPhysicalDeviceDescriptorIndexingFeaturesEXT", *props);
             }
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR) {
+            const VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR *props =
+                (const VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR";
+            DumpVkPhysicalDeviceDeviceAddressCommandsFeaturesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT) {
