@@ -4606,6 +4606,183 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_PARAMETERS_FEEDBACK_IN
     typedef VkVideoEncodeSessionParametersFeedbackInfoKHR Type;
 };
 
+// Map type VkDeviceMemoryCopyKHR to id VK_STRUCTURE_TYPE_DEVICE_MEMORY_COPY_KHR
+template <>
+struct LvlTypeMap<VkDeviceMemoryCopyKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_COPY_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DEVICE_MEMORY_COPY_KHR> {
+    typedef VkDeviceMemoryCopyKHR Type;
+};
+
+// Map type VkCopyDeviceMemoryInfoKHR to id VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_INFO_KHR
+template <>
+struct LvlTypeMap<VkCopyDeviceMemoryInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_INFO_KHR> {
+    typedef VkCopyDeviceMemoryInfoKHR Type;
+};
+
+// Map type VkDeviceMemoryImageCopyKHR to id VK_STRUCTURE_TYPE_DEVICE_MEMORY_IMAGE_COPY_KHR
+template <>
+struct LvlTypeMap<VkDeviceMemoryImageCopyKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_IMAGE_COPY_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DEVICE_MEMORY_IMAGE_COPY_KHR> {
+    typedef VkDeviceMemoryImageCopyKHR Type;
+};
+
+// Map type VkCopyDeviceMemoryImageInfoKHR to id VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR
+template <>
+struct LvlTypeMap<VkCopyDeviceMemoryImageInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR> {
+    typedef VkCopyDeviceMemoryImageInfoKHR Type;
+};
+
+// Map type VkMemoryRangeBarrierKHR to id VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIER_KHR
+template <>
+struct LvlTypeMap<VkMemoryRangeBarrierKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIER_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIER_KHR> {
+    typedef VkMemoryRangeBarrierKHR Type;
+};
+
+// Map type VkMemoryRangeBarriersInfoKHR to id VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIERS_INFO_KHR
+template <>
+struct LvlTypeMap<VkMemoryRangeBarriersInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIERS_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIERS_INFO_KHR> {
+    typedef VkMemoryRangeBarriersInfoKHR Type;
+};
+
+// Map type VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR> {
+    typedef VkPhysicalDeviceDeviceAddressCommandsFeaturesKHR Type;
+};
+
+// Map type VkBindIndexBuffer3InfoKHR to id VK_STRUCTURE_TYPE_BIND_INDEX_BUFFER_3_INFO_KHR
+template <>
+struct LvlTypeMap<VkBindIndexBuffer3InfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BIND_INDEX_BUFFER_3_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_BIND_INDEX_BUFFER_3_INFO_KHR> {
+    typedef VkBindIndexBuffer3InfoKHR Type;
+};
+
+// Map type VkBindVertexBuffer3InfoKHR to id VK_STRUCTURE_TYPE_BIND_VERTEX_BUFFER_3_INFO_KHR
+template <>
+struct LvlTypeMap<VkBindVertexBuffer3InfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BIND_VERTEX_BUFFER_3_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_BIND_VERTEX_BUFFER_3_INFO_KHR> {
+    typedef VkBindVertexBuffer3InfoKHR Type;
+};
+
+// Map type VkDrawIndirect2InfoKHR to id VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR
+template <>
+struct LvlTypeMap<VkDrawIndirect2InfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR> {
+    typedef VkDrawIndirect2InfoKHR Type;
+};
+
+// Map type VkDrawIndirectCount2InfoKHR to id VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR
+template <>
+struct LvlTypeMap<VkDrawIndirectCount2InfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR> {
+    typedef VkDrawIndirectCount2InfoKHR Type;
+};
+
+// Map type VkDispatchIndirect2InfoKHR to id VK_STRUCTURE_TYPE_DISPATCH_INDIRECT_2_INFO_KHR
+template <>
+struct LvlTypeMap<VkDispatchIndirect2InfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DISPATCH_INDIRECT_2_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DISPATCH_INDIRECT_2_INFO_KHR> {
+    typedef VkDispatchIndirect2InfoKHR Type;
+};
+
+// Map type VkConditionalRenderingBeginInfo2EXT to id VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_2_EXT
+template <>
+struct LvlTypeMap<VkConditionalRenderingBeginInfo2EXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_2_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_2_EXT> {
+    typedef VkConditionalRenderingBeginInfo2EXT Type;
+};
+
+// Map type VkBindTransformFeedbackBuffer2InfoEXT to id VK_STRUCTURE_TYPE_BIND_TRANSFORM_FEEDBACK_BUFFER_2_INFO_EXT
+template <>
+struct LvlTypeMap<VkBindTransformFeedbackBuffer2InfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BIND_TRANSFORM_FEEDBACK_BUFFER_2_INFO_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_BIND_TRANSFORM_FEEDBACK_BUFFER_2_INFO_EXT> {
+    typedef VkBindTransformFeedbackBuffer2InfoEXT Type;
+};
+
+// Map type VkMemoryMarkerInfoAMD to id VK_STRUCTURE_TYPE_MEMORY_MARKER_INFO_AMD
+template <>
+struct LvlTypeMap<VkMemoryMarkerInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_MEMORY_MARKER_INFO_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_MEMORY_MARKER_INFO_AMD> {
+    typedef VkMemoryMarkerInfoAMD Type;
+};
+
+// Map type VkAccelerationStructureCreateInfo2KHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_2_KHR
+template <>
+struct LvlTypeMap<VkAccelerationStructureCreateInfo2KHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_2_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_2_KHR> {
+    typedef VkAccelerationStructureCreateInfo2KHR Type;
+};
+
 // Map type VkPhysicalDeviceFragmentShaderBarycentricFeaturesKHR to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR
 template <>

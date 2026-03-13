@@ -2508,6 +2508,100 @@ static VKAPI_ATTR VkResult VKAPI_CALL QueueSubmit2KHR(VkQueue queue, uint32_t su
     // Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
+static VKAPI_ATTR void VKAPI_CALL CmdBindIndexBuffer3KHR(VkCommandBuffer commandBuffer, const VkBindIndexBuffer3InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBindVertexBuffers3KHR(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                           uint32_t bindingCount, const VkBindVertexBuffer3InfoKHR* pBindingInfos) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirect2KHR(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDispatchIndirect2KHR(VkCommandBuffer commandBuffer, const VkDispatchIndirect2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryKHR(VkCommandBuffer commandBuffer,
+                                                   const VkCopyDeviceMemoryInfoKHR* pCopyMemoryInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageKHR(VkCommandBuffer commandBuffer,
+                                                          const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdCopyImageToMemoryKHR(VkCommandBuffer commandBuffer,
+                                                          const VkCopyDeviceMemoryImageInfoKHR* pCopyMemoryInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdUpdateMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                                     VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdFillMemoryKHR(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange,
+                                                   VkAddressCommandFlagsKHR dstFlags, uint32_t data) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdCopyQueryPoolResultsToMemoryKHR(VkCommandBuffer commandBuffer, VkQueryPool queryPool,
+                                                                     uint32_t firstQuery, uint32_t queryCount,
+                                                                     const VkStridedDeviceAddressRangeKHR* pDstRange,
+                                                                     VkAddressCommandFlagsKHR dstFlags,
+                                                                     VkQueryResultFlags queryResultFlags) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                           const VkDrawIndirectCount2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawIndexedIndirectCount2KHR(VkCommandBuffer commandBuffer,
+                                                                  const VkDrawIndirectCount2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBeginConditionalRendering2EXT(
+    VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfo2EXT* pConditionalRenderingBegin) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBindTransformFeedbackBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding,
+                                                                      uint32_t bindingCount,
+                                                                      const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdBeginTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                                uint32_t counterRangeCount,
+                                                                const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdEndTransformFeedback2EXT(VkCommandBuffer commandBuffer, uint32_t firstCounterRange,
+                                                              uint32_t counterRangeCount,
+                                                              const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawIndirectByteCount2EXT(VkCommandBuffer commandBuffer, uint32_t instanceCount,
+                                                               uint32_t firstInstance,
+                                                               const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfo,
+                                                               uint32_t counterOffset, uint32_t vertexStride) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirect2EXT(VkCommandBuffer commandBuffer, const VkDrawIndirect2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdDrawMeshTasksIndirectCount2EXT(VkCommandBuffer commandBuffer,
+                                                                    const VkDrawIndirectCount2InfoKHR* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdWriteMarkerToMemoryAMD(VkCommandBuffer commandBuffer, const VkMemoryMarkerInfoAMD* pInfo) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructure2KHR(VkDevice device,
+                                                                      const VkAccelerationStructureCreateInfo2KHR* pCreateInfo,
+                                                                      const VkAllocationCallbacks* pAllocator,
+                                                                      VkAccelerationStructureKHR* pAccelerationStructure) {
+    unique_lock_t lock(global_lock);
+    *pAccelerationStructure = (VkAccelerationStructureKHR)global_unique_handle++;
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
     // Not a CREATE or DESTROY function
 }
