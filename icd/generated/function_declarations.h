@@ -173,7 +173,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_vulkan_memory_model", VK_KHR_VULKAN_MEMORY_MODEL_SPEC_VERSION},
     {"VK_KHR_shader_terminate_invocation", VK_KHR_SHADER_TERMINATE_INVOCATION_SPEC_VERSION},
     {"VK_KHR_fragment_shading_rate", VK_KHR_FRAGMENT_SHADING_RATE_SPEC_VERSION},
+    {"VK_KHR_shader_constant_data", VK_KHR_SHADER_CONSTANT_DATA_SPEC_VERSION},
     {"VK_KHR_dynamic_rendering_local_read", VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_SPEC_VERSION},
+    {"VK_KHR_shader_abort", VK_KHR_SHADER_ABORT_SPEC_VERSION},
     {"VK_KHR_shader_quad_control", VK_KHR_SHADER_QUAD_CONTROL_SPEC_VERSION},
     {"VK_KHR_spirv_1_4", VK_KHR_SPIRV_1_4_SPEC_VERSION},
     {"VK_KHR_separate_depth_stencil_layouts", VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_SPEC_VERSION},
@@ -228,6 +230,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_video_encode_quantization_map", VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_SPEC_VERSION},
     {"VK_KHR_shader_relaxed_extended_instruction", VK_KHR_SHADER_RELAXED_EXTENDED_INSTRUCTION_SPEC_VERSION},
     {"VK_KHR_maintenance7", VK_KHR_MAINTENANCE_7_SPEC_VERSION},
+    {"VK_KHR_device_fault", VK_KHR_DEVICE_FAULT_SPEC_VERSION},
     {"VK_KHR_maintenance8", VK_KHR_MAINTENANCE_8_SPEC_VERSION},
     {"VK_KHR_shader_fma", VK_KHR_SHADER_FMA_SPEC_VERSION},
     {"VK_KHR_maintenance9", VK_KHR_MAINTENANCE_9_SPEC_VERSION},
@@ -1861,6 +1864,11 @@ static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryIndirectKHR(VkCommandBuffer comma
 
 static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectKHR(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultReportsKHR(VkDevice device, uint64_t timeout, uint32_t* pFaultCounts,
+                                                               VkDeviceFaultInfoKHR* pFaultInfo);
+
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultDebugInfoKHR(VkDevice device, VkDeviceFaultDebugInfoKHR* pDebugInfo);
 
 static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2KHR(VkCommandBuffer commandBuffer,
                                                       const VkRenderingEndInfoKHR* pRenderingEndInfo);
@@ -3616,6 +3624,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkCmdBindDescriptorBufferEmbeddedSamplers2EXT", (void*)CmdBindDescriptorBufferEmbeddedSamplers2EXT},
     {"vkCmdCopyMemoryIndirectKHR", (void*)CmdCopyMemoryIndirectKHR},
     {"vkCmdCopyMemoryToImageIndirectKHR", (void*)CmdCopyMemoryToImageIndirectKHR},
+    {"vkGetDeviceFaultReportsKHR", (void*)GetDeviceFaultReportsKHR},
+    {"vkGetDeviceFaultDebugInfoKHR", (void*)GetDeviceFaultDebugInfoKHR},
     {"vkCmdEndRendering2KHR", (void*)CmdEndRendering2KHR},
     {"vkCreateDebugReportCallbackEXT", (void*)CreateDebugReportCallbackEXT},
     {"vkDestroyDebugReportCallbackEXT", (void*)DestroyDebugReportCallbackEXT},
