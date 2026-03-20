@@ -2785,6 +2785,15 @@ static VKAPI_ATTR void VKAPI_CALL CmdCopyMemoryToImageIndirectKHR(
     VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
     // Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultReportsKHR(VkDevice device, uint64_t timeout, uint32_t* pFaultCounts,
+                                                               VkDeviceFaultInfoKHR* pFaultInfo) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetDeviceFaultDebugInfoKHR(VkDevice device, VkDeviceFaultDebugInfoKHR* pDebugInfo) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2KHR(VkCommandBuffer commandBuffer,
                                                       const VkRenderingEndInfoKHR* pRenderingEndInfo) {
     // Not a CREATE or DESTROY function
