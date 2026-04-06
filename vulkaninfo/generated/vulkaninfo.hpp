@@ -4718,6 +4718,8 @@ void DumpVkPhysicalDevicePresentTimingFeaturesEXT(Printer &p, std::string name,
                                                   const VkPhysicalDevicePresentTimingFeaturesEXT &obj);
 void DumpVkPhysicalDevicePresentWait2FeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentWait2FeaturesKHR &obj);
 void DumpVkPhysicalDevicePresentWaitFeaturesKHR(Printer &p, std::string name, const VkPhysicalDevicePresentWaitFeaturesKHR &obj);
+void DumpVkPhysicalDevicePrimitiveRestartIndexFeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &obj);
 void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(
     Printer &p, std::string name, const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT &obj);
 void DumpVkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT(Printer &p, std::string name,
@@ -6637,6 +6639,12 @@ void DumpVkPhysicalDevicePresentWaitFeaturesKHR(Printer &p, std::string name, co
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(11);
     p.PrintKeyBool("presentWait", static_cast<bool>(obj.presentWait));
+}
+void DumpVkPhysicalDevicePrimitiveRestartIndexFeaturesEXT(Printer &p, std::string name,
+                                                          const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(21);
+    p.PrintKeyBool("primitiveRestartIndex", static_cast<bool>(obj.primitiveRestartIndex));
 }
 void DumpVkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT(
     Printer &p, std::string name, const VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT &obj) {
@@ -9341,6 +9349,7 @@ struct phys_device_features2_chain {
     VkPhysicalDevicePresentTimingFeaturesEXT PhysicalDevicePresentTimingFeaturesEXT{};
     VkPhysicalDevicePresentWait2FeaturesKHR PhysicalDevicePresentWait2FeaturesKHR{};
     VkPhysicalDevicePresentWaitFeaturesKHR PhysicalDevicePresentWaitFeaturesKHR{};
+    VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT PhysicalDevicePrimitiveRestartIndexFeaturesEXT{};
     VkPhysicalDevicePrimitiveTopologyListRestartFeaturesEXT PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT{};
     VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT{};
     VkPhysicalDevicePrivateDataFeatures PhysicalDevicePrivateDataFeatures{};
@@ -9546,6 +9555,8 @@ struct phys_device_features2_chain {
         PhysicalDevicePresentTimingFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT;
         PhysicalDevicePresentWait2FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_2_FEATURES_KHR;
         PhysicalDevicePresentWaitFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR;
+        PhysicalDevicePrimitiveRestartIndexFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT;
         PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT;
         PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT.sType =
@@ -9886,6 +9897,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePresentWait2FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PRESENT_WAIT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePresentWaitFeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVE_RESTART_INDEX_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePrimitiveRestartIndexFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVE_TOPOLOGY_LIST_RESTART_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRIMITIVES_GENERATED_QUERY_EXTENSION_NAME))
@@ -10972,6 +10985,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDevicePresentWaitFeaturesKHR *props = (const VkPhysicalDevicePresentWaitFeaturesKHR *)structure;
             const char *name = "VkPhysicalDevicePresentWaitFeaturesKHR";
             DumpVkPhysicalDevicePresentWaitFeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT) {
+            const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *props =
+                (const VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT";
+            DumpVkPhysicalDevicePrimitiveRestartIndexFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT) {

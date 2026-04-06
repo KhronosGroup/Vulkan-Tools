@@ -3274,7 +3274,7 @@ static VKAPI_ATTR void VKAPI_CALL DestroyAccelerationStructureNV(VkDevice device
     // Destroy object
 }
 static VKAPI_ATTR void VKAPI_CALL GetAccelerationStructureMemoryRequirementsNV(
-    VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) {
+    VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
     // arbitrary
     pMemoryRequirements->memoryRequirements.size = 4096;
     pMemoryRequirements->memoryRequirements.alignment = 1;
@@ -3682,6 +3682,10 @@ static VKAPI_ATTR void VKAPI_CALL GetPrivateDataEXT(VkDevice device, VkObjectTyp
                                                     VkPrivateDataSlot privateDataSlot, uint64_t* pData) {
     // Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR VkResult VKAPI_CALL QueueSetPerfHintQCOM(VkQueue queue, const VkPerfHintInfoQCOM* pPerfHintInfo) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR VkResult VKAPI_CALL CreateCudaModuleNV(VkDevice device, const VkCudaModuleCreateInfoNV* pCreateInfo,
                                                          const VkAllocationCallbacks* pAllocator, VkCudaModuleNV* pModule) {
@@ -3896,7 +3900,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryRemoteAddressNV(VkDevice device,
     // Not a CREATE or DESTROY function
     return VK_SUCCESS;
 }
-static VKAPI_ATTR VkResult VKAPI_CALL GetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoEXT* pPipelineInfo,
+static VKAPI_ATTR VkResult VKAPI_CALL GetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo,
                                                                VkBaseOutStructure* pPipelineProperties) {
     // Not a CREATE or DESTROY function
     return VK_SUCCESS;
@@ -4019,6 +4023,10 @@ static VKAPI_ATTR void VKAPI_CALL CmdDrawClusterIndirectHUAWEI(VkCommandBuffer c
     // Not a CREATE or DESTROY function
 }
 static VKAPI_ATTR void VKAPI_CALL SetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL CmdSetDispatchParametersARM(VkCommandBuffer commandBuffer,
+                                                              const VkDispatchParametersARM* pDispatchParameters) {
     // Not a CREATE or DESTROY function
 }
 static VKAPI_ATTR void VKAPI_CALL
@@ -4422,6 +4430,12 @@ static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceQueueFamilyDataGraphProcessin
     VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties) {
     // Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties, VkBaseOutStructure* pProperties) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
 static VKAPI_ATTR void VKAPI_CALL CmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer,
                                                                         VkImageAspectFlags aspectMask) {
     // Not a CREATE or DESTROY function
@@ -4622,6 +4636,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_UBM_SEC */
+static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
+    // Not a CREATE or DESTROY function
+}
 static VKAPI_ATTR VkResult VKAPI_CALL CreateAccelerationStructureKHR(VkDevice device,
                                                                      const VkAccelerationStructureCreateInfoKHR* pCreateInfo,
                                                                      const VkAllocationCallbacks* pAllocator,
