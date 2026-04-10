@@ -549,6 +549,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_shader_64bit_indexing", VK_EXT_SHADER_64BIT_INDEXING_SPEC_VERSION},
     {"VK_EXT_custom_resolve", VK_EXT_CUSTOM_RESOLVE_SPEC_VERSION},
     {"VK_QCOM_data_graph_model", VK_QCOM_DATA_GRAPH_MODEL_SPEC_VERSION},
+    {"VK_ARM_data_graph_optical_flow", VK_ARM_DATA_GRAPH_OPTICAL_FLOW_SPEC_VERSION},
     {"VK_EXT_shader_long_vector", VK_EXT_SHADER_LONG_VECTOR_SPEC_VERSION},
     {"VK_SEC_pipeline_cache_incremental_mode", VK_SEC_PIPELINE_CACHE_INCREMENTAL_MODE_SPEC_VERSION},
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
@@ -3072,6 +3073,12 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndRendering2EXT(VkCommandBuffer commandBuf
 static VKAPI_ATTR void VKAPI_CALL CmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer,
                                                            const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo);
 
+static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(
+    VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex,
+    const VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties,
+    const VkDataGraphOpticalFlowImageFormatInfoARM* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount,
+    VkDataGraphOpticalFlowImageFormatPropertiesARM* pImageFormatProperties);
+
 static VKAPI_ATTR void VKAPI_CALL CmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer,
                                                                    const VkComputeOccupancyPriorityParametersNV* pParameters);
 #ifdef VK_USE_PLATFORM_UBM_SEC
@@ -4113,6 +4120,8 @@ static const std::unordered_map<std::string, void*> name_to_funcptr_map = {
     {"vkClearShaderInstrumentationMetricsARM", (void*)ClearShaderInstrumentationMetricsARM},
     {"vkCmdEndRendering2EXT", (void*)CmdEndRendering2EXT},
     {"vkCmdBeginCustomResolveEXT", (void*)CmdBeginCustomResolveEXT},
+    {"vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM",
+     (void*)GetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM},
     {"vkCmdSetComputeOccupancyPriorityNV", (void*)CmdSetComputeOccupancyPriorityNV},
 #ifdef VK_USE_PLATFORM_UBM_SEC
     {"vkCreateUbmSurfaceSEC", (void*)CreateUbmSurfaceSEC},
