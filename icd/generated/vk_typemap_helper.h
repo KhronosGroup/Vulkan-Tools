@@ -13305,6 +13305,108 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_MODEL_FEATURES_Q
     typedef VkPhysicalDeviceDataGraphModelFeaturesQCOM Type;
 };
 
+// Map type VkPhysicalDeviceDataGraphOpticalFlowFeaturesARM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_OPTICAL_FLOW_FEATURES_ARM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceDataGraphOpticalFlowFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_OPTICAL_FLOW_FEATURES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_OPTICAL_FLOW_FEATURES_ARM> {
+    typedef VkPhysicalDeviceDataGraphOpticalFlowFeaturesARM Type;
+};
+
+// Map type VkQueueFamilyDataGraphOpticalFlowPropertiesARM to id
+// VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_OPTICAL_FLOW_PROPERTIES_ARM
+template <>
+struct LvlTypeMap<VkQueueFamilyDataGraphOpticalFlowPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_OPTICAL_FLOW_PROPERTIES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_OPTICAL_FLOW_PROPERTIES_ARM> {
+    typedef VkQueueFamilyDataGraphOpticalFlowPropertiesARM Type;
+};
+
+// Map type VkDataGraphPipelineOpticalFlowCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineOpticalFlowCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineOpticalFlowCreateInfoARM Type;
+};
+
+// Map type VkDataGraphOpticalFlowImageFormatPropertiesARM to id
+// VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_ARM
+template <>
+struct LvlTypeMap<VkDataGraphOpticalFlowImageFormatPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_ARM> {
+    typedef VkDataGraphOpticalFlowImageFormatPropertiesARM Type;
+};
+
+// Map type VkDataGraphOpticalFlowImageFormatInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphOpticalFlowImageFormatInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM> {
+    typedef VkDataGraphOpticalFlowImageFormatInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineOpticalFlowDispatchInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_DISPATCH_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineOpticalFlowDispatchInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_DISPATCH_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_DISPATCH_INFO_ARM> {
+    typedef VkDataGraphPipelineOpticalFlowDispatchInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineResourceInfoImageLayoutARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_IMAGE_LAYOUT_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineResourceInfoImageLayoutARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_IMAGE_LAYOUT_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_IMAGE_LAYOUT_ARM> {
+    typedef VkDataGraphPipelineResourceInfoImageLayoutARM Type;
+};
+
+// Map type VkDataGraphPipelineSingleNodeConnectionARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CONNECTION_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineSingleNodeConnectionARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CONNECTION_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CONNECTION_ARM> {
+    typedef VkDataGraphPipelineSingleNodeConnectionARM Type;
+};
+
+// Map type VkDataGraphPipelineSingleNodeCreateInfoARM to id VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineSingleNodeCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineSingleNodeCreateInfoARM Type;
+};
+
 // Map type VkPhysicalDeviceShaderLongVectorFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT
 template <>
 struct LvlTypeMap<VkPhysicalDeviceShaderLongVectorFeaturesEXT> {
