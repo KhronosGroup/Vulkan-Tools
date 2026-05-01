@@ -6108,6 +6108,29 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_RESOLVE_IMAGE_MODE_INFO_KHR> {
     typedef VkResolveImageModeInfoKHR Type;
 };
 
+// Map type VkPhysicalDeviceMaintenance11FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceMaintenance11FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR> {
+    typedef VkPhysicalDeviceMaintenance11FeaturesKHR Type;
+};
+
+// Map type VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR to id
+// VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR
+template <>
+struct LvlTypeMap<VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR> {
+    typedef VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR Type;
+};
+
 // Map type VkDebugReportCallbackCreateInfoEXT to id VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT
 template <>
 struct LvlTypeMap<VkDebugReportCallbackCreateInfoEXT> {
@@ -13511,6 +13534,64 @@ struct LvlTypeMap<VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE> {
     typedef VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE Type;
+};
+
+// Map type VkThrottleHintSubmitInfoSEC to id VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC
+template <>
+struct LvlTypeMap<VkThrottleHintSubmitInfoSEC> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC> {
+    typedef VkThrottleHintSubmitInfoSEC Type;
+};
+
+// Map type VkPhysicalDeviceThrottleHintFeaturesSEC to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_THROTTLE_HINT_FEATURES_SEC
+template <>
+struct LvlTypeMap<VkPhysicalDeviceThrottleHintFeaturesSEC> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_THROTTLE_HINT_FEATURES_SEC;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_THROTTLE_HINT_FEATURES_SEC> {
+    typedef VkPhysicalDeviceThrottleHintFeaturesSEC Type;
+};
+
+// Map type VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM> {
+    typedef VkPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM Type;
+};
+
+// Map type VkDataGraphPipelineNeuralStatisticsCreateInfoARM to id
+// VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineNeuralStatisticsCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineNeuralStatisticsCreateInfoARM Type;
+};
+
+// Map type VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM to id
+// VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM> {
+    typedef VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM Type;
 };
 
 // Map type VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT to id

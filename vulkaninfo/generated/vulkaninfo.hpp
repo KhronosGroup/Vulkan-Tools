@@ -2603,6 +2603,8 @@ std::vector<const char *> VkImageCreateFlagBitsGetStrings(VkImageCreateFlagBits 
         strings.push_back("IMAGE_CREATE_VIDEO_PROFILE_INDEPENDENT_BIT_KHR");
     if (VK_IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT & value)
         strings.push_back("IMAGE_CREATE_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT");
+    if (VK_IMAGE_CREATE_ALIAS_SINGLE_LAYER_DESCRIPTOR_BIT_KHR & value)
+        strings.push_back("IMAGE_CREATE_ALIAS_SINGLE_LAYER_DESCRIPTOR_BIT_KHR");
     return strings;
 }
 void DumpVkImageCreateFlags(Printer &p, std::string name, VkImageCreateFlags value) {
@@ -4636,6 +4638,8 @@ void DumpVkPhysicalDeviceMaintenance10FeaturesKHR(Printer &p, std::string name,
                                                   const VkPhysicalDeviceMaintenance10FeaturesKHR &obj);
 void DumpVkPhysicalDeviceMaintenance10PropertiesKHR(Printer &p, std::string name,
                                                     const VkPhysicalDeviceMaintenance10PropertiesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance11FeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceMaintenance11FeaturesKHR &obj);
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj);
 void DumpVkPhysicalDeviceMaintenance4Features(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Features &obj);
 void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Properties &obj);
@@ -4920,6 +4924,8 @@ void DumpVkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(Printer &p, std::
                                                                const VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures &obj);
 void DumpVkPresentTimingSurfaceCapabilitiesEXT(Printer &p, std::string name, const VkPresentTimingSurfaceCapabilitiesEXT &obj);
 void DumpVkQueueFamilyGlobalPriorityProperties(Printer &p, std::string name, const VkQueueFamilyGlobalPriorityProperties &obj);
+void DumpVkQueueFamilyOptimalImageTransferGranularityPropertiesKHR(
+    Printer &p, std::string name, const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR &obj);
 void DumpVkQueueFamilyOwnershipTransferPropertiesKHR(Printer &p, std::string name,
                                                      const VkQueueFamilyOwnershipTransferPropertiesKHR &obj);
 void DumpVkQueueFamilyQueryResultStatusPropertiesKHR(Printer &p, std::string name,
@@ -6227,6 +6233,12 @@ void DumpVkPhysicalDeviceMaintenance10PropertiesKHR(Printer &p, std::string name
     p.PrintKeyBool("resolveSrgbFormatAppliesTransferFunction", static_cast<bool>(obj.resolveSrgbFormatAppliesTransferFunction));
     p.PrintKeyBool("resolveSrgbFormatSupportsTransferFunctionControl",
                    static_cast<bool>(obj.resolveSrgbFormatSupportsTransferFunctionControl));
+}
+void DumpVkPhysicalDeviceMaintenance11FeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceMaintenance11FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("maintenance11", static_cast<bool>(obj.maintenance11));
 }
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj) {
     ObjectWrapper object{p, name};
@@ -7750,6 +7762,11 @@ void DumpVkQueueFamilyGlobalPriorityProperties(Printer &p, std::string name, con
         else
             p.PrintString(VkQueueGlobalPriorityString(obj.priorities[i]));
     }
+}
+void DumpVkQueueFamilyOptimalImageTransferGranularityPropertiesKHR(
+    Printer &p, std::string name, const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkExtent3D(p, "optimalImageTransferGranularity", obj.optimalImageTransferGranularity);
 }
 void DumpVkQueueFamilyOwnershipTransferPropertiesKHR(Printer &p, std::string name,
                                                      const VkQueueFamilyOwnershipTransferPropertiesKHR &obj) {
@@ -9320,6 +9337,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceLegacyVertexAttributesFeaturesEXT PhysicalDeviceLegacyVertexAttributesFeaturesEXT{};
     VkPhysicalDeviceLineRasterizationFeatures PhysicalDeviceLineRasterizationFeatures{};
     VkPhysicalDeviceMaintenance10FeaturesKHR PhysicalDeviceMaintenance10FeaturesKHR{};
+    VkPhysicalDeviceMaintenance11FeaturesKHR PhysicalDeviceMaintenance11FeaturesKHR{};
     VkPhysicalDeviceMaintenance4Features PhysicalDeviceMaintenance4Features{};
     VkPhysicalDeviceMaintenance5Features PhysicalDeviceMaintenance5Features{};
     VkPhysicalDeviceMaintenance6Features PhysicalDeviceMaintenance6Features{};
@@ -9519,6 +9537,7 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT;
         PhysicalDeviceLineRasterizationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES;
         PhysicalDeviceMaintenance10FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR;
+        PhysicalDeviceMaintenance11FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR;
         PhysicalDeviceMaintenance4Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES;
         PhysicalDeviceMaintenance5Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES;
         PhysicalDeviceMaintenance6Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES;
@@ -9824,6 +9843,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceLineRasterizationFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_10_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance10FeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_11_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance11FeaturesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance4Features));
@@ -10700,6 +10721,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceMaintenance10FeaturesKHR *props = (const VkPhysicalDeviceMaintenance10FeaturesKHR *)structure;
             const char *name = "VkPhysicalDeviceMaintenance10FeaturesKHR";
             DumpVkPhysicalDeviceMaintenance10FeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR) {
+            const VkPhysicalDeviceMaintenance11FeaturesKHR *props = (const VkPhysicalDeviceMaintenance11FeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceMaintenance11FeaturesKHR";
+            DumpVkPhysicalDeviceMaintenance11FeaturesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES) {
@@ -11920,11 +11947,14 @@ struct queue_properties2_chain {
     queue_properties2_chain &operator=(queue_properties2_chain &&) = delete;
     void *start_of_chain = nullptr;
     VkQueueFamilyGlobalPriorityProperties QueueFamilyGlobalPriorityProperties{};
+    VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR QueueFamilyOptimalImageTransferGranularityPropertiesKHR{};
     VkQueueFamilyOwnershipTransferPropertiesKHR QueueFamilyOwnershipTransferPropertiesKHR{};
     VkQueueFamilyQueryResultStatusPropertiesKHR QueueFamilyQueryResultStatusPropertiesKHR{};
     VkQueueFamilyVideoPropertiesKHR QueueFamilyVideoPropertiesKHR{};
     void initialize_chain(AppGpu &gpu) noexcept {
         QueueFamilyGlobalPriorityProperties.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES;
+        QueueFamilyOptimalImageTransferGranularityPropertiesKHR.sType =
+            VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR;
         QueueFamilyOwnershipTransferPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR;
         QueueFamilyQueryResultStatusPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR;
         QueueFamilyVideoPropertiesKHR.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR;
@@ -11933,6 +11963,9 @@ struct queue_properties2_chain {
              gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_GLOBAL_PRIORITY_QUERY_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_4))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&QueueFamilyGlobalPriorityProperties));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_11_EXTENSION_NAME))
+            chain_members.push_back(
+                reinterpret_cast<VkBaseOutStructure *>(&QueueFamilyOptimalImageTransferGranularityPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_9_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&QueueFamilyOwnershipTransferPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_QUEUE_EXTENSION_NAME))
@@ -11966,6 +11999,13 @@ void chain_iterator_queue_properties2(Printer &p, AppGpu &gpu, const void *place
                                           ? "VkQueueFamilyGlobalPriorityPropertiesKHR"
                                           : ("VkQueueFamilyGlobalPriorityPropertiesEXT"));
             DumpVkQueueFamilyGlobalPriorityProperties(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR) {
+            const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR *props =
+                (const VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR *)structure;
+            const char *name = "VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR";
+            DumpVkQueueFamilyOptimalImageTransferGranularityPropertiesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR) {
