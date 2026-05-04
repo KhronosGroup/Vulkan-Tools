@@ -3018,6 +3018,8 @@ static void demo_create_xcb_window(struct demo *demo) {
     xcb_change_property(demo->connection, XCB_PROP_MODE_REPLACE, demo->xcb_window, (*reply).atom, 4, 32, 1,
                         &(*demo->atom_wm_delete_window).atom);
     free(reply);
+    free(net_wm_name_reply);
+    free(utf8_string_reply);
 
     xcb_map_window(demo->connection, demo->xcb_window);
 
