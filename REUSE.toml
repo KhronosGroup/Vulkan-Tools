@@ -1,0 +1,156 @@
+version = 1
+
+# ---------------------------------------------------------------------------
+# Project-wide default: Apache-2.0, core copyright holders
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = "**"
+SPDX-FileCopyrightText = [
+    "2014-2026 The Khronos Group Inc.",
+    "2014-2026 Valve Corporation",
+    "2014-2026 LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# Project infrastructure / config files (no header possible)
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = [
+    ".clang-format",
+    ".gitattributes",
+    ".gitignore",
+    "icd/generated/.clang-format",
+    "vulkaninfo/generated/.clang-format",
+    "scripts/gn/DEPS",
+]
+SPDX-FileCopyrightText = "2014-2026 LunarG, Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# Documentation files without in-file copyright
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = [
+    "BUILD.md",
+    "README.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "GOVERNANCE.md",
+    "icd/README.md",
+    "tests/README.md",
+    "vulkaninfo/json_validation_process.md",
+]
+SPDX-FileCopyrightText = "2014-2026 The Khronos Group Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# cube: linmath.h (header stripped in a PR; original was Apache-2.0)
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = "cube/linmath.h"
+SPDX-FileCopyrightText = [
+    "2015-2016 The Khronos Group Inc.",
+    "2015-2016 Valve Corporation",
+    "2015-2016 LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# cube: embedded LunarG logo
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = "cube/lunarg.ppm.h"
+SPDX-FileCopyrightText = "2014-2026 LunarG, Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# cube: compiled SPIR-V bytecode generated from cube.frag / cube.vert
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = ["cube/cube.frag.inc", "cube/cube.vert.inc"]
+SPDX-FileCopyrightText = [
+    "2015-2016 The Khronos Group Inc.",
+    "2015-2016 Valve Corporation",
+    "2015-2016 LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# cube: Android port
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = "cube/android/AndroidManifest.xml"
+SPDX-FileCopyrightText = "2016 Google, Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# cube: macOS and iOS Apple platform files (Info.plist, storyboards, assets)
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = [
+    "cube/macOS/cube/Info.plist",
+    "cube/macOS/cube/Resources/Main.storyboard",
+    "cube/macOS/cube/Resources/VulkanIcon.icns",
+    "cube/macOS/cubepp/Info.plist",
+    "cube/macOS/cubepp/Resources/Main.storyboard",
+    "cube/macOS/cubepp/Resources/VulkanIcon.icns",
+]
+SPDX-FileCopyrightText = [
+    "2018-2026 The Khronos Group Inc.",
+    "2018-2026 Valve Corporation",
+    "2018-2026 LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# vulkaninfo: iOS Xcode project and Apple platform files
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = [
+    "vulkaninfo/iOS/vulkaninfo.xcodeproj/**",
+    "vulkaninfo/iOS/vulkaninfo/Info.plist",
+    "vulkaninfo/iOS/vulkaninfo/vulkaninfo.entitlements",
+    "vulkaninfo/iOS/vulkaninfo/Assets.xcassets/**",
+    "vulkaninfo/iOS/vulkaninfo/Base.lproj/LaunchScreen.storyboard",
+    "vulkaninfo/iOS/vulkaninfo/Base.lproj/Main.storyboard",
+]
+SPDX-FileCopyrightText = [
+    "2020-2026 The Khronos Group Inc.",
+    "2020-2026 Valve Corporation",
+    "2020-2026 LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# ICD: JSON files without headers
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = ["scripts/known_good.json", "icd/VkICD_mock_icd.json.in"]
+SPDX-FileCopyrightText = "2015-2026 The Khronos Group Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+# ---------------------------------------------------------------------------
+# LICENSE.txt is the Apache-2.0 license text itself — no annotation needed
+# but REUSE requires it to be covered; annotate as Apache-2.0 meta-file.
+# ---------------------------------------------------------------------------
+
+[[annotations]]
+path = "LICENSE.txt"
+SPDX-FileCopyrightText = "2014-2026 The Khronos Group Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "LICENSES/Apache-2.0.txt"
+SPDX-FileCopyrightText = "2004 The Apache Software Foundation"
+SPDX-License-Identifier = "Apache-2.0"
