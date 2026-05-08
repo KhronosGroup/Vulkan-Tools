@@ -6053,6 +6053,51 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_RE
     typedef VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR Type;
 };
 
+// Map type VkAccelerationStructureGeometryMicromapDataKHR to id VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MICROMAP_DATA_KHR
+template <>
+struct LvlTypeMap<VkAccelerationStructureGeometryMicromapDataKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MICROMAP_DATA_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MICROMAP_DATA_KHR> {
+    typedef VkAccelerationStructureGeometryMicromapDataKHR Type;
+};
+
+// Map type VkPhysicalDeviceOpacityMicromapFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceOpacityMicromapFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_KHR> {
+    typedef VkPhysicalDeviceOpacityMicromapFeaturesKHR Type;
+};
+
+// Map type VkPhysicalDeviceOpacityMicromapPropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceOpacityMicromapPropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceOpacityMicromapPropertiesKHR Type;
+};
+
+// Map type VkAccelerationStructureTrianglesOpacityMicromapKHR to id
+// VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_KHR
+template <>
+struct LvlTypeMap<VkAccelerationStructureTrianglesOpacityMicromapKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_KHR> {
+    typedef VkAccelerationStructureTrianglesOpacityMicromapKHR Type;
+};
+
 // Map type VkPhysicalDeviceMaintenance10FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR
 template <>
 struct LvlTypeMap<VkPhysicalDeviceMaintenance10FeaturesKHR> {
@@ -6873,6 +6918,83 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2
 };
 
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
+// Map type VkPhysicalDeviceGpaFeaturesAMD to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_FEATURES_AMD
+template <>
+struct LvlTypeMap<VkPhysicalDeviceGpaFeaturesAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_FEATURES_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_FEATURES_AMD> {
+    typedef VkPhysicalDeviceGpaFeaturesAMD Type;
+};
+
+// Map type VkPhysicalDeviceGpaPropertiesAMD to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD
+template <>
+struct LvlTypeMap<VkPhysicalDeviceGpaPropertiesAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD> {
+    typedef VkPhysicalDeviceGpaPropertiesAMD Type;
+};
+
+// Map type VkPhysicalDeviceGpaProperties2AMD to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_2_AMD
+template <>
+struct LvlTypeMap<VkPhysicalDeviceGpaProperties2AMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_2_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_2_AMD> {
+    typedef VkPhysicalDeviceGpaProperties2AMD Type;
+};
+
+// Map type VkGpaSampleBeginInfoAMD to id VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD
+template <>
+struct LvlTypeMap<VkGpaSampleBeginInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD> {
+    typedef VkGpaSampleBeginInfoAMD Type;
+};
+
+// Map type VkGpaDeviceClockModeInfoAMD to id VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD
+template <>
+struct LvlTypeMap<VkGpaDeviceClockModeInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD> {
+    typedef VkGpaDeviceClockModeInfoAMD Type;
+};
+
+// Map type VkGpaDeviceGetClockInfoAMD to id VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD
+template <>
+struct LvlTypeMap<VkGpaDeviceGetClockInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD> {
+    typedef VkGpaDeviceGetClockInfoAMD Type;
+};
+
+// Map type VkGpaSessionCreateInfoAMD to id VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD
+template <>
+struct LvlTypeMap<VkGpaSessionCreateInfoAMD> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD> {
+    typedef VkGpaSessionCreateInfoAMD Type;
+};
+
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 // Map type VkPhysicalDeviceShaderEnqueueFeaturesAMDX to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX
 template <>
@@ -7586,6 +7708,17 @@ struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM> {
     typedef VkPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceElapsedTimerQueryFeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ELAPSED_TIMER_QUERY_FEATURES_QCOM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceElapsedTimerQueryFeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ELAPSED_TIMER_QUERY_FEATURES_QCOM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ELAPSED_TIMER_QUERY_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceElapsedTimerQueryFeaturesQCOM Type;
 };
 
 // Map type VkImportMemoryHostPointerInfoEXT to id VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT
@@ -8764,6 +8897,64 @@ struct LvlTypeMap<VkPhysicalDeviceQueuePerfHintPropertiesQCOM> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_PERF_HINT_PROPERTIES_QCOM> {
     typedef VkPhysicalDeviceQueuePerfHintPropertiesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceImageProcessing3FeaturesQCOM to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_3_FEATURES_QCOM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceImageProcessing3FeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_3_FEATURES_QCOM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_3_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceImageProcessing3FeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_FEATURES_QCOM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_FEATURES_QCOM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_FEATURES_QCOM> {
+    typedef VkPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_PROPERTIES_QCOM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_PROPERTIES_QCOM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_PROPERTIES_QCOM> {
+    typedef VkPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM Type;
+};
+
+// Map type VkPhysicalDeviceShaderSplitBarrierFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderSplitBarrierFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_FEATURES_EXT> {
+    typedef VkPhysicalDeviceShaderSplitBarrierFeaturesEXT Type;
+};
+
+// Map type VkPhysicalDeviceShaderSplitBarrierPropertiesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_PROPERTIES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderSplitBarrierPropertiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_PROPERTIES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_PROPERTIES_EXT> {
+    typedef VkPhysicalDeviceShaderSplitBarrierPropertiesEXT Type;
 };
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS

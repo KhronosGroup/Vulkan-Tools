@@ -3122,7 +3122,57 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetMemoryAndroidHardwareBufferANDROID(
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_ANDROID_KHR */
-
+static VKAPI_ATTR VkResult VKAPI_CALL CreateGpaSessionAMD(VkDevice device, const VkGpaSessionCreateInfoAMD* pCreateInfo,
+                                                          const VkAllocationCallbacks* pAllocator, VkGpaSessionAMD* pGpaSession) {
+    unique_lock_t lock(global_lock);
+    *pGpaSession = (VkGpaSessionAMD)global_unique_handle++;
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR void VKAPI_CALL DestroyGpaSessionAMD(VkDevice device, VkGpaSessionAMD gpaSession,
+                                                       const VkAllocationCallbacks* pAllocator) {
+    // Destroy object
+}
+static VKAPI_ATTR VkResult VKAPI_CALL SetGpaDeviceClockModeAMD(VkDevice device, VkGpaDeviceClockModeInfoAMD* pInfo) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetGpaDeviceClockInfoAMD(VkDevice device, VkGpaDeviceGetClockInfoAMD* pInfo) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL CmdBeginGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL CmdEndGpaSessionAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL CmdBeginGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession,
+                                                           const VkGpaSampleBeginInfoAMD* pGpaSampleBeginInfo,
+                                                           uint32_t* pSampleID) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR void VKAPI_CALL CmdEndGpaSampleAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetGpaSessionStatusAMD(VkDevice device, VkGpaSessionAMD gpaSession) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL GetGpaSessionResultsAMD(VkDevice device, VkGpaSessionAMD gpaSession, uint32_t sampleID,
+                                                              size_t* pSizeInBytes, void* pData) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR VkResult VKAPI_CALL ResetGpaSessionAMD(VkDevice device, VkGpaSessionAMD gpaSession) {
+    // Not a CREATE or DESTROY function
+    return VK_SUCCESS;
+}
+static VKAPI_ATTR void VKAPI_CALL CmdCopyGpaSessionResultsAMD(VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession) {
+    // Not a CREATE or DESTROY function
+}
 #ifdef VK_ENABLE_BETA_EXTENSIONS
 static VKAPI_ATTR VkResult VKAPI_CALL CreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache pipelineCache,
                                                                         uint32_t createInfoCount,
