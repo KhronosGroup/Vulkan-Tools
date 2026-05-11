@@ -1,156 +1,234 @@
 version = 1
 
-# ---------------------------------------------------------------------------
-# Project-wide default: Apache-2.0, core copyright holders
-# ---------------------------------------------------------------------------
-
 [[annotations]]
-path = "**"
-SPDX-FileCopyrightText = [
-    "2014-2026 The Khronos Group Inc.",
-    "2014-2026 Valve Corporation",
-    "2014-2026 LunarG, Inc.",
+path = [
+    "**",
+    "icd/mock_icd.h", "icd/mock_icd.cpp",
+    "icd/generated/function_definitions.h",
+    "icd/generated/function_declarations.h",
 ]
+SPDX-FileCopyrightText = "The Khronos Group, Inc."
 SPDX-License-Identifier = "Apache-2.0"
-
-# ---------------------------------------------------------------------------
-# Project infrastructure / config files (no header possible)
-# ---------------------------------------------------------------------------
 
 [[annotations]]
 path = [
-    ".clang-format",
-    ".gitattributes",
-    ".gitignore",
-    "icd/generated/.clang-format",
-    "vulkaninfo/generated/.clang-format",
-    "scripts/gn/DEPS",
+    "CMakeLists.txt",
+    "vulkaninfo/CMakeLists.txt",
+    "icd/CMakeLists.txt",
 ]
-SPDX-FileCopyrightText = "2014-2026 LunarG, Inc."
+SPDX-FileCopyrightText = [
+    "Valve Corporation",
+    "LunarG, Inc.",
+    "RasterGrid Kft.",
+]
 SPDX-License-Identifier = "Apache-2.0"
-
-# ---------------------------------------------------------------------------
-# Documentation files without in-file copyright
-# ---------------------------------------------------------------------------
 
 [[annotations]]
 path = [
-    "BUILD.md",
-    "README.md",
-    "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
-    "GOVERNANCE.md",
-    "icd/README.md",
-    "tests/README.md",
-    "vulkaninfo/json_validation_process.md",
+    "BUILD.gn",
+    "scripts/gn/generate_vulkan_icd_json.py",
 ]
-SPDX-FileCopyrightText = "2014-2026 The Khronos Group Inc."
-SPDX-License-Identifier = "Apache-2.0"
-
-# ---------------------------------------------------------------------------
-# cube: linmath.h (header stripped in a PR; original was Apache-2.0)
-# ---------------------------------------------------------------------------
-
-[[annotations]]
-path = "cube/linmath.h"
 SPDX-FileCopyrightText = [
-    "2015-2016 The Khronos Group Inc.",
-    "2015-2016 Valve Corporation",
-    "2015-2016 LunarG, Inc.",
+    "The ANGLE Project Authors.",
+    "LunarG, Inc.",
 ]
 SPDX-License-Identifier = "Apache-2.0"
 
-# ---------------------------------------------------------------------------
-# cube: embedded LunarG logo
-# ---------------------------------------------------------------------------
-
 [[annotations]]
-path = "cube/lunarg.ppm.h"
-SPDX-FileCopyrightText = "2014-2026 LunarG, Inc."
-SPDX-License-Identifier = "Apache-2.0"
-
-# ---------------------------------------------------------------------------
-# cube: compiled SPIR-V bytecode generated from cube.frag / cube.vert
-# ---------------------------------------------------------------------------
-
-[[annotations]]
-path = ["cube/cube.frag.inc", "cube/cube.vert.inc"]
+path = [
+    "cube/object_type_string_helper.h",
+    "cube/wayland_loader.h",
+    "cube/cube.frag",
+    "cube/cube.vert",
+    "cube/cube.frag.inc",
+    "cube/cube.vert.inc",
+    "cube/cube.c",
+    "cube/xlib_loader.h",
+    "cube/xcb_loader.h",
+    "cube/cube_functions.h",
+    "tests/test_common.h",
+    "tests/main.cpp",
+    "tests/icd/**",
+    "vulkaninfo/iOS/vulkaninfo/ViewController.m",
+    "vulkaninfo/iOS/vulkaninfo/ViewController.h",
+    "vulkaninfo/iOS/vulkaninfo/SceneDelegate.m",
+    "vulkaninfo/iOS/vulkaninfo/SceneDelegate.h",
+    "vulkaninfo/iOS/vulkaninfo/main.mm",
+    "vulkaninfo/iOS/vulkaninfo/metal_iosview.m",
+    "vulkaninfo/iOS/vulkaninfo/metal_iosview.h",
+    "vulkaninfo/iOS/vulkaninfo/AppDelegate.h",
+    "vulkaninfo/iOS/vulkaninfo/AppDelegate.m",
+    "scripts/common_codegen.py",
+    "scripts/gn/gn.py",
+    "vulkaninfo/vulkaninfo.rc.in",
+    "vulkaninfo/vulkaninfo_functions.h",
+    "vulkaninfo/macOS/vulkaninfo/**",
+]
 SPDX-FileCopyrightText = [
-    "2015-2016 The Khronos Group Inc.",
-    "2015-2016 Valve Corporation",
-    "2015-2016 LunarG, Inc.",
+    "The Khronos Group Inc.",
+    "Valve Corporation",
+    "LunarG, Inc.",
 ]
 SPDX-License-Identifier = "Apache-2.0"
 
-# ---------------------------------------------------------------------------
-# cube: Android port
-# ---------------------------------------------------------------------------
 
 [[annotations]]
-path = "cube/android/AndroidManifest.xml"
+path = [
+    "cube/CMakeLists.txt",
+    "cube/android/CMakeLists.txt",
+    "cube/macOS/cube/CMakeLists.txt",
+    "cube/macOS/cubepp/CMakeLists.txt",
+    "tests/CMakeLists.txt",
+    "scripts/android.py",
+    ".github/workflows/tools.yml",
+]
+SPDX-FileCopyrightText = [
+    "Valve Corporation",
+    "LunarG, Inc.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "cube/gettime.h"
+SPDX-FileCopyrightText = "2014, 2017 The Android Open Source Project"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "cube/cube.cpp"
+SPDX-FileCopyrightText = [
+    "2015-2019 The Khronos Group Inc.",
+    "2015-2019 Valve Corporation",
+    "2015-2019 LunarG, Inc.",
+    "2025 The Fuchsia Authors.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "cube/BUILD.gn",
+    "cube/fuchsia/**",
+    "vulkaninfo/BUILD.gn",
+    "vulkaninfo/fuchsia/meta/**",
+]
+SPDX-FileCopyrightText = "2025 The Fuchsia Authors."
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "cube/android/android_util.cpp",
+    "cube/android/android_util.h"
+]
 SPDX-FileCopyrightText = "2016 Google, Inc."
 SPDX-License-Identifier = "Apache-2.0"
 
-# ---------------------------------------------------------------------------
-# cube: macOS and iOS Apple platform files (Info.plist, storyboards, assets)
-# ---------------------------------------------------------------------------
+[[annotations]]
+path = [
+    "cube/macOS/cube/AppDelegate.h",
+    "cube/macOS/cube/DemoViewController.h",
+    "cube/macOS/cube/main.m",
+    "cube/macOS/cube/DemoViewController.m",
+    "cube/macOS/cube/AppDelegate.m",
+    "cube/macOS/cubepp/AppDelegate.h",
+    "cube/macOS/cubepp/DemoViewController.h",
+    "cube/macOS/cubepp/main.mm",
+    "cube/macOS/cubepp/AppDelegate.mm",
+    "cube/macOS/cubepp/DemoViewController.mm",
+]
+SPDX-FileCopyrightText = "2014-2018 The Brenwill Workshop Ltd."
+SPDX-License-Identifier = "Apache-2.0"
+
 
 [[annotations]]
 path = [
-    "cube/macOS/cube/Info.plist",
-    "cube/macOS/cube/Resources/Main.storyboard",
-    "cube/macOS/cube/Resources/VulkanIcon.icns",
-    "cube/macOS/cubepp/Info.plist",
-    "cube/macOS/cubepp/Resources/Main.storyboard",
-    "cube/macOS/cubepp/Resources/VulkanIcon.icns",
+    "icd/generated/vk_typemap_helper.h",
+    "icd/VkICD_mock_icd.def",
 ]
 SPDX-FileCopyrightText = [
-    "2018-2026 The Khronos Group Inc.",
-    "2018-2026 Valve Corporation",
-    "2018-2026 LunarG, Inc.",
+    "2015-2017 The Khronos Group Inc.",
+    "2015-2017 Valve Corporation",
+    "2015-2017 LunarG, Inc.",
+    "2015-2017 Google Inc.",
 ]
 SPDX-License-Identifier = "Apache-2.0"
 
-# ---------------------------------------------------------------------------
-# vulkaninfo: iOS Xcode project and Apple platform files
-# ---------------------------------------------------------------------------
+[[annotations]]
+path = "scripts/kvt_genvk.py"
+SPDX-FileCopyrightText = [
+    "2013-2025 The Khronos Group Inc.",
+    "2023-2025 RasterGrid Kft.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "scripts/generate_source.py"
+SPDX-FileCopyrightText = [
+    "2019 The Khronos Group Inc.",
+    "2019 Valve Corporation",
+    "2019 LunarG, Inc.",
+    "2019 Google Inc.",
+    "2021-2022 NVIDIA CORPORATION & AFFILIATES",
+    "2023-2023 RasterGrid Kft.",
+]
+SPDX-License-Identifier = "Apache-2.0"
+
+
+[[annotations]]
+path = "scripts/update_deps.py"
+SPDX-FileCopyrightText = [
+    "2017 The Glslang Authors",
+    "2018-2023 Valve Corporation",
+    "2018-2023 LunarG, Inc.",
+    "2023-2023 RasterGrid Kft.",
+]
+SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
 path = [
-    "vulkaninfo/iOS/vulkaninfo.xcodeproj/**",
-    "vulkaninfo/iOS/vulkaninfo/Info.plist",
-    "vulkaninfo/iOS/vulkaninfo/vulkaninfo.entitlements",
-    "vulkaninfo/iOS/vulkaninfo/Assets.xcassets/**",
-    "vulkaninfo/iOS/vulkaninfo/Base.lproj/LaunchScreen.storyboard",
-    "vulkaninfo/iOS/vulkaninfo/Base.lproj/Main.storyboard",
+    ".github/dependabot.yml",
+    "scripts/CMakeLists.txt",
+    "scripts/gn/update_deps.sh",
+    "scripts/gn/secondary/build_overrides/vulkan_headers.gni",
+    "scripts/gn/secondary/build_overrides/vulkan_tools.gni",
+    "scripts/gn/secondary/build_overrides/build.gni",
+]
+SPDX-FileCopyrightText = "LunarG, Inc."
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "scripts/generators/vulkaninfo_generator.py",
+    "scripts/generators/mock_icd_generator.py",
 ]
 SPDX-FileCopyrightText = [
-    "2020-2026 The Khronos Group Inc.",
-    "2020-2026 Valve Corporation",
-    "2020-2026 LunarG, Inc.",
+    "Valve Corporation",
+    "LunarG, Inc.",
+    "Google Inc.",
+    "RasterGrid Kft.",
+    "The Khronos Group Inc.",
 ]
 SPDX-License-Identifier = "Apache-2.0"
 
-# ---------------------------------------------------------------------------
-# ICD: JSON files without headers
-# ---------------------------------------------------------------------------
-
 [[annotations]]
-path = ["scripts/known_good.json", "icd/VkICD_mock_icd.json.in"]
-SPDX-FileCopyrightText = "2015-2026 The Khronos Group Inc."
-SPDX-License-Identifier = "Apache-2.0"
-
-# ---------------------------------------------------------------------------
-# LICENSE.txt is the Apache-2.0 license text itself — no annotation needed
-# but REUSE requires it to be covered; annotate as Apache-2.0 meta-file.
-# ---------------------------------------------------------------------------
-
-[[annotations]]
-path = "LICENSE.txt"
-SPDX-FileCopyrightText = "2014-2026 The Khronos Group Inc."
+path = "scripts/generators/vulkan_tools_helper_file_generator.py"
+SPDX-FileCopyrightText = [
+    "2015-2021 The Khronos Group Inc.",
+    "2015-2021 Valve Corporation",
+    "2015-2021 LunarG, Inc.",
+    "2015-2021 Google Inc.",
+]
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = "LICENSES/Apache-2.0.txt"
-SPDX-FileCopyrightText = "2004 The Apache Software Foundation"
+path = [
+    "vulkaninfo/outputprinter.h",
+    "vulkaninfo/generated/vulkaninfo.hpp",
+    "vulkaninfo/vulkaninfo.h",
+    "vulkaninfo/vulkaninfo.cpp"
+]
+SPDX-FileCopyrightText = [
+    "The Khronos Group Inc.",
+    "Valve Corporation",
+    "LunarG, Inc.",
+    "RasterGrid Kft.",
+]
 SPDX-License-Identifier = "Apache-2.0"
