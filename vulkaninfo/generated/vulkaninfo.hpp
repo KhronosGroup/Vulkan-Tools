@@ -1178,6 +1178,8 @@ std::string VkDriverIdString(VkDriverId value) {
             return "DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN";
         case (VK_DRIVER_ID_MESA_KOSMICKRISP):
             return "DRIVER_ID_MESA_KOSMICKRISP";
+        case (VK_DRIVER_ID_MESA_GFXSTREAM):
+            return "DRIVER_ID_MESA_GFXSTREAM";
         default:
             return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }

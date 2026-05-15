@@ -566,6 +566,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_SEC_throttle_hint", VK_SEC_THROTTLE_HINT_SPEC_VERSION},
     {"VK_ARM_data_graph_neural_accelerator_statistics", VK_ARM_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_SPEC_VERSION},
     {"VK_EXT_primitive_restart_index", VK_EXT_PRIMITIVE_RESTART_INDEX_SPEC_VERSION},
+    {"VK_NV_cooperative_matrix_decode_vector", VK_NV_COOPERATIVE_MATRIX_DECODE_VECTOR_SPEC_VERSION},
     {"VK_KHR_acceleration_structure", VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_KHR_ray_tracing_pipeline", VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
     {"VK_KHR_ray_query", VK_KHR_RAY_QUERY_SPEC_VERSION},
