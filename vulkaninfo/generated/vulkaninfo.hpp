@@ -2575,6 +2575,39 @@ void DumpVkFormatFeatureFlagBits2(Printer &p, std::string name, VkFormatFeatureF
     }
 }
 
+std::vector<const char *> VkFormatFeatureFlagBits4KHRGetStrings(VkFormatFeatureFlagBits4KHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    return strings;
+}
+void DumpVkFormatFeatureFlags4KHR(Printer &p, std::string name, VkFormatFeatureFlags4KHR value) {
+    if (static_cast<VkFormatFeatureFlagBits4KHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkFormatFeatureFlagBits4KHRGetStrings(static_cast<VkFormatFeatureFlagBits4KHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkFormatFeatureFlagBits4KHR(Printer &p, std::string name, VkFormatFeatureFlagBits4KHR value) {
+    auto strings = VkFormatFeatureFlagBits4KHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkImageCreateFlagBitsGetStrings(VkImageCreateFlagBits value) {
     std::vector<const char *> strings;
     if (value == 0) {
@@ -2627,6 +2660,68 @@ void DumpVkImageCreateFlags(Printer &p, std::string name, VkImageCreateFlags val
 }
 void DumpVkImageCreateFlagBits(Printer &p, std::string name, VkImageCreateFlagBits value) {
     auto strings = VkImageCreateFlagBitsGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkImageCreateFlagBits2KHRGetStrings(VkImageCreateFlagBits2KHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_IMAGE_CREATE_2_SPARSE_BINDING_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_SPARSE_BINDING_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_SPARSE_RESIDENCY_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_SPARSE_RESIDENCY_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_SPARSE_ALIASED_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_SPARSE_ALIASED_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_MUTABLE_FORMAT_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_MUTABLE_FORMAT_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_CUBE_COMPATIBLE_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_CUBE_COMPATIBLE_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_ALIAS_SINGLE_LAYER_DESCRIPTOR_BIT_KHR & value)
+        strings.push_back("IMAGE_CREATE_2_ALIAS_SINGLE_LAYER_DESCRIPTOR_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_2D_ARRAY_COMPATIBLE_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_2D_ARRAY_COMPATIBLE_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR & value)
+        strings.push_back("IMAGE_CREATE_2_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_KHR & value)
+        strings.push_back("IMAGE_CREATE_2_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_EXTENDED_USAGE_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_EXTENDED_USAGE_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_DISJOINT_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_DISJOINT_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_ALIAS_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_ALIAS_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_PROTECTED_BIT_KHR & value) strings.push_back("IMAGE_CREATE_2_PROTECTED_BIT_KHR");
+    if (VK_IMAGE_CREATE_2_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT & value)
+        strings.push_back("IMAGE_CREATE_2_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_CORNER_SAMPLED_BIT_NV & value) strings.push_back("IMAGE_CREATE_2_CORNER_SAMPLED_BIT_NV");
+    if (VK_IMAGE_CREATE_2_SUBSAMPLED_BIT_EXT & value) strings.push_back("IMAGE_CREATE_2_SUBSAMPLED_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT & value)
+        strings.push_back("IMAGE_CREATE_2_FRAGMENT_DENSITY_MAP_OFFSET_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT & value)
+        strings.push_back("IMAGE_CREATE_2_DESCRIPTOR_BUFFER_CAPTURE_REPLAY_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_2D_VIEW_COMPATIBLE_BIT_EXT & value) strings.push_back("IMAGE_CREATE_2_2D_VIEW_COMPATIBLE_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT & value)
+        strings.push_back("IMAGE_CREATE_2_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT");
+    if (VK_IMAGE_CREATE_2_VIDEO_PROFILE_INDEPENDENT_BIT_KHR & value)
+        strings.push_back("IMAGE_CREATE_2_VIDEO_PROFILE_INDEPENDENT_BIT_KHR");
+    return strings;
+}
+void DumpVkImageCreateFlags2KHR(Printer &p, std::string name, VkImageCreateFlags2KHR value) {
+    if (static_cast<VkImageCreateFlagBits2KHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkImageCreateFlagBits2KHRGetStrings(static_cast<VkImageCreateFlagBits2KHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkImageCreateFlagBits2KHR(Printer &p, std::string name, VkImageCreateFlagBits2KHR value) {
+    auto strings = VkImageCreateFlagBits2KHRGetStrings(value);
     if (strings.size() > 0) {
         if (p.Type() == OutputType::json)
             p.PrintKeyString(name, std::string("VK_") + strings.at(0));
@@ -2688,6 +2783,69 @@ void DumpVkImageUsageFlags(Printer &p, std::string name, VkImageUsageFlags value
 }
 void DumpVkImageUsageFlagBits(Printer &p, std::string name, VkImageUsageFlagBits value) {
     auto strings = VkImageUsageFlagBitsGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
+std::vector<const char *> VkImageUsageFlagBits2KHRGetStrings(VkImageUsageFlagBits2KHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_IMAGE_USAGE_2_TRANSFER_SRC_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_TRANSFER_SRC_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_TRANSFER_DST_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_TRANSFER_DST_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_SAMPLED_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_SAMPLED_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_STORAGE_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_STORAGE_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_COLOR_ATTACHMENT_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_COLOR_ATTACHMENT_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_DEPTH_STENCIL_ATTACHMENT_BIT_KHR & value)
+        strings.push_back("IMAGE_USAGE_2_DEPTH_STENCIL_ATTACHMENT_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_TRANSIENT_ATTACHMENT_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_TRANSIENT_ATTACHMENT_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_INPUT_ATTACHMENT_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_INPUT_ATTACHMENT_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR & value)
+        strings.push_back("IMAGE_USAGE_2_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_FRAGMENT_DENSITY_MAP_BIT_EXT & value) strings.push_back("IMAGE_USAGE_2_FRAGMENT_DENSITY_MAP_BIT_EXT");
+    if (VK_IMAGE_USAGE_2_VIDEO_DECODE_DST_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_DECODE_DST_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_DECODE_SRC_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_DECODE_SRC_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_DECODE_DPB_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_DECODE_DPB_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_ENCODE_DST_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_ENCODE_DST_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_ENCODE_SRC_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_ENCODE_SRC_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_ENCODE_DPB_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_VIDEO_ENCODE_DPB_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_INVOCATION_MASK_BIT_HUAWEI & value) strings.push_back("IMAGE_USAGE_2_INVOCATION_MASK_BIT_HUAWEI");
+    if (VK_IMAGE_USAGE_2_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT & value)
+        strings.push_back("IMAGE_USAGE_2_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT");
+    if (VK_IMAGE_USAGE_2_SAMPLE_WEIGHT_BIT_QCOM & value) strings.push_back("IMAGE_USAGE_2_SAMPLE_WEIGHT_BIT_QCOM");
+    if (VK_IMAGE_USAGE_2_SAMPLE_BLOCK_MATCH_BIT_QCOM & value) strings.push_back("IMAGE_USAGE_2_SAMPLE_BLOCK_MATCH_BIT_QCOM");
+    if (VK_IMAGE_USAGE_2_HOST_TRANSFER_BIT_KHR & value) strings.push_back("IMAGE_USAGE_2_HOST_TRANSFER_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_TENSOR_ALIASING_BIT_ARM & value) strings.push_back("IMAGE_USAGE_2_TENSOR_ALIASING_BIT_ARM");
+    if (VK_IMAGE_USAGE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR & value)
+        strings.push_back("IMAGE_USAGE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR & value)
+        strings.push_back("IMAGE_USAGE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR");
+    if (VK_IMAGE_USAGE_2_TILE_MEMORY_BIT_QCOM & value) strings.push_back("IMAGE_USAGE_2_TILE_MEMORY_BIT_QCOM");
+    return strings;
+}
+void DumpVkImageUsageFlags2KHR(Printer &p, std::string name, VkImageUsageFlags2KHR value) {
+    if (static_cast<VkImageUsageFlagBits2KHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkImageUsageFlagBits2KHRGetStrings(static_cast<VkImageUsageFlagBits2KHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkImageUsageFlagBits2KHR(Printer &p, std::string name, VkImageUsageFlagBits2KHR value) {
+    auto strings = VkImageUsageFlagBits2KHRGetStrings(value);
     if (strings.size() > 0) {
         if (p.Type() == OutputType::json)
             p.PrintKeyString(name, std::string("VK_") + strings.at(0));
@@ -3327,6 +3485,50 @@ void DumpVkSurfaceTransformFlagBitsKHR(Printer &p, std::string name, VkSurfaceTr
     }
 }
 
+std::vector<const char *> VkSwapchainCreateFlagBitsKHRGetStrings(VkSwapchainCreateFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR & value)
+        strings.push_back("SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR & value) strings.push_back("SWAPCHAIN_CREATE_PROTECTED_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR & value) strings.push_back("SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_PRESENT_TIMING_BIT_EXT & value) strings.push_back("SWAPCHAIN_CREATE_PRESENT_TIMING_BIT_EXT");
+    if (VK_SWAPCHAIN_CREATE_PRESENT_ID_2_BIT_KHR & value) strings.push_back("SWAPCHAIN_CREATE_PRESENT_ID_2_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_PRESENT_WAIT_2_BIT_KHR & value) strings.push_back("SWAPCHAIN_CREATE_PRESENT_WAIT_2_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_KHR & value)
+        strings.push_back("SWAPCHAIN_CREATE_DEFERRED_MEMORY_ALLOCATION_BIT_KHR");
+    if (VK_SWAPCHAIN_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT & value)
+        strings.push_back("SWAPCHAIN_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT");
+    return strings;
+}
+void DumpVkSwapchainCreateFlagsKHR(Printer &p, std::string name, VkSwapchainCreateFlagsKHR value) {
+    if (static_cast<VkSwapchainCreateFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkSwapchainCreateFlagBitsKHRGetStrings(static_cast<VkSwapchainCreateFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkSwapchainCreateFlagBitsKHR(Printer &p, std::string name, VkSwapchainCreateFlagBitsKHR value) {
+    auto strings = VkSwapchainCreateFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkToolPurposeFlagBitsGetStrings(VkToolPurposeFlagBits value) {
     std::vector<const char *> strings;
     if (value == 0) {
@@ -3836,6 +4038,17 @@ std::vector<const char *> VkVideoEncodeFeedbackFlagBitsKHRGetStrings(VkVideoEnco
         strings.push_back("VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR");
     if (VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR & value)
         strings.push_back("VIDEO_ENCODE_FEEDBACK_BITSTREAM_HAS_OVERRIDES_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_AVERAGE_QUANTIZATION_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_FEEDBACK_AVERAGE_QUANTIZATION_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_MIN_QUANTIZATION_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_FEEDBACK_MIN_QUANTIZATION_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_MAX_QUANTIZATION_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_FEEDBACK_MAX_QUANTIZATION_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_INTRA_PIXELS_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_INTRA_PIXELS_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_INTER_PIXELS_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_INTER_PIXELS_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_SKIPPED_PIXELS_BIT_KHR & value) strings.push_back("VIDEO_ENCODE_FEEDBACK_SKIPPED_PIXELS_BIT_KHR");
+    if (VK_VIDEO_ENCODE_FEEDBACK_PICTURE_PARTITION_COUNT_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_FEEDBACK_PICTURE_PARTITION_COUNT_BIT_KHR");
     return strings;
 }
 void DumpVkVideoEncodeFeedbackFlagsKHR(Printer &p, std::string name, VkVideoEncodeFeedbackFlagsKHR value) {
@@ -4243,6 +4456,48 @@ void DumpVkVideoEncodeIntraRefreshModeFlagBitsKHR(Printer &p, std::string name, 
     }
 }
 
+std::vector<const char *> VkVideoEncodePerPartitionFeedbackFlagBitsKHRGetStrings(
+    VkVideoEncodePerPartitionFeedbackFlagBitsKHR value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_STATUS_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_PER_PARTITION_FEEDBACK_STATUS_BIT_KHR");
+    if (VK_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_PER_PARTITION_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR");
+    if (VK_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR & value)
+        strings.push_back("VIDEO_ENCODE_PER_PARTITION_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR");
+    return strings;
+}
+void DumpVkVideoEncodePerPartitionFeedbackFlagsKHR(Printer &p, std::string name, VkVideoEncodePerPartitionFeedbackFlagsKHR value) {
+    if (static_cast<VkVideoEncodePerPartitionFeedbackFlagBitsKHR>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings =
+        VkVideoEncodePerPartitionFeedbackFlagBitsKHRGetStrings(static_cast<VkVideoEncodePerPartitionFeedbackFlagBitsKHR>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkVideoEncodePerPartitionFeedbackFlagBitsKHR(Printer &p, std::string name,
+                                                      VkVideoEncodePerPartitionFeedbackFlagBitsKHR value) {
+    auto strings = VkVideoEncodePerPartitionFeedbackFlagBitsKHRGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkVideoEncodeRateControlModeFlagBitsKHRGetStrings(VkVideoEncodeRateControlModeFlagBitsKHR value) {
     std::vector<const char *> strings;
     if (value == 0) {
@@ -4456,6 +4711,9 @@ void DumpVkExtent2D(Printer &p, std::string name, const VkExtent2D &obj);
 void DumpVkExtent3D(Printer &p, std::string name, const VkExtent3D &obj);
 void DumpVkFormatProperties(Printer &p, std::string name, const VkFormatProperties &obj);
 void DumpVkFormatProperties3(Printer &p, std::string name, const VkFormatProperties3 &obj);
+void DumpVkFormatProperties4KHR(Printer &p, std::string name, const VkFormatProperties4KHR &obj);
+void DumpVkImageCreateFlags2CreateInfoKHR(Printer &p, std::string name, const VkImageCreateFlags2CreateInfoKHR &obj);
+void DumpVkImageUsageFlags2CreateInfoKHR(Printer &p, std::string name, const VkImageUsageFlags2CreateInfoKHR &obj);
 void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties &obj);
 void DumpVkMultisamplePropertiesEXT(Printer &p, std::string name, const VkMultisamplePropertiesEXT &obj);
 void DumpVkOffset2D(Printer &p, std::string name, const VkOffset2D &obj);
@@ -4561,6 +4819,8 @@ void DumpVkPhysicalDeviceExtendedDynamicState3PropertiesEXT(Printer &p, std::str
                                                             const VkPhysicalDeviceExtendedDynamicState3PropertiesEXT &obj);
 void DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(Printer &p, std::string name,
                                                          const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT &obj);
+void DumpVkPhysicalDeviceExtendedFlagsFeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceExtendedFlagsFeaturesKHR &obj);
 void DumpVkPhysicalDeviceExternalMemoryHostPropertiesEXT(Printer &p, std::string name,
                                                          const VkPhysicalDeviceExternalMemoryHostPropertiesEXT &obj);
 void DumpVkPhysicalDeviceFaultFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceFaultFeaturesEXT &obj);
@@ -4675,6 +4935,8 @@ void DumpVkPhysicalDeviceMultiDrawFeaturesEXT(Printer &p, std::string name, cons
 void DumpVkPhysicalDeviceMultiDrawPropertiesEXT(Printer &p, std::string name, const VkPhysicalDeviceMultiDrawPropertiesEXT &obj);
 void DumpVkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT(
     Printer &p, std::string name, const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT &obj);
+void DumpVkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT &obj);
 void DumpVkPhysicalDeviceMultiviewFeatures(Printer &p, std::string name, const VkPhysicalDeviceMultiviewFeatures &obj);
 void DumpVkPhysicalDeviceMultiviewProperties(Printer &p, std::string name, const VkPhysicalDeviceMultiviewProperties &obj);
 void DumpVkPhysicalDeviceMutableDescriptorTypeFeaturesEXT(Printer &p, std::string name,
@@ -4905,6 +5167,8 @@ void DumpVkPhysicalDeviceVideoDecodeVP9FeaturesKHR(Printer &p, std::string name,
                                                    const VkPhysicalDeviceVideoDecodeVP9FeaturesKHR &obj);
 void DumpVkPhysicalDeviceVideoEncodeAV1FeaturesKHR(Printer &p, std::string name,
                                                    const VkPhysicalDeviceVideoEncodeAV1FeaturesKHR &obj);
+void DumpVkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR &obj);
 void DumpVkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR(Printer &p, std::string name,
                                                             const VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR &obj);
 void DumpVkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR(Printer &p, std::string name,
@@ -4942,6 +5206,7 @@ void DumpVkQueueFamilyOwnershipTransferPropertiesKHR(Printer &p, std::string nam
 void DumpVkQueueFamilyQueryResultStatusPropertiesKHR(Printer &p, std::string name,
                                                      const VkQueueFamilyQueryResultStatusPropertiesKHR &obj);
 void DumpVkQueueFamilyVideoPropertiesKHR(Printer &p, std::string name, const VkQueueFamilyVideoPropertiesKHR &obj);
+void DumpVkSharedPresentSurfaceCapabilities2KHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilities2KHR &obj);
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilitiesKHR &obj);
 void DumpVkSubpassResolvePerformanceQueryEXT(Printer &p, std::string name, const VkSubpassResolvePerformanceQueryEXT &obj);
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -4955,6 +5220,7 @@ void DumpVkSurfaceFormatKHR(Printer &p, std::string name, const VkSurfaceFormatK
 void DumpVkSurfacePresentModeCompatibilityKHR(Printer &p, std::string name, const VkSurfacePresentModeCompatibilityKHR &obj);
 void DumpVkSurfacePresentScalingCapabilitiesKHR(Printer &p, std::string name, const VkSurfacePresentScalingCapabilitiesKHR &obj);
 void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, const VkSurfaceProtectedCapabilitiesKHR &obj);
+void DumpVkSwapchainFlagsSurfaceCapabilitiesEXT(Printer &p, std::string name, const VkSwapchainFlagsSurfaceCapabilitiesEXT &obj);
 void DumpVkVideoCapabilitiesKHR(Printer &p, std::string name, const VkVideoCapabilitiesKHR &obj);
 void DumpVkVideoDecodeAV1CapabilitiesKHR(Printer &p, std::string name, const VkVideoDecodeAV1CapabilitiesKHR &obj);
 void DumpVkVideoDecodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVideoDecodeAV1ProfileInfoKHR &obj);
@@ -4971,6 +5237,7 @@ void DumpVkVideoEncodeAV1ProfileInfoKHR(Printer &p, std::string name, const VkVi
 void DumpVkVideoEncodeAV1QuantizationMapCapabilitiesKHR(Printer &p, std::string name,
                                                         const VkVideoEncodeAV1QuantizationMapCapabilitiesKHR &obj);
 void DumpVkVideoEncodeCapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeCapabilitiesKHR &obj);
+void DumpVkVideoEncodeFeedback2CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeFeedback2CapabilitiesKHR &obj);
 void DumpVkVideoEncodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH264CapabilitiesKHR &obj);
 void DumpVkVideoEncodeH264ProfileInfoKHR(Printer &p, std::string name, const VkVideoEncodeH264ProfileInfoKHR &obj);
 void DumpVkVideoEncodeH264QuantizationMapCapabilitiesKHR(Printer &p, std::string name,
@@ -5109,6 +5376,20 @@ void DumpVkFormatProperties3(Printer &p, std::string name, const VkFormatPropert
     DumpVkFormatFeatureFlags2(p, "optimalTilingFeatures", obj.optimalTilingFeatures);
     p.SetOpenDetails();
     DumpVkFormatFeatureFlags2(p, "bufferFeatures", obj.bufferFeatures);
+}
+void DumpVkFormatProperties4KHR(Printer &p, std::string name, const VkFormatProperties4KHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkFormatFeatureFlags4KHR(p, "linearTilingFeatures", obj.linearTilingFeatures);
+    DumpVkFormatFeatureFlags4KHR(p, "optimalTilingFeatures", obj.optimalTilingFeatures);
+    DumpVkFormatFeatureFlags4KHR(p, "bufferFeatures", obj.bufferFeatures);
+}
+void DumpVkImageCreateFlags2CreateInfoKHR(Printer &p, std::string name, const VkImageCreateFlags2CreateInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkImageCreateFlags2KHR(p, "flags", obj.flags);
+}
+void DumpVkImageUsageFlags2CreateInfoKHR(Printer &p, std::string name, const VkImageUsageFlags2CreateInfoKHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkImageUsageFlags2KHR(p, "usage", obj.usage);
 }
 void DumpVkLayerProperties(Printer &p, std::string name, const VkLayerProperties &obj) {
     ObjectWrapper object{p, name};
@@ -5676,6 +5957,12 @@ void DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(Printer &p, std::string
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(20);
     p.PrintKeyBool("extendedDynamicState", static_cast<bool>(obj.extendedDynamicState));
+}
+void DumpVkPhysicalDeviceExtendedFlagsFeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceExtendedFlagsFeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("extendedFlags", static_cast<bool>(obj.extendedFlags));
 }
 void DumpVkPhysicalDeviceExternalMemoryHostPropertiesEXT(Printer &p, std::string name,
                                                          const VkPhysicalDeviceExternalMemoryHostPropertiesEXT &obj) {
@@ -6459,6 +6746,12 @@ void DumpVkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT(
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(33);
     p.PrintKeyBool("multisampledRenderToSingleSampled", static_cast<bool>(obj.multisampledRenderToSingleSampled));
+}
+void DumpVkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(29);
+    p.PrintKeyBool("multisampledRenderToSwapchain", static_cast<bool>(obj.multisampledRenderToSwapchain));
 }
 void DumpVkPhysicalDeviceMultiviewFeatures(Printer &p, std::string name, const VkPhysicalDeviceMultiviewFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -7383,6 +7676,12 @@ void DumpVkPhysicalDeviceVideoEncodeAV1FeaturesKHR(Printer &p, std::string name,
     p.SetMinKeyWidth(14);
     p.PrintKeyBool("videoEncodeAV1", static_cast<bool>(obj.videoEncodeAV1));
 }
+void DumpVkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR(Printer &p, std::string name,
+                                                         const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(20);
+    p.PrintKeyBool("videoEncodeFeedback2", static_cast<bool>(obj.videoEncodeFeedback2));
+}
 void DumpVkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR(Printer &p, std::string name,
                                                             const VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -7822,6 +8121,10 @@ void DumpVkQueueFamilyVideoPropertiesKHR(Printer &p, std::string name, const VkQ
     ObjectWrapper object{p, name};
     DumpVkVideoCodecOperationFlagsKHR(p, "videoCodecOperations", obj.videoCodecOperations);
 }
+void DumpVkSharedPresentSurfaceCapabilities2KHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilities2KHR &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkImageUsageFlags2KHR(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags);
+}
 void DumpVkSharedPresentSurfaceCapabilitiesKHR(Printer &p, std::string name, const VkSharedPresentSurfaceCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
     DumpVkImageUsageFlags(p, "sharedPresentSupportedUsageFlags", obj.sharedPresentSupportedUsageFlags);
@@ -7893,6 +8196,10 @@ void DumpVkSurfaceProtectedCapabilitiesKHR(Printer &p, std::string name, const V
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(17);
     p.PrintKeyBool("supportsProtected", static_cast<bool>(obj.supportsProtected));
+}
+void DumpVkSwapchainFlagsSurfaceCapabilitiesEXT(Printer &p, std::string name, const VkSwapchainFlagsSurfaceCapabilitiesEXT &obj) {
+    ObjectWrapper object{p, name};
+    DumpVkSwapchainCreateFlagsKHR(p, "swapchainSupportedFlags", obj.swapchainSupportedFlags);
 }
 void DumpVkVideoCapabilitiesKHR(Printer &p, std::string name, const VkVideoCapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -8000,6 +8307,13 @@ void DumpVkVideoEncodeCapabilitiesKHR(Printer &p, std::string name, const VkVide
     p.PrintKeyValue("maxQualityLevels", obj.maxQualityLevels);
     DumpVkExtent2D(p, "encodeInputPictureGranularity", obj.encodeInputPictureGranularity);
     DumpVkVideoEncodeFeedbackFlagsKHR(p, "supportedEncodeFeedbackFlags", obj.supportedEncodeFeedbackFlags);
+}
+void DumpVkVideoEncodeFeedback2CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeFeedback2CapabilitiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(30);
+    p.PrintKeyValue("maxPerPartitionFeedbackEntries", obj.maxPerPartitionFeedbackEntries);
+    DumpVkVideoEncodePerPartitionFeedbackFlagsKHR(p, "supportedPerPartitionEncodeFeedbackFlags",
+                                                  obj.supportedPerPartitionEncodeFeedbackFlags);
 }
 void DumpVkVideoEncodeH264CapabilitiesKHR(Printer &p, std::string name, const VkVideoEncodeH264CapabilitiesKHR &obj) {
     ObjectWrapper object{p, name};
@@ -9370,6 +9684,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceExtendedDynamicState2FeaturesEXT PhysicalDeviceExtendedDynamicState2FeaturesEXT{};
     VkPhysicalDeviceExtendedDynamicState3FeaturesEXT PhysicalDeviceExtendedDynamicState3FeaturesEXT{};
     VkPhysicalDeviceExtendedDynamicStateFeaturesEXT PhysicalDeviceExtendedDynamicStateFeaturesEXT{};
+    VkPhysicalDeviceExtendedFlagsFeaturesKHR PhysicalDeviceExtendedFlagsFeaturesKHR{};
     VkPhysicalDeviceFaultFeaturesEXT PhysicalDeviceFaultFeaturesEXT{};
     VkPhysicalDeviceFaultFeaturesKHR PhysicalDeviceFaultFeaturesKHR{};
     VkPhysicalDeviceFragmentDensityMap2FeaturesEXT PhysicalDeviceFragmentDensityMap2FeaturesEXT{};
@@ -9410,6 +9725,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceMeshShaderFeaturesEXT PhysicalDeviceMeshShaderFeaturesEXT{};
     VkPhysicalDeviceMultiDrawFeaturesEXT PhysicalDeviceMultiDrawFeaturesEXT{};
     VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT{};
+    VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT PhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT{};
     VkPhysicalDeviceMultiviewFeatures PhysicalDeviceMultiviewFeatures{};
     VkPhysicalDeviceMutableDescriptorTypeFeaturesEXT PhysicalDeviceMutableDescriptorTypeFeaturesEXT{};
     VkPhysicalDeviceNestedCommandBufferFeaturesEXT PhysicalDeviceNestedCommandBufferFeaturesEXT{};
@@ -9502,6 +9818,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT PhysicalDeviceVertexInputDynamicStateFeaturesEXT{};
     VkPhysicalDeviceVideoDecodeVP9FeaturesKHR PhysicalDeviceVideoDecodeVP9FeaturesKHR{};
     VkPhysicalDeviceVideoEncodeAV1FeaturesKHR PhysicalDeviceVideoEncodeAV1FeaturesKHR{};
+    VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR PhysicalDeviceVideoEncodeFeedback2FeaturesKHR{};
     VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR PhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR{};
     VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR{};
     VkPhysicalDeviceVideoMaintenance1FeaturesKHR PhysicalDeviceVideoMaintenance1FeaturesKHR{};
@@ -9564,6 +9881,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceExtendedDynamicState3FeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT;
         PhysicalDeviceExtendedDynamicStateFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
+        PhysicalDeviceExtendedFlagsFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR;
         PhysicalDeviceFaultFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT;
         PhysicalDeviceFaultFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_KHR;
         PhysicalDeviceFragmentDensityMap2FeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT;
@@ -9613,6 +9931,8 @@ struct phys_device_features2_chain {
         PhysicalDeviceMultiDrawFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT;
         PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT;
+        PhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT;
         PhysicalDeviceMultiviewFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
         PhysicalDeviceMutableDescriptorTypeFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT;
@@ -9736,6 +10056,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT;
         PhysicalDeviceVideoDecodeVP9FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_DECODE_VP9_FEATURES_KHR;
         PhysicalDeviceVideoEncodeAV1FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR;
+        PhysicalDeviceVideoEncodeFeedback2FeaturesKHR.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR;
         PhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_INTRA_REFRESH_FEATURES_KHR;
         PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR.sType =
@@ -9839,6 +10161,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceExtendedDynamicState3FeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceExtendedDynamicStateFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceExtendedFlagsFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_DEVICE_FAULT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceFaultFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_DEVICE_FAULT_EXTENSION_NAME))
@@ -9938,6 +10262,9 @@ struct phys_device_features2_chain {
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME))
             chain_members.push_back(
                 reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SWAPCHAIN_EXTENSION_NAME))
+            chain_members.push_back(
+                reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MULTIVIEW_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_1 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMultiviewFeatures));
@@ -10152,6 +10479,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVideoDecodeVP9FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_AV1_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVideoEncodeAV1FeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_FEEDBACK_2_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVideoEncodeFeedback2FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_INTRA_REFRESH_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
@@ -10512,6 +10841,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceExtendedDynamicStateFeaturesEXT *)structure;
             const char *name = "VkPhysicalDeviceExtendedDynamicStateFeaturesEXT";
             DumpVkPhysicalDeviceExtendedDynamicStateFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR) {
+            const VkPhysicalDeviceExtendedFlagsFeaturesKHR *props = (const VkPhysicalDeviceExtendedFlagsFeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceExtendedFlagsFeaturesKHR";
+            DumpVkPhysicalDeviceExtendedFlagsFeaturesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT) {
@@ -10898,6 +11233,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT *)structure;
             const char *name = "VkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT";
             DumpVkPhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT) {
+            const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT *props =
+                (const VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT";
+            DumpVkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES) {
@@ -11741,6 +12083,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             DumpVkPhysicalDeviceVideoEncodeAV1FeaturesKHR(p, name, *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR) {
+            const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR *props =
+                (const VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR";
+            DumpVkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_INTRA_REFRESH_FEATURES_KHR) {
             const VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR *props =
                 (const VkPhysicalDeviceVideoEncodeIntraRefreshFeaturesKHR *)structure;
@@ -11864,7 +12213,9 @@ struct surface_capabilities2_chain {
     surface_capabilities2_chain(surface_capabilities2_chain &&) = delete;
     surface_capabilities2_chain &operator=(surface_capabilities2_chain &&) = delete;
     void *start_of_chain = nullptr;
+    VkImageUsageFlags2CreateInfoKHR ImageUsageFlags2CreateInfoKHR{};
     VkPresentTimingSurfaceCapabilitiesEXT PresentTimingSurfaceCapabilitiesEXT{};
+    VkSharedPresentSurfaceCapabilities2KHR SharedPresentSurfaceCapabilities2KHR{};
     VkSharedPresentSurfaceCapabilitiesKHR SharedPresentSurfaceCapabilitiesKHR{};
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     VkSurfaceCapabilitiesFullScreenExclusiveEXT SurfaceCapabilitiesFullScreenExclusiveEXT{};
@@ -11872,8 +12223,11 @@ struct surface_capabilities2_chain {
     VkSurfaceCapabilitiesPresentId2KHR SurfaceCapabilitiesPresentId2KHR{};
     VkSurfaceCapabilitiesPresentWait2KHR SurfaceCapabilitiesPresentWait2KHR{};
     VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR{};
+    VkSwapchainFlagsSurfaceCapabilitiesEXT SwapchainFlagsSurfaceCapabilitiesEXT{};
     void initialize_chain(AppInstance &inst, AppGpu &gpu) noexcept {
+        ImageUsageFlags2CreateInfoKHR.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
         PresentTimingSurfaceCapabilitiesEXT.sType = VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT;
+        SharedPresentSurfaceCapabilities2KHR.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR;
         SharedPresentSurfaceCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
 #ifdef VK_USE_PLATFORM_WIN32_KHR
         SurfaceCapabilitiesFullScreenExclusiveEXT.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
@@ -11881,9 +12235,14 @@ struct surface_capabilities2_chain {
         SurfaceCapabilitiesPresentId2KHR.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_ID_2_KHR;
         SurfaceCapabilitiesPresentWait2KHR.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_WAIT_2_KHR;
         SurfaceProtectedCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
+        SwapchainFlagsSurfaceCapabilitiesEXT.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT;
         std::vector<VkBaseOutStructure *> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&ImageUsageFlags2CreateInfoKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PRESENT_TIMING_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PresentTimingSurfaceCapabilitiesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SharedPresentSurfaceCapabilities2KHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SharedPresentSurfaceCapabilitiesKHR));
 #ifdef VK_USE_PLATFORM_WIN32_KHR
@@ -11896,6 +12255,8 @@ struct surface_capabilities2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SurfaceCapabilitiesPresentWait2KHR));
         if (inst.CheckExtensionEnabled(VK_KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SurfaceProtectedCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SWAPCHAIN_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SwapchainFlagsSurfaceCapabilitiesEXT));
 
         if (!chain_members.empty()) {
             for (size_t i = 0; i < chain_members.size() - 1; i++) {
@@ -11916,10 +12277,22 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
     while (place) {
         const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR) {
+            const VkImageUsageFlags2CreateInfoKHR *props = (const VkImageUsageFlags2CreateInfoKHR *)structure;
+            const char *name = "VkImageUsageFlags2CreateInfoKHR";
+            DumpVkImageUsageFlags2CreateInfoKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT) {
             const VkPresentTimingSurfaceCapabilitiesEXT *props = (const VkPresentTimingSurfaceCapabilitiesEXT *)structure;
             const char *name = "VkPresentTimingSurfaceCapabilitiesEXT";
             DumpVkPresentTimingSurfaceCapabilitiesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR) {
+            const VkSharedPresentSurfaceCapabilities2KHR *props = (const VkSharedPresentSurfaceCapabilities2KHR *)structure;
+            const char *name = "VkSharedPresentSurfaceCapabilities2KHR";
+            DumpVkSharedPresentSurfaceCapabilities2KHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR) {
@@ -11955,6 +12328,12 @@ void chain_iterator_surface_capabilities2(Printer &p, AppInstance &inst, AppGpu 
             DumpVkSurfaceProtectedCapabilitiesKHR(p, name, *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT) {
+            const VkSwapchainFlagsSurfaceCapabilitiesEXT *props = (const VkSwapchainFlagsSurfaceCapabilitiesEXT *)structure;
+            const char *name = "VkSwapchainFlagsSurfaceCapabilitiesEXT";
+            DumpVkSwapchainFlagsSurfaceCapabilitiesEXT(p, name, *props);
+            p.AddNewline();
+        }
         place = structure->pNext;
     }
 }
@@ -11971,14 +12350,18 @@ struct format_properties2_chain {
     format_properties2_chain &operator=(format_properties2_chain &&) = delete;
     void *start_of_chain = nullptr;
     VkFormatProperties3 FormatProperties3{};
+    VkFormatProperties4KHR FormatProperties4KHR{};
     VkSubpassResolvePerformanceQueryEXT SubpassResolvePerformanceQueryEXT{};
     void initialize_chain(AppGpu &gpu) noexcept {
         FormatProperties3.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
+        FormatProperties4KHR.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR;
         SubpassResolvePerformanceQueryEXT.sType = VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT;
         std::vector<VkBaseOutStructure *> chain_members{};
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&FormatProperties3));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&FormatProperties4KHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&SubpassResolvePerformanceQueryEXT));
 
@@ -12004,6 +12387,12 @@ void chain_iterator_format_properties2(Printer &p, AppGpu &gpu, const void *plac
             const VkFormatProperties3 *props = (const VkFormatProperties3 *)structure;
             const char *name = gpu.api_version >= VK_API_VERSION_1_3 ? "VkFormatProperties3" : ("VkFormatProperties3KHR");
             DumpVkFormatProperties3(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR) {
+            const VkFormatProperties4KHR *props = (const VkFormatProperties4KHR *)structure;
+            const char *name = "VkFormatProperties4KHR";
+            DumpVkFormatProperties4KHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT) {
@@ -12268,6 +12657,7 @@ struct video_capabilities_chain {
     VkVideoEncodeAV1CapabilitiesKHR VideoEncodeAV1CapabilitiesKHR{};
     VkVideoEncodeAV1QuantizationMapCapabilitiesKHR VideoEncodeAV1QuantizationMapCapabilitiesKHR{};
     VkVideoEncodeCapabilitiesKHR VideoEncodeCapabilitiesKHR{};
+    VkVideoEncodeFeedback2CapabilitiesKHR VideoEncodeFeedback2CapabilitiesKHR{};
     VkVideoEncodeH264CapabilitiesKHR VideoEncodeH264CapabilitiesKHR{};
     VkVideoEncodeH264QuantizationMapCapabilitiesKHR VideoEncodeH264QuantizationMapCapabilitiesKHR{};
     VkVideoEncodeH265CapabilitiesKHR VideoEncodeH265CapabilitiesKHR{};
@@ -12284,6 +12674,7 @@ struct video_capabilities_chain {
         VideoEncodeAV1CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
         VideoEncodeAV1QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR;
         VideoEncodeCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+        VideoEncodeFeedback2CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
         VideoEncodeH264CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
         VideoEncodeH264QuantizationMapCapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
         VideoEncodeH265CapabilitiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR;
@@ -12308,6 +12699,8 @@ struct video_capabilities_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&VideoEncodeAV1QuantizationMapCapabilitiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUEUE_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&VideoEncodeCapabilitiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_FEEDBACK_2_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&VideoEncodeFeedback2CapabilitiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_H264_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&VideoEncodeH264CapabilitiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
@@ -12390,6 +12783,12 @@ void chain_iterator_video_capabilities(Printer &p, AppGpu &gpu, const void *plac
             DumpVkVideoEncodeCapabilitiesKHR(p, name, *props);
             p.AddNewline();
         }
+        if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR) {
+            const VkVideoEncodeFeedback2CapabilitiesKHR *props = (const VkVideoEncodeFeedback2CapabilitiesKHR *)structure;
+            const char *name = "VkVideoEncodeFeedback2CapabilitiesKHR";
+            DumpVkVideoEncodeFeedback2CapabilitiesKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR) {
             const VkVideoEncodeH264CapabilitiesKHR *props = (const VkVideoEncodeH264CapabilitiesKHR *)structure;
             const char *name = "VkVideoEncodeH264CapabilitiesKHR";
@@ -12451,14 +12850,22 @@ struct video_format_properties_chain {
     video_format_properties_chain(video_format_properties_chain &&) = delete;
     video_format_properties_chain &operator=(video_format_properties_chain &&) = delete;
     void *start_of_chain = nullptr;
+    VkImageCreateFlags2CreateInfoKHR ImageCreateFlags2CreateInfoKHR{};
+    VkImageUsageFlags2CreateInfoKHR ImageUsageFlags2CreateInfoKHR{};
     VkVideoFormatAV1QuantizationMapPropertiesKHR VideoFormatAV1QuantizationMapPropertiesKHR{};
     VkVideoFormatH265QuantizationMapPropertiesKHR VideoFormatH265QuantizationMapPropertiesKHR{};
     VkVideoFormatQuantizationMapPropertiesKHR VideoFormatQuantizationMapPropertiesKHR{};
     void initialize_chain(AppGpu &gpu) noexcept {
+        ImageCreateFlags2CreateInfoKHR.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
+        ImageUsageFlags2CreateInfoKHR.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
         VideoFormatAV1QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
         VideoFormatH265QuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
         VideoFormatQuantizationMapPropertiesKHR.sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
         std::vector<VkBaseOutStructure *> chain_members{};
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&ImageCreateFlags2CreateInfoKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&ImageUsageFlags2CreateInfoKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&VideoFormatAV1QuantizationMapPropertiesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME))
@@ -12485,6 +12892,18 @@ void chain_iterator_video_format_properties(Printer &p, AppGpu &gpu, const void 
     while (place) {
         const VkBaseOutStructure *structure = (const VkBaseOutStructure *)place;
         p.SetSubHeader();
+        if (structure->sType == VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR) {
+            const VkImageCreateFlags2CreateInfoKHR *props = (const VkImageCreateFlags2CreateInfoKHR *)structure;
+            const char *name = "VkImageCreateFlags2CreateInfoKHR";
+            DumpVkImageCreateFlags2CreateInfoKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR) {
+            const VkImageUsageFlags2CreateInfoKHR *props = (const VkImageUsageFlags2CreateInfoKHR *)structure;
+            const char *name = "VkImageUsageFlags2CreateInfoKHR";
+            DumpVkImageUsageFlags2CreateInfoKHR(p, name, *props);
+            p.AddNewline();
+        }
         if (structure->sType == VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR) {
             const VkVideoFormatAV1QuantizationMapPropertiesKHR *props =
                 (const VkVideoFormatAV1QuantizationMapPropertiesKHR *)structure;
@@ -12582,6 +13001,16 @@ bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVi
                     same = same && memcmp(reinterpret_cast<const char *>(a) + sizeof(VkBaseInStructure),
                                           reinterpret_cast<const char *>(b) + sizeof(VkBaseInStructure),
                                           sizeof(VkVideoFormatPropertiesKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                case VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR:
+                    same = same && memcmp(reinterpret_cast<const char *>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char *>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkImageCreateFlags2CreateInfoKHR) - sizeof(VkBaseInStructure)) == 0;
+                    break;
+                case VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR:
+                    same = same && memcmp(reinterpret_cast<const char *>(a) + sizeof(VkBaseInStructure),
+                                          reinterpret_cast<const char *>(b) + sizeof(VkBaseInStructure),
+                                          sizeof(VkImageUsageFlags2CreateInfoKHR) - sizeof(VkBaseInStructure)) == 0;
                     break;
                 case VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR:
                     same = same && memcmp(reinterpret_cast<const char *>(a) + sizeof(VkBaseInStructure),
@@ -13247,6 +13676,15 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             }
                         }
                         if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_FEEDBACK_2_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.sType =
+                                    VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
                             if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_VALVE_VIDEO_ENCODE_RGB_CONVERSION_EXTENSION_NAME)) {
                                 capabilities_chain->VideoEncodeRgbConversionCapabilitiesVALVE.sType =
                                     VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
@@ -13456,6 +13894,15 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext = nullptr;
                                 *ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR;
                                 ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_FEEDBACK_2_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.sType =
+                                    VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext;
                             }
                         }
                         if (capabilities_chain != nullptr) {
@@ -13693,6 +14140,15 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext = nullptr;
                                 *ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR;
                                 ppnext = &capabilities_chain->VideoEncodeIntraRefreshCapabilitiesKHR.pNext;
+                            }
+                        }
+                        if (capabilities_chain != nullptr) {
+                            if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_ENCODE_FEEDBACK_2_EXTENSION_NAME)) {
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.sType =
+                                    VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
+                                capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext = nullptr;
+                                *ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR;
+                                ppnext = &capabilities_chain->VideoEncodeFeedback2CapabilitiesKHR.pNext;
                             }
                         }
                         if (capabilities_chain != nullptr) {

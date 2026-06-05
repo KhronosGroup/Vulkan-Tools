@@ -6008,6 +6008,41 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_
     typedef VkVideoDecodeAV1InlineSessionParametersInfoKHR Type;
 };
 
+// Map type VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR> {
+    typedef VkPhysicalDeviceVideoEncodeFeedback2FeaturesKHR Type;
+};
+
+// Map type VkVideoEncodeFeedback2CapabilitiesKHR to id VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR
+template <>
+struct LvlTypeMap<VkVideoEncodeFeedback2CapabilitiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR> {
+    typedef VkVideoEncodeFeedback2CapabilitiesKHR Type;
+};
+
+// Map type VkQueryPoolVideoEncodePerPartitionFeedbackCreateInfoKHR to id
+// VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_CREATE_INFO_KHR
+template <>
+struct LvlTypeMap<VkQueryPoolVideoEncodePerPartitionFeedbackCreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_CREATE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_CREATE_INFO_KHR> {
+    typedef VkQueryPoolVideoEncodePerPartitionFeedbackCreateInfoKHR Type;
+};
+
 // Map type VkPhysicalDeviceDepthClampZeroOneFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR
 template <>
 struct LvlTypeMap<VkPhysicalDeviceDepthClampZeroOneFeaturesKHR> {
@@ -6174,6 +6209,83 @@ struct LvlTypeMap<VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR> {
     typedef VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR Type;
+};
+
+// Map type VkFormatProperties4KHR to id VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR
+template <>
+struct LvlTypeMap<VkFormatProperties4KHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR> {
+    typedef VkFormatProperties4KHR Type;
+};
+
+// Map type VkImageUsageFlags2CreateInfoKHR to id VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR
+template <>
+struct LvlTypeMap<VkImageUsageFlags2CreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR> {
+    typedef VkImageUsageFlags2CreateInfoKHR Type;
+};
+
+// Map type VkImageCreateFlags2CreateInfoKHR to id VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR
+template <>
+struct LvlTypeMap<VkImageCreateFlags2CreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR> {
+    typedef VkImageCreateFlags2CreateInfoKHR Type;
+};
+
+// Map type VkImageViewUsage2CreateInfoKHR to id VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR
+template <>
+struct LvlTypeMap<VkImageViewUsage2CreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR> {
+    typedef VkImageViewUsage2CreateInfoKHR Type;
+};
+
+// Map type VkPhysicalDeviceExtendedFlagsFeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceExtendedFlagsFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR> {
+    typedef VkPhysicalDeviceExtendedFlagsFeaturesKHR Type;
+};
+
+// Map type VkImageStencilUsage2CreateInfoKHR to id VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR
+template <>
+struct LvlTypeMap<VkImageStencilUsage2CreateInfoKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR> {
+    typedef VkImageStencilUsage2CreateInfoKHR Type;
+};
+
+// Map type VkSharedPresentSurfaceCapabilities2KHR to id VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR
+template <>
+struct LvlTypeMap<VkSharedPresentSurfaceCapabilities2KHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR> {
+    typedef VkSharedPresentSurfaceCapabilities2KHR Type;
 };
 
 // Map type VkDebugReportCallbackCreateInfoEXT to id VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT
@@ -13438,6 +13550,29 @@ struct LvlTypeMap<VkPhysicalDevicePresentMeteringFeaturesNV> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV> {
     typedef VkPhysicalDevicePresentMeteringFeaturesNV Type;
+};
+
+// Map type VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT> {
+    typedef VkPhysicalDeviceMultisampledRenderToSwapchainFeaturesEXT Type;
+};
+
+// Map type VkSwapchainFlagsSurfaceCapabilitiesEXT to id VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT
+template <>
+struct LvlTypeMap<VkSwapchainFlagsSurfaceCapabilitiesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT> {
+    typedef VkSwapchainFlagsSurfaceCapabilitiesEXT Type;
 };
 
 // Map type VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT to id

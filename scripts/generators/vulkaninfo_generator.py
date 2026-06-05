@@ -712,7 +712,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
         out.append('    std::vector<const char *> strings;\n')
         # If a bitmask contains a field whose value is zero, we want to support printing the correct bitflag
         # Otherwise, use "None" for when there are not bits set in the bitmask
-        if bitmask.flags[0].value != 0:
+        if len(bitmask.flags) == 0 or bitmask.flags[0].value != 0:
             out.append('    if (value == 0) { strings.push_back("None"); return strings; }\n')
         else:
             out.append(f'    if (value == 0) {{ strings.push_back("{bitmask.flags[0].name[3:]}"); return strings; }}\n')
