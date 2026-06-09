@@ -62,6 +62,8 @@ target_include_directories(vulkaninfo PRIVATE
 
 target_compile_definitions(vulkaninfo PRIVATE VK_ENABLE_BETA_EXTENSIONS VK_NO_PROTOTYPES)
 
+target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DISPLAY_KHR)
+
 if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_XLIB_SUPPORT "Build Xlib WSI support" ON)
@@ -93,7 +95,6 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
         target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DIRECTFB_EXT)
         target_link_libraries(vulkaninfo PRIVATE PkgConfig::DirectFB)
     endif()
-    target_compile_definitions(vulkaninfo PRIVATE VK_USE_PLATFORM_DISPLAY)
 endif()
 
 if(APPLE)

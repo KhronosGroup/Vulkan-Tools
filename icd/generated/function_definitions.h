@@ -1549,7 +1549,9 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceDisplayPropertiesKHR(VkPh
         *pPropertyCount = 1;
     } else {
         unique_lock_t lock(global_lock);
+        *pPropertyCount = 1;
         pProperties[0].display = (VkDisplayKHR)global_unique_handle++;
+        pProperties[0].displayName = "Vulkan Mock Display";
         display_map[physicalDevice].insert(pProperties[0].display);
     }
     return VK_SUCCESS;
@@ -1557,18 +1559,28 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceDisplayPropertiesKHR(VkPh
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceDisplayPlanePropertiesKHR(VkPhysicalDevice physicalDevice,
                                                                                  uint32_t* pPropertyCount,
                                                                                  VkDisplayPlanePropertiesKHR* pProperties) {
-    // Not a CREATE or DESTROY function
+    *pPropertyCount = 1;
+    if (pProperties) {
+        pProperties[0].currentDisplay = VK_NULL_HANDLE;
+        pProperties[0].currentStackIndex = 0;
+    }
     return VK_SUCCESS;
 }
 static VKAPI_ATTR VkResult VKAPI_CALL GetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice physicalDevice, uint32_t planeIndex,
                                                                           uint32_t* pDisplayCount, VkDisplayKHR* pDisplays) {
-    // Not a CREATE or DESTROY function
+    *pDisplayCount = 1;
+    if (pDisplays) {
+        pDisplays[0] = {};
+    }
     return VK_SUCCESS;
 }
 static VKAPI_ATTR VkResult VKAPI_CALL GetDisplayModePropertiesKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display,
                                                                   uint32_t* pPropertyCount,
                                                                   VkDisplayModePropertiesKHR* pProperties) {
-    // Not a CREATE or DESTROY function
+    *pPropertyCount = 1;
+    if (pProperties) {
+        pProperties[0] = {};
+    }
     return VK_SUCCESS;
 }
 static VKAPI_ATTR VkResult VKAPI_CALL CreateDisplayModeKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display,
@@ -2282,12 +2294,17 @@ static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceSurfaceFormats2KHR(VkPhys
             pSurfaceFormats[1].surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         }
         if (*pSurfaceFormatCount >= 1) {
-            pSurfaceFormats[1].pNext = nullptr;
+            pSurfaceFormats[0].pNext = nullptr;
             pSurfaceFormats[0].surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
             pSurfaceFormats[0].surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         }
     }
-    return VK_SUCCESS;
+    if (*pSurfaceFormatCount >= 2) {
+        *pSurfaceFormatCount = 2;
+        return VK_SUCCESS;
+    } else {
+        return VK_INCOMPLETE;
+    }
 }
 static VKAPI_ATTR VkResult VKAPI_CALL GetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice physicalDevice,
                                                                              uint32_t* pPropertyCount,

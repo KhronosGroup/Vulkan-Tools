@@ -793,7 +793,7 @@ AppDisplayMode::AppDisplayMode(AppGpu &gpu, const VkDisplayModePropertiesKHR &in
 
 static std::string MakeName(uint32_t index, const VkDisplayPropertiesKHR &prop) {
     std::stringstream name;
-    name << "Display id : " << index << " (" << prop.displayName << ")";
+    name << "Display id : " << index << " (" << (prop.displayName ? prop.displayName : "<null>") << ")";
     return name.str();
 }
 
@@ -1515,8 +1515,26 @@ int main(int argc, char **argv) {
 
 #if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
-            surface_extension.create_window(instance);
-            surface_extension.surface = surface_extension.create_surface(instance);
+            // If the surface extension has a create_window function then call it to create the single shared window
+            if (surface_extension.create_window) {
+                try {
+                    surface_extension.create_window(instance);
+                } catch (std::exception &e) {
+                    std::cerr << "ERROR while creating window for surface extension " << surface_extension.name << " : " << e.what()
+                              << "\n";
+                    continue;
+                }
+            }
+
+            // If the surface extension has a create_surface function then call it to create the single shared surface
+            if (surface_extension.create_surface) {
+                try {
+                    surface_extension.surface = surface_extension.create_surface(instance);
+                } catch (std::exception &e) {
+                    std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
+                              << "\n";
+                }
+            }
         }
 #endif  // defined(VULKANINFO_WSI_ENABLED)
 
@@ -1524,14 +1542,31 @@ int main(int argc, char **argv) {
 
         uint32_t gpu_counter = 0;
         for (auto &phys_device : phys_devices) {
-            gpus.push_back(
-                std::unique_ptr<AppGpu>(new AppGpu(instance, gpu_counter++, phys_device, parse_data.show.promoted_structs)));
+            // Take a copy of the surface extensions list as some may be per physical device (e.g. VK_KHR_display)
+            auto surface_extensions = instance.surface_extensions;
+#if defined(VULKANINFO_WSI_ENABLED)
+            for (auto &surface_extension : surface_extensions) {
+                // If the surface extension has a create_surface_for_physical_device function then call it to create
+                // the physical device specific surface
+                if (surface_extension.create_surface_for_physical_device) {
+                    try {
+                        surface_extension.surface = surface_extension.create_surface_for_physical_device(instance, phys_device);
+                    } catch (std::exception &e) {
+                        std::cerr << "ERROR while creating surface for extension " << surface_extension.name << " : " << e.what()
+                                  << "\n";
+                    }
+                }
+            }
+#endif  // defined(VULKANINFO_WSI_ENABLED)
+            gpus.push_back(std::unique_ptr<AppGpu>(
+                new AppGpu(instance, gpu_counter++, phys_device, parse_data.show.promoted_structs, std::move(surface_extensions))));
         }
 
         std::vector<std::unique_ptr<AppSurface>> surfaces;
 #if defined(VULKANINFO_WSI_ENABLED)
-        for (auto &surface_extension : instance.surface_extensions) {
-            for (auto &gpu : gpus) {
+        for (auto &gpu : gpus) {
+            for (auto &surface_extension : gpu->surface_extensions) {
+                if (surface_extension.surface == VK_NULL_HANDLE) continue;
                 try {
                     // check if the surface is supported by the physical device before adding it to the list
                     VkBool32 supported = VK_FALSE;
@@ -1578,10 +1613,21 @@ int main(int argc, char **argv) {
 
         // Call the printer's destructor before the file handle gets closed
         printer.reset(nullptr);
+
+        // Clean up the AppSurface objects to destroy the underlying VkSurfaceKHR objects
+        surfaces.clear();
+
 #if defined(VULKANINFO_WSI_ENABLED)
         for (auto &surface_extension : instance.surface_extensions) {
-            AppDestroySurface(instance, surface_extension.surface);
-            surface_extension.destroy_window(instance);
+            // If the surface is shared across physical devices then we have to destroy it here as there's a single shared
+            // surface for the AppInstance object (contrarily to per physical device surfaces that are maintained by AppSurface)
+            if (surface_extension.create_surface) {
+                vkDestroySurfaceKHR(instance.instance, surface_extension.surface, nullptr);
+            }
+            // If the surface extension has a destroy_window function then call it to destroy the single shared window
+            if (surface_extension.destroy_window) {
+                surface_extension.destroy_window(instance);
+            }
         }
 #endif  // defined(VULKANINFO_WSI_ENABLED)
     } catch (std::exception &e) {

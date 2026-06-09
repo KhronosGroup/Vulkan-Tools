@@ -71,7 +71,7 @@ PFN_vkCreateMacOSSurfaceMVK vkCreateMacOSSurfaceMVK;
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 PFN_vkCreateScreenSurfaceQNX vkCreateScreenSurfaceQNX;
 #endif
-#if defined(VK_USE_PLATFORM_DISPLAY)
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
 PFN_vkCreateDisplayPlaneSurfaceKHR vkCreateDisplayPlaneSurfaceKHR;
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
@@ -208,7 +208,7 @@ static void load_vulkan_instance_functions(VkInstance instance) {
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
     LOAD_INSTANCE_FUNCTION(instance, vkCreateScreenSurfaceQNX);
 #endif
-#if defined(VK_USE_PLATFORM_DISPLAY)
+#if defined(VK_USE_PLATFORM_DISPLAY_KHR)
     LOAD_INSTANCE_FUNCTION(instance, vkCreateDisplayPlaneSurfaceKHR);
 #endif
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
