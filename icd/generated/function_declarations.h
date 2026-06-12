@@ -544,6 +544,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_HUAWEI_hdr_vivid", VK_HUAWEI_HDR_VIVID_SPEC_VERSION},
     {"VK_NV_cooperative_matrix2", VK_NV_COOPERATIVE_MATRIX_2_SPEC_VERSION},
     {"VK_ARM_pipeline_opacity_micromap", VK_ARM_PIPELINE_OPACITY_MICROMAP_SPEC_VERSION},
+    {"VK_IMG_filter_linear_2d", VK_IMG_FILTER_LINEAR_2D_SPEC_VERSION},
 #ifdef VK_USE_PLATFORM_METAL_EXT
     {"VK_EXT_external_memory_metal", VK_EXT_EXTERNAL_MEMORY_METAL_SPEC_VERSION},
 #endif

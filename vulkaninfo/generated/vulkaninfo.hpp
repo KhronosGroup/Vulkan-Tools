@@ -1180,6 +1180,8 @@ std::string VkDriverIdString(VkDriverId value) {
             return "DRIVER_ID_MESA_KOSMICKRISP";
         case (VK_DRIVER_ID_MESA_GFXSTREAM):
             return "DRIVER_ID_MESA_GFXSTREAM";
+        case (VK_DRIVER_ID_APE_SOFT):
+            return "DRIVER_ID_APE_SOFT";
         default:
             return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
@@ -2534,6 +2536,8 @@ std::vector<const char *> VkFormatFeatureFlagBits2GetStrings(VkFormatFeatureFlag
         strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR & value)
         strings.push_back("FORMAT_FEATURE_2_VIDEO_ENCODE_EMPHASIS_MAP_BIT_KHR");
+    if (VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_2D_BIT_IMG & value)
+        strings.push_back("FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_2D_BIT_IMG");
     if (VK_FORMAT_FEATURE_2_DEPTH_COPY_ON_COMPUTE_QUEUE_BIT_KHR & value)
         strings.push_back("FORMAT_FEATURE_2_DEPTH_COPY_ON_COMPUTE_QUEUE_BIT_KHR");
     if (VK_FORMAT_FEATURE_2_DEPTH_COPY_ON_TRANSFER_QUEUE_BIT_KHR & value)
