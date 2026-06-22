@@ -53,7 +53,7 @@ jobs:
 
 
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - run: |
                 sudo apt-get -qq update
                 sudo apt install --yes libwayland-dev xorg-dev wayland-protocols
@@ -95,7 +95,7 @@ jobs:
     codegen:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@v7
         - run: scripts/update_deps.py --dir ext --no-build
         - run: scripts/generate_source.py --verify ext/Vulkan-Headers/registry/
 
@@ -111,7 +111,7 @@ jobs:
                 os: [ windows-latest ]
 
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: lukka/get-cmake@latest
             - uses: ilammy/msvc-dev-cmd@v1
               with:
@@ -136,7 +136,7 @@ jobs:
         runs-on: macos-latest
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: lukka/get-cmake@latest
 
             - name: Setup ccache
@@ -164,7 +164,7 @@ jobs:
         matrix:
           abi: [ armeabi-v7a, arm64-v8a ]
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@v7
         - uses: actions/setup-python@v6
           with:
             python-version: '3.8'
@@ -197,7 +197,7 @@ jobs:
           run:
             shell: bash
         steps:
-          - uses: actions/checkout@v6
+          - uses: actions/checkout@v7
           - name: Setup ccache
             uses: hendrikmuhs/ccache-action@v1.2
             with:
@@ -220,7 +220,7 @@ jobs:
       if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@v7
         - uses: actions/setup-python@v6
           with:
             python-version: '3.10'
@@ -235,7 +235,7 @@ jobs:
       if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@v7
         - uses: actions/setup-python@v6
           with:
             python-version: '3.10'
