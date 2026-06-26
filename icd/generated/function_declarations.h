@@ -532,6 +532,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_command_buffer_inheritance", VK_NV_COMMAND_BUFFER_INHERITANCE_SPEC_VERSION},
     {"VK_NV_shader_atomic_float16_vector", VK_NV_SHADER_ATOMIC_FLOAT16_VECTOR_SPEC_VERSION},
     {"VK_EXT_shader_replicated_composites", VK_EXT_SHADER_REPLICATED_COMPOSITES_SPEC_VERSION},
+    {"VK_ARM_tensor_controls", VK_ARM_TENSOR_CONTROLS_SPEC_VERSION},
     {"VK_EXT_shader_float8", VK_EXT_SHADER_FLOAT8_SPEC_VERSION},
     {"VK_NV_ray_tracing_validation", VK_NV_RAY_TRACING_VALIDATION_SPEC_VERSION},
     {"VK_NV_cluster_acceleration_structure", VK_NV_CLUSTER_ACCELERATION_STRUCTURE_SPEC_VERSION},

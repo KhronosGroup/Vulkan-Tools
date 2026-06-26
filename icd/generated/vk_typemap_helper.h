@@ -12777,6 +12777,28 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITE
     typedef VkPhysicalDeviceShaderReplicatedCompositesFeaturesEXT Type;
 };
 
+// Map type VkTensorRollingBackingCreateInfoARM to id VK_STRUCTURE_TYPE_TENSOR_ROLLING_BACKING_CREATE_INFO_ARM
+template <>
+struct LvlTypeMap<VkTensorRollingBackingCreateInfoARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_TENSOR_ROLLING_BACKING_CREATE_INFO_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_TENSOR_ROLLING_BACKING_CREATE_INFO_ARM> {
+    typedef VkTensorRollingBackingCreateInfoARM Type;
+};
+
+// Map type VkTensorExplicitTilingFormatPropertiesARM to id VK_STRUCTURE_TYPE_TENSOR_EXPLICIT_TILING_FORMAT_PROPERTIES_ARM
+template <>
+struct LvlTypeMap<VkTensorExplicitTilingFormatPropertiesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_TENSOR_EXPLICIT_TILING_FORMAT_PROPERTIES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_TENSOR_EXPLICIT_TILING_FORMAT_PROPERTIES_ARM> {
+    typedef VkTensorExplicitTilingFormatPropertiesARM Type;
+};
+
 // Map type VkPhysicalDeviceShaderFloat8FeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT8_FEATURES_EXT
 template <>
 struct LvlTypeMap<VkPhysicalDeviceShaderFloat8FeaturesEXT> {
