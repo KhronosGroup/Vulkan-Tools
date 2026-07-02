@@ -1263,6 +1263,27 @@ void SetupWindowExtensions(AppInstance &inst) {
     }
 #endif
 
+#ifdef VK_USE_PLATFORM_SCREEN_QNX
+    screen_context_t screen_context;
+    int rc;
+    bool screen_windowing_available = false;
+
+    rc = screen_create_context(&screen_context, 0);
+    if (rc) {
+        std::cerr << "Failed to create a QNX Screen context ... skipping surface info\n";
+    } else {
+        screen_window_t screen_window;
+        rc = screen_create_window(&screen_window, screen_context);
+        if (rc) {
+            std::cerr << "Failed to create a QNX Screen window ... skipping surface info\n";
+        } else {
+            screen_windowing_available = true;
+            screen_destroy_window(screen_window);
+        }
+        screen_destroy_context(screen_context);
+    }
+#endif
+
 //--WIN32--
 #ifdef VK_USE_PLATFORM_WIN32_KHR
     SurfaceExtension surface_ext_win32;
@@ -1383,7 +1404,9 @@ void SetupWindowExtensions(AppInstance &inst) {
         surface_ext_qnx_screen.create_surface = AppCreateScreenSurface;
         surface_ext_qnx_screen.destroy_window = AppDestroyScreenWindow;
 
-        inst.AddSurfaceExtension(surface_ext_qnx_screen);
+        if (screen_windowing_available) {
+            inst.AddSurfaceExtension(surface_ext_qnx_screen);
+        }
     }
 #endif
 //--DISPLAY--
