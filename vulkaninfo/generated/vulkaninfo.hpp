@@ -1094,6 +1094,16 @@ std::string VkComponentTypeKHRString(VkComponentTypeKHR value) {
             return "COMPONENT_TYPE_FLOAT8_E4M3_EXT";
         case (VK_COMPONENT_TYPE_FLOAT8_E5M2_EXT):
             return "COMPONENT_TYPE_FLOAT8_E5M2_EXT";
+        case (VK_COMPONENT_TYPE_FLOAT6_E2M3_EXT):
+            return "COMPONENT_TYPE_FLOAT6_E2M3_EXT";
+        case (VK_COMPONENT_TYPE_FLOAT6_E3M2_EXT):
+            return "COMPONENT_TYPE_FLOAT6_E3M2_EXT";
+        case (VK_COMPONENT_TYPE_FLOAT4_E2M1_EXT):
+            return "COMPONENT_TYPE_FLOAT4_E2M1_EXT";
+        case (VK_COMPONENT_TYPE_FLOAT8_UNSIGNED_E8M0_EXT):
+            return "COMPONENT_TYPE_FLOAT8_UNSIGNED_E8M0_EXT";
+        case (VK_COMPONENT_TYPE_MXINT8_EXT):
+            return "COMPONENT_TYPE_MXINT8_EXT";
         default:
             return std::string("UNKNOWN_VkComponentTypeKHR_value") + std::to_string(value);
     }
@@ -5091,6 +5101,8 @@ void DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(Printer &p, std::stri
                                                            const VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(Printer &p, std::string name,
                                                              const VkPhysicalDeviceShaderModuleIdentifierPropertiesEXT &obj);
+void DumpVkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderObjectFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderObjectFeaturesEXT &obj);
 void DumpVkPhysicalDeviceShaderObjectPropertiesEXT(Printer &p, std::string name,
                                                    const VkPhysicalDeviceShaderObjectPropertiesEXT &obj);
@@ -7386,6 +7398,15 @@ void DumpVkPhysicalDeviceShaderModuleIdentifierPropertiesEXT(Printer &p, std::st
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(35);
     p.PrintKeyValue("shaderModuleIdentifierAlgorithmUUID", obj.shaderModuleIdentifierAlgorithmUUID);
+}
+void DumpVkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT(Printer &p, std::string name,
+                                                               const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(24);
+    p.PrintKeyBool("shaderFloat4", static_cast<bool>(obj.shaderFloat4));
+    p.PrintKeyBool("shaderFloat6", static_cast<bool>(obj.shaderFloat6));
+    p.PrintKeyBool("shaderFloat8UnsignedE8M0", static_cast<bool>(obj.shaderFloat8UnsignedE8M0));
+    p.PrintKeyBool("shaderMXInt8", static_cast<bool>(obj.shaderMXInt8));
 }
 void DumpVkPhysicalDeviceShaderObjectFeaturesEXT(Printer &p, std::string name, const VkPhysicalDeviceShaderObjectFeaturesEXT &obj) {
     ObjectWrapper object{p, name};
@@ -9792,6 +9813,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceShaderLongVectorFeaturesEXT PhysicalDeviceShaderLongVectorFeaturesEXT{};
     VkPhysicalDeviceShaderMaximalReconvergenceFeaturesKHR PhysicalDeviceShaderMaximalReconvergenceFeaturesKHR{};
     VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT PhysicalDeviceShaderModuleIdentifierFeaturesEXT{};
+    VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT PhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT{};
     VkPhysicalDeviceShaderObjectFeaturesEXT PhysicalDeviceShaderObjectFeaturesEXT{};
     VkPhysicalDeviceShaderQuadControlFeaturesKHR PhysicalDeviceShaderQuadControlFeaturesKHR{};
     VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR PhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR{};
@@ -10016,6 +10038,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR;
         PhysicalDeviceShaderModuleIdentifierFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT;
+        PhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT;
         PhysicalDeviceShaderObjectFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT;
         PhysicalDeviceShaderQuadControlFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_QUAD_CONTROL_FEATURES_KHR;
         PhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR.sType =
@@ -10408,6 +10432,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderMaximalReconvergenceFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_MODULE_IDENTIFIER_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderModuleIdentifierFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OCP_MICROSCALING_TYPES_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_SHADER_OBJECT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceShaderObjectFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_SHADER_QUAD_CONTROL_EXTENSION_NAME))
@@ -11782,6 +11808,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT *)structure;
             const char *name = "VkPhysicalDeviceShaderModuleIdentifierFeaturesEXT";
             DumpVkPhysicalDeviceShaderModuleIdentifierFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT) {
+            const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT *props =
+                (const VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT";
+            DumpVkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT) {

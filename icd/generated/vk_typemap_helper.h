@@ -13872,6 +13872,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC> {
 };
 
 #endif  // VK_USE_PLATFORM_UBM_SEC
+// Map type VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT> {
+    typedef VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT Type;
+};
+
 // Map type VkPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE
 template <>
