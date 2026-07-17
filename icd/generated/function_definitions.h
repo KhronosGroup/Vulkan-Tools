@@ -3795,6 +3795,28 @@ static VKAPI_ATTR void VKAPI_CALL CmdEndPerTileExecutionQCOM(VkCommandBuffer com
                                                              const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
     // Not a CREATE or DESTROY function
 }
+static VKAPI_ATTR void VKAPI_CALL SetLatencySleepModeLegacyNV(VkDevice device, VkBool32 lowLatencyMode, VkBool32 lowLatencyBoost,
+                                                              uint32_t minimumIntervalUs) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL LatencySleepLegacyNV(VkDevice device, VkSemaphore signalSemaphore, uint64_t value) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL SetLatencyMarkerLegacyNV(VkDevice device, uint64_t frameID, uint32_t marker) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL GetLatencyTimingsLegacyNV(VkDevice device, void* pTimings) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL QueueNotifyOutOfBandLegacyNV(VkQueue queue, uint32_t queueType) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL GetSleepStatusLegacyNV(VkDevice device, VkBool32* pLowLatencyMode) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL ShutdownLatencyDeviceLegacyNV(VkDevice device) {
+    // Not a CREATE or DESTROY function
+}
 #ifdef VK_USE_PLATFORM_METAL_EXT
 static VKAPI_ATTR void VKAPI_CALL ExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo) {
     // Not a CREATE or DESTROY function

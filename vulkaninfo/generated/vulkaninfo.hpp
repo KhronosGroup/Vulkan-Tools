@@ -72,6 +72,10 @@ std::string StdVideoH264ProfileIdcString(StdVideoH264ProfileIdc value) {
             return "STD_VIDEO_H264_PROFILE_IDC_MAIN";
         case STD_VIDEO_H264_PROFILE_IDC_HIGH:
             return "STD_VIDEO_H264_PROFILE_IDC_HIGH";
+        case STD_VIDEO_H264_PROFILE_IDC_HIGH_10:
+            return "STD_VIDEO_H264_PROFILE_IDC_HIGH_10";
+        case STD_VIDEO_H264_PROFILE_IDC_HIGH_422:
+            return "STD_VIDEO_H264_PROFILE_IDC_HIGH_422";
         case STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE:
             return "STD_VIDEO_H264_PROFILE_IDC_HIGH_444_PREDICTIVE";
         case STD_VIDEO_H264_PROFILE_IDC_INVALID:
@@ -13239,6 +13243,20 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
                                         VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
                                 });
+                    add_profile(profile_base_name + " High 10 progressive", profile_info, create_profile_info_chain,
+                                create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_10;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                                });
+                    add_profile(profile_base_name + " High 4:2:2 progressive", profile_info, create_profile_info_chain,
+                                create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_422;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR;
+                                });
                     add_profile(profile_base_name + " High 4:4:4 Predictive progressive", profile_info, create_profile_info_chain,
                                 create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
@@ -13265,6 +13283,22 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
                                         STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                                });
+                    add_profile(profile_base_name + " High 10 interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain, create_format_properties_chain_list,
+                                [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_10;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
+                                });
+                    add_profile(profile_base_name + " High 4:2:2 interlaced (interleaved lines)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain, create_format_properties_chain_list,
+                                [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_422;
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
                                         VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_INTERLEAVED_LINES_BIT_KHR;
                                 });
@@ -13295,6 +13329,22 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
                                         STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                                });
+                    add_profile(profile_base_name + " High 10 interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain, create_format_properties_chain_list,
+                                [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_10;
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
+                                        VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
+                                });
+                    add_profile(profile_base_name + " High 4:2:2 interlaced (separate planes)", profile_info,
+                                create_profile_info_chain, create_capabilities_chain, create_format_properties_chain_list,
+                                [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_422;
                                     profile.profile_info_chain->VideoDecodeH264ProfileInfoKHR.pictureLayout =
                                         VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_INTERLACED_SEPARATE_PLANES_BIT_KHR;
                                 });
@@ -13861,6 +13911,16 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                                 create_format_properties_chain_list, [](AppVideoProfile &profile) {
                                     profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc =
                                         STD_VIDEO_H264_PROFILE_IDC_HIGH;
+                                });
+                    add_profile(profile_base_name + " High 10", profile_info, create_profile_info_chain, create_capabilities_chain,
+                                create_format_properties_chain_list, [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_10;
+                                });
+                    add_profile(profile_base_name + " High 4:2:2", profile_info, create_profile_info_chain,
+                                create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
+                                    profile.profile_info_chain->VideoEncodeH264ProfileInfoKHR.stdProfileIdc =
+                                        STD_VIDEO_H264_PROFILE_IDC_HIGH_422;
                                 });
                     add_profile(profile_base_name + " High 4:4:4 Predictive", profile_info, create_profile_info_chain,
                                 create_capabilities_chain, create_format_properties_chain_list, [](AppVideoProfile &profile) {
