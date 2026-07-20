@@ -165,7 +165,7 @@ jobs:
           abi: [ armeabi-v7a, arm64-v8a ]
       steps:
         - uses: actions/checkout@v7
-        - uses: actions/setup-python@v6
+        - uses: actions/setup-python@v7
           with:
             python-version: '3.8'
         - uses: lukka/get-cmake@latest
@@ -221,7 +221,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v7
-        - uses: actions/setup-python@v6
+        - uses: actions/setup-python@v7
           with:
             python-version: '3.10'
         - run: pip install pyparsing
@@ -236,7 +236,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v7
-        - uses: actions/setup-python@v6
+        - uses: actions/setup-python@v7
           with:
             python-version: '3.10'
         - run: scripts/gn/gn.py
