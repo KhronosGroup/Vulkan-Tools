@@ -662,6 +662,9 @@ struct AppInstance {
             if (strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
+            if (strcmp(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
             if (strcmp(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
@@ -669,6 +672,9 @@ struct AppInstance {
                 inst_extensions.push_back(ext.extensionName);
             }
             if (strcmp(VK_KHR_SURFACE_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
+            if (strcmp(VK_KHR_SURFACE_MAINTENANCE_1_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
@@ -740,6 +746,9 @@ struct AppInstance {
             if (strcmp(VK_KHR_DISPLAY_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
+            if (strcmp(VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
 #endif
             if (strcmp(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
@@ -754,6 +763,9 @@ struct AppInstance {
                 inst_extensions.push_back(ext.extensionName);
             }
             if (strcmp(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
+            if (strcmp(VK_NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
         }
