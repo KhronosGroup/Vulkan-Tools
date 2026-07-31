@@ -4890,6 +4890,8 @@ void DumpVkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT(
 void DumpVkPhysicalDeviceImageRobustnessFeatures(Printer &p, std::string name, const VkPhysicalDeviceImageRobustnessFeatures &obj);
 void DumpVkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT(Printer &p, std::string name,
                                                         const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT &obj);
+void DumpVkPhysicalDeviceImageTilingControlFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceImageTilingControlFeaturesEXT &obj);
 void DumpVkPhysicalDeviceImageViewMinLodFeaturesEXT(Printer &p, std::string name,
                                                     const VkPhysicalDeviceImageViewMinLodFeaturesEXT &obj);
 void DumpVkPhysicalDeviceImagelessFramebufferFeatures(Printer &p, std::string name,
@@ -6293,6 +6295,12 @@ void DumpVkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT(Printer &p, std::string 
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(19);
     p.PrintKeyBool("imageSlicedViewOf3D", static_cast<bool>(obj.imageSlicedViewOf3D));
+}
+void DumpVkPhysicalDeviceImageTilingControlFeaturesEXT(Printer &p, std::string name,
+                                                       const VkPhysicalDeviceImageTilingControlFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(18);
+    p.PrintKeyBool("imageTilingControl", static_cast<bool>(obj.imageTilingControl));
 }
 void DumpVkPhysicalDeviceImageViewMinLodFeaturesEXT(Printer &p, std::string name,
                                                     const VkPhysicalDeviceImageViewMinLodFeaturesEXT &obj) {
@@ -9732,6 +9740,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceImageCompressionControlSwapchainFeaturesEXT PhysicalDeviceImageCompressionControlSwapchainFeaturesEXT{};
     VkPhysicalDeviceImageRobustnessFeatures PhysicalDeviceImageRobustnessFeatures{};
     VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT PhysicalDeviceImageSlicedViewOf3DFeaturesEXT{};
+    VkPhysicalDeviceImageTilingControlFeaturesEXT PhysicalDeviceImageTilingControlFeaturesEXT{};
     VkPhysicalDeviceImageViewMinLodFeaturesEXT PhysicalDeviceImageViewMinLodFeaturesEXT{};
     VkPhysicalDeviceImagelessFramebufferFeatures PhysicalDeviceImagelessFramebufferFeatures{};
     VkPhysicalDeviceIndexTypeUint8Features PhysicalDeviceIndexTypeUint8Features{};
@@ -9936,6 +9945,7 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT;
         PhysicalDeviceImageRobustnessFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES;
         PhysicalDeviceImageSlicedViewOf3DFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_SLICED_VIEW_OF_3D_FEATURES_EXT;
+        PhysicalDeviceImageTilingControlFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT;
         PhysicalDeviceImageViewMinLodFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT;
         PhysicalDeviceImagelessFramebufferFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
         PhysicalDeviceIndexTypeUint8Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES;
@@ -10239,6 +10249,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceImageRobustnessFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_SLICED_VIEW_OF_3D_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceImageSlicedViewOf3DFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_TILING_CONTROL_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceImageTilingControlFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_IMAGE_VIEW_MIN_LOD_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceImageViewMinLodFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME)) &&
@@ -11055,6 +11067,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT *)structure;
             const char *name = "VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT";
             DumpVkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT) {
+            const VkPhysicalDeviceImageTilingControlFeaturesEXT *props =
+                (const VkPhysicalDeviceImageTilingControlFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceImageTilingControlFeaturesEXT";
+            DumpVkPhysicalDeviceImageTilingControlFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT) {
