@@ -13966,6 +13966,28 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEA
     typedef VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT Type;
 };
 
+// Map type VkPhysicalDeviceImageTilingControlFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceImageTilingControlFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT> {
+    typedef VkPhysicalDeviceImageTilingControlFeaturesEXT Type;
+};
+
+// Map type VkImageTilingControlCreateInfoEXT to id VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT
+template <>
+struct LvlTypeMap<VkImageTilingControlCreateInfoEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT> {
+    typedef VkImageTilingControlCreateInfoEXT Type;
+};
+
 // Map type VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV
 template <>
