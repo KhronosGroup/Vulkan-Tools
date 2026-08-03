@@ -749,6 +749,9 @@ struct AppInstance {
             if (strcmp(VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
+            if (strcmp(VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME, ext.extensionName) == 0) {
+                inst_extensions.push_back(ext.extensionName);
+            }
 #endif
             if (strcmp(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
