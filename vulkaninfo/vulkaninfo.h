@@ -363,12 +363,14 @@ struct AppVideoProfile {
     using CreateCapabilitiesChainCb = std::function<std::unique_ptr<video_capabilities_chain>(void **)>;
     struct CreateFormatPropertiesChainCb {
         std::string format_name;
-        VkImageUsageFlags image_usage_flags;
+        VkImageUsageFlags2KHR image_usage_flags;
         std::function<bool(const VkVideoCapabilitiesKHR &capabilities)> check_required_caps;
         std::function<std::unique_ptr<video_format_properties_chain>(void **)> callback;
     };
     using CreateFormatPropertiesChainCbList = std::vector<CreateFormatPropertiesChainCb>;
     using InitProfileCb = std::function<void(AppVideoProfile &)>;
+
+    bool IsImageUsageFlags2Supported(AppGpu &gpu) const;
 
     AppVideoProfile(AppGpu &gpu, VkPhysicalDevice phys_device, const std::string &in_name,
                     const VkVideoProfileInfoKHR &in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
@@ -406,9 +408,24 @@ struct AppVideoProfile {
                 continue;
             }
 
+            VkImageUsageFlags2CreateInfoKHR image_usage_flags2_info = {VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR,
+                                                                       &profile_list};
             VkPhysicalDeviceVideoFormatInfoKHR video_format_info = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR,
-                                                                    &profile_list,
-                                                                    create_format_properties_chain_info.image_usage_flags};
+                                                                    &profile_list};
+
+            if (create_format_properties_chain_info.image_usage_flags <= UINT32_MAX) {
+                // Regular 32-bit VkImageUsageFlags is sufficient
+                video_format_info.imageUsage =
+                    static_cast<VkImageUsageFlags>(create_format_properties_chain_info.image_usage_flags);
+            } else {
+                if (!IsImageUsageFlags2Supported(gpu)) {
+                    // This format uses one of the 64-bit flag bits therefore requires VkImageUsageFlags2KHR
+                    continue;
+                }
+                // Include VkImageUsageFlags2CreateInfoKHR in the input chain
+                image_usage_flags2_info.usage = create_format_properties_chain_info.image_usage_flags;
+                video_format_info.pNext = &image_usage_flags2_info;
+            }
 
             uint32_t video_format_property_count = 0;
             result =
@@ -2058,6 +2075,11 @@ struct AppGpu {
         return NULL;
     }
 };
+
+bool AppVideoProfile::IsImageUsageFlags2Supported(AppGpu &gpu) const {
+    // VkImageUsageFlags2KHR requires VK_KHR_extended_flags
+    return gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME);
+}
 
 std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
     if (vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
