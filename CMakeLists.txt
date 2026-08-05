@@ -61,6 +61,11 @@ if ((APPLE OR BUILD_TESTS) AND NOT ANDROID)
     find_package(VulkanLoader QUIET REQUIRED CONFIG)
 endif()
 
+# Workaround AppleClang using the wrong headers when there are headers in /usr/local/include
+if (CMAKE_C_COMPILER_ID STREQUAL AppleClang AND TARGET Vulkan::Headers AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
+    set_target_properties(Vulkan::Headers PROPERTIES SYSTEM OFF)
+endif()
+
 include(GNUInstallDirs)
 
 if (BUILD_WERROR)
