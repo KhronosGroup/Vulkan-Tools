@@ -413,7 +413,7 @@ struct AppVideoProfile {
             VkPhysicalDeviceVideoFormatInfoKHR video_format_info = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR,
                                                                     &profile_list};
 
-            if (create_format_properties_chain_info.image_usage_flags <= UINT32_MAX) {
+            if (create_format_properties_chain_info.image_usage_flags <= VK_IMAGE_USAGE_FLAG_BITS_MAX_ENUM) {
                 // Regular 32-bit VkImageUsageFlags is sufficient
                 video_format_info.imageUsage =
                     static_cast<VkImageUsageFlags>(create_format_properties_chain_info.image_usage_flags);
