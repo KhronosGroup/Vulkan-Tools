@@ -22,7 +22,8 @@ set(VULKANINFO_NAME vulkaninfo)
 set(GENERATED generated)
 
 add_executable(vulkaninfo)
-set_target_properties(vulkaninfo PROPERTIES OUTPUT_NAME ${VULKANINFO_NAME})
+set_target_properties(vulkaninfo PROPERTIES OUTPUT_NAME ${VULKANINFO_NAME}
+                                            NO_SYSTEM_FROM_IMPORTED 1)
 
 target_sources(vulkaninfo PRIVATE vulkaninfo.cpp)
 
