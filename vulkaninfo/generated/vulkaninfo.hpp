@@ -1196,6 +1196,8 @@ std::string VkDriverIdString(VkDriverId value) {
             return "DRIVER_ID_MESA_GFXSTREAM";
         case (VK_DRIVER_ID_APE_SOFT):
             return "DRIVER_ID_APE_SOFT";
+        case (VK_DRIVER_ID_RESERVED_31):
+            return "DRIVER_ID_RESERVED_31";
         default:
             return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
@@ -4771,6 +4773,8 @@ void DumpVkPhysicalDeviceConservativeRasterizationPropertiesEXT(Printer &p, std:
                                                                 const VkPhysicalDeviceConservativeRasterizationPropertiesEXT &obj);
 void DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(Printer &p, std::string name,
                                                       const VkPhysicalDeviceCooperativeMatrixFeaturesKHR &obj);
+void DumpVkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT &obj);
 void DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(Printer &p, std::string name,
                                                         const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &obj);
 void DumpVkPhysicalDeviceCopyMemoryIndirectFeaturesKHR(Printer &p, std::string name,
@@ -5587,6 +5591,16 @@ void DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(Printer &p, std::string na
     p.SetMinKeyWidth(35);
     p.PrintKeyBool("cooperativeMatrix", static_cast<bool>(obj.cooperativeMatrix));
     p.PrintKeyBool("cooperativeMatrixRobustBufferAccess", static_cast<bool>(obj.cooperativeMatrixRobustBufferAccess));
+}
+void DumpVkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(37);
+    p.PrintKeyBool("cooperativeMatrixProperties2", static_cast<bool>(obj.cooperativeMatrixProperties2));
+    p.PrintKeyBool("cooperativeMatrixReductions", static_cast<bool>(obj.cooperativeMatrixReductions));
+    p.PrintKeyBool("cooperativeMatrixConversions", static_cast<bool>(obj.cooperativeMatrixConversions));
+    p.PrintKeyBool("cooperativeMatrixPerElementOperations", static_cast<bool>(obj.cooperativeMatrixPerElementOperations));
+    p.PrintKeyBool("cooperativeMatrixGetCoordinate", static_cast<bool>(obj.cooperativeMatrixGetCoordinate));
 }
 void DumpVkPhysicalDeviceCooperativeMatrixPropertiesKHR(Printer &p, std::string name,
                                                         const VkPhysicalDeviceCooperativeMatrixPropertiesKHR &obj) {
@@ -9701,6 +9715,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceComputeShaderDerivativesFeaturesKHR PhysicalDeviceComputeShaderDerivativesFeaturesKHR{};
     VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditionalRenderingFeaturesEXT{};
     VkPhysicalDeviceCooperativeMatrixFeaturesKHR PhysicalDeviceCooperativeMatrixFeaturesKHR{};
+    VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT PhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT{};
     VkPhysicalDeviceCopyMemoryIndirectFeaturesKHR PhysicalDeviceCopyMemoryIndirectFeaturesKHR{};
     VkPhysicalDeviceCustomBorderColorFeaturesEXT PhysicalDeviceCustomBorderColorFeaturesEXT{};
     VkPhysicalDeviceCustomResolveFeaturesEXT PhysicalDeviceCustomResolveFeaturesEXT{};
@@ -9894,6 +9909,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR;
         PhysicalDeviceConditionalRenderingFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT;
         PhysicalDeviceCooperativeMatrixFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR;
+        PhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT;
         PhysicalDeviceCopyMemoryIndirectFeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR;
         PhysicalDeviceCustomBorderColorFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT;
         PhysicalDeviceCustomResolveFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT;
@@ -10158,6 +10175,9 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceConditionalRenderingFeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COOPERATIVE_MATRIX_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceCooperativeMatrixFeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_COOPERATIVE_MATRIX_MAINTENANCE_1_EXTENSION_NAME))
+            chain_members.push_back(
+                reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_COPY_MEMORY_INDIRECT_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceCopyMemoryIndirectFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME))
@@ -10722,6 +10742,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 (const VkPhysicalDeviceCooperativeMatrixFeaturesKHR *)structure;
             const char *name = "VkPhysicalDeviceCooperativeMatrixFeaturesKHR";
             DumpVkPhysicalDeviceCooperativeMatrixFeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT) {
+            const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT *props =
+                (const VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT";
+            DumpVkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR) {
