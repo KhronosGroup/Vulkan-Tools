@@ -13847,6 +13847,40 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_
     typedef VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV Type;
 };
 
+// Map type VkCooperativeMatrixProperties2EXT to id VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT
+template <>
+struct LvlTypeMap<VkCooperativeMatrixProperties2EXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT> {
+    typedef VkCooperativeMatrixProperties2EXT Type;
+};
+
+// Map type VkPhysicalDeviceCooperativeMatrixInfo2EXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrixInfo2EXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT> {
+    typedef VkPhysicalDeviceCooperativeMatrixInfo2EXT Type;
+};
+
+// Map type VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT> {
+    typedef VkPhysicalDeviceCooperativeMatrixMaintenance1FeaturesEXT Type;
+};
+
 // Map type VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT
 template <>
