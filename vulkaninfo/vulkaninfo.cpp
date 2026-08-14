@@ -1107,7 +1107,7 @@ void DumpGpuProfileCapabilities(Printer &p, AppGpu &gpu, bool show_promoted_stru
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
 }
 void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t apiVersion, const std::string &device_label,
-                          const std::vector<std::string> &capabilities) {
+                          const std::vector<std::string> &capabilities, bool no_date) {
     ObjectWrapper vk_info(p, device_name);
     p.PrintKeyValue("version", 1);
     p.PrintKeyString("api-version", APIVersion(apiVersion).str());
@@ -1120,11 +1120,13 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
         ArrayWrapper contributors(p, "history");
         ObjectWrapper element(p, "");
         p.PrintKeyValue("revision", 1);
-        std::time_t t = std::time(0);  // get time now
-        std::tm *now = std::localtime(&t);
-        std::string date =
-            std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
-        p.PrintKeyString("date", date);
+        if (!no_date) {
+            std::time_t t = std::time(0);  // get time now
+            std::tm *now = std::localtime(&t);
+            std::string date =
+                std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
+            p.PrintKeyString("date", date);
+        }
         p.PrintKeyString("author", std::string("Automated export from ") + APP_SHORT_NAME);
         p.PrintKeyString("comment", "");
     }
@@ -1133,7 +1135,7 @@ void PrintProfileBaseInfo(Printer &p, const std::string &device_name, uint32_t a
 }
 
 // Prints profiles section of profiles schema
-void DumpGpuProfileInfo(Printer &p, AppGpu &gpu) {
+void DumpGpuProfileInfo(Printer &p, AppGpu &gpu, bool no_date) {
     ObjectWrapper profiles(p, "profiles");
 
     std::string device_label = std::string(gpu.props.deviceName) + " driver " + gpu.GetDriverVersionString();
@@ -1143,13 +1145,13 @@ void DumpGpuProfileInfo(Printer &p, AppGpu &gpu) {
     for (auto &c : device_name) {
         if (c == ' ' || c == '.') c = '_';
     }
-    PrintProfileBaseInfo(p, device_name, gpu.props.apiVersion, device_label, {"device"});
+    PrintProfileBaseInfo(p, device_name, gpu.props.apiVersion, device_label, {"device"}, no_date);
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
     if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) &&
         (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) ||
          gpu.inst.api_version >= VK_API_VERSION_1_1)) {
         PrintProfileBaseInfo(p, device_name + "_portability_subset", gpu.props.apiVersion, device_label + " subset",
-                             {"device", "macos-specific"});
+                             {"device", "macos-specific"}, no_date);
     }
 #endif  // defined(VK_ENABLE_BETA_EXTENSIONS)
 }
@@ -1275,6 +1277,7 @@ const char *help_message_body =
     "                     interest. This number can be determined by running\n"
     "                     " APP_SHORT_NAME
     " without any options specified.\n"
+    "[--no-date]          Omit the date from JSON output.\n"
     "[--show-all]         Show everything (includes all the below options)\n"
     "[--show-tool-props]  Show the active VkPhysicalDeviceToolPropertiesEXT that " APP_SHORT_NAME
     " finds.\n"
@@ -1310,6 +1313,7 @@ struct ParsedResults {
     bool has_selected_gpu = false;  // differentiate between selecting the 0th gpu and using the default 0th value
     ShowSettings show;
     bool print_to_file = false;
+    bool no_date = false;
     std::string filename;  // set if explicitly given, or if vkconfig_output has a <path> argument
     std::string default_filename;
 };
@@ -1360,6 +1364,8 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
             set_output_category(OutputCategory::html);
             results.print_to_file = true;
             results.default_filename = APP_SHORT_NAME ".html";
+        } else if (strcmp(argv[i], "--no-date") == 0) {
+            results.no_date = true;
         } else if (strcmp(argv[i], "--show-all") == 0) {
             results.show.all = true;
             results.show.tool_props = true;
@@ -1447,7 +1453,7 @@ void RunPrinter(Printer &p, ParsedResults parse_data, AppInstance &instance, std
         }
     } else if (parse_data.output_category == OutputCategory::profile_json) {
         DumpGpuProfileCapabilities(p, *(gpus.at(parse_data.selected_gpu).get()), parse_data.show.promoted_structs);
-        DumpGpuProfileInfo(p, *(gpus.at(parse_data.selected_gpu).get()));
+        DumpGpuProfileInfo(p, *(gpus.at(parse_data.selected_gpu).get()), parse_data.no_date);
     } else {
         // text, html, vkconfig_output
         p.SetHeader();
