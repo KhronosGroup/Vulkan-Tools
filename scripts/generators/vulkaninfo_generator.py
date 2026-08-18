@@ -460,6 +460,20 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                 result.push_back(std::move(profile));
             }
         };
+
+    auto add_extended_flags = [&](void **ppnext, video_format_properties_chain* format_properties_chain) {
+            if (format_properties_chain != nullptr &&
+                gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME)) {
+                format_properties_chain->ImageCreateFlags2CreateInfoKHR.sType =
+                    VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
+                *ppnext = &format_properties_chain->ImageCreateFlags2CreateInfoKHR;
+                ppnext = &format_properties_chain->ImageCreateFlags2CreateInfoKHR.pNext;
+                format_properties_chain->ImageUsageFlags2CreateInfoKHR.sType =
+                    VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
+                *ppnext = &format_properties_chain->ImageUsageFlags2CreateInfoKHR;
+                ppnext = &format_properties_chain->ImageUsageFlags2CreateInfoKHR.pNext;
+            }
+        };
 ''')
 
         # Generate individual video profiles from the video codec metadata
@@ -562,6 +576,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                 # Callback to create video format properties chain
                 out.append(f'{" " * 28}[&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {{\n')
                 out.append(f'{" " * 28}    auto format_properties_chain = std::make_unique<video_format_properties_chain>();\n')
+                out.append(f'{" " * 28}    add_extended_flags(ppnext, format_properties_chain.get());\n')
                 for formatProps in format.properties:
                     structDef = self.vk.structs[formatProps]
                     out.append(self.AddGuardHeader(structDef))

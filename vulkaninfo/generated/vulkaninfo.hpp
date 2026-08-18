@@ -13186,6 +13186,17 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
         }
     };
 
+    auto add_extended_flags = [&](void **ppnext, video_format_properties_chain *format_properties_chain) {
+        if (format_properties_chain != nullptr && gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME)) {
+            format_properties_chain->ImageCreateFlags2CreateInfoKHR.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
+            *ppnext = &format_properties_chain->ImageCreateFlags2CreateInfoKHR;
+            ppnext = &format_properties_chain->ImageCreateFlags2CreateInfoKHR.pNext;
+            format_properties_chain->ImageUsageFlags2CreateInfoKHR.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
+            *ppnext = &format_properties_chain->ImageUsageFlags2CreateInfoKHR;
+            ppnext = &format_properties_chain->ImageUsageFlags2CreateInfoKHR.pNext;
+        }
+    };
+
     if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VIDEO_DECODE_H264_EXTENSION_NAME)) {
         const std::string codec_name = "H.264 Decode";
 
@@ -13251,6 +13262,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13263,6 +13275,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13472,6 +13485,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13484,6 +13498,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13584,6 +13599,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13596,6 +13612,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13687,6 +13704,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13699,6 +13717,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13857,6 +13876,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13869,6 +13889,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -13894,6 +13915,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
@@ -13928,6 +13950,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
@@ -14088,6 +14111,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -14100,6 +14124,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -14125,6 +14150,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
@@ -14169,6 +14195,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
@@ -14325,6 +14352,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -14337,6 +14365,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 return format_properties_chain;
                             },
                         },
@@ -14362,6 +14391,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
@@ -14406,6 +14436,7 @@ std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles
                             },
                             [&](void **ppnext) -> std::unique_ptr<video_format_properties_chain> {
                                 auto format_properties_chain = std::make_unique<video_format_properties_chain>();
+                                add_extended_flags(ppnext, format_properties_chain.get());
                                 if (format_properties_chain != nullptr) {
                                     if (gpu.CheckPhysicalDeviceExtensionIncluded(
                                             VK_KHR_VIDEO_ENCODE_QUANTIZATION_MAP_EXTENSION_NAME)) {
