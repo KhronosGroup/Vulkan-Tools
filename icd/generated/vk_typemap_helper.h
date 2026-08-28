@@ -14034,6 +14034,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_V
     typedef VkPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV Type;
 };
 
+// Map type VkPhysicalDevicePrivateDataBaseHandleFeaturesNV to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV
+template <>
+struct LvlTypeMap<VkPhysicalDevicePrivateDataBaseHandleFeaturesNV> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV> {
+    typedef VkPhysicalDevicePrivateDataBaseHandleFeaturesNV Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id
 // VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <>
