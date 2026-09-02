@@ -3065,13 +3065,26 @@ static void handle_surface_configure(void *data, struct xdg_surface *xdg_surface
     struct demo *demo = (struct demo *)data;
     xdg_surface_ack_configure(xdg_surface, serial);
     demo->xdg_surface_has_been_configured = 1;
+    const uint32_t previous_width = demo->width;
+    const uint32_t previous_height = demo->height;
     if (demo->pending_width > 0) {
         demo->width = demo->pending_width;
     }
     if (demo->pending_height > 0) {
         demo->height = demo->pending_height;
     }
-    demo_resize(demo);
+    // Only rebuild the swapchain when the size actually changed. A compositor also sends
+    // xdg_surface.configure for state changes -- activation, maximization, tiling -- and those
+    // usually carry the size the surface already has, so rebuilding destroys and recreates every
+    // image, view, framebuffer and command buffer for nothing. Locally that is cheap enough to be
+    // invisible, but it is very visible when each Vulkan call is expensive.
+    //
+    // !swapchain_ready keeps the first configure creating the swapchain, and the
+    // VK_ERROR_OUT_OF_DATE_KHR / VK_SUBOPTIMAL_KHR paths in draw() remain the safety net for
+    // anything that invalidates the swapchain without changing the size.
+    if (demo->width != previous_width || demo->height != previous_height || !demo->swapchain_ready) {
+        demo_resize(demo);
+    }
 }
 
 static const struct xdg_surface_listener xdg_surface_listener = {handle_surface_configure};
