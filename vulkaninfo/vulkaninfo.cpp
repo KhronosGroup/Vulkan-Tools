@@ -28,6 +28,7 @@
  *
  */
 
+#include <ctime>
 #include <string>
 #ifdef _WIN32
 #include <crtdbg.h>
