@@ -4994,8 +4994,8 @@ void DumpVkPhysicalDevicePipelineCreationCacheControlFeatures(Printer &p, std::s
                                                               const VkPhysicalDevicePipelineCreationCacheControlFeatures &obj);
 void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(
     Printer &p, std::string name, const VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR &obj);
-void DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT(Printer &p, std::string name,
-                                                                const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT &obj);
+void DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR(Printer &p, std::string name,
+                                                                const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR &obj);
 void DumpVkPhysicalDevicePipelinePropertiesFeaturesEXT(Printer &p, std::string name,
                                                        const VkPhysicalDevicePipelinePropertiesFeaturesEXT &obj);
 void DumpVkPhysicalDevicePipelineProtectedAccessFeatures(Printer &p, std::string name,
@@ -6919,8 +6919,8 @@ void DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(
     p.SetMinKeyWidth(22);
     p.PrintKeyBool("pipelineExecutableInfo", static_cast<bool>(obj.pipelineExecutableInfo));
 }
-void DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT(Printer &p, std::string name,
-                                                                const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT &obj) {
+void DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR(Printer &p, std::string name,
+                                                                const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR &obj) {
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(27);
     p.PrintKeyBool("pipelineLibraryGroupHandles", static_cast<bool>(obj.pipelineLibraryGroupHandles));
@@ -9790,7 +9790,7 @@ struct phys_device_features2_chain {
     VkPhysicalDevicePipelineBinaryFeaturesKHR PhysicalDevicePipelineBinaryFeaturesKHR{};
     VkPhysicalDevicePipelineCreationCacheControlFeatures PhysicalDevicePipelineCreationCacheControlFeatures{};
     VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR PhysicalDevicePipelineExecutablePropertiesFeaturesKHR{};
-    VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT PhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT{};
+    VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR PhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR{};
     VkPhysicalDevicePipelinePropertiesFeaturesEXT PhysicalDevicePipelinePropertiesFeaturesEXT{};
     VkPhysicalDevicePipelineProtectedAccessFeatures PhysicalDevicePipelineProtectedAccessFeatures{};
     VkPhysicalDevicePipelineRobustnessFeatures PhysicalDevicePipelineRobustnessFeatures{};
@@ -10005,8 +10005,8 @@ struct phys_device_features2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES;
         PhysicalDevicePipelineExecutablePropertiesFeaturesKHR.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR;
-        PhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT.sType =
-            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT;
+        PhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR;
         PhysicalDevicePipelinePropertiesFeaturesEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT;
         PhysicalDevicePipelineProtectedAccessFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES;
         PhysicalDevicePipelineRobustnessFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES;
@@ -10354,8 +10354,9 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePipelineCreationCacheControlFeatures));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePipelineExecutablePropertiesFeaturesKHR));
-        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME))
-            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME) ||
+            gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_PROPERTIES_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDevicePipelinePropertiesFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME)) &&
@@ -11419,11 +11420,20 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             DumpVkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR(p, name, *props);
             p.AddNewline();
         }
-        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT) {
-            const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT *props =
-                (const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT *)structure;
-            const char *name = "VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT";
-            DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT(p, name, *props);
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR) {
+            const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR *props =
+                (const VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR *)structure;
+            const char *name = gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME)
+                                   ? "VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR"
+                                   : ("VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT");
+            DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR(p, name, *props);
+            if (show_promoted_structs && strcmp(name, "VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT") != 0 &&
+                gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_PIPELINE_LIBRARY_GROUP_HANDLES_EXTENSION_NAME)) {
+                p.AddNewline();
+                p.SetSubHeader();
+                DumpVkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR(
+                    p, "VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT", *props);
+            }
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT) {

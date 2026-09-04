@@ -6188,6 +6188,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_RESOLVE_IMAGE_MODE_INFO_KHR> {
     typedef VkResolveImageModeInfoKHR Type;
 };
 
+// Map type VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR> {
+    typedef VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesKHR Type;
+};
+
 // Map type VkPhysicalDeviceMaintenance11FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR
 template <>
 struct LvlTypeMap<VkPhysicalDeviceMaintenance11FeaturesKHR> {
@@ -11998,18 +12010,6 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_BUILTINS_PROPER
     typedef VkPhysicalDeviceShaderCoreBuiltinsPropertiesARM Type;
 };
 
-// Map type VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT to id
-// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT
-template <>
-struct LvlTypeMap<VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT> {
-    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT;
-};
-
-template <>
-struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_EXT> {
-    typedef VkPhysicalDevicePipelineLibraryGroupHandlesFeaturesEXT Type;
-};
-
 // Map type VkPhysicalDeviceDynamicRenderingUnusedAttachmentsFeaturesEXT to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT
 template <>
@@ -14044,6 +14044,44 @@ struct LvlTypeMap<VkPhysicalDevicePrivateDataBaseHandleFeaturesNV> {
 template <>
 struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV> {
     typedef VkPhysicalDevicePrivateDataBaseHandleFeaturesNV Type;
+};
+
+// Map type VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE
+template <>
+struct LvlTypeMap<VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE> {
+    static const VkStructureType kSType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE> {
+    typedef VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE Type;
+};
+
+// Map type VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_PROPERTIES_VALVE
+template <>
+struct LvlTypeMap<VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE> {
+    static const VkStructureType kSType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_PROPERTIES_VALVE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_PROPERTIES_VALVE> {
+    typedef VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesVALVE Type;
+};
+
+// Map type VkBufferDeviceAddressAlignmentAllocateInfoVALVE to id
+// VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_INFO_VALVE
+template <>
+struct LvlTypeMap<VkBufferDeviceAddressAlignmentAllocateInfoVALVE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_INFO_VALVE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_INFO_VALVE> {
+    typedef VkBufferDeviceAddressAlignmentAllocateInfoVALVE Type;
 };
 
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id
