@@ -506,6 +506,7 @@ struct Demo {
     std::vector<SwapchainImageResources> swapchain_resources;
     vk::PresentModeKHR presentMode = vk::PresentModeKHR::eFifo;
     bool first_swapchain_frame;
+    bool swapchain_suboptimal = false;
 
     vk::CommandPool cmd_pool;
     vk::CommandPool present_cmd_pool;
@@ -867,6 +868,7 @@ void Demo::draw() {
 
     vk::Result acquire_result;
     uint32_t current_swapchain_image_index = 0;
+    bool acquired_suboptimal_swapchain = false;
     do {
         acquire_result = device.acquireNextImageKHR(swapchain, UINT64_MAX, current_submission.image_acquired_semaphore, vk::Fence(),
                                                     &current_swapchain_image_index);
@@ -877,6 +879,7 @@ void Demo::draw() {
         } else if (acquire_result == vk::Result::eSuboptimalKHR) {
             // swapchain is not as optimal as it could be, but the platform's
             // presentation engine will still present the image correctly.
+            acquired_suboptimal_swapchain = true;
             break;
         } else if (acquire_result == vk::Result::eErrorSurfaceLostKHR) {
             inst.destroySurfaceKHR(surface);
@@ -951,12 +954,12 @@ void Demo::draw() {
         // swapchain is out of date (e.g. the window was resized) and
         // must be recreated:
         resize();
-    } else if (present_result == vk::Result::eSuboptimalKHR) {
-        // SUBOPTIMAL could be due to resize
-        vk::SurfaceCapabilitiesKHR surfCapabilities;
-        auto caps_result = gpu.getSurfaceCapabilitiesKHR(surface, &surfCapabilities);
-        VERIFY(caps_result == vk::Result::eSuccess);
-        if (surfCapabilities.currentExtent.width != width || surfCapabilities.currentExtent.height != height) {
+    } else if (present_result == vk::Result::eSuboptimalKHR ||
+               (present_result == vk::Result::eSuccess && acquired_suboptimal_swapchain)) {
+        // Try once to adapt to changes such as new Wayland DMA-BUF feedback,
+        // but don't recreate every frame if the condition persists.
+        if (!swapchain_suboptimal) {
+            swapchain_suboptimal = true;
             resize();
         }
     } else if (present_result == vk::Result::eErrorSurfaceLostKHR) {
@@ -965,6 +968,7 @@ void Demo::draw() {
         resize();
     } else {
         VERIFY(present_result == vk::Result::eSuccess);
+        swapchain_suboptimal = false;
     }
 }
 
