@@ -510,6 +510,7 @@ struct demo {
     SwapchainImageResources swapchain_resources[MAX_SWAPCHAIN_IMAGE_COUNT];
     VkPresentModeKHR presentMode;
     bool first_swapchain_frame;
+    bool swapchain_suboptimal;
 
     VkCommandPool cmd_pool;
     VkCommandPool present_cmd_pool;
@@ -1165,6 +1166,7 @@ static void demo_draw(struct demo *demo) {
     vkWaitForFences(demo->device, 1, &current_submission.fence, VK_TRUE, UINT64_MAX);
 
     uint32_t current_swapchain_image_index;
+    bool acquired_suboptimal_swapchain = false;
     do {
         // Get the index of the next available swapchain image:
         err = vkAcquireNextImageKHR(demo->device, demo->swapchain, UINT64_MAX, current_submission.image_acquired_semaphore,
@@ -1177,6 +1179,7 @@ static void demo_draw(struct demo *demo) {
         } else if (err == VK_SUBOPTIMAL_KHR) {
             // demo->swapchain is not as optimal as it could be, but the platform's
             // presentation engine will still present the image correctly.
+            acquired_suboptimal_swapchain = true;
             break;
         } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
             vkDestroySurfaceKHR(demo->inst, demo->surface, NULL);
@@ -1345,13 +1348,11 @@ static void demo_draw(struct demo *demo) {
         // demo->swapchain is out of date (e.g. the window was resized) and
         // must be recreated:
         demo_resize(demo);
-    } else if (err == VK_SUBOPTIMAL_KHR) {
-        // SUBOPTIMAL could be due to a resize
-        VkSurfaceCapabilitiesKHR surfCapabilities;
-        err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(demo->gpu, demo->surface, &surfCapabilities);
-        assert(!err);
-        if (surfCapabilities.currentExtent.width != (uint32_t)demo->width ||
-            surfCapabilities.currentExtent.height != (uint32_t)demo->height) {
+    } else if (err == VK_SUBOPTIMAL_KHR || (err == VK_SUCCESS && acquired_suboptimal_swapchain)) {
+        // Try once to adapt to changes such as new Wayland DMA-BUF feedback,
+        // but don't recreate every frame if the condition persists.
+        if (!demo->swapchain_suboptimal) {
+            demo->swapchain_suboptimal = true;
             demo_resize(demo);
         }
     } else if (err == VK_ERROR_SURFACE_LOST_KHR) {
@@ -1360,6 +1361,7 @@ static void demo_draw(struct demo *demo) {
         demo_resize(demo);
     } else {
         assert(!err);
+        demo->swapchain_suboptimal = false;
     }
 }
 
