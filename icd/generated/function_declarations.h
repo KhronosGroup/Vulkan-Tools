@@ -577,6 +577,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_EXT_image_tiling_control", VK_EXT_IMAGE_TILING_CONTROL_SPEC_VERSION},
     {"VK_NV_cooperative_matrix_decode_vector", VK_NV_COOPERATIVE_MATRIX_DECODE_VECTOR_SPEC_VERSION},
     {"VK_NV_private_data_base_handle", VK_NV_PRIVATE_DATA_BASE_HANDLE_SPEC_VERSION},
+    {"VK_INTEL_device_info", VK_INTEL_DEVICE_INFO_SPEC_VERSION},
     {"VK_VALVE_buffer_device_address_allocation_alignment", VK_VALVE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_SPEC_VERSION},
     {"VK_KHR_acceleration_structure", VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_KHR_ray_tracing_pipeline", VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
