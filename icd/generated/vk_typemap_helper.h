@@ -14046,6 +14046,17 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FE
     typedef VkPhysicalDevicePrivateDataBaseHandleFeaturesNV Type;
 };
 
+// Map type VkPhysicalDeviceInfoPropertiesINTEL to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INFO_PROPERTIES_INTEL
+template <>
+struct LvlTypeMap<VkPhysicalDeviceInfoPropertiesINTEL> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INFO_PROPERTIES_INTEL;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INFO_PROPERTIES_INTEL> {
+    typedef VkPhysicalDeviceInfoPropertiesINTEL Type;
+};
+
 // Map type VkPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVALVE to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE
 template <>
