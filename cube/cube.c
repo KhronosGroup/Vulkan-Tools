@@ -1417,6 +1417,11 @@ static void demo_prepare_swapchain(struct demo *demo) {
         swapchainExtent = surfCapabilities.currentExtent;
         demo->width = surfCapabilities.currentExtent.width;
         demo->height = surfCapabilities.currentExtent.height;
+
+        if (surfCapabilities.currentExtent.width == 0 || surfCapabilities.currentExtent.height == 0) {
+            demo->is_minimized = true;
+            return;
+        }
     }
 
     if (surfCapabilities.maxImageExtent.width == 0 || surfCapabilities.maxImageExtent.height == 0) {
