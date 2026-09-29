@@ -61,6 +61,8 @@ USAGE:
 
 OPTIONS:
 [-h, --help]        Print this help.
+Note: --summary, --text, --html, and --json select the output format and are
+      mutually exclusive; specify at most one.
 [--summary]         Show a summary of the instance and GPU's on a system.
 [-o <filename>, --output <filename>]
                     Print output to a new file whose name is specified by filename.

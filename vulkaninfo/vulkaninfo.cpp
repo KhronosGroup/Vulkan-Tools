@@ -1249,6 +1249,8 @@ enum class OutputCategory { text, html, profile_json, vkconfig_output, summary }
 const char *help_message_body =
     "OPTIONS:\n"
     "[-h, --help]         Print this help.\n"
+    "Note: --summary, --text, --html, --json, and --vkconfig_output select the output\n"
+    "      format and are mutually exclusive; specify at most one.\n"
     "[--summary]          Show a summary of the instance and GPU's on a system.\n"
     "[-o <filename>, --output <filename>]\n"
     "                     Print output to a new file whose name is specified by filename.\n"
@@ -1315,12 +1317,18 @@ struct ParsedResults {
 util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, std::string executable_name) {
     ParsedResults results{};
     results.default_filename = APP_SHORT_NAME ".txt";
+    // Output formats are mutually exclusive, so record every format requested and reject more than one distinct format.
+    std::set<OutputCategory> requested_categories;
+    auto set_output_category = [&](OutputCategory category) {
+        results.output_category = category;
+        requested_categories.insert(category);
+    };
     for (int i = 1; i < argc; ++i) {
         // A internal-use-only format for communication with the Vulkan Configurator tool
         // Usage "--vkconfig_output <path>"
         // -o can be used to specify the filename instead
         if (0 == strcmp("--vkconfig_output", argv[i])) {
-            results.output_category = OutputCategory::vkconfig_output;
+            set_output_category(OutputCategory::vkconfig_output);
             results.print_to_file = true;
             results.default_filename = APP_SHORT_NAME ".json";
             if (argc > (i + 1) && argv[i + 1][0] != '-') {
@@ -1332,6 +1340,7 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
                 ++i;
             }
         } else if (strncmp("--json", argv[i], 6) == 0 || strncmp(argv[i], "-j", 2) == 0) {
+            set_output_category(OutputCategory::profile_json);
             if (strlen(argv[i]) > 7 && strncmp("--json=", argv[i], 7) == 0) {
                 results.selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 7, nullptr, 10));
                 results.has_selected_gpu = true;
@@ -1340,16 +1349,15 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
                 results.selected_gpu = static_cast<uint32_t>(strtol(argv[i] + 3, nullptr, 10));
                 results.has_selected_gpu = true;
             }
-            results.output_category = OutputCategory::profile_json;
             results.default_filename = APP_SHORT_NAME ".json";
             results.print_to_file = true;
         } else if (strcmp(argv[i], "--summary") == 0) {
-            results.output_category = OutputCategory::summary;
+            set_output_category(OutputCategory::summary);
         } else if (strcmp(argv[i], "--text") == 0) {
-            results.output_category = OutputCategory::text;
+            set_output_category(OutputCategory::text);
             results.default_filename = APP_SHORT_NAME ".txt";
         } else if (strcmp(argv[i], "--html") == 0) {
-            results.output_category = OutputCategory::html;
+            set_output_category(OutputCategory::html);
             results.print_to_file = true;
             results.default_filename = APP_SHORT_NAME ".html";
         } else if (strcmp(argv[i], "--show-all") == 0) {
@@ -1381,6 +1389,11 @@ util::vulkaninfo_optional<ParsedResults> parse_arguments(int argc, char **argv, 
             print_usage(executable_name);
             return {};
         }
+    }
+    if (requested_categories.size() > 1) {
+        std::cerr << "Error: --summary, --text, --html, --json, and --vkconfig_output cannot be combined. "
+                     "Only one output format may be specified.\n";
+        return {};
     }
     return results;
 }
