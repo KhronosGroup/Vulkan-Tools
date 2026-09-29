@@ -69,3 +69,28 @@ endif()
 
 include(GoogleTest)
 gtest_discover_tests(vulkan_tools_tests DISCOVERY_TIMEOUT 100)
+
+# vulkaninfo command line parsing: output format flags are mutually exclusive.
+# Argument parsing happens before any Vulkan call, so these tests do not need a driver.
+if (TARGET vulkaninfo)
+    set(VULKANINFO_CONFLICTING_FORMATS
+        "--html|--json"
+        "--json|--html"
+        "--text|--html"
+        "--summary|--text"
+        "--summary|-j"
+        "--json=0|--summary"
+        "--vkconfig_output|--html"
+    )
+    # Pairs use '|' as the separator since CMake flattens nested ';' lists
+    foreach(FORMAT_PAIR_STRING IN LISTS VULKANINFO_CONFLICTING_FORMATS)
+        string(REPLACE "|" ";" FORMAT_PAIR "${FORMAT_PAIR_STRING}")
+        string(REPLACE "|" "_" TEST_SUFFIX "${FORMAT_PAIR_STRING}")
+        string(REGEX REPLACE "[-=]" "" TEST_SUFFIX "${TEST_SUFFIX}")
+        set(TEST_NAME vulkaninfo_rejects_conflicting_formats_${TEST_SUFFIX})
+        add_test(NAME ${TEST_NAME} COMMAND $<TARGET_FILE:vulkaninfo> ${FORMAT_PAIR})
+        set_tests_properties(${TEST_NAME} PROPERTIES
+            PASS_REGULAR_EXPRESSION "Only one output format may be specified"
+        )
+    endforeach()
+endif()
