@@ -13906,6 +13906,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_UBM_SURFACE_CREATE_INFO_SEC> {
 };
 
 #endif  // VK_USE_PLATFORM_UBM_SEC
+// Map type VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_LAYOUTS_FEATURES_ARM
+template <>
+struct LvlTypeMap<VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_LAYOUTS_FEATURES_ARM;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_LAYOUTS_FEATURES_ARM> {
+    typedef VkPhysicalDeviceCooperativeMatrixLayoutsFeaturesARM Type;
+};
+
 // Map type VkPhysicalDeviceShaderOCPMicroscalingTypesFeaturesEXT to id
 // VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT
 template <>
