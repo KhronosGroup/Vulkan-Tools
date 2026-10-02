@@ -569,6 +569,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_compute_occupancy_priority", VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION},
     {"VK_EXT_cooperative_matrix_maintenance1", VK_EXT_COOPERATIVE_MATRIX_MAINTENANCE_1_SPEC_VERSION},
     {"VK_EXT_shader_subgroup_partitioned", VK_EXT_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION},
+    {"VK_ARM_cooperative_matrix_layouts", VK_ARM_COOPERATIVE_MATRIX_LAYOUTS_SPEC_VERSION},
     {"VK_EXT_shader_ocp_microscaling_types", VK_EXT_SHADER_OCP_MICROSCALING_TYPES_SPEC_VERSION},
     {"VK_VALVE_shader_mixed_float_dot_product", VK_VALVE_SHADER_MIXED_FLOAT_DOT_PRODUCT_SPEC_VERSION},
     {"VK_SEC_throttle_hint", VK_SEC_THROTTLE_HINT_SPEC_VERSION},
