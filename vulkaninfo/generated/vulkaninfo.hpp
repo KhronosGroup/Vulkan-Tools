@@ -2399,6 +2399,70 @@ void DumpVkDisplayPlaneAlphaFlagBitsKHR(Printer &p, std::string name, VkDisplayP
     }
 }
 
+std::vector<const char *> VkExternalMemoryHandleTypeFlagBitsGetStrings(VkExternalMemoryHandleTypeFlagBits value) {
+    std::vector<const char *> strings;
+    if (value == 0) {
+        strings.push_back("None");
+        return strings;
+    }
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT & value) strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT & value) strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT & value) strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT & value) strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_ZIRCON_VMO_BIT_FUCHSIA & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_ZIRCON_VMO_BIT_FUCHSIA");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_RDMA_ADDRESS_BIT_NV & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_RDMA_ADDRESS_BIT_NV");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OH_NATIVE_BUFFER_BIT_OHOS & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_OH_NATIVE_BUFFER_BIT_OHOS");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLBUFFER_BIT_EXT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_MTLBUFFER_BIT_EXT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLTEXTURE_BIT_EXT & value)
+        strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_MTLTEXTURE_BIT_EXT");
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLHEAP_BIT_EXT & value) strings.push_back("EXTERNAL_MEMORY_HANDLE_TYPE_MTLHEAP_BIT_EXT");
+    return strings;
+}
+void DumpVkExternalMemoryHandleTypeFlags(Printer &p, std::string name, VkExternalMemoryHandleTypeFlags value) {
+    if (static_cast<VkExternalMemoryHandleTypeFlagBits>(value) == 0) {
+        ArrayWrapper arr(p, name, 0);
+        if (p.Type() != OutputType::json && p.Type() != OutputType::vkconfig_output) p.SetAsType().PrintString("None");
+        return;
+    }
+    auto strings = VkExternalMemoryHandleTypeFlagBitsGetStrings(static_cast<VkExternalMemoryHandleTypeFlagBits>(value));
+    ArrayWrapper arr(p, name, strings.size());
+    for (auto &str : strings) {
+        if (p.Type() == OutputType::json)
+            p.SetAsType().PrintString(std::string("VK_") + str);
+        else
+            p.SetAsType().PrintString(str);
+    }
+}
+void DumpVkExternalMemoryHandleTypeFlagBits(Printer &p, std::string name, VkExternalMemoryHandleTypeFlagBits value) {
+    auto strings = VkExternalMemoryHandleTypeFlagBitsGetStrings(value);
+    if (strings.size() > 0) {
+        if (p.Type() == OutputType::json)
+            p.PrintKeyString(name, std::string("VK_") + strings.at(0));
+        else
+            p.PrintKeyString(name, strings.at(0));
+    }
+}
+
 std::vector<const char *> VkFormatFeatureFlagBitsGetStrings(VkFormatFeatureFlagBits value) {
     std::vector<const char *> strings;
     if (value == 0) {

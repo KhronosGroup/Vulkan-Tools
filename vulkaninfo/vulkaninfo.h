@@ -1661,6 +1661,13 @@ util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &in
     return {};
 }
 
+struct ExternalMemorySupport {
+    VkExternalMemoryHandleTypeFlagBits type;
+    uint32_t memoryTypeBits;
+
+    bool Compatible(uint32_t memtype_bit) { return memoryTypeBits & memtype_bit; }
+};
+
 struct FormatRange {
     // the Vulkan standard version that supports this format range, or 0 if non-standard
     APIVersion minimum_instance_version;
@@ -1733,6 +1740,9 @@ struct AppGpu {
     VkPhysicalDeviceMemoryProperties2KHR memory_props2{};
 
     std::vector<ImageTypeInfos> memory_image_support_types;
+
+    std::vector<ExternalMemorySupport> external_memory_import_support_types;
+    std::vector<ExternalMemorySupport> external_memory_export_support_types;
 
     VkPhysicalDeviceFeatures features{};
     VkPhysicalDeviceFeatures2KHR features2{};
@@ -1873,13 +1883,16 @@ struct AppGpu {
         }
 
         std::vector<const char *> extensions_to_enable;
-#ifdef VK_ENABLE_BETA_EXTENSIONS
         for (const auto &extension : device_extensions) {
+            if (std::string(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME) == extension.extensionName) {
+                extensions_to_enable.push_back(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME);
+            }
+#ifdef VK_ENABLE_BETA_EXTENSIONS
             if (std::string(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) == extension.extensionName) {
                 extensions_to_enable.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
             }
-        }
 #endif
+        }
 
         const float queue_priority = 1.0f;
         // pick the first queue index and hope for the best
@@ -1984,6 +1997,62 @@ struct AppGpu {
             }
         }
         // TODO buffer - memory type compatibility
+
+        // External Memory Support
+        if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) &&
+            CheckPhysicalDeviceExtensionIncluded(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME)) {
+            structure = (struct VkBaseOutStructure *)props2.pNext;
+
+            while (structure) {
+                if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT) {
+
+                    // VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT
+                    {
+                        ExternalMemorySupport external_memory_support;
+                        external_memory_support.type = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT;
+
+                        // Get alignment value from physical device properties
+                        const VkPhysicalDeviceExternalMemoryHostPropertiesEXT *props =
+                            reinterpret_cast<VkPhysicalDeviceExternalMemoryHostPropertiesEXT *>(structure);
+
+                        // Skip if the alignment is invalid.
+                        const VkDeviceSize host_alignment = props->minImportedHostPointerAlignment;
+                        if (host_alignment == 0 || (host_alignment & (host_alignment - 1)) != 0) {
+                            break;
+                        }
+
+                        // Allocate plain host pointer
+                        size_t size = static_cast<size_t>(host_alignment);
+                        std::align_val_t alignment = static_cast<std::align_val_t>(host_alignment);
+                        void *memory = ::operator new[](size, alignment);
+
+                        // Get memory properties of the host pointer
+                        VkMemoryHostPointerPropertiesEXT memory_host_pointer_properties{};
+                        memory_host_pointer_properties.sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
+                        VkResult host_ptr_err = vkGetMemoryHostPointerPropertiesEXT(dev, external_memory_support.type, memory,
+                                                                                    &memory_host_pointer_properties);
+
+                        // Free host pointer
+                        ::operator delete[](memory, alignment);
+
+                        if (host_ptr_err) THROW_VK_ERR("vkGetMemoryHostPointerPropertiesEXT", host_ptr_err);
+
+                        external_memory_support.memoryTypeBits = memory_host_pointer_properties.memoryTypeBits;
+
+                        external_memory_import_support_types.push_back(external_memory_support);
+                    }
+
+                    // VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT
+                    {
+                        // unimplementable
+                    }
+
+                    break;
+                }
+
+                structure = structure->pNext;
+            }
+        }
 
         // Video //
         video_profiles = enumerate_supported_video_profiles(*this);
