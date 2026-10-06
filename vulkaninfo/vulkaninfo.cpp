@@ -542,6 +542,39 @@ void GpuDumpMemoryProps(Printer &p, AppGpu &gpu) {
                     if (!regular && transient && !sparse) p.PrintString("(transient only)");
                 }
             }
+
+            if (gpu.inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
+                IndentWrapper indent_ext_mem(p);
+                ObjectWrapper ext_mem(p, "external memory");
+                {
+                    ArrayWrapper ext_mem_import(p, "import");
+                    bool has_any_support_types = false;
+                    for (auto &external_memory : gpu.external_memory_import_support_types) {
+                        if (external_memory.Compatible(memtype_bit)) {
+                            p.PrintString(VkExternalMemoryHandleTypeFlagBitsGetStrings(external_memory.type)[0]);
+                            has_any_support_types = true;
+                        }
+                    }
+                    if (!has_any_support_types) {
+                        p.PrintString("None");
+                    }
+                }
+                {
+                    ArrayWrapper ext_mem_export(p, "export");
+                    bool has_any_support_types = false;
+                    for (auto &external_memory : gpu.external_memory_export_support_types) {
+                        if (external_memory.Compatible(memtype_bit)) {
+                            p.PrintString(VkExternalMemoryHandleTypeFlagBitsGetStrings(external_memory.type)[0]);
+                            has_any_support_types = true;
+                        }
+                    }
+                    if (!has_any_support_types) {
+                        p.PrintString("None");
+                    }
+                }
+            }
+
+            p.AddNewline();
         }
     }
     p.AddNewline();
