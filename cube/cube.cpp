@@ -1323,7 +1323,7 @@ const char *Demo::init_wayland_connection() {
 
     registry = wl_display_get_registry(wayland_display);
     wl_registry_add_listener(registry, &registry_listener, this);
-    wl_display_dispatch(wayland_display);
+    wl_display_roundtrip(wayland_display);
     return NULL;
 }
 #endif
