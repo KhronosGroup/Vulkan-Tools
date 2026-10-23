@@ -580,6 +580,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_NV_private_data_base_handle", VK_NV_PRIVATE_DATA_BASE_HANDLE_SPEC_VERSION},
     {"VK_INTEL_device_info", VK_INTEL_DEVICE_INFO_SPEC_VERSION},
     {"VK_VALVE_buffer_device_address_allocation_alignment", VK_VALVE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_SPEC_VERSION},
+    {"VK_GOOGLE_hdr_smpte_st_209450_metadata", VK_GOOGLE_HDR_SMPTE_ST_209450_METADATA_SPEC_VERSION},
     {"VK_KHR_acceleration_structure", VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION},
     {"VK_KHR_ray_tracing_pipeline", VK_KHR_RAY_TRACING_PIPELINE_SPEC_VERSION},
     {"VK_KHR_ray_query", VK_KHR_RAY_QUERY_SPEC_VERSION},
