@@ -14107,6 +14107,40 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_IN
     typedef VkBufferDeviceAddressAlignmentAllocateInfoVALVE Type;
 };
 
+// Map type VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_SMPTE_ST_209450_FEATURES_GOOGLE
+template <>
+struct LvlTypeMap<VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_SMPTE_ST_209450_FEATURES_GOOGLE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_SMPTE_ST_209450_FEATURES_GOOGLE> {
+    typedef VkPhysicalDeviceHdrSmpteSt209450FeaturesGOOGLE Type;
+};
+
+// Map type VkHdrSmpteSt209450GOOGLE to id VK_STRUCTURE_TYPE_HDR_SMPTE_ST_209450_GOOGLE
+template <>
+struct LvlTypeMap<VkHdrSmpteSt209450GOOGLE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_HDR_SMPTE_ST_209450_GOOGLE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_HDR_SMPTE_ST_209450_GOOGLE> {
+    typedef VkHdrSmpteSt209450GOOGLE Type;
+};
+
+// Map type VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE to id VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_HDR_SMPTE_ST_209450_GOOGLE
+template <>
+struct LvlTypeMap<VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_HDR_SMPTE_ST_209450_GOOGLE;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_HDR_SMPTE_ST_209450_GOOGLE> {
+    typedef VkSurfaceCapabilitiesHdrSmpteSt209450GOOGLE Type;
+};
+
 // Map type VkAccelerationStructureGeometryTrianglesDataKHR to id
 // VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR
 template <>

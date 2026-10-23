@@ -1198,6 +1198,12 @@ std::string VkDriverIdString(VkDriverId value) {
             return "DRIVER_ID_APE_SOFT";
         case (VK_DRIVER_ID_RESERVED_31):
             return "DRIVER_ID_RESERVED_31";
+        case (VK_DRIVER_ID_APEX):
+            return "DRIVER_ID_APEX";
+        case (VK_DRIVER_ID_NIKKI):
+            return "DRIVER_ID_NIKKI";
+        case (VK_DRIVER_ID_MOMOTEN):
+            return "DRIVER_ID_MOMOTEN";
         default:
             return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
