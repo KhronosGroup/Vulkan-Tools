@@ -244,6 +244,7 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_KHR_pipeline_library_group_handles", VK_KHR_PIPELINE_LIBRARY_GROUP_HANDLES_SPEC_VERSION},
     {"VK_KHR_maintenance11", VK_KHR_MAINTENANCE_11_SPEC_VERSION},
     {"VK_KHR_extended_flags", VK_KHR_EXTENDED_FLAGS_SPEC_VERSION},
+    {"VK_KHR_maintenance12", VK_KHR_MAINTENANCE_12_SPEC_VERSION},
     {"VK_NV_glsl_shader", VK_NV_GLSL_SHADER_SPEC_VERSION},
     {"VK_EXT_depth_range_unrestricted", VK_EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION},
     {"VK_IMG_filter_cubic", VK_IMG_FILTER_CUBIC_SPEC_VERSION},

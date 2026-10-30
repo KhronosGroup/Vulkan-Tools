@@ -1204,6 +1204,8 @@ std::string VkDriverIdString(VkDriverId value) {
             return "DRIVER_ID_NIKKI";
         case (VK_DRIVER_ID_MOMOTEN):
             return "DRIVER_ID_MOMOTEN";
+        case (VK_DRIVER_ID_AURORA_BOREALIS):
+            return "DRIVER_ID_AURORA_BOREALIS";
         default:
             return std::string("UNKNOWN_VkDriverId_value") + std::to_string(value);
     }
@@ -4997,6 +4999,10 @@ void DumpVkPhysicalDeviceMaintenance10PropertiesKHR(Printer &p, std::string name
                                                     const VkPhysicalDeviceMaintenance10PropertiesKHR &obj);
 void DumpVkPhysicalDeviceMaintenance11FeaturesKHR(Printer &p, std::string name,
                                                   const VkPhysicalDeviceMaintenance11FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance12FeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceMaintenance12FeaturesKHR &obj);
+void DumpVkPhysicalDeviceMaintenance12PropertiesKHR(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceMaintenance12PropertiesKHR &obj);
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj);
 void DumpVkPhysicalDeviceMaintenance4Features(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Features &obj);
 void DumpVkPhysicalDeviceMaintenance4Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance4Properties &obj);
@@ -6649,6 +6655,18 @@ void DumpVkPhysicalDeviceMaintenance11FeaturesKHR(Printer &p, std::string name,
     ObjectWrapper object{p, name};
     p.SetMinKeyWidth(13);
     p.PrintKeyBool("maintenance11", static_cast<bool>(obj.maintenance11));
+}
+void DumpVkPhysicalDeviceMaintenance12FeaturesKHR(Printer &p, std::string name,
+                                                  const VkPhysicalDeviceMaintenance12FeaturesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(13);
+    p.PrintKeyBool("maintenance12", static_cast<bool>(obj.maintenance12));
+}
+void DumpVkPhysicalDeviceMaintenance12PropertiesKHR(Printer &p, std::string name,
+                                                    const VkPhysicalDeviceMaintenance12PropertiesKHR &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(23);
+    p.PrintKeyValue("maxInputAttachmentIndex", obj.maxInputAttachmentIndex);
 }
 void DumpVkPhysicalDeviceMaintenance3Properties(Printer &p, std::string name, const VkPhysicalDeviceMaintenance3Properties &obj) {
     ObjectWrapper object{p, name};
@@ -8605,6 +8623,7 @@ struct phys_device_props2_chain {
     VkPhysicalDeviceLegacyVertexAttributesPropertiesEXT PhysicalDeviceLegacyVertexAttributesPropertiesEXT{};
     VkPhysicalDeviceLineRasterizationProperties PhysicalDeviceLineRasterizationProperties{};
     VkPhysicalDeviceMaintenance10PropertiesKHR PhysicalDeviceMaintenance10PropertiesKHR{};
+    VkPhysicalDeviceMaintenance12PropertiesKHR PhysicalDeviceMaintenance12PropertiesKHR{};
     VkPhysicalDeviceMaintenance3Properties PhysicalDeviceMaintenance3Properties{};
     VkPhysicalDeviceMaintenance4Properties PhysicalDeviceMaintenance4Properties{};
     VkPhysicalDeviceMaintenance5Properties PhysicalDeviceMaintenance5Properties{};
@@ -8704,6 +8723,7 @@ struct phys_device_props2_chain {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_PROPERTIES_EXT;
         PhysicalDeviceLineRasterizationProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES;
         PhysicalDeviceMaintenance10PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_PROPERTIES_KHR;
+        PhysicalDeviceMaintenance12PropertiesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR;
         PhysicalDeviceMaintenance3Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
         PhysicalDeviceMaintenance4Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES;
         PhysicalDeviceMaintenance5Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES;
@@ -8841,6 +8861,8 @@ struct phys_device_props2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceLineRasterizationProperties));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_10_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance10PropertiesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_12_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance12PropertiesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_3_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_1 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance3Properties));
@@ -9283,6 +9305,12 @@ void chain_iterator_phys_device_props2(Printer &p, AppInstance &inst, AppGpu &gp
             const VkPhysicalDeviceMaintenance10PropertiesKHR *props = (const VkPhysicalDeviceMaintenance10PropertiesKHR *)structure;
             const char *name = "VkPhysicalDeviceMaintenance10PropertiesKHR";
             DumpVkPhysicalDeviceMaintenance10PropertiesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR) {
+            const VkPhysicalDeviceMaintenance12PropertiesKHR *props = (const VkPhysicalDeviceMaintenance12PropertiesKHR *)structure;
+            const char *name = "VkPhysicalDeviceMaintenance12PropertiesKHR";
+            DumpVkPhysicalDeviceMaintenance12PropertiesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES) {
@@ -9836,6 +9864,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceLineRasterizationFeatures PhysicalDeviceLineRasterizationFeatures{};
     VkPhysicalDeviceMaintenance10FeaturesKHR PhysicalDeviceMaintenance10FeaturesKHR{};
     VkPhysicalDeviceMaintenance11FeaturesKHR PhysicalDeviceMaintenance11FeaturesKHR{};
+    VkPhysicalDeviceMaintenance12FeaturesKHR PhysicalDeviceMaintenance12FeaturesKHR{};
     VkPhysicalDeviceMaintenance4Features PhysicalDeviceMaintenance4Features{};
     VkPhysicalDeviceMaintenance5Features PhysicalDeviceMaintenance5Features{};
     VkPhysicalDeviceMaintenance6Features PhysicalDeviceMaintenance6Features{};
@@ -10045,6 +10074,7 @@ struct phys_device_features2_chain {
         PhysicalDeviceLineRasterizationFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES;
         PhysicalDeviceMaintenance10FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR;
         PhysicalDeviceMaintenance11FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR;
+        PhysicalDeviceMaintenance12FeaturesKHR.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR;
         PhysicalDeviceMaintenance4Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES;
         PhysicalDeviceMaintenance5Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES;
         PhysicalDeviceMaintenance6Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES;
@@ -10367,6 +10397,8 @@ struct phys_device_features2_chain {
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance10FeaturesKHR));
         if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_11_EXTENSION_NAME))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance11FeaturesKHR));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_12_EXTENSION_NAME))
+            chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance12FeaturesKHR));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_MAINTENANCE_4_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_3 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceMaintenance4Features));
@@ -11281,6 +11313,12 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
             const VkPhysicalDeviceMaintenance11FeaturesKHR *props = (const VkPhysicalDeviceMaintenance11FeaturesKHR *)structure;
             const char *name = "VkPhysicalDeviceMaintenance11FeaturesKHR";
             DumpVkPhysicalDeviceMaintenance11FeaturesKHR(p, name, *props);
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR) {
+            const VkPhysicalDeviceMaintenance12FeaturesKHR *props = (const VkPhysicalDeviceMaintenance12FeaturesKHR *)structure;
+            const char *name = "VkPhysicalDeviceMaintenance12FeaturesKHR";
+            DumpVkPhysicalDeviceMaintenance12FeaturesKHR(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES) {
