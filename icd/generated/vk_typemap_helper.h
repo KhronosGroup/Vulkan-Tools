@@ -6300,6 +6300,28 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR> 
     typedef VkSharedPresentSurfaceCapabilities2KHR Type;
 };
 
+// Map type VkPhysicalDeviceMaintenance12FeaturesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceMaintenance12FeaturesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_FEATURES_KHR> {
+    typedef VkPhysicalDeviceMaintenance12FeaturesKHR Type;
+};
+
+// Map type VkPhysicalDeviceMaintenance12PropertiesKHR to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR
+template <>
+struct LvlTypeMap<VkPhysicalDeviceMaintenance12PropertiesKHR> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_12_PROPERTIES_KHR> {
+    typedef VkPhysicalDeviceMaintenance12PropertiesKHR Type;
+};
+
 // Map type VkDebugReportCallbackCreateInfoEXT to id VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT
 template <>
 struct LvlTypeMap<VkDebugReportCallbackCreateInfoEXT> {
