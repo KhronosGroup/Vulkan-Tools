@@ -430,6 +430,15 @@ struct demo {
     xcb_window_t xcb_window;
     xcb_intern_atom_reply_t *atom_wm_delete_window;
 #endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+    // _NET_WM_SYNC_REQUEST
+    bool x11_sync_enabled;
+    uint32_t x11_sync_counter;
+    unsigned long x11_atom_sync_request;
+    bool x11_sync_have_request;
+    bool x11_sync_have_configure;
+    int64_t x11_sync_value;
+#endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
     void *wayland_library;  // Dynamic library for wayland
     struct wl_display *wayland_display;
@@ -1153,6 +1162,42 @@ void DemoUpdateTargetIPD(struct demo *demo) {
     }
 }
 
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+static void demo_x11_sync_handle_request(struct demo *demo, uint32_t value_lo, uint32_t value_hi) {
+    if (!demo->x11_sync_enabled) return;
+    demo->x11_sync_value = (int64_t)(((uint64_t)value_hi << 32) | value_lo);
+    demo->x11_sync_have_request = true;  // consumed by the next ConfigureNotify
+}
+
+static void demo_x11_sync_handle_configure(struct demo *demo) {
+    if (!demo->x11_sync_have_request) return;
+    demo->x11_sync_have_request = false;
+    demo->x11_sync_have_configure = true;
+}
+
+// Called right after a successful vkQueuePresentKHR.
+static void demo_x11_sync_after_present(struct demo *demo) {
+    if (!demo->x11_sync_have_configure) return;
+
+    demo->x11_sync_have_configure = false;
+
+#if defined(VK_USE_PLATFORM_XCB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XCB) {
+        xcb_sync_int64_t v = {.hi = (int32_t)(demo->x11_sync_value >> 32), .lo = (uint32_t)demo->x11_sync_value};
+        xcb_sync_set_counter(demo->connection, demo->x11_sync_counter, v);
+        xcb_flush(demo->connection);
+    }
+#endif
+#if defined(VK_USE_PLATFORM_XLIB_KHR)
+    if (demo->wsi_platform == WSI_PLATFORM_XLIB) {
+        XSyncValue v = {.hi = (int)(demo->x11_sync_value >> 32), .lo = (unsigned int)demo->x11_sync_value};
+        XSyncSetCounter(demo->xlib_display, demo->x11_sync_counter, v);
+        XFlush(demo->xlib_display);
+    }
+#endif
+}
+#endif
+
 static void demo_draw(struct demo *demo) {
     // Don't draw if initialization isn't complete, if the swapchain became outdated, or if the window is minimized
     if (!demo->initialized || !demo->swapchain_ready || demo->is_minimized) {
@@ -1339,6 +1384,12 @@ static void demo_draw(struct demo *demo) {
     }
 
     err = vkQueuePresentKHR(demo->present_queue, &present);
+
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+    // The image was queued at the new size
+    if (err == VK_SUCCESS || err == VK_SUBOPTIMAL_KHR)
+        demo_x11_sync_after_present(demo);
+#endif
     demo->current_submission_index += 1;
     demo->current_submission_index %= FRAME_LAG;
     demo->first_swapchain_frame = false;
@@ -2859,16 +2910,41 @@ static void demo_create_xlib_window(struct demo *demo) {
                                       demo->height, 0, visualInfo->depth, InputOutput, visualInfo->visual,
                                       CWBackPixel | CWBorderPixel | CWEventMask | CWColormap, &windowAttributes);
 
-    XSelectInput(demo->xlib_display, demo->xlib_window, ExposureMask | KeyPressMask);
+    XSelectInput(demo->xlib_display, demo->xlib_window, ExposureMask | KeyPressMask | StructureNotifyMask);
+
+    Atom protocols[2];
+    int n_protocols = 0;
+    demo->xlib_wm_delete_window = XInternAtom(demo->xlib_display, "WM_DELETE_WINDOW", False);
+    protocols[n_protocols++] = demo->xlib_wm_delete_window;
+
+    int sync_event_base, sync_error_base, sync_major, sync_minor;
+    if (XSyncQueryExtension(demo->xlib_display, &sync_event_base, &sync_error_base) &&
+        XSyncInitialize(demo->xlib_display, &sync_major, &sync_minor)) {
+        XSyncValue zero = {0, 0};
+        XID counter = XSyncCreateCounter(demo->xlib_display, zero);
+
+        XChangeProperty(demo->xlib_display, demo->xlib_window,
+                        XInternAtom(demo->xlib_display, "_NET_WM_SYNC_REQUEST_COUNTER", False), XA_CARDINAL, 32,
+                        PropModeReplace, (const unsigned char *)&counter, 1);
+
+        demo->x11_sync_counter = (uint32_t)counter;
+        demo->x11_atom_sync_request = XInternAtom(demo->xlib_display, "_NET_WM_SYNC_REQUEST", False);
+        demo->x11_sync_enabled = true;
+        protocols[n_protocols++] = (Atom)demo->x11_atom_sync_request;
+    }
+    XSetWMProtocols(demo->xlib_display, demo->xlib_window, protocols, n_protocols);
     XMapWindow(demo->xlib_display, demo->xlib_window);
     XFlush(demo->xlib_display);
-    demo->xlib_wm_delete_window = XInternAtom(demo->xlib_display, "WM_DELETE_WINDOW", False);
-    XSetWMProtocols(demo->xlib_display, demo->xlib_window, &demo->xlib_wm_delete_window, 1);
 }
 static void demo_handle_xlib_event(struct demo *demo, const XEvent *event) {
     switch (event->type) {
         case ClientMessage:
-            if ((Atom)event->xclient.data.l[0] == demo->xlib_wm_delete_window) demo->quit = true;
+            if ((Atom)event->xclient.data.l[0] == demo->xlib_wm_delete_window) {
+                demo->quit = true;
+            } else if (demo->x11_sync_enabled && (Atom)event->xclient.data.l[0] == (Atom)demo->x11_atom_sync_request) {
+                // data.l[2] = low 32 bits, data.l[3] = high 32 bits
+                demo_x11_sync_handle_request(demo, (uint32_t)event->xclient.data.l[2], (uint32_t)event->xclient.data.l[3]);
+            }
             break;
         case KeyPress:
             switch (event->xkey.keycode) {
@@ -2892,6 +2968,7 @@ static void demo_handle_xlib_event(struct demo *demo, const XEvent *event) {
                 demo->height = event->xconfigure.height;
                 demo_resize(demo);
             }
+            demo_x11_sync_handle_configure(demo);
             break;
         default:
             break;
@@ -2927,11 +3004,15 @@ static void demo_handle_xcb_event(struct demo *demo, const xcb_generic_event_t *
         case XCB_EXPOSE:
             // TODO: Resize window
             break;
-        case XCB_CLIENT_MESSAGE:
-            if ((*(xcb_client_message_event_t *)event).data.data32[0] == (*demo->atom_wm_delete_window).atom) {
+        case XCB_CLIENT_MESSAGE: {
+            const xcb_client_message_event_t *msg = (const xcb_client_message_event_t *)event;
+            if (msg->data.data32[0] == (*demo->atom_wm_delete_window).atom) {
                 demo->quit = true;
+            } else if (demo->x11_sync_enabled && msg->data.data32[0] == demo->x11_atom_sync_request) {
+                // data32[2] = low 32 bits, data32[3] = high 32 bits
+                demo_x11_sync_handle_request(demo, msg->data.data32[2], msg->data.data32[3]);
             }
-            break;
+        } break;
         case XCB_KEY_RELEASE: {
             const xcb_key_release_event_t *key = (const xcb_key_release_event_t *)event;
 
@@ -2957,6 +3038,7 @@ static void demo_handle_xcb_event(struct demo *demo, const xcb_generic_event_t *
                 demo->height = cfg->height;
                 demo_resize(demo);
             }
+            demo_x11_sync_handle_configure(demo);
         } break;
         default:
             break;
@@ -3017,8 +3099,40 @@ static void demo_create_xcb_window(struct demo *demo) {
     xcb_intern_atom_cookie_t cookie2 = xcb_intern_atom(demo->connection, 0, 16, "WM_DELETE_WINDOW");
     demo->atom_wm_delete_window = xcb_intern_atom_reply(demo->connection, cookie2, 0);
 
-    xcb_change_property(demo->connection, XCB_PROP_MODE_REPLACE, demo->xcb_window, (*reply).atom, 4, 32, 1,
-                        &(*demo->atom_wm_delete_window).atom);
+    xcb_atom_t protocols[2];
+    uint32_t n_protocols = 0;
+    protocols[n_protocols++] = (*demo->atom_wm_delete_window).atom;
+
+    // _NET_WM_SYNC_REQUEST: create a SYNC counter and advertise it.
+    xcb_sync_initialize_reply_t *sync_reply = xcb_sync_initialize_reply(
+        demo->connection, xcb_sync_initialize(demo->connection, XCB_SYNC_MAJOR_VERSION, XCB_SYNC_MINOR_VERSION), NULL);
+
+    if (sync_reply) {
+        xcb_intern_atom_cookie_t counter_cookie =
+            xcb_intern_atom(demo->connection, 0, strlen("_NET_WM_SYNC_REQUEST_COUNTER"), "_NET_WM_SYNC_REQUEST_COUNTER");
+        xcb_intern_atom_cookie_t request_cookie =
+            xcb_intern_atom(demo->connection, 0, strlen("_NET_WM_SYNC_REQUEST"), "_NET_WM_SYNC_REQUEST");
+        xcb_intern_atom_reply_t *counter_atom = xcb_intern_atom_reply(demo->connection, counter_cookie, NULL);
+        xcb_intern_atom_reply_t *request_atom = xcb_intern_atom_reply(demo->connection, request_cookie, NULL);
+
+        if (counter_atom && request_atom) {
+            xcb_sync_int64_t zero = {0, 0};
+            demo->x11_sync_counter = xcb_generate_id(demo->connection);
+            xcb_sync_create_counter(demo->connection, demo->x11_sync_counter, zero);
+            xcb_change_property(demo->connection, XCB_PROP_MODE_REPLACE, demo->xcb_window, counter_atom->atom,
+                                XCB_ATOM_CARDINAL, 32, 1, &demo->x11_sync_counter);
+
+            demo->x11_atom_sync_request = request_atom->atom;
+            demo->x11_sync_enabled = true;
+            protocols[n_protocols++] = request_atom->atom;
+        }
+        free(counter_atom);
+        free(request_atom);
+        free(sync_reply);
+    }
+
+    xcb_change_property(demo->connection, XCB_PROP_MODE_REPLACE, demo->xcb_window, (*reply).atom, XCB_ATOM_ATOM, 32,
+                        n_protocols, protocols);
     free(reply);
     free(net_wm_name_reply);
     free(utf8_string_reply);
