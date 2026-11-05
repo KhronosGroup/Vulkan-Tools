@@ -438,6 +438,10 @@ struct demo {
     bool x11_sync_have_request;
     bool x11_sync_have_configure;
     int64_t x11_sync_value;
+    bool x11_present_wait_enabled;
+    PFN_vkWaitForPresentKHR fpWaitForPresentKHR;
+    uint64_t x11_next_present_id;
+    int x11_sync_presents_at_new_size; // fallback when present_wait is unavailable
 #endif
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
     void *wayland_library;  // Dynamic library for wayland
@@ -1173,12 +1177,23 @@ static void demo_x11_sync_handle_configure(struct demo *demo) {
     if (!demo->x11_sync_have_request) return;
     demo->x11_sync_have_request = false;
     demo->x11_sync_have_configure = true;
+    demo->x11_sync_presents_at_new_size = 0;  // a newer size restarts the count
 }
 
-// Called right after a successful vkQueuePresentKHR.
-static void demo_x11_sync_after_present(struct demo *demo) {
+// Called right after a successful vkQueuePresentKHR. present_id is the
+// VK_KHR_present_id value attached to that present, or 0.
+static void demo_x11_sync_after_present(struct demo *demo, VkSwapchainKHR swapchain, uint64_t present_id) {
     if (!demo->x11_sync_have_configure) return;
 
+    if (present_id != 0 && demo->fpWaitForPresentKHR) {
+        demo->fpWaitForPresentKHR(demo->device, swapchain, present_id, 100 * 1000 * 1000); // 1 sec timeout
+    } else if (++demo->x11_sync_presents_at_new_size < 2) {
+        // fallback without VK_KHR_present_wait
+        // not a guarantee flicker-free during resize
+        return;
+    }
+
+    demo->x11_sync_presents_at_new_size = 0;
     demo->x11_sync_have_configure = false;
 
 #if defined(VK_USE_PLATFORM_XCB_KHR)
@@ -1383,12 +1398,29 @@ static void demo_draw(struct demo *demo) {
         present.pNext = &present_time;
     }
 
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+    // Tag the frame that answers a _NET_WM_SYNC_REQUEST so we can wait for it.
+    uint64_t sync_present_id = 0;
+    VkPresentIdKHR present_id_info;
+    if (demo->x11_sync_have_configure && demo->x11_present_wait_enabled) {
+        sync_present_id = ++demo->x11_next_present_id;
+        present_id_info = (VkPresentIdKHR){
+            .sType = VK_STRUCTURE_TYPE_PRESENT_ID_KHR,
+            .pNext = present.pNext,
+            .swapchainCount = 1,
+            .pPresentIds = &sync_present_id,
+        };
+        present.pNext = &present_id_info;
+    }
+    VkSwapchainKHR presented_swapchain = demo->swapchain;
+#endif
+
     err = vkQueuePresentKHR(demo->present_queue, &present);
 
 #if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
     // The image was queued at the new size
     if (err == VK_SUCCESS || err == VK_SUBOPTIMAL_KHR)
-        demo_x11_sync_after_present(demo);
+        demo_x11_sync_after_present(demo, presented_swapchain, sync_present_id);
 #endif
     demo->current_submission_index += 1;
     demo->current_submission_index %= FRAME_LAG;
@@ -4529,6 +4561,36 @@ static void demo_select_physical_device(struct demo *demo) {
             }
         }
 
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+        // VK_KHR_present_id + VK_KHR_present_wait, used to release the
+        // _NET_WM_SYNC_REQUEST counter only once a frame is in the window.
+        if (demo->wsi_platform == WSI_PLATFORM_XCB || demo->wsi_platform == WSI_PLATFORM_XLIB) {
+            bool has_present_id = false, has_present_wait = false;
+            for (uint32_t i = 0; i < device_extension_count; i++) {
+                if (!strcmp(VK_KHR_PRESENT_ID_EXTENSION_NAME, device_extensions[i].extensionName)) has_present_id = true;
+                if (!strcmp(VK_KHR_PRESENT_WAIT_EXTENSION_NAME, device_extensions[i].extensionName)) has_present_wait = true;
+            }
+
+            PFN_vkGetPhysicalDeviceFeatures2KHR get_features2 =
+                (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(demo->inst, "vkGetPhysicalDeviceFeatures2KHR");
+            if (has_present_id && has_present_wait && get_features2) {
+                VkPhysicalDevicePresentWaitFeaturesKHR wait_features = {
+                    .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR};
+                VkPhysicalDevicePresentIdFeaturesKHR id_features = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR,
+                                                                    .pNext = &wait_features};
+                VkPhysicalDeviceFeatures2 features2 = {.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2, .pNext = &id_features};
+                get_features2(demo->gpu, &features2);
+
+                if (id_features.presentId && wait_features.presentWait) {
+                    demo->extension_names[demo->enabled_extension_count++] = VK_KHR_PRESENT_ID_EXTENSION_NAME;
+                    demo->extension_names[demo->enabled_extension_count++] = VK_KHR_PRESENT_WAIT_EXTENSION_NAME;
+                    assert(demo->enabled_extension_count < 64);
+                    demo->x11_present_wait_enabled = true;
+                }
+            }
+        }
+#endif
+
         free(device_extensions);
     }
 
@@ -4617,10 +4679,28 @@ static void demo_create_device(struct demo *demo) {
         queues[1].flags = 0;
         device.queueCreateInfoCount = 2;
     }
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+    VkPhysicalDevicePresentWaitFeaturesKHR present_wait_features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR,
+        .pNext = (void *)device.pNext,
+        .presentWait = VK_TRUE,
+    };
+    VkPhysicalDevicePresentIdFeaturesKHR present_id_features = {
+        .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR,
+        .pNext = &present_wait_features,
+        .presentId = VK_TRUE,
+    };
+    if (demo->x11_present_wait_enabled) device.pNext = &present_id_features;
+#endif
     err = vkCreateDevice(demo->gpu, &device, NULL, &demo->device);
     assert(!err);
 
     load_vulkan_device_functions(demo->device);
+
+#if defined(VK_USE_PLATFORM_XLIB_KHR) || defined(VK_USE_PLATFORM_XCB_KHR)
+    if (demo->x11_present_wait_enabled)
+        demo->fpWaitForPresentKHR = (PFN_vkWaitForPresentKHR)vkGetDeviceProcAddr(demo->device, "vkWaitForPresentKHR");
+#endif
 }
 
 static void demo_create_surface(struct demo *demo) {
