@@ -416,12 +416,14 @@ struct demo {
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
     void *xlib_library;
+    void *xext_libary;
     Display *xlib_display;
     Window xlib_window;
     Atom xlib_wm_delete_window;
 #endif
 #if defined(VK_USE_PLATFORM_XCB_KHR)
     void *xcb_library;
+    void *xcb_sync_library;
     Display *xcb_display;
     xcb_connection_t *connection;
     xcb_screen_t *screen;
@@ -3707,8 +3709,12 @@ static const struct wl_registry_listener registry_listener = {registry_handle_gl
 #if defined(VK_USE_PLATFORM_XCB_KHR)
 static const char *demo_init_xcb_connection(struct demo *demo) {
     demo->xcb_library = initialize_xcb();
+    demo->xcb_sync_library = initialize_xcb_sync ();
     if (NULL == demo->xcb_library) {
         return "Cannot load XCB dynamic library.";
+    }
+    if (NULL == demo->xcb_sync_library) {
+        return "Cannot load XCB sync dynamic library";
     }
 
     const xcb_setup_t *setup;
@@ -3736,8 +3742,13 @@ static const char *demo_init_xcb_connection(struct demo *demo) {
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 static const char *demo_init_xlib_connection(struct demo *demo) {
     demo->xlib_library = initialize_xlib();
+    demo->xext_libary = initialize_xext();
+
     if (NULL == demo->xlib_library) {
         return "Cannot load XLIB dynamic library.";
+    }
+    if (NULL == demo->xext_libary) {
+        return "Cannot load XExtension dynamic library";
     }
     return NULL;
 }
