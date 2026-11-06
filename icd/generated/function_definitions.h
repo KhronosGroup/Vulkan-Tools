@@ -4739,6 +4739,18 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL GetPhysicalDeviceUbmPresentationSupportSEC
     return VK_SUCCESS;
 }
 #endif /* VK_USE_PLATFORM_UBM_SEC */
+static VKAPI_ATTR void VKAPI_CALL GetPhysicalDeviceInternalHandleNV(VkPhysicalDevice physicalDevice, VkInternalHandleNV* pHandle) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL GetDeviceInternalHandleNV(VkDevice device, VkInternalHandleNV* pHandle) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL GetQueueInternalHandleNV(VkQueue queue, VkInternalHandleNV* pHandle) {
+    // Not a CREATE or DESTROY function
+}
+static VKAPI_ATTR void VKAPI_CALL GetCommandBufferInternalHandleNV(VkCommandBuffer commandBuffer, VkInternalHandleNV* pHandle) {
+    // Not a CREATE or DESTROY function
+}
 static VKAPI_ATTR void VKAPI_CALL CmdSetPrimitiveRestartIndexEXT(VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex) {
     // Not a CREATE or DESTROY function
 }
