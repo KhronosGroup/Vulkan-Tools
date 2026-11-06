@@ -14034,6 +14034,18 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEA
     typedef VkPhysicalDevicePrimitiveRestartIndexFeaturesEXT Type;
 };
 
+// Map type VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT
+template <>
+struct LvlTypeMap<VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT> {
+    typedef VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT Type;
+};
+
 // Map type VkPhysicalDeviceImageTilingControlFeaturesEXT to id VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT
 template <>
 struct LvlTypeMap<VkPhysicalDeviceImageTilingControlFeaturesEXT> {

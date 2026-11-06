@@ -5255,6 +5255,8 @@ void DumpVkPhysicalDeviceUniformBufferStandardLayoutFeatures(Printer &p, std::st
                                                              const VkPhysicalDeviceUniformBufferStandardLayoutFeatures &obj);
 void DumpVkPhysicalDeviceVariablePointersFeatures(Printer &p, std::string name,
                                                   const VkPhysicalDeviceVariablePointersFeatures &obj);
+void DumpVkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT &obj);
 void DumpVkPhysicalDeviceVertexAttributeDivisorFeatures(Printer &p, std::string name,
                                                         const VkPhysicalDeviceVertexAttributeDivisorFeatures &obj);
 void DumpVkPhysicalDeviceVertexAttributeDivisorProperties(Printer &p, std::string name,
@@ -7771,6 +7773,12 @@ void DumpVkPhysicalDeviceVariablePointersFeatures(Printer &p, std::string name,
     p.PrintKeyBool("variablePointersStorageBuffer", static_cast<bool>(obj.variablePointersStorageBuffer));
     p.PrintKeyBool("variablePointers", static_cast<bool>(obj.variablePointers));
 }
+void DumpVkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT(
+    Printer &p, std::string name, const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT &obj) {
+    ObjectWrapper object{p, name};
+    p.SetMinKeyWidth(32);
+    p.PrintKeyBool("vertexAddressBindingUnrestricted", static_cast<bool>(obj.vertexAddressBindingUnrestricted));
+}
 void DumpVkPhysicalDeviceVertexAttributeDivisorFeatures(Printer &p, std::string name,
                                                         const VkPhysicalDeviceVertexAttributeDivisorFeatures &obj) {
     ObjectWrapper object{p, name};
@@ -9966,6 +9974,7 @@ struct phys_device_features2_chain {
     VkPhysicalDeviceUnifiedImageLayoutsFeaturesKHR PhysicalDeviceUnifiedImageLayoutsFeaturesKHR{};
     VkPhysicalDeviceUniformBufferStandardLayoutFeatures PhysicalDeviceUniformBufferStandardLayoutFeatures{};
     VkPhysicalDeviceVariablePointersFeatures PhysicalDeviceVariablePointersFeatures{};
+    VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT PhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT{};
     VkPhysicalDeviceVertexAttributeDivisorFeatures PhysicalDeviceVertexAttributeDivisorFeatures{};
     VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT PhysicalDeviceVertexAttributeRobustnessFeaturesEXT{};
     VkPhysicalDeviceVertexInputDynamicStateFeaturesEXT PhysicalDeviceVertexInputDynamicStateFeaturesEXT{};
@@ -10208,6 +10217,8 @@ struct phys_device_features2_chain {
         PhysicalDeviceUniformBufferStandardLayoutFeatures.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
         PhysicalDeviceVariablePointersFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
+        PhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT.sType =
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT;
         PhysicalDeviceVertexAttributeDivisorFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES;
         PhysicalDeviceVertexAttributeRobustnessFeaturesEXT.sType =
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT;
@@ -10636,6 +10647,9 @@ struct phys_device_features2_chain {
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VARIABLE_POINTERS_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_1 || show_promoted_structs))
             chain_members.push_back(reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVariablePointersFeatures));
+        if (gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VERTEX_ADDRESS_BINDING_UNRESTRICTED_EXTENSION_NAME))
+            chain_members.push_back(
+                reinterpret_cast<VkBaseOutStructure *>(&PhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT));
         if ((gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME) ||
              gpu.CheckPhysicalDeviceExtensionIncluded(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME)) &&
             (gpu.api_version < VK_API_VERSION_1_4 || show_promoted_structs))
@@ -12237,6 +12251,13 @@ void chain_iterator_phys_device_features2(Printer &p, AppGpu &gpu, bool show_pro
                 p.SetSubHeader();
                 DumpVkPhysicalDeviceVariablePointersFeatures(p, "VkPhysicalDeviceVariablePointersFeaturesKHR", *props);
             }
+            p.AddNewline();
+        }
+        if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ADDRESS_BINDING_UNRESTRICTED_FEATURES_EXT) {
+            const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT *props =
+                (const VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT *)structure;
+            const char *name = "VkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT";
+            DumpVkPhysicalDeviceVertexAddressBindingUnrestrictedFeaturesEXT(p, name, *props);
             p.AddNewline();
         }
         if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES) {
