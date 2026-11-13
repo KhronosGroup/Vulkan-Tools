@@ -2934,13 +2934,13 @@ static void demo_create_xlib_window(struct demo *demo) {
 
     XSetWindowAttributes windowAttributes = {};
     windowAttributes.colormap = colormap;
-    windowAttributes.background_pixel = 0xFFFFFFFF;
+    windowAttributes.background_pixmap = None;
     windowAttributes.border_pixel = 0;
     windowAttributes.event_mask = KeyPressMask | KeyReleaseMask | StructureNotifyMask | ExposureMask;
 
     demo->xlib_window = XCreateWindow(demo->xlib_display, RootWindow(demo->xlib_display, vInfoTemplate.screen), 0, 0, demo->width,
                                       demo->height, 0, visualInfo->depth, InputOutput, visualInfo->visual,
-                                      CWBackPixel | CWBorderPixel | CWEventMask | CWColormap, &windowAttributes);
+                                      CWBackPixmap | CWBorderPixel | CWEventMask | CWColormap, &windowAttributes);
 
     XSelectInput(demo->xlib_display, demo->xlib_window, ExposureMask | KeyPressMask | StructureNotifyMask);
 
@@ -3108,8 +3108,8 @@ static void demo_create_xcb_window(struct demo *demo) {
 
     demo->xcb_window = xcb_generate_id(demo->connection);
 
-    value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-    value_list[0] = demo->screen->black_pixel;
+    value_mask = XCB_CW_BACK_PIXMAP | XCB_CW_EVENT_MASK;
+    value_list[0] = None;
     value_list[1] = XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
 
     xcb_create_window(demo->connection, XCB_COPY_FROM_PARENT, demo->xcb_window, demo->screen->root, 0, 0, demo->width, demo->height,
