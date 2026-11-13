@@ -24,6 +24,8 @@
 #include <stdlib.h>
 
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/extensions/sync.h>
 
 typedef int (*PFN_XDestroyWindow)(Display*, Window);
 typedef Display* (*PFN_XOpenDisplay)(_Xconst char*);
@@ -42,6 +44,7 @@ typedef Status (*PFN_XInitThreads)(void);
 typedef int (*PFN_XFlush)(Display* /* display */
 );
 typedef Status (*PFN_XSetWMProtocols)(Display*, Window, Atom*, int);
+typedef int (*PFN_XChangeProperty)(Display *, Window, Atom, Atom, int, int, const unsigned char *, int);
 
 static PFN_XDestroyWindow cube_XDestroyWindow = NULL;
 static PFN_XOpenDisplay cube_XOpenDisplay = NULL;
@@ -57,6 +60,7 @@ static PFN_XCloseDisplay cube_XCloseDisplay = NULL;
 static PFN_XInitThreads cube_XInitThreads = NULL;
 static PFN_XFlush cube_XFlush = NULL;
 static PFN_XSetWMProtocols cube_XSetWMProtocols = NULL;
+static PFN_XChangeProperty cube_XChangeProperty = NULL;
 
 #define XDestroyWindow cube_XDestroyWindow
 #define XOpenDisplay cube_XOpenDisplay
@@ -72,6 +76,7 @@ static PFN_XSetWMProtocols cube_XSetWMProtocols = NULL;
 #define XInitThreads cube_XInitThreads
 #define XFlush cube_XFlush
 #define XSetWMProtocols cube_XSetWMProtocols
+#define XChangeProperty cube_XChangeProperty
 
 void* initialize_xlib() {
     void* xlib_library = NULL;
@@ -105,6 +110,35 @@ void* initialize_xlib() {
     cube_XInitThreads = TYPE_CONVERSION(PFN_XInitThreads)(dlsym(xlib_library, "XInitThreads"));
     cube_XFlush = TYPE_CONVERSION(PFN_XFlush)(dlsym(xlib_library, "XFlush"));
     cube_XSetWMProtocols = TYPE_CONVERSION(PFN_XSetWMProtocols)(dlsym(xlib_library, "XSetWMProtocols"));
+    cube_XChangeProperty = TYPE_CONVERSION(PFN_XChangeProperty)(dlsym(xlib_library, "XChangeProperty"));
 
     return xlib_library;
+}
+
+typedef Bool (*PFN_XSyncQueryExtension)(Display *, int *, int *);
+typedef Status (*PFN_XSyncInitialize)(Display *, int *, int *);
+typedef XSyncCounter (*PFN_XSyncCreateCounter)(Display *, XSyncValue);
+typedef Status (*PFN_XSyncSetCounter)(Display *, XSyncCounter, XSyncValue);
+
+static PFN_XSyncQueryExtension cube_XSyncQueryExtension = NULL;
+static PFN_XSyncInitialize cube_XSyncInitialize = NULL;
+static PFN_XSyncCreateCounter cube_XSyncCreateCounter = NULL;
+static PFN_XSyncSetCounter cube_XSyncSetCounter = NULL;
+
+#define XSyncQueryExtension cube_XSyncQueryExtension
+#define XSyncInitialize cube_XSyncInitialize
+#define XSyncCreateCounter cube_XSyncCreateCounter
+#define XSyncSetCounter cube_XSyncSetCounter
+
+void* initialize_xext() {
+    void *xext = dlopen("libXext.so.6", RTLD_NOW | RTLD_LOCAL);
+    if (!xext) xext = dlopen("libXext.so", RTLD_NOW | RTLD_LOCAL);
+    if (!xext) return NULL;
+    
+    cube_XSyncQueryExtension = (PFN_XSyncQueryExtension)dlsym(xext, "XSyncQueryExtension");
+    cube_XSyncInitialize = (PFN_XSyncInitialize)dlsym(xext, "XSyncInitialize");
+    cube_XSyncCreateCounter = (PFN_XSyncCreateCounter)dlsym(xext, "XSyncCreateCounter");
+    cube_XSyncSetCounter = (PFN_XSyncSetCounter)dlsym(xext, "XSyncSetCounter");
+
+    return xext;
 }
