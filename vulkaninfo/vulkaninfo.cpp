@@ -1572,6 +1572,7 @@ int main(int argc, char **argv) {
             if (surface_extension.create_window) {
                 try {
                     surface_extension.create_window(instance);
+                    surface_extension.window_created = true;
                 } catch (std::exception &e) {
                     std::cerr << "ERROR while creating window for surface extension " << surface_extension.name << " : " << e.what()
                               << "\n";
@@ -1677,8 +1678,8 @@ int main(int argc, char **argv) {
             if (surface_extension.create_surface) {
                 vkDestroySurfaceKHR(instance.instance, surface_extension.surface, nullptr);
             }
-            // If the surface extension has a destroy_window function then call it to destroy the single shared window
-            if (surface_extension.destroy_window) {
+            // Only destroy the shared window if create_window succeeded; a failed create leaves no valid window state
+            if (surface_extension.destroy_window && surface_extension.window_created) {
                 surface_extension.destroy_window(instance);
             }
         }

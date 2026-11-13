@@ -336,6 +336,7 @@ struct SurfaceExtension {
     VkSurfaceKHR (*create_surface)(AppInstance &) = nullptr;
     VkSurfaceKHR (*create_surface_for_physical_device)(AppInstance &, VkPhysicalDevice) = nullptr;
     void (*destroy_window)(AppInstance &) = nullptr;
+    bool window_created = false;
     VkSurfaceKHR surface = VK_NULL_HANDLE;
 
     bool operator==(const SurfaceExtension &other) { return name == other.name && surface == other.surface; }
