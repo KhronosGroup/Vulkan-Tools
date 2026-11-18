@@ -305,6 +305,13 @@ elseif(APPLE)
     set_target_properties(vkcube PROPERTIES
         INSTALL_RPATH @executable_path/../Frameworks
     )
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
+    install(TARGETS vkcube)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vkcube.desktop
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vkcube.png
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps
+            RENAME vkcube.png)
 else()
     install(TARGETS vkcube)
 endif()
