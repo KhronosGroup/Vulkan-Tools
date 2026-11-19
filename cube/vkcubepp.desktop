@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Vulkan Cube PP
+Comment=Vulkan cube rendering demo
+Exec=vkcubepp
+Icon=vkcubepp
+Terminal=false
+Categories=Graphics;Development;
+StartupNotify=true
+StartupWMClass=vkcubepp
+Keywords=Vulkan;vkcube;Graphics;Demo;Cube;3D;

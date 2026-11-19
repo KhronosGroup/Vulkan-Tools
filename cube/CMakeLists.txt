@@ -375,4 +375,12 @@ if(APPLE)
     )
 else()
     install(TARGETS vkcubepp)
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|GNU")
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vkcubepp.desktop
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+
+        install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vkcube.png
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/256x256/apps
+                RENAME vkcubepp.png)
+    endif()
 endif()
