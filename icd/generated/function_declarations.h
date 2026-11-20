@@ -568,6 +568,9 @@ static const std::unordered_map<std::string, uint32_t> device_extension_map = {
     {"VK_SEC_pipeline_cache_incremental_mode", VK_SEC_PIPELINE_CACHE_INCREMENTAL_MODE_SPEC_VERSION},
     {"VK_EXT_shader_uniform_buffer_unsized_array", VK_EXT_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_SPEC_VERSION},
     {"VK_NV_compute_occupancy_priority", VK_NV_COMPUTE_OCCUPANCY_PRIORITY_SPEC_VERSION},
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+    {"VK_AMDX_multi_level_acceleration_structure", VK_AMDX_MULTI_LEVEL_ACCELERATION_STRUCTURE_SPEC_VERSION},
+#endif
     {"VK_EXT_cooperative_matrix_maintenance1", VK_EXT_COOPERATIVE_MATRIX_MAINTENANCE_1_SPEC_VERSION},
     {"VK_EXT_shader_subgroup_partitioned", VK_EXT_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION},
     {"VK_NV_internal_handle", VK_NV_INTERNAL_HANDLE_SPEC_VERSION},

@@ -13869,6 +13869,20 @@ struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_
     typedef VkPhysicalDeviceComputeOccupancyPriorityFeaturesNV Type;
 };
 
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+// Map type VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX to id
+// VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_LEVEL_ACCELERATION_STRUCTURE_FEATURES_AMDX
+template <>
+struct LvlTypeMap<VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX> {
+    static const VkStructureType kSType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_LEVEL_ACCELERATION_STRUCTURE_FEATURES_AMDX;
+};
+
+template <>
+struct LvlSTypeMap<VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_LEVEL_ACCELERATION_STRUCTURE_FEATURES_AMDX> {
+    typedef VkPhysicalDeviceMultiLevelAccelerationStructureFeaturesAMDX Type;
+};
+
+#endif  // VK_ENABLE_BETA_EXTENSIONS
 // Map type VkCooperativeMatrixProperties2EXT to id VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT
 template <>
 struct LvlTypeMap<VkCooperativeMatrixProperties2EXT> {
