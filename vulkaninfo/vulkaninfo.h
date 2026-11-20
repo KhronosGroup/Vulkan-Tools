@@ -996,6 +996,9 @@ static VkSurfaceKHR AppCreateXlibSurface(AppInstance& inst) {
 }
 
 static void AppDestroyXlibWindow(AppInstance& inst) {
+    if (!inst.xlib_display || !inst.xlib_window) {
+        return;  // Nothing to destroy
+    }
     XDestroyWindow(inst.xlib_display, inst.xlib_window);
     XCloseDisplay(inst.xlib_display);
 }
