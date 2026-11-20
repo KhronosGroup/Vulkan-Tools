@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include <xcb/xcb.h>
+#include <xcb/sync.h>
 
 typedef xcb_void_cookie_t (*PFN_xcb_destroy_window)(xcb_connection_t *c, xcb_window_t window);
 typedef void (*PFN_xcb_disconnect)(xcb_connection_t *c);
@@ -123,4 +124,33 @@ void *initialize_xcb() {
     cube_xcb_screen_next = TYPE_CONVERSION(PFN_xcb_screen_next)(dlsym(xcb_library, "xcb_screen_next"));
 
     return xcb_library;
+}
+
+typedef xcb_sync_initialize_cookie_t (*PFN_xcb_sync_initialize)(xcb_connection_t *c, uint8_t major_version, uint8_t minor_version);
+typedef xcb_sync_initialize_reply_t *(*PFN_xcb_sync_initialize_reply)(xcb_connection_t *c, xcb_sync_initialize_cookie_t cookie,
+                                                                      xcb_generic_error_t **e);
+typedef xcb_void_cookie_t (*PFN_xcb_sync_create_counter)(xcb_connection_t *c, xcb_sync_counter_t sync_counter, xcb_sync_int64_t initial_value);
+typedef xcb_void_cookie_t (*PFN_xcb_sync_set_counter)(xcb_connection_t *c, xcb_sync_counter_t sync_counter, xcb_sync_int64_t value);
+
+static PFN_xcb_sync_initialize cube_xcb_sync_initialize = NULL;
+static PFN_xcb_sync_initialize_reply cube_xcb_sync_initialize_reply = NULL;
+static PFN_xcb_sync_create_counter cube_xcb_sync_create_counter = NULL;
+static PFN_xcb_sync_set_counter cube_xcb_sync_set_counter = NULL;
+
+#define xcb_sync_initialize cube_xcb_sync_initialize
+#define xcb_sync_initialize_reply cube_xcb_sync_initialize_reply
+#define xcb_sync_create_counter cube_xcb_sync_create_counter
+#define xcb_sync_set_counter cube_xcb_sync_set_counter
+
+void* initialize_xcb_sync() {
+    void *xcb_sync = dlopen("libxcb-sync.so.1", RTLD_NOW | RTLD_LOCAL);
+    if (!xcb_sync) xcb_sync = dlopen("libxcb-sync.so", RTLD_NOW | RTLD_LOCAL);
+    if (!xcb_sync) return NULL;
+
+    cube_xcb_sync_initialize = (PFN_xcb_sync_initialize)dlsym(xcb_sync, "xcb_sync_initialize");
+    cube_xcb_sync_initialize_reply = (PFN_xcb_sync_initialize_reply)dlsym(xcb_sync, "xcb_sync_initialize_reply");
+    cube_xcb_sync_create_counter = (PFN_xcb_sync_create_counter)dlsym(xcb_sync, "xcb_sync_create_counter");
+    cube_xcb_sync_set_counter = (PFN_xcb_sync_set_counter)dlsym(xcb_sync, "xcb_sync_set_counter");
+
+    return xcb_sync;
 }
