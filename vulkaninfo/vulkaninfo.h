@@ -94,11 +94,11 @@ static std::string VkResultString(VkResult err);
 
 // General error: Get file + line and a short message
 struct FileLineException : std::runtime_error {
-    FileLineException(const std::string &arg, const char *file, int line) : runtime_error(arg) {
+    FileLineException(const std::string& arg, const char* file, int line) : runtime_error(arg) {
         msg = std::string(file) + ":" + std::to_string(line) + ": " + arg;
     }
     ~FileLineException() throw() {}
-    const char *what() const throw() { return msg.c_str(); }
+    const char* what() const throw() { return msg.c_str(); }
 
   private:
     std::string msg;
@@ -107,11 +107,11 @@ struct FileLineException : std::runtime_error {
 
 // Vulkan function error: Get name of function, file, line, and the error code returned by the function
 struct VulkanException : std::runtime_error {
-    VulkanException(const std::string &function, const char *file, int line, VkResult err) : runtime_error(function) {
+    VulkanException(const std::string& function, const char* file, int line, VkResult err) : runtime_error(function) {
         msg = std::string(file) + ":" + std::to_string(line) + ":" + function + " failed with " + VkResultString(err);
     }
     ~VulkanException() throw() {}
-    const char *what() const throw() { return msg.c_str(); }
+    const char* what() const throw() { return msg.c_str(); }
 
   private:
     std::string msg;
@@ -134,14 +134,14 @@ void wait_for_console_destroy() {
 }
 
 // User32 function declarations
-using PFN_AdjustWindowRect = WINUSERAPI BOOL(WINAPI *)(_Inout_ LPRECT, _In_ DWORD, _In_ BOOL);
-using PFN_CreateWindowExA = WINUSERAPI HWND(WINAPI *)(_In_ DWORD, _In_opt_ LPCSTR, _In_opt_ LPCSTR, _In_ DWORD, _In_ int, _In_ int,
-                                                      _In_ int, _In_ int, _In_opt_ HWND, _In_opt_ HMENU, _In_opt_ HINSTANCE,
-                                                      _In_opt_ LPVOID);
-using PFN_DefWindowProcA = WINUSERAPI LRESULT(WINAPI *)(_In_ HWND, _In_ UINT, _In_ WPARAM, _In_ LPARAM);
-using PFN_DestroyWindow = WINUSERAPI BOOL(WINAPI *)(_In_ HWND);
-using PFN_LoadIconA = WINUSERAPI HICON(WINAPI *)(_In_opt_ HINSTANCE, _In_ LPCSTR);
-using PFN_RegisterClassExA = WINUSERAPI ATOM(WINAPI *)(_In_ CONST WNDCLASSEXA *);
+using PFN_AdjustWindowRect = WINUSERAPI BOOL(WINAPI*)(_Inout_ LPRECT, _In_ DWORD, _In_ BOOL);
+using PFN_CreateWindowExA = WINUSERAPI HWND(WINAPI*)(_In_ DWORD, _In_opt_ LPCSTR, _In_opt_ LPCSTR, _In_ DWORD, _In_ int, _In_ int,
+                                                     _In_ int, _In_ int, _In_opt_ HWND, _In_opt_ HMENU, _In_opt_ HINSTANCE,
+                                                     _In_opt_ LPVOID);
+using PFN_DefWindowProcA = WINUSERAPI LRESULT(WINAPI*)(_In_ HWND, _In_ UINT, _In_ WPARAM, _In_ LPARAM);
+using PFN_DestroyWindow = WINUSERAPI BOOL(WINAPI*)(_In_ HWND);
+using PFN_LoadIconA = WINUSERAPI HICON(WINAPI*)(_In_opt_ HINSTANCE, _In_ LPCSTR);
+using PFN_RegisterClassExA = WINUSERAPI ATOM(WINAPI*)(_In_ CONST WNDCLASSEXA*);
 
 struct User32Handles {
     // User32 dll handle
@@ -162,10 +162,10 @@ struct User32Handles {
         }
     }
     // Don't allow moving of this class
-    User32Handles(User32Handles const &) = delete;
-    User32Handles &operator=(User32Handles const &) = delete;
-    User32Handles(User32Handles &&) = delete;
-    User32Handles &operator=(User32Handles &&) = delete;
+    User32Handles(User32Handles const&) = delete;
+    User32Handles& operator=(User32Handles const&) = delete;
+    User32Handles(User32Handles&&) = delete;
+    User32Handles& operator=(User32Handles&&) = delete;
 
     bool load() {
         user32DllHandle = LoadLibraryExA("user32.dll", nullptr, 0);
@@ -181,7 +181,7 @@ struct User32Handles {
 
   private:
     template <typename T>
-    bool load_function(T &function_pointer, const char *function_name) {
+    bool load_function(T& function_pointer, const char* function_name) {
         function_pointer = reinterpret_cast<T>(GetProcAddress(user32DllHandle, function_name));
         if (function_pointer == nullptr) {
             fprintf(stderr, "Failed to load function: %s\n", function_name);
@@ -192,20 +192,20 @@ struct User32Handles {
 };
 
 // Global user handles function used in windows callback and code
-User32Handles *user32_handles;
+User32Handles* user32_handles;
 #endif  // _WIN32
 
 #define APP_SHORT_NAME "vulkaninfo"
 #define APP_UPPER_CASE_NAME "VULKANINFO"
 #define API_NAME "Vulkan"
 
-std::vector<const char *> get_c_str_array(std::vector<std::string> const &vec) {
-    std::vector<const char *> ret;
-    for (auto &str : vec) ret.push_back(str.c_str());
+std::vector<const char*> get_c_str_array(std::vector<std::string> const& vec) {
+    std::vector<const char*> ret;
+    for (auto& str : vec) ret.push_back(str.c_str());
     return ret;
 }
 
-static const char *VkDebugReportFlagsEXTString(const VkDebugReportFlagsEXT flags) {
+static const char* VkDebugReportFlagsEXTString(const VkDebugReportFlagsEXT flags) {
     switch (flags) {
         case VK_DEBUG_REPORT_ERROR_BIT_EXT:
             return "ERROR";
@@ -222,8 +222,8 @@ static const char *VkDebugReportFlagsEXTString(const VkDebugReportFlagsEXT flags
     }
 }
 static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags, VkDebugReportObjectTypeEXT objType,
-                                                  uint64_t srcObject, size_t location, int32_t msgCode, const char *pLayerPrefix,
-                                                  const char *pMsg, void *pUserData) {
+                                                  uint64_t srcObject, size_t location, int32_t msgCode, const char* pLayerPrefix,
+                                                  const char* pMsg, void* pUserData) {
     std::cerr << VkDebugReportFlagsEXTString(msgFlags) << ": [" << pLayerPrefix << "] Code " << msgCode << " : " << pMsg << "\n";
 
     // True is reserved for layer developers, and MAY mean calls are not distributed down the layer chain after validation
@@ -233,7 +233,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DbgCallback(VkDebugReportFlagsEXT msgFlags
 
 // Helper for robustly executing the two-call pattern
 template <typename T, typename F, typename... Ts>
-auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vector<T> {
+auto GetVectorInit(const char* func_name, F&& f, T init, Ts&&... ts) -> std::vector<T> {
     uint32_t count = 32;  // Preallocate enough so that most calls only happen once
     std::vector<T> results;
     VkResult err;
@@ -251,7 +251,7 @@ auto GetVectorInit(const char *func_name, F &&f, T init, Ts &&...ts) -> std::vec
 }
 
 template <typename T, typename F, typename... Ts>
-auto GetVector(const char *func_name, F &&f, Ts &&...ts) -> std::vector<T> {
+auto GetVector(const char* func_name, F&& f, Ts&&... ts) -> std::vector<T> {
     return GetVectorInit(func_name, f, T(), ts...);
 }
 
@@ -272,24 +272,24 @@ struct AppDisplay;
 struct AppDisplayMode;
 struct AppDisplayPlane;
 
-void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2 &start, std::unique_ptr<phys_device_props2_chain> &chain,
-                                    AppInstance &inst, AppGpu &gpu, bool show_promoted_structs);
-void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2 &start,
-                                        std::unique_ptr<phys_device_mem_props2_chain> &chain, AppGpu &gpu);
-void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2 &start, std::unique_ptr<phys_device_features2_chain> &chain,
-                                       AppGpu &gpu, bool show_promoted_structs);
-void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR &start, std::unique_ptr<surface_capabilities2_chain> &chain,
-                                       AppInstance &inst, AppGpu &gpu);
-void setup_format_properties2_chain(VkFormatProperties2 &start, std::unique_ptr<format_properties2_chain> &chain, AppGpu &gpu);
-void setup_queue_properties2_chain(VkQueueFamilyProperties2 &start, std::unique_ptr<queue_properties2_chain> &chain, AppGpu &gpu);
+void setup_phys_device_props2_chain(VkPhysicalDeviceProperties2& start, std::unique_ptr<phys_device_props2_chain>& chain,
+                                    AppInstance& inst, AppGpu& gpu, bool show_promoted_structs);
+void setup_phys_device_mem_props2_chain(VkPhysicalDeviceMemoryProperties2& start,
+                                        std::unique_ptr<phys_device_mem_props2_chain>& chain, AppGpu& gpu);
+void setup_phys_device_features2_chain(VkPhysicalDeviceFeatures2& start, std::unique_ptr<phys_device_features2_chain>& chain,
+                                       AppGpu& gpu, bool show_promoted_structs);
+void setup_surface_capabilities2_chain(VkSurfaceCapabilities2KHR& start, std::unique_ptr<surface_capabilities2_chain>& chain,
+                                       AppInstance& inst, AppGpu& gpu);
+void setup_format_properties2_chain(VkFormatProperties2& start, std::unique_ptr<format_properties2_chain>& chain, AppGpu& gpu);
+void setup_queue_properties2_chain(VkQueueFamilyProperties2& start, std::unique_ptr<queue_properties2_chain>& chain, AppGpu& gpu);
 
-bool prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain> &chain);
+bool prepare_phys_device_props2_twocall_chain_vectors(std::unique_ptr<phys_device_props2_chain>& chain);
 
-bool is_video_format_same(const VkVideoFormatPropertiesKHR &format_a, const VkVideoFormatPropertiesKHR &format_b);
-std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles(AppGpu &gpu);
+bool is_video_format_same(const VkVideoFormatPropertiesKHR& format_a, const VkVideoFormatPropertiesKHR& format_b);
+std::vector<std::unique_ptr<AppVideoProfile>> enumerate_supported_video_profiles(AppGpu& gpu);
 
-std::vector<AppDisplayPlane> enumerate_display_planes(AppGpu &gpu);
-std::vector<AppDisplay> enumerate_displays(AppGpu &gpu, const std::vector<AppDisplayPlane> &all_planes);
+std::vector<AppDisplayPlane> enumerate_display_planes(AppGpu& gpu);
+std::vector<AppDisplay> enumerate_displays(AppGpu& gpu, const std::vector<AppDisplayPlane>& all_planes);
 
 /* An ptional contains either a value or nothing. The optional asserts if a value is trying to be gotten but none exist.
  * The interface is taken from C++17's <optional> with many aspects removed.
@@ -332,13 +332,13 @@ struct AppInstance;
 
 struct SurfaceExtension {
     std::string name;
-    void (*create_window)(AppInstance &) = nullptr;
-    VkSurfaceKHR (*create_surface)(AppInstance &) = nullptr;
-    VkSurfaceKHR (*create_surface_for_physical_device)(AppInstance &, VkPhysicalDevice) = nullptr;
-    void (*destroy_window)(AppInstance &) = nullptr;
+    void (*create_window)(AppInstance&) = nullptr;
+    VkSurfaceKHR (*create_surface)(AppInstance&) = nullptr;
+    VkSurfaceKHR (*create_surface_for_physical_device)(AppInstance&, VkPhysicalDevice) = nullptr;
+    void (*destroy_window)(AppInstance&) = nullptr;
     VkSurfaceKHR surface = VK_NULL_HANDLE;
 
-    bool operator==(const SurfaceExtension &other) { return name == other.name && surface == other.surface; }
+    bool operator==(const SurfaceExtension& other) { return name == other.name && surface == other.surface; }
 };
 
 struct AppVideoProfile {
@@ -359,23 +359,23 @@ struct AppVideoProfile {
     std::vector<Format> formats;
     std::unordered_map<std::string, std::vector<VkVideoFormatPropertiesKHR>> formats_by_category;
 
-    using CreateProfileInfoChainCb = std::function<std::unique_ptr<video_profile_info_chain>(const void **)>;
-    using CreateCapabilitiesChainCb = std::function<std::unique_ptr<video_capabilities_chain>(void **)>;
+    using CreateProfileInfoChainCb = std::function<std::unique_ptr<video_profile_info_chain>(const void**)>;
+    using CreateCapabilitiesChainCb = std::function<std::unique_ptr<video_capabilities_chain>(void**)>;
     struct CreateFormatPropertiesChainCb {
         std::string format_name;
         VkImageUsageFlags2KHR image_usage_flags;
-        std::function<bool(const VkVideoCapabilitiesKHR &capabilities)> check_required_caps;
-        std::function<std::unique_ptr<video_format_properties_chain>(void **)> callback;
+        std::function<bool(const VkVideoCapabilitiesKHR& capabilities)> check_required_caps;
+        std::function<std::unique_ptr<video_format_properties_chain>(void**)> callback;
     };
     using CreateFormatPropertiesChainCbList = std::vector<CreateFormatPropertiesChainCb>;
-    using InitProfileCb = std::function<void(AppVideoProfile &)>;
+    using InitProfileCb = std::function<void(AppVideoProfile&)>;
 
-    bool IsImageUsageFlags2Supported(AppGpu &gpu) const;
+    bool IsImageUsageFlags2Supported(AppGpu& gpu) const;
 
-    AppVideoProfile(AppGpu &gpu, VkPhysicalDevice phys_device, const std::string &in_name,
-                    const VkVideoProfileInfoKHR &in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
+    AppVideoProfile(AppGpu& gpu, VkPhysicalDevice phys_device, const std::string& in_name,
+                    const VkVideoProfileInfoKHR& in_profile_info, CreateProfileInfoChainCb create_profile_info_chain,
                     CreateCapabilitiesChainCb create_capabilities_chain,
-                    const CreateFormatPropertiesChainCbList &create_format_properties_chain_list, InitProfileCb init_profile)
+                    const CreateFormatPropertiesChainCbList& create_format_properties_chain_list, InitProfileCb init_profile)
         : supported(true), name(in_name), profile_info(in_profile_info), capabilities({}) {
         profile_info_chain = create_profile_info_chain(&profile_info.pNext);
         if (profile_info_chain == nullptr) {
@@ -403,7 +403,7 @@ struct AppVideoProfile {
 
         std::vector<VkVideoFormatPropertiesKHR> video_format_props{};
         std::vector<std::unique_ptr<video_format_properties_chain>> video_format_props_chains{};
-        for (const auto &create_format_properties_chain_info : create_format_properties_chain_list) {
+        for (const auto& create_format_properties_chain_info : create_format_properties_chain_list) {
             if (!create_format_properties_chain_info.check_required_caps(capabilities)) {
                 continue;
             }
@@ -446,8 +446,8 @@ struct AppVideoProfile {
                                                                  video_format_props.data());
             if (result == VK_SUCCESS) {
                 for (uint32_t i = 0; i < video_format_property_count; ++i) {
-                    const VkVideoFormatPropertiesKHR *existing_format = nullptr;
-                    for (const auto &format : formats) {
+                    const VkVideoFormatPropertiesKHR* existing_format = nullptr;
+                    for (const auto& format : formats) {
                         if (is_video_format_same(format.properties, video_format_props[i])) {
                             existing_format = &format.properties;
                             break;
@@ -474,7 +474,7 @@ struct AppDisplayPlane {
     VkDisplayPlanePropertiesKHR properties;
     std::vector<VkDisplayKHR> supported_displays;
 
-    AppDisplayPlane(AppGpu &gpu, uint32_t index, const VkDisplayPlanePropertiesKHR &in_prop);
+    AppDisplayPlane(AppGpu& gpu, uint32_t index, const VkDisplayPlanePropertiesKHR& in_prop);
 };
 
 struct AppDisplayMode {
@@ -483,7 +483,7 @@ struct AppDisplayMode {
     // key is a AppDisplayPlane::global_index value
     std::map<uint32_t, VkDisplayPlaneCapabilitiesKHR> capabilities;
 
-    AppDisplayMode(AppGpu &gpu, const VkDisplayModePropertiesKHR &in_prop, const std::set<uint32_t> &supported_planes);
+    AppDisplayMode(AppGpu& gpu, const VkDisplayModePropertiesKHR& in_prop, const std::set<uint32_t>& supported_planes);
 };
 
 struct AppDisplay {
@@ -494,8 +494,8 @@ struct AppDisplay {
     VkDisplayPropertiesKHR properties;
     std::vector<AppDisplayMode> modes;
 
-    AppDisplay(AppGpu &gpu, uint32_t index, const VkDisplayPropertiesKHR &in_properties,
-               const std::vector<AppDisplayPlane> &all_planes);
+    AppDisplay(AppGpu& gpu, uint32_t index, const VkDisplayPropertiesKHR& in_properties,
+               const std::vector<AppDisplayPlane>& all_planes);
 };
 
 class APIVersion {
@@ -519,7 +519,7 @@ class APIVersion {
     uint32_t api_version_;
 };
 
-std::ostream &operator<<(std::ostream &out, const APIVersion &v) {
+std::ostream& operator<<(std::ostream& out, const APIVersion& v) {
     return out << v.Major() << "." << v.Minor() << "." << v.Patch();
 }
 
@@ -544,34 +544,34 @@ struct AppInstance {
     HWND h_wnd;            // window handle
 #endif
 #ifdef VK_USE_PLATFORM_XCB_KHR
-    xcb_connection_t *xcb_connection;
-    xcb_screen_t *xcb_screen;
+    xcb_connection_t* xcb_connection;
+    xcb_screen_t* xcb_screen;
     xcb_window_t xcb_window;
 #endif
 #ifdef VK_USE_PLATFORM_XLIB_KHR
-    Display *xlib_display;
+    Display* xlib_display;
     Window xlib_window;
 #endif
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-    void *macos_window;
+    void* macos_window;
 #endif
 #ifdef VK_USE_PLATFORM_METAL_EXT
-    void *metal_window;
+    void* metal_window;
 #endif
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
-    wl_display *wayland_display;
-    wl_surface *wayland_surface;
+    wl_display* wayland_display;
+    wl_surface* wayland_surface;
 #endif
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
-    IDirectFB *dfb;
-    IDirectFBSurface *directfb_surface;
+    IDirectFB* dfb;
+    IDirectFBSurface* directfb_surface;
 #endif
 #ifdef VK_USE_PLATFORM_ANDROID_KHR  // TODO
-    ANativeWindow *window;
+    ANativeWindow* window;
 #endif
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
-    struct _screen_context *context;
-    struct _screen_window *window;
+    struct _screen_context* context;
+    struct _screen_window* window;
 #endif
     AppInstance() {
         VkResult dllErr = load_vulkan_library();
@@ -601,8 +601,8 @@ struct AppInstance {
 
         AppCompileInstanceExtensionsToEnable();
 
-        std::vector<const char *> inst_exts;
-        for (const auto &ext : inst_extensions) {
+        std::vector<const char*> inst_exts;
+        for (const auto& ext : inst_extensions) {
             inst_exts.push_back(ext.c_str());
         }
 
@@ -643,8 +643,8 @@ struct AppInstance {
         unload_vulkan_library();
     }
 
-    AppInstance(const AppInstance &) = delete;
-    const AppInstance &operator=(const AppInstance &) = delete;
+    AppInstance(const AppInstance&) = delete;
+    const AppInstance& operator=(const AppInstance&) = delete;
 
     bool CheckExtensionEnabled(std::string extension_to_check) const {
         return std::any_of(inst_extensions.begin(), inst_extensions.end(),
@@ -657,7 +657,7 @@ struct AppInstance {
         auto global_layer_properties =
             GetVector<VkLayerProperties>("vkEnumerateInstanceLayerProperties", vkEnumerateInstanceLayerProperties);
 
-        for (const auto &layer : global_layer_properties) {
+        for (const auto& layer : global_layer_properties) {
             global_layers.push_back(LayerExtensionList{layer, AppGetGlobalLayerExtensions(layer.layerName)});
         }
 
@@ -668,14 +668,14 @@ struct AppInstance {
     void AppCompileInstanceExtensionsToEnable() {
 #if defined(VK_USE_PLATFORM_MACOS_MVK) || defined(VK_USE_PLATFORM_IOS_MVK)
         bool metal_surface_available = false;
-        for (const auto &ext : global_extensions) {
+        for (const auto& ext : global_extensions) {
             if (strcmp("VK_EXT_metal_surface", ext.extensionName) == 0) {
                 metal_surface_available = true;
             }
         }
 #endif
 
-        for (const auto &ext : global_extensions) {
+        for (const auto& ext : global_extensions) {
             if (strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, ext.extensionName) == 0) {
                 inst_extensions.push_back(ext.extensionName);
             }
@@ -793,7 +793,7 @@ struct AppInstance {
 
     void AddSurfaceExtension(SurfaceExtension ext) { surface_extensions.push_back(ext); }
 
-    std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(const char *layer_name) {
+    std::vector<VkExtensionProperties> AppGetGlobalLayerExtensions(const char* layer_name) {
         return GetVector<VkExtensionProperties>("vkEnumerateInstanceExtensionProperties", vkEnumerateInstanceExtensionProperties,
                                                 layer_name);
     }
@@ -802,7 +802,7 @@ struct AppInstance {
         return GetVector<VkPhysicalDevice>("vkEnumeratePhysicalDevices", vkEnumeratePhysicalDevices, instance);
     }
 
-    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(VkPhysicalDevice phys_device, const char *layer_name) {
+    std::vector<VkExtensionProperties> AppGetPhysicalDeviceLayerExtensions(VkPhysicalDevice phys_device, const char* layer_name) {
         return GetVector<VkExtensionProperties>("vkEnumerateDeviceExtensionProperties", vkEnumerateDeviceExtensionProperties,
                                                 phys_device, layer_name);
     }
@@ -826,7 +826,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     return user32_handles->pfnDefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
-static void AppCreateWin32Window(AppInstance &inst) {
+static void AppCreateWin32Window(AppInstance& inst) {
     inst.h_instance = GetModuleHandle(nullptr);
 
     WNDCLASSEX win_class;
@@ -871,7 +871,7 @@ static void AppCreateWin32Window(AppInstance &inst) {
     }
 }
 
-static VkSurfaceKHR AppCreateWin32Surface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateWin32Surface(AppInstance& inst) {
     VkWin32SurfaceCreateInfoKHR createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = nullptr;
@@ -885,15 +885,15 @@ static VkSurfaceKHR AppCreateWin32Surface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyWin32Window(AppInstance &inst) { user32_handles->pfnDestroyWindow(inst.h_wnd); }
+static void AppDestroyWin32Window(AppInstance& inst) { user32_handles->pfnDestroyWindow(inst.h_wnd); }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 //-----------------------------------------------------------
 
 //----------------------------XCB----------------------------
 #ifdef VK_USE_PLATFORM_XCB_KHR
-static void AppCreateXcbWindow(AppInstance &inst) {
+static void AppCreateXcbWindow(AppInstance& inst) {
     //--Init Connection--
-    const xcb_setup_t *setup;
+    const xcb_setup_t* setup;
     xcb_screen_iterator_t iter;
     int scr;
 
@@ -922,11 +922,11 @@ static void AppCreateXcbWindow(AppInstance &inst) {
                       inst.height, 0, XCB_WINDOW_CLASS_INPUT_OUTPUT, inst.xcb_screen->root_visual, 0, nullptr);
 
     xcb_intern_atom_cookie_t cookie = xcb_intern_atom(inst.xcb_connection, 1, 12, "WM_PROTOCOLS");
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(inst.xcb_connection, cookie, 0);
+    xcb_intern_atom_reply_t* reply = xcb_intern_atom_reply(inst.xcb_connection, cookie, 0);
     free(reply);
 }
 
-static VkSurfaceKHR AppCreateXcbSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateXcbSurface(AppInstance& inst) {
     if (!inst.xcb_connection) {
         THROW_ERR("AppCreateXcbSurface failed to establish connection");
     }
@@ -944,7 +944,7 @@ static VkSurfaceKHR AppCreateXcbSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyXcbWindow(AppInstance &inst) {
+static void AppDestroyXcbWindow(AppInstance& inst) {
     if (!inst.xcb_connection) {
         return;  // Nothing to destroy
     }
@@ -957,7 +957,7 @@ static void AppDestroyXcbWindow(AppInstance &inst) {
 
 //----------------------------XLib---------------------------
 #ifdef VK_USE_PLATFORM_XLIB_KHR
-static void AppCreateXlibWindow(AppInstance &inst) {
+static void AppCreateXlibWindow(AppInstance& inst) {
     long visualMask = VisualScreenMask;
     int numberOfVisuals{};
 
@@ -968,12 +968,12 @@ static void AppCreateXlibWindow(AppInstance &inst) {
 
     XVisualInfo vInfoTemplate = {};
     vInfoTemplate.screen = DefaultScreen(inst.xlib_display);
-    XVisualInfo *visualInfoBegin = XGetVisualInfo(inst.xlib_display, visualMask, &vInfoTemplate, &numberOfVisuals);
-    XVisualInfo *visualInfoEnd = visualInfoBegin + numberOfVisuals;
-    const Visual *rootVisual = DefaultVisual(inst.xlib_display, vInfoTemplate.screen);
-    const XVisualInfo *foundVisualInfo =
-        std::find_if(visualInfoBegin, visualInfoEnd, [rootVisual](const XVisualInfo &vi) { return vi.visual == rootVisual; });
-    const XVisualInfo *visualInfo = foundVisualInfo == visualInfoEnd ? visualInfoBegin : foundVisualInfo;
+    XVisualInfo* visualInfoBegin = XGetVisualInfo(inst.xlib_display, visualMask, &vInfoTemplate, &numberOfVisuals);
+    XVisualInfo* visualInfoEnd = visualInfoBegin + numberOfVisuals;
+    const Visual* rootVisual = DefaultVisual(inst.xlib_display, vInfoTemplate.screen);
+    const XVisualInfo* foundVisualInfo =
+        std::find_if(visualInfoBegin, visualInfoEnd, [rootVisual](const XVisualInfo& vi) { return vi.visual == rootVisual; });
+    const XVisualInfo* visualInfo = foundVisualInfo == visualInfoEnd ? visualInfoBegin : foundVisualInfo;
     inst.xlib_window = XCreateWindow(inst.xlib_display, RootWindow(inst.xlib_display, vInfoTemplate.screen), 0, 0, inst.width,
                                      inst.height, 0, visualInfo->depth, InputOutput, visualInfo->visual, 0, nullptr);
 
@@ -981,7 +981,7 @@ static void AppCreateXlibWindow(AppInstance &inst) {
     XFree(visualInfoBegin);
 }
 
-static VkSurfaceKHR AppCreateXlibSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateXlibSurface(AppInstance& inst) {
     VkXlibSurfaceCreateInfoKHR createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = nullptr;
@@ -995,7 +995,7 @@ static VkSurfaceKHR AppCreateXlibSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyXlibWindow(AppInstance &inst) {
+static void AppDestroyXlibWindow(AppInstance& inst) {
     XDestroyWindow(inst.xlib_display, inst.xlib_window);
     XCloseDisplay(inst.xlib_display);
 }
@@ -1004,14 +1004,14 @@ static void AppDestroyXlibWindow(AppInstance &inst) {
 
 //------------------------MACOS_MVK--------------------------
 #ifdef VK_USE_PLATFORM_MACOS_MVK
-static void AppCreateMacOSWindow(AppInstance &inst) {
+static void AppCreateMacOSWindow(AppInstance& inst) {
     inst.macos_window = CreateMetalView(inst.width, inst.height);
     if (inst.macos_window == nullptr) {
         THROW_ERR("Could not create a native Metal view.");
     }
 }
 
-static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateMacOSSurface(AppInstance& inst) {
     VkMacOSSurfaceCreateInfoMVK createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK;
     createInfo.pNext = nullptr;
@@ -1024,25 +1024,25 @@ static VkSurfaceKHR AppCreateMacOSSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyMacOSWindow(AppInstance &inst) { DestroyMetalView(inst.macos_window); }
+static void AppDestroyMacOSWindow(AppInstance& inst) { DestroyMetalView(inst.macos_window); }
 #endif  // VK_USE_PLATFORM_MACOS_MVK
 //-----------------------------------------------------------
 
 //------------------------METAL_EXT--------------------------
 #ifdef VK_USE_PLATFORM_METAL_EXT
-static void AppCreateMetalWindow(AppInstance &inst) {
+static void AppCreateMetalWindow(AppInstance& inst) {
     inst.metal_window = CreateMetalView(inst.width, inst.height);
     if (inst.metal_window == nullptr) {
         THROW_ERR("Could not create a native Metal view.");
     }
 }
 
-static VkSurfaceKHR AppCreateMetalSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateMetalSurface(AppInstance& inst) {
     VkMetalSurfaceCreateInfoEXT createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
     createInfo.pNext = nullptr;
     createInfo.flags = 0;
-    createInfo.pLayer = static_cast<CAMetalLayer *>(GetCAMetalLayerFromMetalView(inst.metal_window));
+    createInfo.pLayer = static_cast<CAMetalLayer*>(GetCAMetalLayerFromMetalView(inst.metal_window));
 
     VkSurfaceKHR surface;
     VkResult err = vkCreateMetalSurfaceEXT(inst.instance, &createInfo, nullptr, &surface);
@@ -1050,32 +1050,32 @@ static VkSurfaceKHR AppCreateMetalSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyMetalWindow(AppInstance &inst) { DestroyMetalView(inst.metal_window); }
+static void AppDestroyMetalWindow(AppInstance& inst) { DestroyMetalView(inst.metal_window); }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 //-----------------------------------------------------------
 
 //-------------------------WAYLAND---------------------------
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
-static void wayland_registry_global(void *data, struct wl_registry *registry, uint32_t id, const char *interface,
+static void wayland_registry_global(void* data, struct wl_registry* registry, uint32_t id, const char* interface,
                                     uint32_t version) {
-    AppInstance &inst = *static_cast<AppInstance *>(data);
+    AppInstance& inst = *static_cast<AppInstance*>(data);
     if (strcmp(interface, "wl_compositor") == 0) {
-        struct wl_compositor *compositor = (struct wl_compositor *)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
+        struct wl_compositor* compositor = (struct wl_compositor*)wl_registry_bind(registry, id, &wl_compositor_interface, 1);
         inst.wayland_surface = wl_compositor_create_surface(compositor);
     }
 }
-static void wayland_registry_global_remove(void *data, struct wl_registry *registry, uint32_t id) {}
+static void wayland_registry_global_remove(void* data, struct wl_registry* registry, uint32_t id) {}
 static const struct wl_registry_listener wayland_registry_listener = {wayland_registry_global, wayland_registry_global_remove};
 
-static void AppCreateWaylandWindow(AppInstance &inst) {
+static void AppCreateWaylandWindow(AppInstance& inst) {
     inst.wayland_display = wl_display_connect(nullptr);
-    struct wl_registry *registry = wl_display_get_registry(inst.wayland_display);
-    wl_registry_add_listener(wl_display_get_registry(inst.wayland_display), &wayland_registry_listener, static_cast<void *>(&inst));
+    struct wl_registry* registry = wl_display_get_registry(inst.wayland_display);
+    wl_registry_add_listener(wl_display_get_registry(inst.wayland_display), &wayland_registry_listener, static_cast<void*>(&inst));
     wl_display_roundtrip(inst.wayland_display);
     wl_registry_destroy(registry);
 }
 
-static VkSurfaceKHR AppCreateWaylandSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateWaylandSurface(AppInstance& inst) {
     VkWaylandSurfaceCreateInfoKHR createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = nullptr;
@@ -1089,13 +1089,13 @@ static VkSurfaceKHR AppCreateWaylandSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyWaylandWindow(AppInstance &inst) { wl_display_disconnect(inst.wayland_display); }
+static void AppDestroyWaylandWindow(AppInstance& inst) { wl_display_disconnect(inst.wayland_display); }
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
 //-----------------------------------------------------------
 
 //-------------------------DIRECTFB--------------------------
 #ifdef VK_USE_PLATFORM_DIRECTFB_EXT
-static void AppCreateDirectFBWindow(AppInstance &inst) {
+static void AppCreateDirectFBWindow(AppInstance& inst) {
     DFBResult ret;
 
     ret = DirectFBInit(NULL, NULL);
@@ -1119,7 +1119,7 @@ static void AppCreateDirectFBWindow(AppInstance &inst) {
     }
 }
 
-static VkSurfaceKHR AppCreateDirectFBSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateDirectFBSurface(AppInstance& inst) {
     VkDirectFBSurfaceCreateInfoEXT createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_DIRECTFB_SURFACE_CREATE_INFO_EXT;
     createInfo.pNext = nullptr;
@@ -1133,7 +1133,7 @@ static VkSurfaceKHR AppCreateDirectFBSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyDirectFBWindow(AppInstance &inst) {
+static void AppDestroyDirectFBWindow(AppInstance& inst) {
     inst.directfb_surface->Release(inst.directfb_surface);
     inst.dfb->Release(inst.dfb);
 }
@@ -1142,26 +1142,26 @@ static void AppDestroyDirectFBWindow(AppInstance &inst) {
 
 //-------------------------ANDROID---------------------------
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
-static void AppCreateAndroidWindow(AppInstance &inst) {}
-static VkSurfaceKHR AppCreateAndroidSurface(AppInstance &inst) {
+static void AppCreateAndroidWindow(AppInstance& inst) {}
+static VkSurfaceKHR AppCreateAndroidSurface(AppInstance& inst) {
     VkAndroidSurfaceCreateInfoKHR createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.flags = 0;
-    createInfo.window = (struct ANativeWindow *)(inst.window);
+    createInfo.window = (struct ANativeWindow*)(inst.window);
 
     VkSurfaceKHR surface;
     VkResult err = vkCreateAndroidSurfaceKHR(inst.instance, &createInfo, NULL, &surface);
     if (err) THROW_VK_ERR("vkCreateAndroidSurfaceKHR", err);
     return surface;
 }
-static void AppDestroyAndroidWindow(AppInstance &inst) {}
+static void AppDestroyAndroidWindow(AppInstance& inst) {}
 #endif
 //-----------------------------------------------------------
 //---------------------------GGP-----------------------------
 #ifdef VK_USE_PLATFORM_GGP
-static void AppCreateGgpWindow(AppInstance &inst) {}
-static VkSurfaceKHR AppCreateGgpSurface(AppInstance &inst) {
+static void AppCreateGgpWindow(AppInstance& inst) {}
+static VkSurfaceKHR AppCreateGgpSurface(AppInstance& inst) {
     VkStreamDescriptorSurfaceCreateInfoGGP createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP;
     createInfo.pNext = NULL;
@@ -1173,12 +1173,12 @@ static VkSurfaceKHR AppCreateGgpSurface(AppInstance &inst) {
     if (err) THROW_VK_ERR("vkCreateStreamDescriptorSurfaceGGP", err);
     return surface;
 }
-static void AppDestroyGgpWindow(AppInstance &inst) {}
+static void AppDestroyGgpWindow(AppInstance& inst) {}
 #endif
 //-----------------------------------------------------------
 //----------------------QNX SCREEN---------------------------
 #ifdef VK_USE_PLATFORM_SCREEN_QNX
-static void AppCreateScreenWindow(AppInstance &inst) {
+static void AppCreateScreenWindow(AppInstance& inst) {
     int usage = SCREEN_USAGE_VULKAN;
     int rc;
 
@@ -1196,7 +1196,7 @@ static void AppCreateScreenWindow(AppInstance &inst) {
     }
 }
 
-static VkSurfaceKHR AppCreateScreenSurface(AppInstance &inst) {
+static VkSurfaceKHR AppCreateScreenSurface(AppInstance& inst) {
     VkScreenSurfaceCreateInfoQNX createInfo;
     createInfo.sType = VK_STRUCTURE_TYPE_SCREEN_SURFACE_CREATE_INFO_QNX;
     createInfo.pNext = nullptr;
@@ -1210,7 +1210,7 @@ static VkSurfaceKHR AppCreateScreenSurface(AppInstance &inst) {
     return surface;
 }
 
-static void AppDestroyScreenWindow(AppInstance &inst) {
+static void AppDestroyScreenWindow(AppInstance& inst) {
     screen_destroy_window(inst.window);
     screen_destroy_context(inst.context);
 }
@@ -1219,7 +1219,7 @@ static void AppDestroyScreenWindow(AppInstance &inst) {
 //-----------------------------------------------------------
 //----------------------KHR DISPLAY--------------------------
 #ifdef VK_USE_PLATFORM_DISPLAY_KHR
-static VkSurfaceKHR AppCreateDisplaySurface(AppInstance &inst, VkPhysicalDevice phys_device) {
+static VkSurfaceKHR AppCreateDisplaySurface(AppInstance& inst, VkPhysicalDevice phys_device) {
     auto all_display_props = GetVector<VkDisplayPropertiesKHR>("vkGetPhysicalDeviceDisplayPropertiesKHR",
                                                                vkGetPhysicalDeviceDisplayPropertiesKHR, phys_device);
     if (all_display_props.size() == 0) return VK_NULL_HANDLE;
@@ -1230,7 +1230,7 @@ static VkSurfaceKHR AppCreateDisplaySurface(AppInstance &inst, VkPhysicalDevice 
 
     // Always use the first plane
     const uint32_t plane_index = 0;
-    const auto &plane_props = all_plane_props[plane_index];
+    const auto& plane_props = all_plane_props[plane_index];
 
     auto supported_displays = GetVector<VkDisplayKHR>("vkGetDisplayPlaneSupportedDisplaysKHR",
                                                       vkGetDisplayPlaneSupportedDisplaysKHR, phys_device, plane_index);
@@ -1242,7 +1242,7 @@ static VkSurfaceKHR AppCreateDisplaySurface(AppInstance &inst, VkPhysicalDevice 
         GetVector<VkDisplayModePropertiesKHR>("vkGetDisplayModePropertiesKHR", vkGetDisplayModePropertiesKHR, phys_device, display);
     if (all_mode_props.size() == 0) THROW_VK_ERR("No display modes reported for display.", VK_ERROR_UNKNOWN);
 
-    const auto &mode_props = all_mode_props[0];
+    const auto& mode_props = all_mode_props[0];
     const VkDisplayModeKHR mode = mode_props.displayMode;
 
     VkDisplayPlaneCapabilitiesKHR plane_caps{};
@@ -1276,10 +1276,10 @@ static VkSurfaceKHR AppCreateDisplaySurface(AppInstance &inst, VkPhysicalDevice 
 //-----------------------------------------------------------
 // ------------ Setup Windows ------------- //
 
-void SetupWindowExtensions(AppInstance &inst) {
+void SetupWindowExtensions(AppInstance& inst) {
 #if defined(VK_USE_PLATFORM_XCB_KHR) || defined(VK_USE_PLATFORM_XLIB_KHR)
     bool has_display = true;
-    const char *display_var = getenv("DISPLAY");
+    const char* display_var = getenv("DISPLAY");
     if (display_var == nullptr || strlen(display_var) == 0) {
         has_display = false;
         std::cerr << "'DISPLAY' environment variable not set... skipping surface info\n";
@@ -1287,7 +1287,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 #endif
 
 #ifdef VK_USE_PLATFORM_WAYLAND_KHR
-    wl_display *wayland_display = wl_display_connect(nullptr);
+    wl_display* wayland_display = wl_display_connect(nullptr);
     bool has_wayland_display = false;
     if (wayland_display != nullptr) {
         wl_display_disconnect(wayland_display);
@@ -1457,7 +1457,7 @@ void SetupWindowExtensions(AppInstance &inst) {
 
 class AppSurface {
   public:
-    AppInstance &inst;
+    AppInstance& inst;
     VkPhysicalDevice phys_device;
     SurfaceExtension surface_extension;
 
@@ -1472,7 +1472,7 @@ class AppSurface {
 
     std::unique_ptr<surface_capabilities2_chain> chain_for_surface_capabilities2;
 
-    AppSurface(AppInstance &inst, AppGpu &gpu, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
+    AppSurface(AppInstance& inst, AppGpu& gpu, VkPhysicalDevice phys_device, SurfaceExtension surface_extension)
         : inst(inst), phys_device(phys_device), surface_extension(surface_extension) {
         surf_present_modes =
             GetVector<VkPresentModeKHR>("vkGetPhysicalDeviceSurfacePresentModesKHR", vkGetPhysicalDeviceSurfacePresentModesKHR,
@@ -1508,7 +1508,7 @@ class AppSurface {
             win32_fullscreen_exclusive_info.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
             win32_fullscreen_exclusive_info.hmonitor = MonitorFromWindow(inst.h_wnd, MONITOR_DEFAULTTOPRIMARY);
 
-            surface_info.pNext = static_cast<void *>(&win32_fullscreen_exclusive_info);
+            surface_info.pNext = static_cast<void*>(&win32_fullscreen_exclusive_info);
 #endif  // VK_USE_PLATFORM_WIN32_KHR
             VkResult err = vkGetPhysicalDeviceSurfaceCapabilities2KHR(phys_device, &surface_info, &surface_capabilities2_khr);
             if (err) THROW_VK_ERR("vkGetPhysicalDeviceSurfaceCapabilities2KHR", err);
@@ -1523,13 +1523,13 @@ class AppSurface {
         }
     }
 
-    AppSurface(const AppSurface &) = delete;
-    const AppSurface &operator=(const AppSurface &) = delete;
+    AppSurface(const AppSurface&) = delete;
+    const AppSurface& operator=(const AppSurface&) = delete;
 };
 
 // -------------------- Device Groups ------------------------//
 
-std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
+std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance& inst) {
     if (inst.CheckExtensionEnabled(VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME)) {
         VkPhysicalDeviceGroupProperties group_props{};
         group_props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
@@ -1539,7 +1539,7 @@ std::vector<VkPhysicalDeviceGroupProperties> GetGroups(AppInstance &inst) {
     return {};
 }
 
-std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance &inst, VkPhysicalDeviceGroupProperties group) {
+std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance& inst, VkPhysicalDeviceGroupProperties group) {
     std::vector<VkPhysicalDeviceProperties> props(group.physicalDeviceCount);
 
     for (uint32_t i = 0; i < group.physicalDeviceCount; ++i) {
@@ -1549,13 +1549,13 @@ std::vector<VkPhysicalDeviceProperties> GetGroupProps(AppInstance &inst, VkPhysi
     return props;
 }
 
-util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance &inst,
+util::vulkaninfo_optional<VkDeviceGroupPresentCapabilitiesKHR> GetGroupCapabilities(AppInstance& inst,
                                                                                     VkPhysicalDeviceGroupProperties group) {
     // Build create info for logical device made from all physical devices in this group.
     std::vector<std::string> extensions_list = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_DEVICE_GROUP_EXTENSION_NAME};
 
 #ifdef VK_ENABLE_BETA_EXTENSIONS
-    for (const auto &extension : inst.AppGetPhysicalDeviceLayerExtensions(group.physicalDevices[0], nullptr)) {
+    for (const auto& extension : inst.AppGetPhysicalDeviceLayerExtensions(group.physicalDevices[0], nullptr)) {
         if (std::string(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME) == extension.extensionName) {
             extensions_list.push_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
         }
@@ -1634,7 +1634,7 @@ VkImageCreateInfo GetImageCreateInfo(VkImageCreateFlags flags, VkFormat format, 
             VK_IMAGE_LAYOUT_UNDEFINED};
 }
 
-util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance &inst, VkPhysicalDevice phys_device, VkDevice device,
+util::vulkaninfo_optional<ImageTypeSupport> FillImageTypeSupport(AppInstance& inst, VkPhysicalDevice phys_device, VkDevice device,
                                                                  ImageTypeSupport::Type img_type, VkImageCreateInfo image_ci) {
     VkImageFormatProperties img_props;
     VkResult res = vkGetPhysicalDeviceImageFormatProperties(phys_device, image_ci.format, image_ci.imageType, image_ci.tiling,
@@ -1674,7 +1674,7 @@ struct FormatRange {
 
     // The name of the extension that supports this format range, or NULL if the range
     // is only part of the standard
-    const char *extension_name;
+    const char* extension_name;
 
     // The first and last supported formats within this range.
     VkFormat first_format;
@@ -1684,15 +1684,15 @@ struct FormatRange {
 struct AppQueueFamilyProperties {
     VkQueueFamilyProperties props;
     uint32_t queue_index;
-    void *pNext = nullptr;  // assumes the lifetime of the pNext chain outlives this object, eg parent object must keep both alive
+    void* pNext = nullptr;  // assumes the lifetime of the pNext chain outlives this object, eg parent object must keep both alive
     bool can_present = false;
     bool can_always_present = true;
     std::vector<std::pair<std::string, VkBool32>> present_support;
-    AppQueueFamilyProperties(AppInstance &inst, VkPhysicalDevice physical_device,
-                             const std::vector<SurfaceExtension> &surface_extensions, VkQueueFamilyProperties family_properties,
-                             uint32_t queue_index, void *pNext = nullptr)
+    AppQueueFamilyProperties(AppInstance& inst, VkPhysicalDevice physical_device,
+                             const std::vector<SurfaceExtension>& surface_extensions, VkQueueFamilyProperties family_properties,
+                             uint32_t queue_index, void* pNext = nullptr)
         : props(family_properties), queue_index(queue_index), pNext(pNext) {
-        for (const auto &surface_ext : surface_extensions) {
+        for (const auto& surface_ext : surface_extensions) {
             if (surface_ext.surface == VK_NULL_HANDLE) continue;
 
             present_support.push_back({surface_ext.name, VK_FALSE});
@@ -1709,7 +1709,7 @@ struct AppQueueFamilyProperties {
 };
 
 struct AppGpu {
-    AppInstance &inst;
+    AppInstance& inst;
     uint32_t id{};
     VkPhysicalDevice phys_device = VK_NULL_HANDLE;
     APIVersion api_version;
@@ -1769,8 +1769,8 @@ struct AppGpu {
     std::vector<AppDisplay> displays;
     std::vector<AppDisplayPlane> display_planes;
 
-    AppGpu(AppInstance &inst, uint32_t id, VkPhysicalDevice phys_device, bool show_promoted_structs,
-           std::vector<SurfaceExtension> &&surface_extensions)
+    AppGpu(AppInstance& inst, uint32_t id, VkPhysicalDevice phys_device, bool show_promoted_structs,
+           std::vector<SurfaceExtension>&& surface_extensions)
         : inst(inst), id(id), phys_device(phys_device), surface_extensions(surface_extensions) {
         vkGetPhysicalDeviceProperties(phys_device, &props);
 
@@ -1822,19 +1822,19 @@ struct AppGpu {
 
             if (CheckPhysicalDeviceExtensionIncluded(VK_KHR_DRIVER_PROPERTIES_EXTENSION_NAME) ||
                 api_version >= VK_API_VERSION_1_2) {
-                void *place = props2.pNext;
+                void* place = props2.pNext;
                 while (place) {
-                    VkBaseOutStructure *structure = static_cast<VkBaseOutStructure *>(place);
+                    VkBaseOutStructure* structure = static_cast<VkBaseOutStructure*>(place);
                     if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES) {
-                        VkPhysicalDeviceDriverProperties *driver_driver_properties =
-                            reinterpret_cast<VkPhysicalDeviceDriverProperties *>(structure);
+                        VkPhysicalDeviceDriverProperties* driver_driver_properties =
+                            reinterpret_cast<VkPhysicalDeviceDriverProperties*>(structure);
                         driverID = driver_driver_properties->driverID;
                         memcpy(driverName, driver_driver_properties->driverName, VK_MAX_DRIVER_NAME_SIZE);
                         memcpy(driverInfo, driver_driver_properties->driverInfo, VK_MAX_DRIVER_INFO_SIZE);
                         conformanceVersion = driver_driver_properties->conformanceVersion;
                         found_driver_props = true;
                     } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES) {
-                        VkPhysicalDeviceIDProperties *device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties *>(structure);
+                        VkPhysicalDeviceIDProperties* device_id_props = reinterpret_cast<VkPhysicalDeviceIDProperties*>(structure);
                         memcpy(deviceUUID, device_id_props->deviceUUID, VK_UUID_SIZE);
                         memcpy(driverUUID, device_id_props->driverUUID, VK_UUID_SIZE);
                         memcpy(deviceLUID, device_id_props->deviceLUID, VK_LUID_SIZE);
@@ -1842,8 +1842,8 @@ struct AppGpu {
                         deviceLUIDValid = device_id_props->deviceLUIDValid;
                         found_device_id_props = true;
                     } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES) {
-                        VkPhysicalDeviceVulkan11Properties *vulkan_11_props =
-                            reinterpret_cast<VkPhysicalDeviceVulkan11Properties *>(structure);
+                        VkPhysicalDeviceVulkan11Properties* vulkan_11_props =
+                            reinterpret_cast<VkPhysicalDeviceVulkan11Properties*>(structure);
                         memcpy(deviceUUID, vulkan_11_props->deviceUUID, VK_UUID_SIZE);
                         memcpy(driverUUID, vulkan_11_props->driverUUID, VK_UUID_SIZE);
                         memcpy(deviceLUID, vulkan_11_props->deviceLUID, VK_LUID_SIZE);
@@ -1851,8 +1851,8 @@ struct AppGpu {
                         deviceLUIDValid = vulkan_11_props->deviceLUIDValid;
                         found_device_id_props = true;
                     } else if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES) {
-                        VkPhysicalDeviceVulkan12Properties *vulkan_12_props =
-                            reinterpret_cast<VkPhysicalDeviceVulkan12Properties *>(structure);
+                        VkPhysicalDeviceVulkan12Properties* vulkan_12_props =
+                            reinterpret_cast<VkPhysicalDeviceVulkan12Properties*>(structure);
                         driverID = vulkan_12_props->driverID;
                         memcpy(driverName, vulkan_12_props->driverName, VK_MAX_DRIVER_NAME_SIZE);
                         memcpy(driverInfo, vulkan_12_props->driverInfo, VK_MAX_DRIVER_INFO_SIZE);
@@ -1867,12 +1867,12 @@ struct AppGpu {
         // Use the queue_props2 if they exist, else fallback on vulkan 1.0 queue_props
         int queue_index = 0;
         if (queue_props2.size() > 0) {
-            for (auto &queue_prop : queue_props2) {
+            for (auto& queue_prop : queue_props2) {
                 extended_queue_props.push_back(AppQueueFamilyProperties(
                     inst, phys_device, surface_extensions, queue_prop.queueFamilyProperties, queue_index++, queue_prop.pNext));
             }
         } else {
-            for (auto &queue_prop : queue_props) {
+            for (auto& queue_prop : queue_props) {
                 extended_queue_props.push_back(
                     AppQueueFamilyProperties(inst, phys_device, surface_extensions, queue_prop, queue_index++, nullptr));
             }
@@ -1882,8 +1882,8 @@ struct AppGpu {
             enabled_features.sparseBinding = VK_TRUE;
         }
 
-        std::vector<const char *> extensions_to_enable;
-        for (const auto &extension : device_extensions) {
+        std::vector<const char*> extensions_to_enable;
+        for (const auto& extension : device_extensions) {
             if (std::string(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME) == extension.extensionName) {
                 extensions_to_enable.push_back(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME);
             }
@@ -1978,15 +1978,15 @@ struct AppGpu {
 
         // Memory //
 
-        struct VkBaseOutStructure *structure = NULL;
+        struct VkBaseOutStructure* structure = NULL;
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME)) {
-            structure = (struct VkBaseOutStructure *)memory_props2.pNext;
+            structure = (struct VkBaseOutStructure*)memory_props2.pNext;
 
             while (structure) {
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT &&
                     CheckPhysicalDeviceExtensionIncluded(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
-                    VkPhysicalDeviceMemoryBudgetPropertiesEXT *mem_budget_props =
-                        reinterpret_cast<VkPhysicalDeviceMemoryBudgetPropertiesEXT *>(structure);
+                    VkPhysicalDeviceMemoryBudgetPropertiesEXT* mem_budget_props =
+                        reinterpret_cast<VkPhysicalDeviceMemoryBudgetPropertiesEXT*>(structure);
                     for (uint32_t i = 0; i < VK_MAX_MEMORY_HEAPS; i++) {
                         heapBudget[i] = mem_budget_props->heapBudget[i];
                         heapUsage[i] = mem_budget_props->heapUsage[i];
@@ -2001,19 +2001,18 @@ struct AppGpu {
         // External Memory Support
         if (inst.CheckExtensionEnabled(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME) &&
             CheckPhysicalDeviceExtensionIncluded(VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME)) {
-            structure = (struct VkBaseOutStructure *)props2.pNext;
+            structure = (struct VkBaseOutStructure*)props2.pNext;
 
             while (structure) {
                 if (structure->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT) {
-
                     // VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT
                     {
                         ExternalMemorySupport external_memory_support;
                         external_memory_support.type = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT;
 
                         // Get alignment value from physical device properties
-                        const VkPhysicalDeviceExternalMemoryHostPropertiesEXT *props =
-                            reinterpret_cast<VkPhysicalDeviceExternalMemoryHostPropertiesEXT *>(structure);
+                        const VkPhysicalDeviceExternalMemoryHostPropertiesEXT* props =
+                            reinterpret_cast<VkPhysicalDeviceExternalMemoryHostPropertiesEXT*>(structure);
 
                         // Skip if the alignment is invalid.
                         const VkDeviceSize host_alignment = props->minImportedHostPointerAlignment;
@@ -2024,7 +2023,7 @@ struct AppGpu {
                         // Allocate plain host pointer
                         size_t size = static_cast<size_t>(host_alignment);
                         std::align_val_t alignment = static_cast<std::align_val_t>(host_alignment);
-                        void *memory = ::operator new[](size, alignment);
+                        void* memory = ::operator new[](size, alignment);
 
                         // Get memory properties of the host pointer
                         VkMemoryHostPointerPropertiesEXT memory_host_pointer_properties{};
@@ -2066,7 +2065,7 @@ struct AppGpu {
     }
 
     ~AppGpu() {
-        for (auto &surface_extension : surface_extensions) {
+        for (auto& surface_extension : surface_extensions) {
             // If the surface is per physical device then we have to destroy it here as there's a separate surface for the
             // AppGpu object (contrarily to surfaces shared across the instance that are maintained by AppInstance)
             if (surface_extension.create_surface_for_physical_device) {
@@ -2077,17 +2076,17 @@ struct AppGpu {
         vkDestroyDevice(dev, nullptr);
     }
 
-    AppGpu(const AppGpu &) = delete;
-    const AppGpu &operator=(const AppGpu &) = delete;
+    AppGpu(const AppGpu&) = delete;
+    const AppGpu& operator=(const AppGpu&) = delete;
 
     bool CheckPhysicalDeviceExtensionIncluded(std::string extension_to_check) const {
         return std::any_of(
             device_extensions.begin(), device_extensions.end(),
-            [extension_to_check](const VkExtensionProperties &prop) { return prop.extensionName == extension_to_check; });
+            [extension_to_check](const VkExtensionProperties& prop) { return prop.extensionName == extension_to_check; });
     }
 
     // Helper function to determine whether a format range is currently supported.
-    bool FormatRangeSupported(const FormatRange &format_range) const {
+    bool FormatRangeSupported(const FormatRange& format_range) const {
         // Formats from base vulkan spec
         if (format_range.minimum_instance_version == 0 && format_range.extension_name == nullptr) {
             return true;
@@ -2135,8 +2134,8 @@ struct AppGpu {
             return APIVersion(v).str();
         }
     }
-    const AppDisplay *FindDisplay(VkDisplayKHR handle) {
-        for (const auto &disp : displays) {
+    const AppDisplay* FindDisplay(VkDisplayKHR handle) {
+        for (const auto& disp : displays) {
             if (disp.properties.display == handle) {
                 return &disp;
             }
@@ -2145,32 +2144,32 @@ struct AppGpu {
     }
 };
 
-bool AppVideoProfile::IsImageUsageFlags2Supported(AppGpu &gpu) const {
+bool AppVideoProfile::IsImageUsageFlags2Supported(AppGpu& gpu) const {
     // VkImageUsageFlags2KHR requires VK_KHR_extended_flags
     return gpu.CheckPhysicalDeviceExtensionIncluded(VK_KHR_EXTENDED_FLAGS_EXTENSION_NAME);
 }
 
-std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu &gpu) {
+std::vector<VkPhysicalDeviceToolPropertiesEXT> GetToolingInfo(AppGpu& gpu) {
     if (vkGetPhysicalDeviceToolPropertiesEXT == nullptr) return {};
     return GetVector<VkPhysicalDeviceToolPropertiesEXT>("vkGetPhysicalDeviceToolPropertiesEXT",
                                                         vkGetPhysicalDeviceToolPropertiesEXT, gpu.phys_device);
 }
 
-std::vector<VkCooperativeMatrixPropertiesKHR> GetCooperativeMatrixInfo(AppGpu &gpu) {
+std::vector<VkCooperativeMatrixPropertiesKHR> GetCooperativeMatrixInfo(AppGpu& gpu) {
     if (vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR == nullptr ||
         !gpu.CheckPhysicalDeviceExtensionIncluded("VK_KHR_cooperative_matrix"))
         return {};
     return GetVector<VkCooperativeMatrixPropertiesKHR>("vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR",
                                                        vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR, gpu.phys_device);
 }
-std::vector<VkTimeDomainKHR> GetTimeDomainInfo(AppGpu &gpu) {
+std::vector<VkTimeDomainKHR> GetTimeDomainInfo(AppGpu& gpu) {
     if (vkGetPhysicalDeviceCalibrateableTimeDomainsKHR == nullptr ||
         !gpu.CheckPhysicalDeviceExtensionIncluded("VK_KHR_calibrated_timestamps"))
         return {};
     return GetVector<VkTimeDomainKHR>("vkGetPhysicalDeviceCalibrateableTimeDomainsKHR",
                                       vkGetPhysicalDeviceCalibrateableTimeDomainsKHR, gpu.phys_device);
 }
-std::vector<VkPhysicalDeviceFragmentShadingRateKHR> GetFragmentShadingRateInfo(AppGpu &gpu) {
+std::vector<VkPhysicalDeviceFragmentShadingRateKHR> GetFragmentShadingRateInfo(AppGpu& gpu) {
     if (vkGetPhysicalDeviceFragmentShadingRatesKHR == nullptr ||
         !gpu.CheckPhysicalDeviceExtensionIncluded("VK_KHR_fragment_shading_rate"))
         return {};
@@ -2178,7 +2177,7 @@ std::vector<VkPhysicalDeviceFragmentShadingRateKHR> GetFragmentShadingRateInfo(A
                                                              vkGetPhysicalDeviceFragmentShadingRatesKHR, gpu.phys_device);
 }
 // Returns vector where each index maps to VkSampleCountFlagBits
-std::vector<VkMultisamplePropertiesEXT> GetSampleLocationInfo(AppGpu &gpu) {
+std::vector<VkMultisamplePropertiesEXT> GetSampleLocationInfo(AppGpu& gpu) {
     if (vkGetPhysicalDeviceMultisamplePropertiesEXT == nullptr ||
         !gpu.CheckPhysicalDeviceExtensionIncluded("VK_EXT_sample_locations"))
         return {};
@@ -2195,11 +2194,11 @@ std::vector<VkMultisamplePropertiesEXT> GetSampleLocationInfo(AppGpu &gpu) {
 
 // --------- Format Properties ----------//
 // can't use autogen because that is put in a header that we can't include because that header depends on stuff defined here
-bool operator==(const VkFormatProperties &a, const VkFormatProperties b) {
+bool operator==(const VkFormatProperties& a, const VkFormatProperties b) {
     return a.linearTilingFeatures == b.linearTilingFeatures && a.optimalTilingFeatures == b.optimalTilingFeatures &&
            a.bufferFeatures == b.bufferFeatures;
 }
-bool operator==(const VkFormatProperties3 &a, const VkFormatProperties3 b) {
+bool operator==(const VkFormatProperties3& a, const VkFormatProperties3 b) {
     return a.linearTilingFeatures == b.linearTilingFeatures && a.optimalTilingFeatures == b.optimalTilingFeatures &&
            a.bufferFeatures == b.bufferFeatures;
 }
@@ -2208,10 +2207,10 @@ struct PropFlags {
     VkFormatProperties props;
     VkFormatProperties3 props3;
 
-    bool operator==(const PropFlags &other) const { return props == other.props && props3 == other.props3; }
+    bool operator==(const PropFlags& other) const { return props == other.props && props3 == other.props3; }
 };
 
-PropFlags get_format_properties(const AppGpu &gpu, VkFormat fmt) {
+PropFlags get_format_properties(const AppGpu& gpu, VkFormat fmt) {
     VkFormatProperties props;
     vkGetPhysicalDeviceFormatProperties(gpu.phys_device, fmt, &props);
 
@@ -2223,7 +2222,7 @@ PropFlags get_format_properties(const AppGpu &gpu, VkFormat fmt) {
         VkFormatProperties2 props2{};
         props2.sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
         props2.formatProperties = props;
-        props2.pNext = static_cast<void *>(&props3);
+        props2.pNext = static_cast<void*>(&props3);
         vkGetPhysicalDeviceFormatProperties2KHR(gpu.phys_device, fmt, &props2);
     }
     return {props, props3};
@@ -2232,21 +2231,21 @@ PropFlags get_format_properties(const AppGpu &gpu, VkFormat fmt) {
 namespace std {
 template <>
 struct hash<VkFormatProperties> {
-    std::size_t operator()(const VkFormatProperties &k) const {
+    std::size_t operator()(const VkFormatProperties& k) const {
         return ((std::hash<uint32_t>()(k.linearTilingFeatures) ^ (std::hash<uint32_t>()(k.optimalTilingFeatures) << 1)) >> 1) ^
                (std::hash<uint32_t>()(k.bufferFeatures) << 1);
     }
 };
 template <>
 struct hash<VkFormatProperties3> {
-    std::size_t operator()(const VkFormatProperties3 &k) const {
+    std::size_t operator()(const VkFormatProperties3& k) const {
         return ((std::hash<uint64_t>()(k.linearTilingFeatures) ^ (std::hash<uint64_t>()(k.optimalTilingFeatures) << 1)) >> 1) ^
                (std::hash<uint64_t>()(k.bufferFeatures) << 1);
     }
 };
 template <>
 struct hash<PropFlags> {
-    std::size_t operator()(const PropFlags &k) const {
+    std::size_t operator()(const PropFlags& k) const {
         return (std::hash<VkFormatProperties>()(k.props) ^ std::hash<VkFormatProperties3>()(k.props3)) >> 1;
     }
 };
