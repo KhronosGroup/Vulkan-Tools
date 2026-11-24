@@ -21,4 +21,4 @@ Select the latest schema that `vulkaninfo` was designed to be used with, or simp
 
 * https://www.jsonschemavalidator.net/
 * https://jsonschemalint.com/#/version/draft-04/markup/json
-* https://json-schema-validator.herokuapp.com/index.jsp
+* https://jsonviewertool.com/json-schema-validator
