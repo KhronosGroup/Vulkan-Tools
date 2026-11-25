@@ -64,9 +64,13 @@ jobs:
               uses: hendrikmuhs/ccache-action@v1.2
               with:
                 key: ${{ runner.os }}-${{ matrix.config }}-${{ matrix.cc }}
-            # This is to combat a bug when using 6.6 linux kernels with thread/address sanitizer
-            # https://github.com/google/sanitizers/issues/1716
-            - run: sudo sysctl vm.mmap_rnd_bits=28
+            - name: Cache external dependencies
+              id: cache-deps
+              uses: actions/cache@v6
+              with:
+                path: |
+                  ${{ github.workspace }}/external
+                key: linux-dependencies-${{ matrix.config }}-${{ hashfiles('scripts/known_good.json') }}
             - name: Configure
               run: |
                 cmake -S. -B build -G "Ninja" \
@@ -75,7 +79,8 @@ jobs:
                 -D BUILD_WERROR=ON \
                 -D INSTALL_ICD=ON \
                 -D BUILD_TESTS=ON \
-                -D ENABLE_ADDRESS_SANITIZER=ON
+                -D ENABLE_ADDRESS_SANITIZER=ON \
+                -D UPDATE_DEPS_SKIP_EXISTING_INSTALL=ON
               env:
                 CC: ${{matrix.cc}}
                 CXX: ${{matrix.cxx}}
@@ -109,22 +114,45 @@ jobs:
                 arch: [ Win32, x64 ]
                 config: [ Debug, Release ]
                 os: [ windows-latest ]
-
+        env:
+          # Exercises the multi-config generator path (Visual Studio, Xcode, Ninja Multi-Config),
+          # where switching Debug/Release/RelWithDebInfo must work from a single configure.
+          CMAKE_GENERATOR: Ninja Multi-Config
         steps:
             - uses: actions/checkout@v7
             - uses: lukka/get-cmake@latest
             - uses: ilammy/msvc-dev-cmd@v1
               with:
                 arch: ${{ matrix.arch }}
+            - name: Cache known_good.json installations
+              id: cache-deps
+              uses: actions/cache@v6
+              with:
+                path: |
+                  ${{ github.workspace }}/external/Vulkan-Headers/build/install
+                  ${{ github.workspace }}/external/Vulkan-Loader/build/install
+                  ${{ github.workspace }}/external/googltest/build/install
+                key: windows-dependencies-multi-config-${{ matrix.arch }}-${{ hashfiles('scripts/known_good.json') }}
+            - name: Configure (once, for every --config used below)
+              run: cmake -S. -B build \
+                -D UPDATE_DEPS=ON \
+                -D INSTALL_ICD=ON \
+                -D BUILD_TESTS=ON \
+                -D BUILD_WERROR=ON \
+                -D UPDATE_DEPS_SKIP_EXISTING_INSTALL=ON \
+                -D UPDATE_DEPS_DIR=${{ github.workspace }}/external
 
-            - name: Configure
-              run: cmake -S. -B build -G "Ninja" -DCMAKE_BUILD_TYPE=${{matrix.config}} -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D BUILD_WERROR=ON
-
-            - name: Build
-              run: cmake --build ./build
-
-            - name: Install
-              run: cmake --install build/ --prefix build/install
+            - name: Build and install Debug, Release and RelWithDebInfo without reconfiguring
+              run: |
+                foreach ($config in "Debug", "Release", "RelWithDebInfo") {
+                  # BUILD_WERROR's link_options(/WX) turns any link warning (e.g. LNK4098, mismatched
+                  # Debug/Release runtimes) into a build failure, so a non-zero exit here already covers it.
+                  cmake --build build --config $config
+                  if ($LASTEXITCODE -ne 0) {
+                    throw "cmake --build failed for config $config"
+                  }
+                  cmake --install build --config $config --prefix ${{ github.workspace }}/install/$config
+                }
 
             - name: Test
               working-directory: ./build
@@ -148,7 +176,24 @@ jobs:
             - name: Add ccache to PATH
               run: echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
 
-            - run: cmake -S. -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -D UPDATE_DEPS=ON -D INSTALL_ICD=ON -D BUILD_TESTS=ON -D ENABLE_ADDRESS_SANITIZER=ON -D BUILD_WERROR=OFF # Disable warnings as unavoidable deprecation notice causes CI to fail
+            - name: Cache external dependencies
+              id: cache-deps
+              uses: actions/cache@v6
+              with:
+                path: |
+                  ${{ github.workspace }}/external
+                key: macos-dependencies-${{ hashfiles('scripts/known_good.json') }}
+
+            - run: cmake -S. -B build \
+                -G Ninja \
+                -D CMAKE_BUILD_TYPE=Release \
+                -D UPDATE_DEPS=ON \
+                -D INSTALL_ICD=ON \
+                -D BUILD_TESTS=ON \
+                -D ENABLE_ADDRESS_SANITIZER=ON \
+                -D UPDATE_DEPS_SKIP_EXISTING_INSTALL=ON \
+                -D BUILD_WERROR=OFF # Disable warnings as unavoidable deprecation notice causes CI to fail
+
 
             - run: cmake --build build
 
